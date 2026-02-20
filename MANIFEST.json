@@ -463,7 +463,7 @@
       "sha256": "ef00fd15dcc75257ec47423a33c7ee69f16935bfec171817dabaf8ec68431b28"
     },
     "tests/test_protocol_step_paths.py": {
-      "sha256": "457114bdbd2d24a4bfdfc1e685dcf487d51c605f2db4c7a171920ed0b7071828"
+      "sha256": "2601f7952e6d66f1663fb4a75e637e023b746837997cc127d397b57d6eca5421"
     },
     "tests/test_readme_contract.py": {
       "sha256": "193c6ab854d08e4134a4326e86ae16288ec9c4451d11dc46d089edd9eec1a83b"

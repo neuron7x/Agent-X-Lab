@@ -34,7 +34,9 @@ def test_r6_steps_have_existing_impl_paths_for_d7_d8_d9() -> None:
     for step_id, deficit_id in expected.items():
         step = steps.get(step_id)
         assert step is not None, f"missing step: {step_id}"
-        assert deficit_id in (step.get("fixes") or []), f"{step_id} must fix {deficit_id}"
+        assert deficit_id in (step.get("fixes") or []), (
+            f"{step_id} must fix {deficit_id}"
+        )
 
         impl_paths = [p for p in (step.get("impl_paths") or []) if isinstance(p, str)]
         assert impl_paths, f"{step_id} must declare impl_paths"
