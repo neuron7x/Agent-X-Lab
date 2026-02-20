@@ -35,11 +35,17 @@ jobs:
       - name: Mypy
         run: mypy .
       - name: Pytest
-        run: pytest -q
+        run: python -m pytest -q -W error
       - name: Validate
         run: make validate
       - name: Eval
         run: make eval
+      - name: Verify protocol consistency
+        run: python tools/verify_protocol_consistency.py --protocol protocol.yaml
+      - name: Build inventory
+        run: python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json
+      - name: Verify README contract
+        run: python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:

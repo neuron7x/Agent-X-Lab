@@ -2,46 +2,42 @@
 
 A deterministic cognitive-agent architecture with mechanized validation for shipping prompt catalogs and proof bundles as a GitHub-ready project.
 
-This repository contains:
-- a curated **catalog** of top-tier system prompts / protocols (yours + curated packs)
-- a minimal **governor CLI** (`sg`) to validate the catalog, run VR calibration, and build a release zip
-- a vendored **SCPE CIMQA v2026.3.0** SSOT stack (for interpreted/mechanized quality + evidence discipline)
-
-## Quickstart (local)
+## Quickstart
 
 ```bash
-python -m venv .venv
-. .venv/bin/activate
-make bootstrap
-make ci
-
+python -m pip install -r requirements.lock
+python -m pip install -r requirements-dev.txt
+ruff check .
+ruff format --check .
+mypy .
+python -m pytest -q -W error
+python scripts/validate_arsenal.py --repo-root . --strict
+python scripts/run_object_evals.py --repo-root .
+python tools/verify_protocol_consistency.py --protocol protocol.yaml
+python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json
+python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json
 ```
 
-Outputs:
+## Repository outputs
+
 - `VR.json`
 - `artifacts/evidence/<YYYYMMDD>/<work-id>/...`
 - `artifacts/release/*.zip`
+- `artifacts/titan9/inventory.json`
+- `artifacts/titan9/readme_commands.json`
 
-## GitHub
+## CI
 
-Push to GitHub and enable Actions. CI runs:
-- catalog integrity (sha256 + indexing)
-- pytest-based selftests
+CI runs formatting, linting, typing, tests, validation/eval, and README contract checks from `.github/workflows/ci.yml`.
 
-## Core “Supreme Command” objects (recommended default stack)
-- **DSE Codebase Fixer & Optimizer (99-grade)**: `catalog/agents/06_DSE_Codebase-Fixer-Optimizer_99.txt`
-- **Codex PFRI v2026.5.0**: `catalog/agents/CODEX_PFRI_v2026.5.0.md`
-- **GHTPO-2026.02**: `catalog/protocols/GHTPO-2026.02.md`
+## Deterministic error codes
 
-## License
-MIT (see LICENSE).
+See [docs/ERRORS.md](docs/ERRORS.md) for SSOT user-facing deterministic error identifiers.
 
+## Protocol mapping and governance
 
-## Evidence tracking policy
-
-- Track only **reference evidence** required for deterministic verification (`objects/*/artifacts/evidence/reference/**`).
-- Ignore runtime evidence emitted during local/CI runs (`artifacts/evidence/**`, non-reference object evidence).
-
+- Human-readable protocol spec: [docs/SPEC.md](docs/SPEC.md)
+- Machine-checkable mapping: `protocol.yaml`
 
 ## Optional SG CLI usage
 
@@ -51,18 +47,6 @@ sg --config configs/sg.config.json vr
 sg --config configs/sg.config.json release
 ```
 
-## Dev quality gates
+## License
 
-Use the repo-pinned tooling from `requirements-dev.txt`:
-
-```bash
-python -m pip install -r requirements-dev.txt
-make fmt
-make fmt-check
-```
-
-Before pushing, run at minimum:
-
-```bash
-make fmt-check
-```
+MIT (see LICENSE).

@@ -136,7 +136,7 @@
       "sha256": "7396b398eead8d78d36007a9c2c2296fdfdb37565190e1a581a900c0f75ff405"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "588937805e9759aef5db7c43803f8f1fc317ce8de8da531435cd1eb28e2f70ac"
+      "sha256": "afe84b46123b18f850ed80d684b1e2c4247a7e3c19449fd18fd8aedc22d9fac2"
     },
     ".github/workflows/lint-actions.yml": {
       "sha256": "93659ca5f5adf6bd945037cd1544869954d468ee821a3f1a79f6486b614f1704"
@@ -157,10 +157,10 @@
       "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685"
     },
     "Makefile": {
-      "sha256": "5c70bdf3526767fdaabcd492e7b682eba8228a62bc639a2c99b16cf698d986b5"
+      "sha256": "d498155c87df8902d5732108a63669f472832f3b8144bcd4d007c357ca8fe152"
     },
     "README.md": {
-      "sha256": "dbded03ef17f4649aee5f3736af70ceb7c9ba3ac412f93757076a0b9ead5417f"
+      "sha256": "58c8b6163af302bf488ac58cdba85358a382951be38546a35fd4c42b135530b6"
     },
     "SECURITY.md": {
       "sha256": "5715b12ebe6bcecf93a736a48d6d22881428f241e22c7bdd383aec8d2f1b0bc8"
@@ -185,6 +185,12 @@
     },
     "architecture/NAMING-CONVENTIONS.md": {
       "sha256": "1273636bb026b96328d82f194a0a0e3c7e5b140f65e641d23e4a1a17b33397db"
+    },
+    "artifacts/titan9/inventory.json": {
+      "sha256": "7ea6ecdc17050d392a1256ecf0e603af4b4fa71e8fe71bbcab6a80a56bd965cc"
+    },
+    "artifacts/titan9/readme_commands.json": {
+      "sha256": "b0d2669e5d3d18764770fb9f70108e7561b9e147a65caac2ff170507c28ebd7c"
     },
     "catalog/agents/01_PR-Orchestrator_Repo-Readiness-Governor.txt": {
       "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"
@@ -294,6 +300,12 @@
     "configs/sg.config.schema.json": {
       "sha256": "8c12d50bacec508a633dcce893e19b583908b6e7f3cbb9e839f94317f453f497"
     },
+    "docs/ERRORS.md": {
+      "sha256": "8c0006a934fec3536aa82d13539432ac07a4b7827208dc8489265e1f89d76d16"
+    },
+    "docs/SPEC.md": {
+      "sha256": "3a607756122c2a903052a8e8c6072d69a31efe1a2565e06fc1cf073677f3ddd9"
+    },
     "exoneural_governor/__init__.py": {
       "sha256": "b576d15ec3b4344fd45759081e26534d0407d1f8f45362a8c7136eb2efe0ceb3"
     },
@@ -387,6 +399,9 @@
     "proof/.gitkeep": {
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
+    "protocol.yaml": {
+      "sha256": "02f88c5832f58523d4fae9d658e603c6cfdc7120df81ec2161f23d0aed7fe70a"
+    },
     "protocols/ENC-CORE.md": {
       "sha256": "1a268043db479deb983ee02316692e6935d674a783e9894a1a599d8abf742d42"
     },
@@ -441,11 +456,23 @@
     "tests/test_generate_proof_bundle.py": {
       "sha256": "ef00fd15dcc75257ec47423a33c7ee69f16935bfec171817dabaf8ec68431b28"
     },
+    "tests/test_readme_contract.py": {
+      "sha256": "ea9a7b1b3403b4e319c8d0f02caf4fdb84609804b1131043b141e6883548e661"
+    },
     "tests/test_repo_invariants.py": {
       "sha256": "c5011d0ee39f5b92d65cacd66c1703d5c8d34e5aec9561eff0d5297e86d70589"
     },
     "tests/test_stack.py": {
       "sha256": "8d44a31c5140fdea9f73d1cefd2ee61a2105096ec8809b859d49ad2453e1982f"
+    },
+    "tools/titan9_inventory.py": {
+      "sha256": "283dad86631a92c0016353f2afa44f3ddee328161c5153fc69fd76fa7a4a2da3"
+    },
+    "tools/verify_protocol_consistency.py": {
+      "sha256": "fbabca14cce46636fe5adcaf037082fc712c970a3ba2f67e4bcba4cd3409f71f"
+    },
+    "tools/verify_readme_contract.py": {
+      "sha256": "b1f96045671d37cc0939396666f99a99578f4b58abbbc30c9e348197f6fcfaf2"
     },
     "vendor/scpe-cimqa-2026.3.0/CG.json": {
       "sha256": "efdeb908577cd4aeea0710b53aea66c691ca0a659301dee99b75680ef3b66b04"
