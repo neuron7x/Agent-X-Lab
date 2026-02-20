@@ -1,4 +1,5 @@
 name: pin-pip
+description: Pin pip to a deterministic version and print pip --version
 runs:
   using: composite
   steps:

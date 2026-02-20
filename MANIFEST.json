@@ -127,7 +127,7 @@
       "sha256": "3aaba4c99a60621a3af05afb1d923ea916db44716acf2b1cdf877cb33ec6ae73"
     },
     ".github/actions/pin-pip/action.yml": {
-      "sha256": "bfab164aaf5c9e75d7b65eba084d5fed68f4c277d54a0be7a70cee53a9faa04a"
+      "sha256": "c939d54feec2f5653b263226ac5be934aef7484945709b9a100bee5293d3f543"
     },
     ".github/dependabot.yml": {
       "sha256": "575c5bcd5d433560f5e40db5580c1e9bf824a3d1d4ed84a91eb4f8864065ef53"
