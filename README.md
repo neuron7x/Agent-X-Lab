@@ -15,14 +15,6 @@ python -m venv .venv
 make bootstrap
 make ci
 
-# fail-closed integrity check
-sg --config configs/sg.config.json validate-catalog
-
-# calibration run + evidence bundle + VR.json
-sg --config configs/sg.config.json vr
-
-# build release zip (includes latest VR evidence folder when available)
-sg --config configs/sg.config.json release
 ```
 
 Outputs:
@@ -49,3 +41,12 @@ MIT (see LICENSE).
 
 - Track only **reference evidence** required for deterministic verification (`objects/*/artifacts/evidence/reference/**`).
 - Ignore runtime evidence emitted during local/CI runs (`artifacts/evidence/**`, non-reference object evidence).
+
+
+## Optional SG CLI usage
+
+```bash
+sg --config configs/sg.config.json validate-catalog
+sg --config configs/sg.config.json vr
+sg --config configs/sg.config.json release
+```

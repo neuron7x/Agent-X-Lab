@@ -8,7 +8,6 @@ This repository is optimized for PR-driven development with deterministic qualit
 python -m venv .venv
 . .venv/bin/activate
 make bootstrap
-pre-commit install
 make ci
 ```
 

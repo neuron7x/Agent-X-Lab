@@ -59,3 +59,17 @@ def test_makefile_targets_exist() -> None:
     makefile = (REPO_ROOT / "Makefile").read_text(encoding="utf-8")
     for target in ["fmt", "lint", "type", "test", "validate", "eval", "ci"]:
         assert f"{target}:" in makefile
+
+
+def test_sg_config_selftest_passes() -> None:
+    p = run(
+        [
+            "python",
+            "-m",
+            "exoneural_governor.cli",
+            "--config",
+            "configs/sg.config.json",
+            "selftest",
+        ]
+    )
+    assert p.returncode == 0, p.stdout + "\n" + p.stderr

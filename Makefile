@@ -1,8 +1,7 @@
 .PHONY: bootstrap fmt lint type test validate eval ci precommit
 
 bootstrap:
-	python -m pip install -r requirements.lock
-	python -m pip install -r requirements-dev.txt
+	python scripts/bootstrap_env.py
 
 fmt:
 	ruff format .
@@ -25,4 +24,7 @@ eval:
 ci: lint type test validate eval
 
 precommit:
-	pre-commit run --all-files
+	ruff check .
+	ruff format --check .
+	mypy .
+	python -m pytest -q

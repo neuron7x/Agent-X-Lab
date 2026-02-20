@@ -58,6 +58,8 @@ def iter_files(repo_root: Path) -> Iterable[Path]:
         rel = p.relative_to(repo_root).as_posix()
         if rel.startswith("artifacts/evidence/"):
             continue
+        if rel.startswith("configs/artifacts/"):
+            continue
         if (
             rel.startswith("artifacts/reports/")
             or rel.startswith("artifacts/tmp/")

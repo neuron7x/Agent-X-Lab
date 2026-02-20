@@ -19,9 +19,13 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
+          cache-dependency-path: |
+            requirements.lock
+            requirements-dev.txt
       - uses: ./.github/actions/pin-pip
       - name: Install dependencies
         run: |
+          set -euo pipefail
           python -m pip install -r requirements.lock
           python -m pip install -r requirements-dev.txt
       - name: Ruff lint

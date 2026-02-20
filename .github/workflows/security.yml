@@ -25,34 +25,24 @@ jobs:
 
   gitleaks:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Install gitleaks
-        run: |
-          curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz -o gitleaks.tar.gz
-          tar -xzf gitleaks.tar.gz gitleaks
-          sudo mv gitleaks /usr/local/bin/gitleaks
-          gitleaks version
-      - name: Verify PR refs and run range scan
+      - name: Verify PR refs exist
         if: github.event_name == 'pull_request'
         run: |
+          set -euo pipefail
           BASE_SHA='${{ github.event.pull_request.base.sha }}'
           HEAD_SHA='${{ github.event.pull_request.head.sha }}'
           git rev-parse --verify "$BASE_SHA"
           git rev-parse --verify "$HEAD_SHA"
-          gitleaks detect --redact --verbose --exit-code 2 --report-format sarif --report-path results.sarif --log-opts="--no-merges --first-parent ${BASE_SHA}..${HEAD_SHA}"
-      - name: Run full scan (push/schedule)
-        if: github.event_name != 'pull_request'
-        run: |
-          gitleaks git --redact --verbose --exit-code 2 --report-format sarif --report-path results.sarif
-      - name: Upload gitleaks SARIF
-        uses: actions/upload-artifact@v4
-        with:
-          name: gitleaks-results
-          if-no-files-found: error
-          path: results.sarif
+      - name: Gitleaks scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   dependency-review:
     if: github.event_name == 'pull_request'
