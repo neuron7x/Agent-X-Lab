@@ -61,6 +61,7 @@ def build_inventory(repo_root: Path) -> dict[str, object]:
                 "python tools/verify_protocol_consistency.py --protocol protocol.yaml",
                 "python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json",
                 "python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json",
+                "python tools/generate_titan9_proof.py --repo-root .",
             ],
         },
         "workflows": {

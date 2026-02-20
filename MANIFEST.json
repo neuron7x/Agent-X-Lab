@@ -136,7 +136,7 @@
       "sha256": "7396b398eead8d78d36007a9c2c2296fdfdb37565190e1a581a900c0f75ff405"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "afe84b46123b18f850ed80d684b1e2c4247a7e3c19449fd18fd8aedc22d9fac2"
+      "sha256": "ff5dd2d4874fea926303e00468e82cb9d75938ea47a6ce51f0cc23e91c6ae4f1"
     },
     ".github/workflows/lint-actions.yml": {
       "sha256": "93659ca5f5adf6bd945037cd1544869954d468ee821a3f1a79f6486b614f1704"
@@ -157,10 +157,10 @@
       "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685"
     },
     "Makefile": {
-      "sha256": "d498155c87df8902d5732108a63669f472832f3b8144bcd4d007c357ca8fe152"
+      "sha256": "8c547da2214db51828378b5280dc98465b49f88af762b1dad399b74d49de923d"
     },
     "README.md": {
-      "sha256": "58c8b6163af302bf488ac58cdba85358a382951be38546a35fd4c42b135530b6"
+      "sha256": "a71c023372132a0b91bf95328709a1c7902892c8efa6a78d789dd5afe5f35e97"
     },
     "SECURITY.md": {
       "sha256": "5715b12ebe6bcecf93a736a48d6d22881428f241e22c7bdd383aec8d2f1b0bc8"
@@ -186,11 +186,17 @@
     "architecture/NAMING-CONVENTIONS.md": {
       "sha256": "1273636bb026b96328d82f194a0a0e3c7e5b140f65e641d23e4a1a17b33397db"
     },
+    "artifacts/titan9/hashes.json": {
+      "sha256": "f8305bc77c02072ee89a6843c7a39b4d0def6f652c108b42fa758ad617030fbc"
+    },
     "artifacts/titan9/inventory.json": {
-      "sha256": "7ea6ecdc17050d392a1256ecf0e603af4b4fa71e8fe71bbcab6a80a56bd965cc"
+      "sha256": "ad76383c3f6899e973c58461800ef5bd2f70f75f760b0432fd57ec59a86dc9af"
+    },
+    "artifacts/titan9/proof.log": {
+      "sha256": "075975c9045b0b4b26e5eeb1f01a85ad9950c3e69a14c773d49670a370aedffe"
     },
     "artifacts/titan9/readme_commands.json": {
-      "sha256": "b0d2669e5d3d18764770fb9f70108e7561b9e147a65caac2ff170507c28ebd7c"
+      "sha256": "a1c79f01a2e8b97c34ee304e003df429be58fb64852c3b899d4ed861a5eb8f8a"
     },
     "catalog/agents/01_PR-Orchestrator_Repo-Readiness-Governor.txt": {
       "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"
@@ -304,7 +310,7 @@
       "sha256": "8c0006a934fec3536aa82d13539432ac07a4b7827208dc8489265e1f89d76d16"
     },
     "docs/SPEC.md": {
-      "sha256": "3a607756122c2a903052a8e8c6072d69a31efe1a2565e06fc1cf073677f3ddd9"
+      "sha256": "c5dc53e4498eeb7642baa24b1070988e1fa67e4e00a07ecf8c7050e4a1f9be3f"
     },
     "exoneural_governor/__init__.py": {
       "sha256": "b576d15ec3b4344fd45759081e26534d0407d1f8f45362a8c7136eb2efe0ceb3"
@@ -457,7 +463,7 @@
       "sha256": "ef00fd15dcc75257ec47423a33c7ee69f16935bfec171817dabaf8ec68431b28"
     },
     "tests/test_readme_contract.py": {
-      "sha256": "ea9a7b1b3403b4e319c8d0f02caf4fdb84609804b1131043b141e6883548e661"
+      "sha256": "193c6ab854d08e4134a4326e86ae16288ec9c4451d11dc46d089edd9eec1a83b"
     },
     "tests/test_repo_invariants.py": {
       "sha256": "c5011d0ee39f5b92d65cacd66c1703d5c8d34e5aec9561eff0d5297e86d70589"
@@ -465,8 +471,11 @@
     "tests/test_stack.py": {
       "sha256": "8d44a31c5140fdea9f73d1cefd2ee61a2105096ec8809b859d49ad2453e1982f"
     },
+    "tools/generate_titan9_proof.py": {
+      "sha256": "a0db4202435e8f3bff3113792a476185dd3324b342f2825fbf039d72436a5413"
+    },
     "tools/titan9_inventory.py": {
-      "sha256": "283dad86631a92c0016353f2afa44f3ddee328161c5153fc69fd76fa7a4a2da3"
+      "sha256": "39f0cdeb3f9710b6746fb8a9d246978c725db42edfaf8dce4a1050edb2137829"
     },
     "tools/verify_protocol_consistency.py": {
       "sha256": "fbabca14cce46636fe5adcaf037082fc712c970a3ba2f67e4bcba4cd3409f71f"

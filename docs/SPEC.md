@@ -20,3 +20,8 @@ This repository encodes TITAN-9 remediation mapping as a bijection between defic
 
 README must contain exactly one `## Quickstart` section with executable commands.
 Contract is enforced by `tools/verify_readme_contract.py` against CI workflows and generated inventory.
+
+
+## Proof bundle artifacts
+
+`tools/generate_titan9_proof.py` must generate deterministic outputs in `artifacts/titan9/`: `inventory.json`, `readme_commands.json`, `proof.log`, and `hashes.json`.
