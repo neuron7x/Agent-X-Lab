@@ -60,7 +60,11 @@ def _validate_seed_before_tooling(quickstart_commands: list[str]) -> None:
         raise SystemExit(E_README_PYTHONHASHSEED_MISSING) from exc
 
     tooling_index = next(
-        (index for index, cmd in enumerate(quickstart_commands) if _is_tooling_command(cmd)),
+        (
+            index
+            for index, cmd in enumerate(quickstart_commands)
+            if _is_tooling_command(cmd)
+        ),
         None,
     )
     if tooling_index is not None and seed_index > tooling_index:
@@ -101,7 +105,9 @@ def _workflow_seed_violations(workflows_dir: Path) -> list[str]:
             for index, step in enumerate(job.get("steps", [])):
                 if not isinstance(step, dict) or not isinstance(step.get("run"), str):
                     continue
-                run_lines = [line.strip() for line in step["run"].splitlines() if line.strip()]
+                run_lines = [
+                    line.strip() for line in step["run"].splitlines() if line.strip()
+                ]
                 if not any(_is_tooling_command(line) for line in run_lines):
                     continue
                 step_env = dict(job_env)

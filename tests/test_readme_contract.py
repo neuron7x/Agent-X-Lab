@@ -82,7 +82,9 @@ jobs:
 
         inventory = temp_path / "inventory.json"
         inventory.write_text(
-            json.dumps({"canonical_commands": {"tests": ["python -m pytest -q -W error"]}})
+            json.dumps(
+                {"canonical_commands": {"tests": ["python -m pytest -q -W error"]}}
+            )
             + "\n",
             encoding="utf-8",
         )

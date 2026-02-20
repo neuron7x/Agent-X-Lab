@@ -484,7 +484,7 @@
       "sha256": "2601f7952e6d66f1663fb4a75e637e023b746837997cc127d397b57d6eca5421"
     },
     "tests/test_readme_contract.py": {
-      "sha256": "234d19792467fedfa8b9a9036552a852572998b018718f24535695d9c6aa8adf"
+      "sha256": "539360225c6e075b3550b6888198105728d3b69d017debd3a17bf435d1d93996"
     },
     "tests/test_repo_invariants.py": {
       "sha256": "c5011d0ee39f5b92d65cacd66c1703d5c8d34e5aec9561eff0d5297e86d70589"
@@ -511,7 +511,7 @@
       "sha256": "0eb11e0260015e37f2804f3c17c8ae9bf799f503485b8b0a25677c91b9a4a3e2"
     },
     "tools/verify_readme_contract.py": {
-      "sha256": "88c9abb38f934ecd88944b9986c5b942817d49dcd2475a59c802d4c8551216db"
+      "sha256": "4623b9a631d9ccce67bb6bf893c62ee4985b38cbf5b44efd800472919f3a5e72"
     },
     "vendor/scpe-cimqa-2026.3.0/CG.json": {
       "sha256": "efdeb908577cd4aeea0710b53aea66c691ca0a659301dee99b75680ef3b66b04"
