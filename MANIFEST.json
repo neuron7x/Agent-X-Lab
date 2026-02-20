@@ -406,7 +406,7 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "protocol.yaml": {
-      "sha256": "02f88c5832f58523d4fae9d658e603c6cfdc7120df81ec2161f23d0aed7fe70a"
+      "sha256": "b172ba5d64bc09c53ae73b0c64ec2365d1a19840d0b1454627fe04e414fc6d6f"
     },
     "protocols/ENC-CORE.md": {
       "sha256": "1a268043db479deb983ee02316692e6935d674a783e9894a1a599d8abf742d42"
@@ -462,6 +462,9 @@
     "tests/test_generate_proof_bundle.py": {
       "sha256": "ef00fd15dcc75257ec47423a33c7ee69f16935bfec171817dabaf8ec68431b28"
     },
+    "tests/test_protocol_step_paths.py": {
+      "sha256": "457114bdbd2d24a4bfdfc1e685dcf487d51c605f2db4c7a171920ed0b7071828"
+    },
     "tests/test_readme_contract.py": {
       "sha256": "193c6ab854d08e4134a4326e86ae16288ec9c4451d11dc46d089edd9eec1a83b"
     },
@@ -478,7 +481,7 @@
       "sha256": "39f0cdeb3f9710b6746fb8a9d246978c725db42edfaf8dce4a1050edb2137829"
     },
     "tools/verify_protocol_consistency.py": {
-      "sha256": "fbabca14cce46636fe5adcaf037082fc712c970a3ba2f67e4bcba4cd3409f71f"
+      "sha256": "76574171c6c05763b49313c39e03664fdc1537bebf06a9ad5ac3c16c3645b7c2"
     },
     "tools/verify_readme_contract.py": {
       "sha256": "b1f96045671d37cc0939396666f99a99578f4b58abbbc30c9e348197f6fcfaf2"
