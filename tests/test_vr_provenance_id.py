@@ -34,8 +34,8 @@ def test_no_git_with_build_id_produces_stable_deterministic_id(tmp_path, monkeyp
     second = _work_id(repo_root, cfg)
 
     assert first == second
-    assert len(first) >= 32
-    assert re.fullmatch(r"[0-9a-f]{32}", first)
+    assert first.startswith("release-0.0.0+nogit.")
+    assert re.fullmatch(r"release-0\.0\.0\+nogit\.[0-9a-f]{32}", first)
 
 
 def test_no_git_and_no_build_id_raises_fail_closed_error(tmp_path, monkeypatch):
@@ -53,3 +53,19 @@ def test_no_git_and_no_build_id_raises_fail_closed_error(tmp_path, monkeypatch):
         assert "set BUILD_ID" in msg
     else:
         raise AssertionError("Expected ValueError for missing git and BUILD_ID")
+
+
+def test_no_git_with_distinct_build_ids_are_unique(tmp_path, monkeypatch):
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir()
+    cfg = _cfg(repo_root)
+    (repo_root / "pyproject.toml").write_text('version = "1.2.3"\n', encoding="utf-8")
+    (repo_root / "docs").mkdir()
+    (repo_root / "docs" / "SPEC.md").write_text("# TITAN-9 R6 Protocol Spec\n", encoding="utf-8")
+
+    ids = set()
+    for i in range(10_000):
+        monkeypatch.setenv("BUILD_ID", f"build-{i}")
+        ids.add(_work_id(repo_root, cfg))
+
+    assert len(ids) == 10_000

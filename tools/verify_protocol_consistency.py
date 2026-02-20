@@ -41,10 +41,9 @@ def verify(protocol_path: Path) -> dict[str, object]:
     )
     return {
         "pass": passed,
-        "missing_deficits": missing_deficits,
+        "missing_deficits": missing_deficits + unknown_deficits,
         "duplicate_deficits": duplicate_deficits,
         "orphan_steps": orphan_steps,
-        "unknown_deficits": unknown_deficits,
     }
 
 

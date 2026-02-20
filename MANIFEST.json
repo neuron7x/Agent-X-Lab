@@ -307,7 +307,7 @@
       "sha256": "8c12d50bacec508a633dcce893e19b583908b6e7f3cbb9e839f94317f453f497"
     },
     "docs/ERRORS.md": {
-      "sha256": "8c0006a934fec3536aa82d13539432ac07a4b7827208dc8489265e1f89d76d16"
+      "sha256": "c687ce73fa5235ec2dd8413fd14d729c8fecea99bfc5dff4d47cfc33ffecaa9f"
     },
     "docs/SPEC.md": {
       "sha256": "c5dc53e4498eeb7642baa24b1070988e1fa67e4e00a07ecf8c7050e4a1f9be3f"
@@ -330,6 +330,9 @@
     "exoneural_governor/manifest.py": {
       "sha256": "b932df358873b34d5025888074d90a4f67ef99c00799fbf04ef812854a71a1a9"
     },
+    "exoneural_governor/network.py": {
+      "sha256": "12d44a2ea25c946784910f52b6807e951cef083c607ccc2d93411a83f306f240"
+    },
     "exoneural_governor/redaction.py": {
       "sha256": "398e830098ff072d4b626cdd1cd46c125ecd06f0b2799866de4fec2c4bb30e7c"
     },
@@ -340,7 +343,7 @@
       "sha256": "8731ba0fda88225b5117e2b8c63e7278169b573a66692fc2f465fd26c0db3581"
     },
     "exoneural_governor/vr.py": {
-      "sha256": "3d2334ebf9b46798db733e218b6b586250babc5163a26092d7f4f1400444f5b9"
+      "sha256": "63fd7764b3f252ae2b20aea9d5eb8c6b36e4babe0b001155fa82a8a76e194185"
     },
     "objects/dse-fix-opt/CHANGELOG.md": {
       "sha256": "bb6b7628c1ecdbc925145c11ba0c801d319485e120b653d15cce0bb3f1e5798f"
@@ -459,8 +462,17 @@
     "scripts/validate_arsenal.py": {
       "sha256": "018a6ff35bcb3145de33730905737053db6da1bf60f9bd720b6117b7d2aef88e"
     },
+    "tests/conftest.py": {
+      "sha256": "93ea3036a9dcee8c35157a947e8db0c0ef74f48f0ed505530f9e1d047bae98fa"
+    },
     "tests/test_generate_proof_bundle.py": {
       "sha256": "ef00fd15dcc75257ec47423a33c7ee69f16935bfec171817dabaf8ec68431b28"
+    },
+    "tests/test_isolation_fixture.py": {
+      "sha256": "b174b12d09fc6f6ab2f56814ea3233c2c8607253f8eaf1b12b57ee744320a5f8"
+    },
+    "tests/test_network_backend.py": {
+      "sha256": "ccdb671aa3a7d9b37d5f85c3dbb7c11e3eec1cdac47d7c7df70e529f2787188a"
     },
     "tests/test_readme_contract.py": {
       "sha256": "193c6ab854d08e4134a4326e86ae16288ec9c4451d11dc46d089edd9eec1a83b"
@@ -472,7 +484,7 @@
       "sha256": "8d44a31c5140fdea9f73d1cefd2ee61a2105096ec8809b859d49ad2453e1982f"
     },
     "tests/test_vr_provenance_id.py": {
-      "sha256": "c450e0c622dda7c46d399a9ec8cdbf35155aeadf94157b0aee6ba994b50e146d"
+      "sha256": "1b882290ebe9e8fd59c6401c54a72e1f9d476819133de2f7fbe2cf954648aca9"
     },
     "tools/generate_titan9_proof.py": {
       "sha256": "a0db4202435e8f3bff3113792a476185dd3324b342f2825fbf039d72436a5413"
@@ -481,7 +493,7 @@
       "sha256": "39f0cdeb3f9710b6746fb8a9d246978c725db42edfaf8dce4a1050edb2137829"
     },
     "tools/verify_protocol_consistency.py": {
-      "sha256": "fbabca14cce46636fe5adcaf037082fc712c970a3ba2f67e4bcba4cd3409f71f"
+      "sha256": "0eb11e0260015e37f2804f3c17c8ae9bf799f503485b8b0a25677c91b9a4a3e2"
     },
     "tools/verify_readme_contract.py": {
       "sha256": "b1f96045671d37cc0939396666f99a99578f4b58abbbc30c9e348197f6fcfaf2"

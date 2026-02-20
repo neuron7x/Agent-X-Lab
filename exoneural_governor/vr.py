@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from pathlib import Path
 from typing import Any, Dict
 
@@ -11,6 +12,30 @@ from .inventory import inventory
 from .manifest import write_manifest
 from .redaction import load_redaction_patterns, redact_tree
 from .util import sha256_bytes, utc_now_iso, write_json, run_cmd, ensure_dir
+
+
+def _package_version(repo_root: Path) -> str:
+    pyproject = repo_root / "pyproject.toml"
+    if not pyproject.exists():
+        return "0.0.0"
+    raw = pyproject.read_text(encoding="utf-8", errors="replace")
+    m = re.search(r'^version\s*=\s*"([^"]+)"', raw, flags=re.MULTILINE)
+    if m:
+        return m.group(1)
+    return "0.0.0"
+
+
+def _spec_token(repo_root: Path) -> str:
+    spec = repo_root / "docs" / "SPEC.md"
+    if not spec.exists():
+        return "NO_SPEC"
+    spec_text = spec.read_text(encoding="utf-8", errors="replace")
+    token = re.search(
+        r"TITAN-9\s+[A-Za-z0-9._-]*\s*Protocol\s*Spec", spec_text, flags=re.IGNORECASE
+    )
+    if token:
+        return token.group(0)
+    return sha256_bytes(spec.read_bytes())
 
 
 def _work_id(repo_root: Path, cfg: Config) -> str:
@@ -38,21 +63,22 @@ def _work_id(repo_root: Path, cfg: Config) -> str:
             "E_NO_GIT_NO_BUILD_ID: git commit unavailable; set BUILD_ID for deterministic provenance id."
         )
 
-    # Include declarative inputs only; never include time/uuid/randomness.
-    idx = repo_root / "catalog" / "index.json"
-    idx_hash = sha256_bytes(idx.read_bytes()) if idx.exists() else "NO_INDEX"
-    payload = json.dumps(
-        {
-            "build_id": build_id,
-            "catalog_index": idx_hash,
-            "config": {
-                "artifact_name": cfg.artifact_name,
-                "baseline_commands": cfg.baseline_commands,
-            },
-        },
-        sort_keys=True,
-    ).encode("utf-8")
-    return sha256_bytes(payload)[:32]
+    pyproject = repo_root / "pyproject.toml"
+    pyproject_bytes = pyproject.read_bytes() if pyproject.exists() else b""
+    version = _package_version(repo_root)
+    spec_token = _spec_token(repo_root).encode("utf-8")
+
+    digest = sha256_bytes(
+        b"\n".join(
+            [
+                pyproject_bytes,
+                spec_token,
+                version.encode("utf-8"),
+                build_id.encode("utf-8"),
+            ]
+        )
+    )[:32]
+    return f"release-{version}+nogit.{digest}"
 
 
 def run_vr(cfg: Config, *, write_back: bool = True) -> dict:
