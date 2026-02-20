@@ -15,8 +15,13 @@ from __future__ import annotations
 import argparse
 import json
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any, Dict, List
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from exoneural_governor.backend import resolve_backend
 
 
 def load_json(path: Path) -> Dict[str, Any]:
@@ -82,7 +87,15 @@ def main() -> int:
         action="store_true",
         help="Forward --deterministic to harnesses",
     )
+    ap.add_argument(
+        "--backend",
+        default="default",
+        choices=["default", "accelerated"],
+        help="Execution backend selector (default: default)",
+    )
     args = ap.parse_args()
+
+    resolve_backend(args.backend)
 
     repo_root = Path(args.repo_root).resolve()
     m = load_json(repo_root / args.manifest)
