@@ -46,6 +46,8 @@ jobs:
         run: python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json
       - name: Verify README contract
         run: python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json
+      - name: Generate Titan9 proof bundle
+        run: python tools/generate_titan9_proof.py --repo-root .
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:

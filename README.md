@@ -16,6 +16,7 @@ python scripts/run_object_evals.py --repo-root .
 python tools/verify_protocol_consistency.py --protocol protocol.yaml
 python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json
 python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json
+python tools/generate_titan9_proof.py --repo-root .
 ```
 
 ## Repository outputs
@@ -25,6 +26,8 @@ python tools/verify_readme_contract.py --readme README.md --workflows .github/wo
 - `artifacts/release/*.zip`
 - `artifacts/titan9/inventory.json`
 - `artifacts/titan9/readme_commands.json`
+- `artifacts/titan9/proof.log`
+- `artifacts/titan9/hashes.json`
 
 ## CI
 

@@ -19,7 +19,8 @@
       "python scripts/run_object_evals.py --repo-root .",
       "python tools/verify_protocol_consistency.py --protocol protocol.yaml",
       "python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json",
-      "python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json"
+      "python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json",
+      "python tools/generate_titan9_proof.py --repo-root ."
     ]
   },
   "demo_artifacts": [
@@ -49,6 +50,7 @@
       "python -m pip install -r requirements-dev.txt",
       "python -m pip install -r requirements.lock",
       "python -m pytest -q -W error",
+      "python tools/generate_titan9_proof.py --repo-root .",
       "python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json",
       "python tools/verify_protocol_consistency.py --protocol protocol.yaml",
       "python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json",

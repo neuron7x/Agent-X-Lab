@@ -49,3 +49,16 @@ def test_readme_contract_passes() -> None:
         ]
     )
     assert p.returncode == 0, p.stdout + "\n" + p.stderr
+
+
+def test_generate_titan9_proof_bundle() -> None:
+    p = run(["python", "tools/generate_titan9_proof.py", "--repo-root", "."])
+    assert p.returncode == 0, p.stdout + "\n" + p.stderr
+
+    for rel in [
+        "artifacts/titan9/inventory.json",
+        "artifacts/titan9/readme_commands.json",
+        "artifacts/titan9/proof.log",
+        "artifacts/titan9/hashes.json",
+    ]:
+        assert (REPO_ROOT / rel).exists(), rel
