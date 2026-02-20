@@ -1,14 +1,18 @@
 from __future__ import annotations
 
+import json
 import subprocess
+import tempfile
 from pathlib import Path
 
+
+from tools.verify_readme_contract import E_README_PYTHONHASHSEED_MISSING
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
-def run(cmd: list[str]) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(cmd, cwd=REPO_ROOT, capture_output=True, text=True)
+def run(cmd: list[str], cwd: Path = REPO_ROOT) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
 
 
 def test_protocol_consistency_passes() -> None:
@@ -49,6 +53,70 @@ def test_readme_contract_passes() -> None:
         ]
     )
     assert p.returncode == 0, p.stdout + "\n" + p.stderr
+
+
+def test_readme_contract_fails_when_seed_export_missing_stable() -> None:
+    expected = E_README_PYTHONHASHSEED_MISSING
+    outputs: list[str] = []
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+        readme = temp_path / "README.md"
+        workflows = temp_path / "workflows"
+        workflows.mkdir(parents=True, exist_ok=True)
+        (workflows / "ci.yml").write_text(
+            """
+name: CI
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONHASHSEED: "0"
+    steps:
+      - name: Example
+        run: python -m pytest -q -W error
+""".strip()
+            + "\n",
+            encoding="utf-8",
+        )
+
+        inventory = temp_path / "inventory.json"
+        inventory.write_text(
+            json.dumps({"canonical_commands": {"tests": ["python -m pytest -q -W error"]}})
+            + "\n",
+            encoding="utf-8",
+        )
+
+        readme.write_text(
+            """
+## Quickstart
+
+```bash
+python -m pytest -q -W error
+```
+""".strip()
+            + "\n",
+            encoding="utf-8",
+        )
+
+        for _ in range(3):
+            proc = run(
+                [
+                    "python",
+                    str(REPO_ROOT / "tools/verify_readme_contract.py"),
+                    "--readme",
+                    str(readme),
+                    "--workflows",
+                    str(workflows),
+                    "--inventory",
+                    str(inventory),
+                ],
+                cwd=temp_path,
+            )
+            assert proc.returncode != 0
+            outputs.append(proc.stderr.strip())
+
+    assert outputs == [expected, expected, expected]
 
 
 def test_generate_titan9_proof_bundle() -> None:

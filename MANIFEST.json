@@ -136,13 +136,13 @@
       "sha256": "7396b398eead8d78d36007a9c2c2296fdfdb37565190e1a581a900c0f75ff405"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "ff5dd2d4874fea926303e00468e82cb9d75938ea47a6ce51f0cc23e91c6ae4f1"
+      "sha256": "ededb0e3cd8843df478e011a7f8e6fb116f07ab6698c653e3e7af7baedcdc087"
     },
     ".github/workflows/lint-actions.yml": {
-      "sha256": "93659ca5f5adf6bd945037cd1544869954d468ee821a3f1a79f6486b614f1704"
+      "sha256": "25b2f8f69e344d541b2705e721db58c470766dd215568eae18aee9f029a0a0ee"
     },
     ".github/workflows/security.yml": {
-      "sha256": "03f21ec2ad975e6ced76d47151ea8c4a06ba68f55e4c73263154c8138c9e64d3"
+      "sha256": "b2712202f1a60c92ed89149b8040165bc3f821a5641529d6ce028474374d74ea"
     },
     ".gitignore": {
       "sha256": "bfd94521c896d7a03e7cfbdc599770a2c78723fc0e6dc2019ada246c770f3851"
@@ -160,7 +160,7 @@
       "sha256": "8c547da2214db51828378b5280dc98465b49f88af762b1dad399b74d49de923d"
     },
     "README.md": {
-      "sha256": "a71c023372132a0b91bf95328709a1c7902892c8efa6a78d789dd5afe5f35e97"
+      "sha256": "733cd5fa3a1657f8cee07db3fb93065ec0a5cb5ab8945ccc9b7bdc809606e9cb"
     },
     "SECURITY.md": {
       "sha256": "5715b12ebe6bcecf93a736a48d6d22881428f241e22c7bdd383aec8d2f1b0bc8"
@@ -187,16 +187,16 @@
       "sha256": "1273636bb026b96328d82f194a0a0e3c7e5b140f65e641d23e4a1a17b33397db"
     },
     "artifacts/titan9/hashes.json": {
-      "sha256": "f8305bc77c02072ee89a6843c7a39b4d0def6f652c108b42fa758ad617030fbc"
+      "sha256": "5b0e8e4e5954e3476b23a7a1a0e2402b434b2122a52069bb2adb1f7441d0dd6c"
     },
     "artifacts/titan9/inventory.json": {
       "sha256": "ad76383c3f6899e973c58461800ef5bd2f70f75f760b0432fd57ec59a86dc9af"
     },
     "artifacts/titan9/proof.log": {
-      "sha256": "075975c9045b0b4b26e5eeb1f01a85ad9950c3e69a14c773d49670a370aedffe"
+      "sha256": "5afcec59fc085b99194dbaa2fac4e7251df442904f62925d4a9273932ebc0026"
     },
     "artifacts/titan9/readme_commands.json": {
-      "sha256": "a1c79f01a2e8b97c34ee304e003df429be58fb64852c3b899d4ed861a5eb8f8a"
+      "sha256": "53525bf3f094d0d9e53ff950a2f71fcec44f4004a7772bc490e2e7f7dc4d9ff4"
     },
     "catalog/agents/01_PR-Orchestrator_Repo-Readiness-Governor.txt": {
       "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"
@@ -307,7 +307,7 @@
       "sha256": "8c12d50bacec508a633dcce893e19b583908b6e7f3cbb9e839f94317f453f497"
     },
     "docs/ERRORS.md": {
-      "sha256": "33443a38b8d48890b28731c96d3796c9586d5ada73efc7e3a496fbaae6a7229e"
+      "sha256": "ad374d64ceb26c1f589908f2cd28fe78173ef6e1373521b6f9866f0df30d280e"
     },
     "docs/SPEC.md": {
       "sha256": "c5dc53e4498eeb7642baa24b1070988e1fa67e4e00a07ecf8c7050e4a1f9be3f"
@@ -484,7 +484,7 @@
       "sha256": "2601f7952e6d66f1663fb4a75e637e023b746837997cc127d397b57d6eca5421"
     },
     "tests/test_readme_contract.py": {
-      "sha256": "193c6ab854d08e4134a4326e86ae16288ec9c4451d11dc46d089edd9eec1a83b"
+      "sha256": "234d19792467fedfa8b9a9036552a852572998b018718f24535695d9c6aa8adf"
     },
     "tests/test_repo_invariants.py": {
       "sha256": "c5011d0ee39f5b92d65cacd66c1703d5c8d34e5aec9561eff0d5297e86d70589"
@@ -511,7 +511,7 @@
       "sha256": "0eb11e0260015e37f2804f3c17c8ae9bf799f503485b8b0a25677c91b9a4a3e2"
     },
     "tools/verify_readme_contract.py": {
-      "sha256": "b1f96045671d37cc0939396666f99a99578f4b58abbbc30c9e348197f6fcfaf2"
+      "sha256": "88c9abb38f934ecd88944b9986c5b942817d49dcd2475a59c802d4c8551216db"
     },
     "vendor/scpe-cimqa-2026.3.0/CG.json": {
       "sha256": "efdeb908577cd4aeea0710b53aea66c691ca0a659301dee99b75680ef3b66b04"

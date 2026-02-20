@@ -1,5 +1,6 @@
 {
   "quickstart_commands": [
+    "export PYTHONHASHSEED=0",
     "python -m pip install -r requirements.lock",
     "python -m pip install -r requirements-dev.txt",
     "ruff check .",
