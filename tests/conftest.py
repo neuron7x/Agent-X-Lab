@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import sys
 from collections.abc import Iterator
@@ -12,21 +14,30 @@ PRODUCT_MODULE_PREFIXES = (
 )
 
 
+def _canonical_env_hash(env: dict[str, str]) -> str:
+    payload = json.dumps(sorted(env.items()), ensure_ascii=False, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
 @pytest.fixture(autouse=True)
 def isolate_runtime_state() -> Iterator[None]:
     modules_before = set(sys.modules.keys())
     environ_before = dict(os.environ)
+    environ_before_hash = _canonical_env_hash(environ_before)
 
     yield
 
-    new_product_modules = [
-        module_name
-        for module_name in sys.modules
-        if module_name not in modules_before
-        and module_name.startswith(PRODUCT_MODULE_PREFIXES)
-    ]
-    for module_name in new_product_modules:
-        sys.modules.pop(module_name, None)
+    post_modules = set(sys.modules.keys())
+    new_modules = post_modules - modules_before
+    for module_name in new_modules:
+        if module_name.startswith(PRODUCT_MODULE_PREFIXES):
+            sys.modules.pop(module_name, None)
 
-    os.environ.clear()
-    os.environ.update(environ_before)
+    post_env = dict(os.environ)
+    for key in list(post_env.keys()):
+        if key not in environ_before:
+            os.environ.pop(key, None)
+    for key, value in environ_before.items():
+        os.environ[key] = value
+
+    assert _canonical_env_hash(dict(os.environ)) == environ_before_hash

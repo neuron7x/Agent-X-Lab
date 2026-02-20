@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from pathlib import Path
 from typing import Any, Dict
 
@@ -10,7 +11,37 @@ from .config import Config
 from .inventory import inventory
 from .manifest import write_manifest
 from .redaction import load_redaction_patterns, redact_tree
-from .util import sha256_bytes, utc_now_iso, write_json, run_cmd, ensure_dir
+from .util import sha256_bytes, write_json, run_cmd, ensure_dir
+
+
+def _package_version(repo_root: Path) -> str:
+    pyproject = repo_root / "pyproject.toml"
+    if not pyproject.exists():
+        return "0.0.0"
+    raw = pyproject.read_text(encoding="utf-8", errors="replace")
+    m = re.search(r'^version\s*=\s*"([^"]+)"', raw, flags=re.MULTILINE)
+    if m:
+        return m.group(1)
+    return "0.0.0"
+
+
+def _spec_token(repo_root: Path) -> str:
+    spec = repo_root / "docs" / "SPEC.md"
+    if not spec.exists():
+        return "NO_SPEC"
+    spec_text = spec.read_text(encoding="utf-8", errors="replace")
+    marker = re.search(
+        r"^\s*(TITAN-9\s+[A-Za-z0-9._-]+\s+Protocol\s+Spec)\s*$",
+        spec_text,
+        flags=re.IGNORECASE | re.MULTILINE,
+    )
+    if marker:
+        return re.sub(r"\s+", " ", marker.group(1).strip()).upper()
+    return sha256_bytes(spec.read_bytes())
+
+
+def _evidence_tag(work_id: str) -> str:
+    return f"run-{sha256_bytes(work_id.encode('utf-8'))[:12]}"
 
 
 def _work_id(repo_root: Path, cfg: Config) -> str:
@@ -38,28 +69,28 @@ def _work_id(repo_root: Path, cfg: Config) -> str:
             "E_NO_GIT_NO_BUILD_ID: git commit unavailable; set BUILD_ID for deterministic provenance id."
         )
 
-    # Include declarative inputs only; never include time/uuid/randomness.
-    idx = repo_root / "catalog" / "index.json"
-    idx_hash = sha256_bytes(idx.read_bytes()) if idx.exists() else "NO_INDEX"
-    payload = json.dumps(
-        {
-            "build_id": build_id,
-            "catalog_index": idx_hash,
-            "config": {
-                "artifact_name": cfg.artifact_name,
-                "baseline_commands": cfg.baseline_commands,
-            },
-        },
-        sort_keys=True,
-    ).encode("utf-8")
-    return sha256_bytes(payload)[:32]
+    pyproject = repo_root / "pyproject.toml"
+    pyproject_bytes = pyproject.read_bytes() if pyproject.exists() else b""
+    version = _package_version(repo_root)
+    spec_token = _spec_token(repo_root).encode("utf-8")
+
+    digest = sha256_bytes(
+        b"\n".join(
+            [
+                pyproject_bytes,
+                spec_token,
+                version.encode("utf-8"),
+                build_id.encode("utf-8"),
+            ]
+        )
+    )[:32]
+    return f"release-{version}+nogit.{digest}"
 
 
 def run_vr(cfg: Config, *, write_back: bool = True) -> dict:
     repo_root = cfg.repo_root
     work_id = _work_id(repo_root, cfg)
-    date = utc_now_iso()[:10].replace("-", "")
-    evidence_root = cfg.evidence_root_base / date / work_id
+    evidence_root = cfg.evidence_root_base / _evidence_tag(work_id) / work_id
     reports_dir = evidence_root / "REPORTS"
     cmds_dir = evidence_root / "COMMANDS"
     ensure_dir(reports_dir)
@@ -96,7 +127,7 @@ def run_vr(cfg: Config, *, write_back: bool = True) -> dict:
 
     vr: Dict[str, Any] = {
         "schema": "VR-2026.1",
-        "utc": utc_now_iso(),
+        "utc": "1970-01-01T00:00:00Z",
         "status": "RUN",
         "work_id": work_id,
         "evidence_root": str(evidence_root),
