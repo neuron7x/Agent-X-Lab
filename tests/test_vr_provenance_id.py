@@ -30,7 +30,9 @@ def _cfg(repo_root: Path) -> Config:
 def _collision_runs() -> int:
     raw = os.environ.get("TITAN9_COLLISION_RUNS", "").strip()
     if not raw:
-        raise ValueError("E_NO_COLLISION_RUNS: set TITAN9_COLLISION_RUNS for collision simulation")
+        raise ValueError(
+            "E_NO_COLLISION_RUNS: set TITAN9_COLLISION_RUNS for collision simulation"
+        )
     val = int(raw)
     if val <= 0:
         raise ValueError("E_NO_COLLISION_RUNS: TITAN9_COLLISION_RUNS must be > 0")
@@ -40,7 +42,9 @@ def _collision_runs() -> int:
 def _max_runtime_seconds() -> float:
     raw = os.environ.get("TITAN9_MAX_RUNTIME_SECONDS", "").strip()
     if not raw:
-        raise ValueError("E_NO_MAX_RUNTIME: set TITAN9_MAX_RUNTIME_SECONDS for collision simulation")
+        raise ValueError(
+            "E_NO_MAX_RUNTIME: set TITAN9_MAX_RUNTIME_SECONDS for collision simulation"
+        )
     val = float(raw)
     if val <= 0:
         raise ValueError("E_NO_MAX_RUNTIME: TITAN9_MAX_RUNTIME_SECONDS must be > 0")
@@ -106,7 +110,9 @@ def test_no_git_with_distinct_build_ids_are_unique(tmp_path, monkeypatch):
     cfg = _cfg(repo_root)
     (repo_root / "pyproject.toml").write_text('version = "1.2.3"\n', encoding="utf-8")
     (repo_root / "docs").mkdir()
-    (repo_root / "docs" / "SPEC.md").write_text("# TITAN-9 R6 Protocol Spec\n", encoding="utf-8")
+    (repo_root / "docs" / "SPEC.md").write_text(
+        "# TITAN-9 R6 Protocol Spec\n", encoding="utf-8"
+    )
 
     monkeypatch.setenv("TITAN9_COLLISION_RUNS", "10000")
     monkeypatch.setenv("TITAN9_MAX_RUNTIME_SECONDS", "180")

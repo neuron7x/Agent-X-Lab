@@ -13,6 +13,7 @@ from .manifest import write_manifest
 from .redaction import load_redaction_patterns, redact_tree
 from .util import sha256_bytes, write_json, run_cmd, ensure_dir
 
+
 def _package_version(repo_root: Path) -> str:
     pyproject = repo_root / "pyproject.toml"
     if not pyproject.exists():
@@ -37,8 +38,6 @@ def _spec_token(repo_root: Path) -> str:
     if marker:
         return re.sub(r"\s+", " ", marker.group(1).strip()).upper()
     return sha256_bytes(spec.read_bytes())
-
-
 
 
 def _evidence_tag(work_id: str) -> str:
