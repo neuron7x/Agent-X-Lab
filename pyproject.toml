@@ -11,7 +11,7 @@ requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [{name = "Exo-Neural Stack"}]
 dependencies = [
-  "PyYAML==6.0.2",
+  "PyYAML==6.0.3",
   "jsonschema==4.23.0",
 ]
 
