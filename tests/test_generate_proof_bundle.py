@@ -5,7 +5,9 @@ import sys
 from pathlib import Path
 
 
-MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "generate_proof_bundle.py"
+MODULE_PATH = (
+    Path(__file__).resolve().parents[1] / "scripts" / "generate_proof_bundle.py"
+)
 SPEC = importlib.util.spec_from_file_location("generate_proof_bundle", MODULE_PATH)
 assert SPEC and SPEC.loader
 MODULE = importlib.util.module_from_spec(SPEC)
