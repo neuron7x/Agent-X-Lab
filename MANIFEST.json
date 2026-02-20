@@ -148,7 +148,7 @@
       "sha256": "bf9ae3f58a78022517d391f14556d25e0f113496e1bf9e43760819f0779191fd"
     },
     ".pre-commit-config.yaml": {
-      "sha256": "7ec7b4d68dc6cc2eecca0336bd1d4e1dcc222e79d08aed71e31e86d8f186382b"
+      "sha256": "ddbee8173e272f2c1386593b8cde2b42acbba8428642fdbe4f641ee256d35e5d"
     },
     "CONTRIBUTING.md": {
       "sha256": "bbe0fc34747a3f66f9dc72c0827569ffad5e39f70c8f8f56d9cdb30e3bb03114"
@@ -157,10 +157,10 @@
       "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685"
     },
     "Makefile": {
-      "sha256": "a8dd3bfe1e2609f60a62d91f0c73abf2eae9b93fbb1645a0bfbd122da3d0dd64"
+      "sha256": "5c70bdf3526767fdaabcd492e7b682eba8228a62bc639a2c99b16cf698d986b5"
     },
     "README.md": {
-      "sha256": "daef86096681a9ad25343d4a6d919fa5c91c936153cbf1ad030de6bf4944bef6"
+      "sha256": "dbded03ef17f4649aee5f3736af70ceb7c9ba3ac412f93757076a0b9ead5417f"
     },
     "SECURITY.md": {
       "sha256": "5715b12ebe6bcecf93a736a48d6d22881428f241e22c7bdd383aec8d2f1b0bc8"
@@ -301,7 +301,7 @@
       "sha256": "5f9a161f1c399de0cc3ea69e97046879473f5debf71dedfa99a036bd2aca77e6"
     },
     "exoneural_governor/cli.py": {
-      "sha256": "6f42b714e519bdde9794125a545748ecf7d2f77dfb67e3658bab1a5bd8cf37af"
+      "sha256": "990ec99bb30a4e7a172d5ac79f3d2cdfca3d143afb76e5c37faebc325196ce27"
     },
     "exoneural_governor/config.py": {
       "sha256": "498d8d448cfe8ab623d5ac0e329eb4499cc99cee21fd3635163b3af0c25c1dda"
@@ -391,7 +391,7 @@
       "sha256": "10d8d54318449dc76afbb54f37570f85e8cad8fc648d9dbc2cf658a84677ea6a"
     },
     "pyproject.toml": {
-      "sha256": "1ea8664995bbedd9104d9d9dcb75a749e3639798499e5f36c86bc7bc4c077bb9"
+      "sha256": "9b7aa1ad7ad763b470a4994de69028459289a6995fbe624aaf7f412b33112e8f"
     },
     "requirements-dev.txt": {
       "sha256": "789adb96f8e4bb52bf29bd3f58713efa8d4323ae1e22223eefd65197f668ba4a"

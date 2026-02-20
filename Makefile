@@ -1,10 +1,13 @@
-.PHONY: bootstrap fmt lint type test validate eval ci precommit
+.PHONY: bootstrap fmt fmt-check lint type test validate eval ci precommit
 
 bootstrap:
 	python scripts/bootstrap_env.py
 
 fmt:
 	ruff format .
+
+fmt-check:
+	ruff format --check .
 
 lint:
 	ruff check .

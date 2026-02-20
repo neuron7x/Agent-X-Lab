@@ -60,7 +60,9 @@ def cmd_vr(cfg_path: Path, out_path: Path, write_back: bool) -> int:
     if write_back:
         target = out_path if out_path.is_absolute() else (cfg.repo_root / out_path)
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(json.dumps(vr, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        target.write_text(
+            json.dumps(vr, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
     print(json.dumps(vr, indent=2, sort_keys=True))
     return 0 if vr.get("status") == "RUN" else 3
 

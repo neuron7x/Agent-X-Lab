@@ -50,3 +50,19 @@ sg --config configs/sg.config.json validate-catalog
 sg --config configs/sg.config.json vr
 sg --config configs/sg.config.json release
 ```
+
+## Dev quality gates
+
+Use the repo-pinned tooling from `requirements-dev.txt`:
+
+```bash
+python -m pip install -r requirements-dev.txt
+make fmt
+make fmt-check
+```
+
+Before pushing, run at minimum:
+
+```bash
+make fmt-check
+```
