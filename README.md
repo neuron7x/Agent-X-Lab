@@ -4,21 +4,31 @@ A deterministic cognitive-agent architecture with mechanized validation for ship
 
 ## Quickstart
 
+`PYTHONHASHSEED=0` is required for all local and CI execution surfaces.
+
 ```bash
-export PYTHONHASHSEED=0
+make setup
+make test
+make proof
+```
+
+### Expanded command mapping (Makefile SSOT)
+
+```bash
+# make setup
 python -m pip install -r requirements.lock
 python -m pip install -r requirements-dev.txt
-ruff check .
-ruff format --check .
-mypy .
+
+# make test
 python -m pytest -q -W error
-python scripts/validate_arsenal.py --repo-root . --strict
-python scripts/run_object_evals.py --repo-root .
-python tools/verify_protocol_consistency.py --protocol protocol.yaml
-python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json
-python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json
+
+# make proof
 python tools/generate_titan9_proof.py --repo-root .
 ```
+
+## Codespaces
+
+Open this repository in GitHub Codespaces and run `make test`.
 
 ## Repository outputs
 
@@ -32,7 +42,7 @@ python tools/generate_titan9_proof.py --repo-root .
 
 ## CI
 
-CI runs formatting, linting, typing, tests, validation/eval, and README contract checks from `.github/workflows/ci.yml`.
+CI runs `make ci` from `.github/workflows/ci.yml`.
 
 ## Deterministic error codes
 

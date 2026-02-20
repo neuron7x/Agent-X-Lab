@@ -1,4 +1,10 @@
-.PHONY: bootstrap fmt fmt-check lint type test validate eval ci precommit
+.PHONY: setup bootstrap fmt fmt-check lint type test validate eval proof ci precommit
+
+export PYTHONHASHSEED := 0
+
+setup:
+	python -m pip install -r requirements.lock
+	python -m pip install -r requirements-dev.txt
 
 bootstrap:
 	python scripts/bootstrap_env.py
@@ -23,12 +29,14 @@ validate:
 	python tools/verify_protocol_consistency.py --protocol protocol.yaml
 	python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json
 	python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json
+
+proof:
 	python tools/generate_titan9_proof.py --repo-root .
 
 eval:
 	python scripts/run_object_evals.py --repo-root . --write-evidence
 
-ci: lint type test validate eval
+ci: fmt-check lint type test validate eval proof
 
 precommit:
 	ruff check .

@@ -19,6 +19,11 @@
   - Message: `E_COLLISION_TEST_BUDGET_EXCEEDED: uniqueness simulation exceeded runtime budget`
   - Fix: increase `TITAN9_MAX_RUNTIME_SECONDS` or optimize the test/runtime environment.
 
+- `E_README_CONTRACT_VIOLATION`
+  - Meaning: README Quickstart contract is not Makefile-SSOT compliant or does not require deterministic seed.
+  - Message: `E_README_CONTRACT_VIOLATION: README Quickstart must require PYTHONHASHSEED=0 and run exactly 'make setup', 'make test', 'make proof'.`
+  - Fix: update `README.md` Quickstart to include the seed requirement and only `make setup`, `make test`, `make proof`; ensure workflows run `make ci`.
+
 - `E_README_PYTHONHASHSEED_MISSING`
   - Meaning: README Quickstart does not set deterministic PYTHONHASHSEED before python tooling commands.
   - Message: `E_README_PYTHONHASHSEED_MISSING: README Quickstart must export PYTHONHASHSEED=0 before running python tooling.`

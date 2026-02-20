@@ -123,6 +123,9 @@
     "all_objects_above_threshold": true
   },
   "checksums": {
+    ".devcontainer/devcontainer.json": {
+      "sha256": "a9724e3168adea9d15dbe9090311a8d71ef940c66d61e01700a6d0bcec4f3178"
+    },
     ".editorconfig": {
       "sha256": "3aaba4c99a60621a3af05afb1d923ea916db44716acf2b1cdf877cb33ec6ae73"
     },
@@ -136,7 +139,7 @@
       "sha256": "7396b398eead8d78d36007a9c2c2296fdfdb37565190e1a581a900c0f75ff405"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "ededb0e3cd8843df478e011a7f8e6fb116f07ab6698c653e3e7af7baedcdc087"
+      "sha256": "b235dac11754b7fa1458f01b17754bf97ef5c447494eb9fb374f2be98560736a"
     },
     ".github/workflows/lint-actions.yml": {
       "sha256": "25b2f8f69e344d541b2705e721db58c470766dd215568eae18aee9f029a0a0ee"
@@ -157,10 +160,10 @@
       "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685"
     },
     "Makefile": {
-      "sha256": "8c547da2214db51828378b5280dc98465b49f88af762b1dad399b74d49de923d"
+      "sha256": "1370152ccbe476c5b96c11f53c822b16c6ccc7243168888abf776e6ef991973b"
     },
     "README.md": {
-      "sha256": "733cd5fa3a1657f8cee07db3fb93065ec0a5cb5ab8945ccc9b7bdc809606e9cb"
+      "sha256": "05c6f4afd2724567b7f140d0fcdde4815887f306bc9ab1febcdf9433524fc5f7"
     },
     "SECURITY.md": {
       "sha256": "5715b12ebe6bcecf93a736a48d6d22881428f241e22c7bdd383aec8d2f1b0bc8"
@@ -187,16 +190,16 @@
       "sha256": "1273636bb026b96328d82f194a0a0e3c7e5b140f65e641d23e4a1a17b33397db"
     },
     "artifacts/titan9/hashes.json": {
-      "sha256": "5b0e8e4e5954e3476b23a7a1a0e2402b434b2122a52069bb2adb1f7441d0dd6c"
+      "sha256": "000bfcabe27515dc3c35c83b7386a300a010eccfb14c8e2f44eaa93a1bef5149"
     },
     "artifacts/titan9/inventory.json": {
-      "sha256": "ad76383c3f6899e973c58461800ef5bd2f70f75f760b0432fd57ec59a86dc9af"
+      "sha256": "80eebe949a146f5568f81de4318354b332695ec6f95da3e840525225e2751390"
     },
     "artifacts/titan9/proof.log": {
-      "sha256": "5afcec59fc085b99194dbaa2fac4e7251df442904f62925d4a9273932ebc0026"
+      "sha256": "4cb66307f84e68571c2a65bac0f349200c100f4c11e9d6ce12db7d69f7dc5bfa"
     },
     "artifacts/titan9/readme_commands.json": {
-      "sha256": "53525bf3f094d0d9e53ff950a2f71fcec44f4004a7772bc490e2e7f7dc4d9ff4"
+      "sha256": "6b21196ca786dd8029fed4f51a0a20b099458e712be7b0092c4f79726e594c50"
     },
     "catalog/agents/01_PR-Orchestrator_Repo-Readiness-Governor.txt": {
       "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"
@@ -307,7 +310,7 @@
       "sha256": "8c12d50bacec508a633dcce893e19b583908b6e7f3cbb9e839f94317f453f497"
     },
     "docs/ERRORS.md": {
-      "sha256": "ad374d64ceb26c1f589908f2cd28fe78173ef6e1373521b6f9866f0df30d280e"
+      "sha256": "1df03219ffb6483ecb59e99547455a8b01420847d8b659237ba5f32dfbda6906"
     },
     "docs/SPEC.md": {
       "sha256": "c5dc53e4498eeb7642baa24b1070988e1fa67e4e00a07ecf8c7050e4a1f9be3f"
@@ -484,7 +487,7 @@
       "sha256": "2601f7952e6d66f1663fb4a75e637e023b746837997cc127d397b57d6eca5421"
     },
     "tests/test_readme_contract.py": {
-      "sha256": "539360225c6e075b3550b6888198105728d3b69d017debd3a17bf435d1d93996"
+      "sha256": "3fd81750e7ada7b74c4b5ec82935c9d7c38fc7cb645d4c9968ff48c88fb5701a"
     },
     "tests/test_repo_invariants.py": {
       "sha256": "c5011d0ee39f5b92d65cacd66c1703d5c8d34e5aec9561eff0d5297e86d70589"
@@ -505,13 +508,13 @@
       "sha256": "a0db4202435e8f3bff3113792a476185dd3324b342f2825fbf039d72436a5413"
     },
     "tools/titan9_inventory.py": {
-      "sha256": "39f0cdeb3f9710b6746fb8a9d246978c725db42edfaf8dce4a1050edb2137829"
+      "sha256": "5fbbf55baa095418ed8e49175a6e42ec1160870d35ab36ccd6a50805f4226f72"
     },
     "tools/verify_protocol_consistency.py": {
       "sha256": "0eb11e0260015e37f2804f3c17c8ae9bf799f503485b8b0a25677c91b9a4a3e2"
     },
     "tools/verify_readme_contract.py": {
-      "sha256": "4623b9a631d9ccce67bb6bf893c62ee4985b38cbf5b44efd800472919f3a5e72"
+      "sha256": "5fed47ead23c023dea25546c8d534c7493603d5dfb999fc494a4591679e1a999"
     },
     "vendor/scpe-cimqa-2026.3.0/CG.json": {
       "sha256": "efdeb908577cd4aeea0710b53aea66c691ca0a659301dee99b75680ef3b66b04"

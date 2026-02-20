@@ -8,8 +8,16 @@
       "ruff check .",
       "ruff format --check ."
     ],
+    "proof": [
+      "make proof",
+      "python tools/generate_titan9_proof.py --repo-root ."
+    ],
+    "setup": [
+      "make setup"
+    ],
     "tests": [
-      "python -m pytest -q -W error"
+      "python -m pytest -q -W error",
+      "make test"
     ],
     "typecheck": [
       "mypy ."
@@ -20,7 +28,7 @@
       "python tools/verify_protocol_consistency.py --protocol protocol.yaml",
       "python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json",
       "python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json",
-      "python tools/generate_titan9_proof.py --repo-root ."
+      "make ci"
     ]
   },
   "demo_artifacts": [
@@ -44,18 +52,8 @@
       "echo \"Dependency graph is disabled; skipping dependency review action.\"",
       "git rev-parse --verify \"$BASE_SHA\"",
       "git rev-parse --verify \"$HEAD_SHA\"",
-      "make eval",
-      "make validate",
-      "mypy .",
-      "python -m pip install -r requirements-dev.txt",
-      "python -m pip install -r requirements.lock",
-      "python -m pytest -q -W error",
-      "python tools/generate_titan9_proof.py --repo-root .",
-      "python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json",
-      "python tools/verify_protocol_consistency.py --protocol protocol.yaml",
-      "python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json",
-      "ruff check .",
-      "ruff format --check .",
+      "make ci",
+      "make setup",
       "set -euo pipefail"
     ]
   }
