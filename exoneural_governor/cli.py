@@ -34,16 +34,18 @@ def cmd_validate(cfg_path: Path) -> int:
     return 0 if rep.get("ok") else 2
 
 
-def cmd_vr(cfg_path: Path, write_back: bool) -> int:
+def cmd_vr(cfg_path: Path, out_path: Path, write_back: bool) -> int:
     cfg = load_config(cfg_path)
-    vr = run_vr(cfg, write_back=write_back)
+    vr = run_vr(cfg, write_back=False)
+    if write_back:
+        out_path.write_text(json.dumps(vr, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(vr, indent=2, sort_keys=True))
     return 0 if vr.get("status") == "RUN" else 3
 
 
-def cmd_release(cfg_path: Path) -> int:
+def cmd_release(cfg_path: Path, vr_path: Path, output_dir: Path) -> int:
     cfg = load_config(cfg_path)
-    rep = build_release(cfg)
+    rep = build_release(cfg, vr_path=vr_path, output_dir=output_dir)
     print(json.dumps(rep, indent=2, sort_keys=True))
     return 0
 
@@ -75,27 +77,41 @@ def main(argv: list[str] | None = None) -> None:
     )
 
     vrp = sub.add_parser("vr", help="Run VR calibration and produce evidence bundle.")
+    vrp.add_argument("--config", dest="config_override", help="Override config path.")
+    vrp.add_argument("--out", default="VR.json", help="Path to VR output JSON.")
     vrp.add_argument(
         "--no-write", action="store_true", help="Do not write VR.json back to repo."
     )
 
-    sub.add_parser(
+    rel = sub.add_parser(
         "release",
         help="Build release zip (includes latest VR evidence when available).",
+    )
+    rel.add_argument("--config", dest="config_override", help="Override config path.")
+    rel.add_argument("--vr", default="VR.json", help="Path to VR.json to include.")
+    rel.add_argument(
+        "--output",
+        default="artifacts/release",
+        help="Directory for release bundle outputs.",
     )
     sub.add_parser("selftest", help="Lightweight CI self-test (catalog validation).")
 
     args = p.parse_args(argv)
-    cfg_path = Path(args.config)
+    cfg_override = getattr(args, "config_override", None)
+    cfg_path = Path(cfg_override if cfg_override else args.config)
 
     if args.cmd == "inventory":
         rc = cmd_inventory(cfg_path)
     elif args.cmd == "validate-catalog":
         rc = cmd_validate(cfg_path)
     elif args.cmd == "vr":
-        rc = cmd_vr(cfg_path, write_back=(not args.no_write))
+        rc = cmd_vr(cfg_path, out_path=Path(args.out), write_back=(not args.no_write))
     elif args.cmd == "release":
-        rc = cmd_release(cfg_path)
+        rc = cmd_release(
+            cfg_path,
+            vr_path=Path(args.vr),
+            output_dir=Path(args.output),
+        )
     elif args.cmd == "selftest":
         rc = cmd_selftest(cfg_path)
     else:

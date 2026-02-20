@@ -169,7 +169,7 @@
       "sha256": "518f57036835b352d9b2f19f923638abe23c23c94ff2d01accface17b08db462"
     },
     "VR.json": {
-      "sha256": "8aa6409a1d263280185d65786f86a7fad1c8dd7f5d70b5fdc0f775cffcf72a69"
+      "sha256": "3f32fba1fd7d85eeacfa2d9210b5c20f2164fed51b4d3e768b9885454f535cbe"
     },
     "_STRIPPED_FOR_GITHUB.md": {
       "sha256": "eb9221b8c6ce29163224352efd418ff57dd602e662a100ce7329cb2015bb31f4"
@@ -301,7 +301,7 @@
       "sha256": "5f9a161f1c399de0cc3ea69e97046879473f5debf71dedfa99a036bd2aca77e6"
     },
     "exoneural_governor/cli.py": {
-      "sha256": "dd970f6992e09b7f20e4abefa9fd52dae534fd123fa3214f23c2ad8fcc2f3833"
+      "sha256": "fe068323ce721e2e0b1108079c4ce71d089374d9503f5b15d1420b296775b1cc"
     },
     "exoneural_governor/config.py": {
       "sha256": "498d8d448cfe8ab623d5ac0e329eb4499cc99cee21fd3635163b3af0c25c1dda"
@@ -316,7 +316,7 @@
       "sha256": "398e830098ff072d4b626cdd1cd46c125ecd06f0b2799866de4fec2c4bb30e7c"
     },
     "exoneural_governor/release.py": {
-      "sha256": "4350afd500dac5ef3e88118aacf79d34146c466b11bd93aa3b0ff1a2c6996c4e"
+      "sha256": "4361597b9279979bb7c6b72c38943dec9486042a01bc3949609687588262228f"
     },
     "exoneural_governor/util.py": {
       "sha256": "8731ba0fda88225b5117e2b8c63e7278169b573a66692fc2f465fd26c0db3581"
