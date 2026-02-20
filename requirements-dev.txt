@@ -9,3 +9,4 @@ jsonschema==4.26.0
 types-jsonschema==4.26.0.20260202
 pre-commit==4.5.1
 actionlint-py==1.7.11.24
+types-PyYAML==6.0.12.20250915

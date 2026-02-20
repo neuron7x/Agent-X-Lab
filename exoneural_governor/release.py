@@ -41,7 +41,10 @@ def build_release(cfg: Config) -> dict:
         for item in INCLUDE_DEFAULT:
             src = repo_root / item
             if src.is_dir():
-                for p in sorted([x for x in src.rglob("*") if x.is_file()], key=lambda x: x.as_posix()):
+                for p in sorted(
+                    [x for x in src.rglob("*") if x.is_file()],
+                    key=lambda x: x.as_posix(),
+                ):
                     z.write(p, arcname=p.relative_to(repo_root).as_posix())
             elif src.is_file():
                 z.write(src, arcname=src.relative_to(repo_root).as_posix())
@@ -49,17 +52,24 @@ def build_release(cfg: Config) -> dict:
         if evidence_root:
             epath = Path(evidence_root)
             if epath.exists() and epath.is_dir():
-                for p in sorted([x for x in epath.rglob("*") if x.is_file()], key=lambda x: x.as_posix()):
+                for p in sorted(
+                    [x for x in epath.rglob("*") if x.is_file()],
+                    key=lambda x: x.as_posix(),
+                ):
                     # include under evidence/ to keep release small and explicit
                     z.write(p, arcname=("evidence/" + p.relative_to(epath).as_posix()))
 
-    manifest = write_manifest(release_dir, release_dir / "MANIFEST.release.json")
+    write_manifest(release_dir, release_dir / "MANIFEST.release.json")
     report = {
         "utc": utc_now_iso(),
         "zip_path": str(zip_path.relative_to(repo_root)),
-        "manifest_path": str((release_dir / "MANIFEST.release.json").relative_to(repo_root)),
+        "manifest_path": str(
+            (release_dir / "MANIFEST.release.json").relative_to(repo_root)
+        ),
         "included": INCLUDE_DEFAULT,
         "evidence_included": bool(evidence_root),
     }
-    (release_dir / "release.report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    (release_dir / "release.report.json").write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
     return report

@@ -1,11 +1,14 @@
 # Contributing
 
-This repository is optimized for PR-driven development with automated gates.
+This repository is optimized for PR-driven development with deterministic quality gates.
 
 ## Local workflow
 
 ```bash
-make setup
+python -m venv .venv
+. .venv/bin/activate
+make bootstrap
+pre-commit install
 make ci
 ```
 
@@ -13,11 +16,11 @@ make ci
 
 - **Fail-closed:** validations must fail on ambiguity.
 - **Determinism:** validators and eval harnesses must be reproducible.
-- **Evidence:** PRs must include proof (logs + outputs), not claims.
+- **Evidence discipline:** keep only reference evidence in git; runtime evidence is ignored.
 
 ## Updating manifests
 
-After changing any files, run:
+After changing tracked files, run:
 
 ```bash
 python scripts/rebuild_checksums.py --repo-root .

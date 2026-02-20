@@ -59,18 +59,30 @@ def cmd_selftest(cfg_path: Path) -> int:
 
 def main(argv: list[str] | None = None) -> None:
     argv = argv or sys.argv[1:]
-    p = argparse.ArgumentParser(prog="sg", description="Exo-Neural Singularity Stack governor CLI (deterministic).")
-    p.add_argument("--config", default=str(_default_config_path()), help="Path to sg.config.json")
+    p = argparse.ArgumentParser(
+        prog="sg", description="AgentX Lab governor CLI (deterministic)."
+    )
+    p.add_argument(
+        "--config", default=str(_default_config_path()), help="Path to sg.config.json"
+    )
 
     sub = p.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("inventory", help="Collect deterministic repo inventory.")
-    sub.add_parser("validate-catalog", help="Fail-closed catalog integrity check (sha256 + indexing).")
+    sub.add_parser(
+        "validate-catalog",
+        help="Fail-closed catalog integrity check (sha256 + indexing).",
+    )
 
     vrp = sub.add_parser("vr", help="Run VR calibration and produce evidence bundle.")
-    vrp.add_argument("--no-write", action="store_true", help="Do not write VR.json back to repo.")
+    vrp.add_argument(
+        "--no-write", action="store_true", help="Do not write VR.json back to repo."
+    )
 
-    sub.add_parser("release", help="Build release zip (includes latest VR evidence when available).")
+    sub.add_parser(
+        "release",
+        help="Build release zip (includes latest VR evidence when available).",
+    )
     sub.add_parser("selftest", help="Lightweight CI self-test (catalog validation).")
 
     args = p.parse_args(argv)

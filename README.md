@@ -1,6 +1,6 @@
-# Exo‑Neural Singularity Stack (in‑silico)
+# AgentX Lab
 
-A deterministic, mechanized governance stack for shipping **prompt catalogs + proof bundles** as a **GitHub‑ready** project.
+A deterministic cognitive-agent architecture with mechanized validation for shipping prompt catalogs and proof bundles as a GitHub-ready project.
 
 This repository contains:
 - a curated **catalog** of top-tier system prompts / protocols (yours + curated packs)
@@ -42,3 +42,9 @@ Push to GitHub and enable Actions. CI runs:
 
 ## License
 MIT (see LICENSE).
+
+
+## Evidence tracking policy
+
+- Track only **reference evidence** required for deterministic verification (`objects/*/artifacts/evidence/reference/**`).
+- Ignore runtime evidence emitted during local/CI runs (`artifacts/evidence/**`, non-reference object evidence).

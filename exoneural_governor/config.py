@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 import jsonschema
 
@@ -46,6 +45,10 @@ def load_config(path: Path) -> Config:
         baseline_commands=[list(cmd) for cmd in raw["baseline_commands"]],
         artifact_name=str(raw["artifact_name"]),
         budgets=dict(raw["budgets"]),
-        redaction_policy_path=_rel_to_repo(str(raw.get("redaction_policy_path", "SECURITY.redaction.yml"))),
-        evidence_root_base=_rel_to_repo(str(raw.get("evidence_root_base", "artifacts/evidence"))),
+        redaction_policy_path=_rel_to_repo(
+            str(raw.get("redaction_policy_path", "SECURITY.redaction.yml"))
+        ),
+        evidence_root_base=_rel_to_repo(
+            str(raw.get("evidence_root_base", "artifacts/evidence"))
+        ),
     )

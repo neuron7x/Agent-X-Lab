@@ -3,9 +3,9 @@ requires = ["setuptools==75.6.0", "wheel==0.44.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "exoneural-singularity-stack"
+name = "agentx-lab"
 version = "0.1.0"
-description = "Deterministic, mechanized governance stack for prompt catalogs + proof bundles + release finalization."
+description = "Deterministic cognitive-agent architecture with mechanized validation for prompt catalogs, evaluation, and release finalization."
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
@@ -21,6 +21,7 @@ dev = [
 ]
 
 [project.scripts]
+agentx-lab = "exoneural_governor.cli:main"
 sg = "exoneural_governor.cli:main"
 
 [tool.setuptools]
@@ -30,3 +31,12 @@ include-package-data = false
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+
+[tool.ruff]
+extend-exclude = ["vendor"]
+
+[tool.mypy]
+python_version = "3.11"
+exclude = ["^vendor/", "^objects/.*/eval/"]
+ignore_missing_imports = true
+disable_error_code = ["import-untyped"]

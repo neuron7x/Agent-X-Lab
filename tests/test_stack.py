@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-import json
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from exoneural_governor.catalog import validate_catalog
 from exoneural_governor.config import load_config

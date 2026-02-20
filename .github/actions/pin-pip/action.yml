@@ -1,0 +1,8 @@
+name: pin-pip
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        python -m pip install --upgrade "pip==${PIP_VERSION}"
+        python -m pip --version
