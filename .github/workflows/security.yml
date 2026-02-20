@@ -16,6 +16,8 @@ jobs:
       security-events: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: github/codeql-action/init@v3
         with:
           languages: python
@@ -25,6 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -37,4 +41,19 @@ jobs:
       pull-requests: read
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/dependency-review-action@v4
+      - id: depgraph
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data } = await github.request('GET /repos/{owner}/{repo}', {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            const enabled = data?.security_and_analysis?.dependency_graph?.status === 'enabled';
+            core.setOutput('enabled', enabled ? 'true' : 'false');
+      - name: Run dependency review
+        if: steps.depgraph.outputs.enabled == 'true'
+        uses: actions/dependency-review-action@v4
+      - name: Skip dependency review (dependency graph disabled)
+        if: steps.depgraph.outputs.enabled != 'true'
+        run: echo "Dependency graph is disabled; skipping dependency review action."

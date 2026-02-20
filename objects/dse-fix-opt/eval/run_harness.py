@@ -49,7 +49,11 @@ def run_case(repo_root: Path, case_path: Path) -> dict:
 
     bundle_rel = spec.get("bundle_path")
     if not bundle_rel:
-        return {"case": spec.get("id", case_path.name), "passed": False, "error": "bundle_path missing"}
+        return {
+            "case": spec.get("id", case_path.name),
+            "passed": False,
+            "error": "bundle_path missing",
+        }
 
     bundle_path = repo_root / bundle_rel
     if not bundle_path.exists():
@@ -97,8 +101,14 @@ def run_case(repo_root: Path, case_path: Path) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo-root", default=".", help="Repository root (default: .)")
-    ap.add_argument("--cases", default=f"objects/{OBJECT_NAME}/eval/cases", help="Cases directory")
-    ap.add_argument("--write-evidence", action="store_true", help="Write report under artifacts/evidence/")
+    ap.add_argument(
+        "--cases", default=f"objects/{OBJECT_NAME}/eval/cases", help="Cases directory"
+    )
+    ap.add_argument(
+        "--write-evidence",
+        action="store_true",
+        help="Write report under artifacts/evidence/",
+    )
     ap.add_argument(
         "--deterministic",
         action="store_true",
@@ -132,7 +142,11 @@ def main() -> int:
 
     if args.write_evidence:
         ev_root = repo_root / f"objects/{OBJECT_NAME}/artifacts/evidence"
-        run_id = "reference" if args.deterministic else datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        run_id = (
+            "reference"
+            if args.deterministic
+            else datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        )
         out_dir = ev_root / run_id / "eval"
         out_dir.mkdir(parents=True, exist_ok=True)
         (out_dir / "report.json").write_text(out + "\n", encoding="utf-8")

@@ -25,9 +25,20 @@ def redact_file_inplace(path: Path, patterns: Iterable[str]) -> None:
     path.write_bytes(redact_bytes(path.read_bytes(), patterns))
 
 
-def redact_tree(root: Path, patterns: Iterable[str], *, include_exts: set[str] | None = None) -> list[str]:
+def redact_tree(
+    root: Path, patterns: Iterable[str], *, include_exts: set[str] | None = None
+) -> list[str]:
     changed: list[str] = []
-    include_exts = include_exts or {".txt", ".log", ".out", ".err", ".json", ".md", ".yml", ".yaml"}
+    include_exts = include_exts or {
+        ".txt",
+        ".log",
+        ".out",
+        ".err",
+        ".json",
+        ".md",
+        ".yml",
+        ".yaml",
+    }
     for p in root.rglob("*"):
         if p.is_file() and p.suffix.lower() in include_exts:
             before = p.read_bytes()

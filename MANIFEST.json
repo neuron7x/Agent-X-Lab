@@ -139,10 +139,10 @@
       "sha256": "28734c428bbd768ececc393a882a868578f0a8a0a26219480c8c8c86f50f1c61"
     },
     ".github/workflows/lint-actions.yml": {
-      "sha256": "10aff4a78729e17d6a061bf3821e345de7f90d3cf112991ab17dc0ad08158d62"
+      "sha256": "93659ca5f5adf6bd945037cd1544869954d468ee821a3f1a79f6486b614f1704"
     },
     ".github/workflows/security.yml": {
-      "sha256": "7002668ad648bc436478df60791c26acd71cddea7da36200b6d6f6141d6699bd"
+      "sha256": "739ff9d324385fa7cd78050eae7d1a71dd643947fbe7c6f10047af45452ab438"
     },
     ".gitignore": {
       "sha256": "15606e9f4b76555ec7a9f975bddf294ce42f2b987a0b24ed4cea667bce13ca6e"
@@ -298,7 +298,7 @@
       "sha256": "b576d15ec3b4344fd45759081e26534d0407d1f8f45362a8c7136eb2efe0ceb3"
     },
     "exoneural_governor/catalog.py": {
-      "sha256": "22ba5635365a55b875f05f0eb1e628e1c53d45aae7a350632f8151c64be64241"
+      "sha256": "5f9a161f1c399de0cc3ea69e97046879473f5debf71dedfa99a036bd2aca77e6"
     },
     "exoneural_governor/cli.py": {
       "sha256": "dd970f6992e09b7f20e4abefa9fd52dae534fd123fa3214f23c2ad8fcc2f3833"
@@ -307,13 +307,13 @@
       "sha256": "498d8d448cfe8ab623d5ac0e329eb4499cc99cee21fd3635163b3af0c25c1dda"
     },
     "exoneural_governor/inventory.py": {
-      "sha256": "71a7bdc34277b99ceeef5b0596966971e7eebc904e179fb409e9eb3a597e41ed"
+      "sha256": "2999f2043e287ca28bfbc5f008311e0b2bf436358a428f4244fdb37307ecb85d"
     },
     "exoneural_governor/manifest.py": {
-      "sha256": "ef0cf2e8e20619e4365588b2011b8b86897ff405562864b77ef4d8d68f0ba122"
+      "sha256": "b932df358873b34d5025888074d90a4f67ef99c00799fbf04ef812854a71a1a9"
     },
     "exoneural_governor/redaction.py": {
-      "sha256": "78d4f0b179e833748c0759ecb40d6deb58e8ae0b50272b3fd2daa38059d632b4"
+      "sha256": "398e830098ff072d4b626cdd1cd46c125ecd06f0b2799866de4fec2c4bb30e7c"
     },
     "exoneural_governor/release.py": {
       "sha256": "4350afd500dac5ef3e88118aacf79d34146c466b11bd93aa3b0ff1a2c6996c4e"
@@ -343,7 +343,7 @@
       "sha256": "55ecfdec5bbe444669b6ee9928a505e675a9092e6f3760436cae1db7ea1be5a2"
     },
     "objects/dse-fix-opt/eval/run_harness.py": {
-      "sha256": "36c81fcd3220c0cddfaac6df42f74fad4d91aedba0aaa368e1378416b09963e9"
+      "sha256": "901591243200ad2826ecb0dee6b8efba71d3b001a994ad73ed1c21b064de9e27"
     },
     "objects/dse-fix-opt/examples/adversarial/secret_exfiltration.md": {
       "sha256": "998039a53e07ea68a5bbd68703a5d010feefb9df04398d007f4b0097d07d507c"
@@ -373,7 +373,7 @@
       "sha256": "55ecfdec5bbe444669b6ee9928a505e675a9092e6f3760436cae1db7ea1be5a2"
     },
     "objects/pr-orchestrator/eval/run_harness.py": {
-      "sha256": "0c259790acc2ceca004425d507062f2b71dc797e37944eeefb9eab9e487e7971"
+      "sha256": "028744df6c90b7383bf8c7558f6c03db0aa59644b6b0b68bf0339b022eccc832"
     },
     "objects/pr-orchestrator/examples/adversarial/disable_security.md": {
       "sha256": "32428e078e2d849fb1583437fc22f10a4305d75de714fbf4ec6349791703c40a"
@@ -409,7 +409,7 @@
       "sha256": "406664a58f9f5ff0a47aadecb5db5cd0c5ff8748ce09a6b1a7c2571d12f8239f"
     },
     "scripts/arsenal.py": {
-      "sha256": "9b462a7d75b827ab9bb5ececbfd88b7a5abe66dcebfad5958952bbbd0aed21d3"
+      "sha256": "e5dc0f9560a3452bea44bea29b05e1251f80f015aa43892d05cfabea29661629"
     },
     "scripts/rebuild_catalog_index.py": {
       "sha256": "986ccdc8b168188b38deadea00a93a1e46a9e30f7c238f25e78bff3a7a68c2e5"
@@ -418,10 +418,10 @@
       "sha256": "d36058f6fd9ddcef5daee9dec0b8fad981d820ecbfe48594746973c3b9567dc6"
     },
     "scripts/run_object_evals.py": {
-      "sha256": "e8ca4e8233b959ecfb6c95ec3f4c8f74c561ebd86f6adc5bcde0cef7fb890011"
+      "sha256": "fb0a0961cb7bb9924931d65b052bcbc19c891362d3df99a74a8b2b026d35a256"
     },
     "scripts/schema_validate.py": {
-      "sha256": "d72ca91a9d2a1b005ea4c8d3ea033c41298e16806774ff9fb408c207f8edafe8"
+      "sha256": "3ca0da54d61a43935468c33abcb7dba9d23ebb19fa974657d290525ff65d088a"
     },
     "scripts/validate_arsenal.py": {
       "sha256": "018a6ff35bcb3145de33730905737053db6da1bf60f9bd720b6117b7d2aef88e"
