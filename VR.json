@@ -1,8 +1,8 @@
 {
   "artifacts": {
     "catalog_validation": "artifacts/reports/catalog.validate.json",
-    "inventory": "artifacts/evidence/20260220/7f09a9d47bc364d5/REPORTS/inventory/inventory.json",
-    "manifest": "artifacts/evidence/20260220/7f09a9d47bc364d5/REPORTS/MANIFEST.json"
+    "inventory": "artifacts/evidence/20260220/e0371af18cddd70f/REPORTS/inventory/inventory.json",
+    "manifest": "artifacts/evidence/20260220/e0371af18cddd70f/REPORTS/MANIFEST.json"
   },
   "blockers": [],
   "commands": [
@@ -16,8 +16,8 @@
       ],
       "cwd": "/workspace/Agent-X-Lab",
       "exit_code": 0,
-      "stderr_path": "/workspace/Agent-X-Lab/artifacts/evidence/20260220/7f09a9d47bc364d5/COMMANDS/000.stderr.txt",
-      "stdout_path": "/workspace/Agent-X-Lab/artifacts/evidence/20260220/7f09a9d47bc364d5/COMMANDS/000.stdout.txt"
+      "stderr_path": "/workspace/Agent-X-Lab/artifacts/evidence/20260220/e0371af18cddd70f/COMMANDS/000.stderr.txt",
+      "stdout_path": "/workspace/Agent-X-Lab/artifacts/evidence/20260220/e0371af18cddd70f/COMMANDS/000.stdout.txt"
     },
     {
       "argv": [
@@ -28,11 +28,11 @@
       ],
       "cwd": "/workspace/Agent-X-Lab",
       "exit_code": 0,
-      "stderr_path": "/workspace/Agent-X-Lab/artifacts/evidence/20260220/7f09a9d47bc364d5/COMMANDS/001.stderr.txt",
-      "stdout_path": "/workspace/Agent-X-Lab/artifacts/evidence/20260220/7f09a9d47bc364d5/COMMANDS/001.stdout.txt"
+      "stderr_path": "/workspace/Agent-X-Lab/artifacts/evidence/20260220/e0371af18cddd70f/COMMANDS/001.stderr.txt",
+      "stdout_path": "/workspace/Agent-X-Lab/artifacts/evidence/20260220/e0371af18cddd70f/COMMANDS/001.stdout.txt"
     }
   ],
-  "evidence_root": "/workspace/Agent-X-Lab/artifacts/evidence/20260220/7f09a9d47bc364d5",
+  "evidence_root": "/workspace/Agent-X-Lab/artifacts/evidence/20260220/e0371af18cddd70f",
   "metrics": {
     "baseline_pass": true,
     "catalog_ok": true,
@@ -42,6 +42,6 @@
   },
   "schema": "VR-2026.1",
   "status": "RUN",
-  "utc": "2026-02-20T17:19:29Z",
-  "work_id": "7f09a9d47bc364d5"
+  "utc": "2026-02-20T18:16:13Z",
+  "work_id": "e0371af18cddd70f"
 }
