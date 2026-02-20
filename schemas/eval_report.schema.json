@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AgentX Lab Eval Evidence Report",
+  "type": "object",
+  "required": [
+    "passed",
+    "score",
+    "meta"
+  ],
+  "properties": {
+    "passed": {
+      "type": "boolean"
+    },
+    "score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "results": {
+      "type": "array"
+    },
+    "meta": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

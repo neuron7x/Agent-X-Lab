@@ -1,0 +1,47 @@
+[project]
+name = "agentx-lab"
+version = "1.1.0"
+description = "AgentX Lab: audit-grade agent-policy arsenal and cognitive architecture workbench."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "AgentX Lab Contributors"}]
+keywords = ["agents", "cognitive-architecture", "evaluation", "governance", "prompt-engineering"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+extend-exclude = [
+  ".venv",
+  "dist",
+  "build",
+  "__pycache__",
+  ".mypy_cache",
+  ".pytest_cache",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "C4", "PIE", "RUF"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "lf"
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+no_implicit_optional = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+strict_equality = true
+show_error_codes = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-q"]

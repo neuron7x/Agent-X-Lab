@@ -1,0 +1,11 @@
+# Dev/test toolchain (pinned for reproducibility)
+# Update via: python -m pip install -U -r requirements-dev.txt
+ruff==0.15.2
+mypy==1.19.1
+pytest==9.0.2
+pytest-cov==7.0.0
+coverage==7.13.4
+jsonschema==4.26.0
+types-jsonschema==4.26.0.20260202
+pre-commit==4.5.1
+actionlint-py==1.7.11.24

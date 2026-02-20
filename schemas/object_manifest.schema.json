@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AgentX Lab Object Manifest",
+  "type": "object",
+  "required": [
+    "object",
+    "paths",
+    "checksums"
+  ],
+  "properties": {
+    "object": {
+      "type": "object",
+      "required": [
+        "name",
+        "version",
+        "status",
+        "score",
+        "score_target",
+        "protocol",
+        "protocol_version",
+        "created"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^v\\d+\\.\\d+\\.\\d+$"
+        },
+        "status": {
+          "type": "string"
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "score_target": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "protocol": {
+          "type": "string"
+        },
+        "protocol_version": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        }
+      },
+      "additionalProperties": true
+    },
+    "paths": {
+      "type": "object"
+    },
+    "checksums": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "sha256"
+        ],
+        "properties": {
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "validation": {
+      "type": "object"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}
