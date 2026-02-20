@@ -1,0 +1,60 @@
+{
+  "canonical_commands": {
+    "install": [
+      "python -m pip install -r requirements.lock",
+      "python -m pip install -r requirements-dev.txt"
+    ],
+    "lint_format": [
+      "ruff check .",
+      "ruff format --check ."
+    ],
+    "tests": [
+      "python -m pytest -q -W error"
+    ],
+    "typecheck": [
+      "mypy ."
+    ],
+    "validate": [
+      "python scripts/validate_arsenal.py --repo-root . --strict",
+      "python scripts/run_object_evals.py --repo-root .",
+      "python tools/verify_protocol_consistency.py --protocol protocol.yaml",
+      "python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json",
+      "python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json"
+    ]
+  },
+  "demo_artifacts": [
+    "VR.json",
+    "artifacts/release/*.zip"
+  ],
+  "entrypoints": [
+    "agentx-lab",
+    "sg"
+  ],
+  "python_requires": ">=3.10",
+  "tooling": [
+    "ruff",
+    "mypy",
+    "pytest"
+  ],
+  "workflows": {
+    "commands": [
+      "BASE_SHA='${{ github.event.pull_request.base.sha }}'",
+      "HEAD_SHA='${{ github.event.pull_request.head.sha }}'",
+      "echo \"Dependency graph is disabled; skipping dependency review action.\"",
+      "git rev-parse --verify \"$BASE_SHA\"",
+      "git rev-parse --verify \"$HEAD_SHA\"",
+      "make eval",
+      "make validate",
+      "mypy .",
+      "python -m pip install -r requirements-dev.txt",
+      "python -m pip install -r requirements.lock",
+      "python -m pytest -q -W error",
+      "python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json",
+      "python tools/verify_protocol_consistency.py --protocol protocol.yaml",
+      "python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json",
+      "ruff check .",
+      "ruff format --check .",
+      "set -euo pipefail"
+    ]
+  }
+}
