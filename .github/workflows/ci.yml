@@ -41,7 +41,7 @@ jobs:
       - name: Eval
         run: make eval
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: validation-and-eval-${{ matrix.python-version }}
           if-no-files-found: error
