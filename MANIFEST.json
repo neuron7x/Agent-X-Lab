@@ -127,7 +127,7 @@
       "sha256": "3a151560c443f6fe8a734313554126e8625ff1ae0642d44115f9bd097b873390"
     },
     ".github/actions/pin-pip/action.yml": {
-      "sha256": "463eb6bbbaebb7df2bd80d4e118775d60fc1c2d29004781b4ddc68b2b94f019d"
+      "sha256": "bfab164aaf5c9e75d7b65eba084d5fed68f4c277d54a0be7a70cee53a9faa04a"
     },
     ".github/dependabot.yml": {
       "sha256": "57cd4a8f20b101cf56871e7d872a4525ccb1dfbbea13a429b704d39245acd3f1"
@@ -136,7 +136,7 @@
       "sha256": "7396b398eead8d78d36007a9c2c2296fdfdb37565190e1a581a900c0f75ff405"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "f59fc40afde6a3a74ff0a93904ccd3ec372eac5aa4e010352626ff4f988f492f"
+      "sha256": "28734c428bbd768ececc393a882a868578f0a8a0a26219480c8c8c86f50f1c61"
     },
     ".github/workflows/lint-actions.yml": {
       "sha256": "10aff4a78729e17d6a061bf3821e345de7f90d3cf112991ab17dc0ad08158d62"
@@ -145,7 +145,7 @@
       "sha256": "7002668ad648bc436478df60791c26acd71cddea7da36200b6d6f6141d6699bd"
     },
     ".gitignore": {
-      "sha256": "b47dedc6d3155c11672195a0f80e22b32bebaf2cb450a01c7cddf9d43f5e31a4"
+      "sha256": "15606e9f4b76555ec7a9f975bddf294ce42f2b987a0b24ed4cea667bce13ca6e"
     },
     ".pre-commit-config.yaml": {
       "sha256": "ff13acfd98ef0dfa43bd39071789090d029f0049be2702efd4d15bab205da004"
@@ -160,7 +160,7 @@
       "sha256": "1958ad0c651df1cb71baee8425ba82163231db558353b3b8c5e1cde9696f8198"
     },
     "README.md": {
-      "sha256": "9f06945297bf2c78380dcb52875172895db426ac211570f8318a2c3cd5494cde"
+      "sha256": "1bd6605b62cf41188333310a200b617e9b48d987aa09f99ac01a76e87376047f"
     },
     "SECURITY.md": {
       "sha256": "5715b12ebe6bcecf93a736a48d6d22881428f241e22c7bdd383aec8d2f1b0bc8"
@@ -324,24 +324,6 @@
     "exoneural_governor/vr.py": {
       "sha256": "d6e5dbeb390ea914b5020163b3f281bfb10e69cb180e467e7d175fc217b056dd"
     },
-    "exoneural_singularity_stack.egg-info/PKG-INFO": {
-      "sha256": "64ecd4246bff92032889785da6e5fc30cc46f47e3bcbab3759a139699ecc372b"
-    },
-    "exoneural_singularity_stack.egg-info/SOURCES.txt": {
-      "sha256": "136c6d12d6a718a087e960db718b64baa3a38c345b12de06c976801a4df77701"
-    },
-    "exoneural_singularity_stack.egg-info/dependency_links.txt": {
-      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
-    },
-    "exoneural_singularity_stack.egg-info/entry_points.txt": {
-      "sha256": "e1f362dae90792c90098a1f889fa6fb0affe4e356349971c781ec07370ffd850"
-    },
-    "exoneural_singularity_stack.egg-info/requires.txt": {
-      "sha256": "9a53e5eecf5e306145cbd31e378f18df9cccc985fb25a312ebefb03c9221cb82"
-    },
-    "exoneural_singularity_stack.egg-info/top_level.txt": {
-      "sha256": "da10a226cba6ed849e1404e007a25773735cf80a30e2029ff19966284489d5cd"
-    },
     "objects/dse-fix-opt/CHANGELOG.md": {
       "sha256": "bb6b7628c1ecdbc925145c11ba0c801d319485e120b653d15cce0bb3f1e5798f"
     },
@@ -412,10 +394,10 @@
       "sha256": "1ea8664995bbedd9104d9d9dcb75a749e3639798499e5f36c86bc7bc4c077bb9"
     },
     "requirements-dev.txt": {
-      "sha256": "0858a22e66364cf6ac472d0a30b36382b8143169c18bd547085548ac49016fe1"
+      "sha256": "789adb96f8e4bb52bf29bd3f58713efa8d4323ae1e22223eefd65197f668ba4a"
     },
     "requirements.lock": {
-      "sha256": "92c867366b27fc619902891919b168ae6f2cce49a7021a42085d2a6f0c167bbc"
+      "sha256": "c6510e2d2bfbd08ae31ee9d1042c91e2d748cca5b1c58a6fd879ae32f5fb073c"
     },
     "schemas/eval_report.schema.json": {
       "sha256": "bba1736cda56c1ca9f0a18f2d88179ae8b0e36f5a8be03cd0ed41c35007cb9d1"
@@ -433,7 +415,7 @@
       "sha256": "986ccdc8b168188b38deadea00a93a1e46a9e30f7c238f25e78bff3a7a68c2e5"
     },
     "scripts/rebuild_checksums.py": {
-      "sha256": "32052e2b5caf215d997be0ddbeb5b10beb3a16af86c2477182b9623bb1e3fd74"
+      "sha256": "d36058f6fd9ddcef5daee9dec0b8fad981d820ecbfe48594746973c3b9567dc6"
     },
     "scripts/run_object_evals.py": {
       "sha256": "e8ca4e8233b959ecfb6c95ec3f4c8f74c561ebd86f6adc5bcde0cef7fb890011"

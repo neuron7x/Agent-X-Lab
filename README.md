@@ -12,7 +12,8 @@ This repository contains:
 ```bash
 python -m venv .venv
 . .venv/bin/activate
-python -m pip install -r requirements.lock
+make bootstrap
+make ci
 
 # fail-closed integrity check
 sg --config configs/sg.config.json validate-catalog

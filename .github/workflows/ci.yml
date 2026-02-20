@@ -40,6 +40,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: validation-and-eval-${{ matrix.python-version }}
+          if-no-files-found: error
           path: |
             artifacts/reports/**
             objects/*/artifacts/evidence/reference/eval/report.json

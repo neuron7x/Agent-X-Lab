@@ -27,3 +27,4 @@ objects/*/artifacts/evidence/*
 artifacts/reports/*
 artifacts/tmp/*
 artifacts/release/*
+artifacts/proof/*
