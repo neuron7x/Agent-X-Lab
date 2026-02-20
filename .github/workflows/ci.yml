@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 env:
-  PIP_VERSION: "24.3.1"
+  PIP_VERSION: "26.0"
 
 jobs:
   quality:
