@@ -5,6 +5,7 @@ A deterministic cognitive-agent architecture with mechanized validation for ship
 ## Quickstart
 
 ```bash
+export PYTHONHASHSEED=0
 python -m pip install -r requirements.lock
 python -m pip install -r requirements-dev.txt
 ruff check .
