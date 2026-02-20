@@ -7,6 +7,9 @@ on:
   schedule:
     - cron: "0 4 * * 1"
 
+env:
+  PYTHONHASHSEED: "0"
+
 jobs:
   codeql:
     runs-on: ubuntu-latest

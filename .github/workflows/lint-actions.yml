@@ -4,6 +4,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  PYTHONHASHSEED: "0"
+
 jobs:
   actionlint:
     runs-on: ubuntu-latest
