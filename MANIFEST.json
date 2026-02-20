@@ -340,7 +340,7 @@
       "sha256": "8731ba0fda88225b5117e2b8c63e7278169b573a66692fc2f465fd26c0db3581"
     },
     "exoneural_governor/vr.py": {
-      "sha256": "d6e5dbeb390ea914b5020163b3f281bfb10e69cb180e467e7d175fc217b056dd"
+      "sha256": "3d2334ebf9b46798db733e218b6b586250babc5163a26092d7f4f1400444f5b9"
     },
     "objects/dse-fix-opt/CHANGELOG.md": {
       "sha256": "bb6b7628c1ecdbc925145c11ba0c801d319485e120b653d15cce0bb3f1e5798f"
@@ -470,6 +470,9 @@
     },
     "tests/test_stack.py": {
       "sha256": "8d44a31c5140fdea9f73d1cefd2ee61a2105096ec8809b859d49ad2453e1982f"
+    },
+    "tests/test_vr_provenance_id.py": {
+      "sha256": "c450e0c622dda7c46d399a9ec8cdbf35155aeadf94157b0aee6ba994b50e146d"
     },
     "tools/generate_titan9_proof.py": {
       "sha256": "a0db4202435e8f3bff3113792a476185dd3324b342f2825fbf039d72436a5413"
