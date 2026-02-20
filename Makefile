@@ -1,4 +1,10 @@
-.PHONY: bootstrap fmt fmt-check lint type test validate eval ci precommit
+export PYTHONHASHSEED := 0
+
+.PHONY: setup bootstrap fmt fmt-check lint type test validate eval proof ci precommit
+
+setup:
+	python -m pip install -r requirements.lock
+	python -m pip install -r requirements-dev.txt
 
 bootstrap:
 	python scripts/bootstrap_env.py
@@ -28,7 +34,11 @@ validate:
 eval:
 	python scripts/run_object_evals.py --repo-root . --write-evidence
 
-ci: lint type test validate eval
+proof:
+	python scripts/generate_proof_bundle.py
+	python tools/prompt_lint.py --paths catalog docs
+
+ci: lint type test validate eval proof
 
 precommit:
 	ruff check .

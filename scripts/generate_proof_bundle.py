@@ -66,7 +66,7 @@ def main(argv: Iterable[str] | None = None) -> int:
         CommandSpec("tool_versions.txt", ["python", "--version"]),
         CommandSpec("reproduction.log", ["python", "-m", "pytest", "-q"]),
         CommandSpec("fix_validation.log", ["ruff", "check", "."]),
-        CommandSpec("test_results.log", ["make", "ci"]),
+        CommandSpec("test_results.log", ["make", "test"]),
     ]
 
     exit_codes = [run_and_log(repo_root, proof_dir, spec) for spec in specs]

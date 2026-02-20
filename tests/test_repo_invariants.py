@@ -57,7 +57,7 @@ def test_required_workflows_exist() -> None:
 
 def test_makefile_targets_exist() -> None:
     makefile = (REPO_ROOT / "Makefile").read_text(encoding="utf-8")
-    for target in ["fmt", "lint", "type", "test", "validate", "eval", "ci"]:
+    for target in ["setup", "fmt", "lint", "type", "test", "validate", "eval", "proof", "ci"]:
         assert f"{target}:" in makefile
 
 
