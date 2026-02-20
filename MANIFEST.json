@@ -145,7 +145,7 @@
       "sha256": "03f21ec2ad975e6ced76d47151ea8c4a06ba68f55e4c73263154c8138c9e64d3"
     },
     ".gitignore": {
-      "sha256": "bf9ae3f58a78022517d391f14556d25e0f113496e1bf9e43760819f0779191fd"
+      "sha256": "bfd94521c896d7a03e7cfbdc599770a2c78723fc0e6dc2019ada246c770f3851"
     },
     ".pre-commit-config.yaml": {
       "sha256": "ddbee8173e272f2c1386593b8cde2b42acbba8428642fdbe4f641ee256d35e5d"
@@ -384,6 +384,9 @@
     "objects/pr-orchestrator/raw/PR-ORCH_source_2026.02.1.txt": {
       "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"
     },
+    "proof/.gitkeep": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
     "protocols/ENC-CORE.md": {
       "sha256": "1a268043db479deb983ee02316692e6935d674a783e9894a1a599d8abf742d42"
     },
@@ -392,6 +395,9 @@
     },
     "pyproject.toml": {
       "sha256": "9b7aa1ad7ad763b470a4994de69028459289a6995fbe624aaf7f412b33112e8f"
+    },
+    "reports/production-readiness-verified-2026-02-20.md": {
+      "sha256": "bc0299089166088626586aea35242d382442892559a115cdcb1473674eae1e4a"
     },
     "requirements-dev.txt": {
       "sha256": "789adb96f8e4bb52bf29bd3f58713efa8d4323ae1e22223eefd65197f668ba4a"
@@ -414,6 +420,9 @@
     "scripts/bootstrap_env.py": {
       "sha256": "13478f8f1e7e36440b782766e3f1407ba8f9fca4fd3b9b719522c6a0108df2c5"
     },
+    "scripts/generate_proof_bundle.py": {
+      "sha256": "a029343b3ddf8f5555f41f5fb891dc0b289d1dd26fad92ba798a89d5d68bc8ed"
+    },
     "scripts/rebuild_catalog_index.py": {
       "sha256": "986ccdc8b168188b38deadea00a93a1e46a9e30f7c238f25e78bff3a7a68c2e5"
     },
@@ -428,6 +437,9 @@
     },
     "scripts/validate_arsenal.py": {
       "sha256": "018a6ff35bcb3145de33730905737053db6da1bf60f9bd720b6117b7d2aef88e"
+    },
+    "tests/test_generate_proof_bundle.py": {
+      "sha256": "80bfa06981c691a05a03c1a64f5d69f0794c1def0b2c1b4c5ce54275a577c549"
     },
     "tests/test_repo_invariants.py": {
       "sha256": "c5011d0ee39f5b92d65cacd66c1703d5c8d34e5aec9561eff0d5297e86d70589"
