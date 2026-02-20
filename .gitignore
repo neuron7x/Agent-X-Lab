@@ -29,3 +29,7 @@ artifacts/tmp/*
 artifacts/release/*
 artifacts/proof/*
 configs/artifacts/
+
+# Local CSI proof bundles
+proof/*
+!proof/.gitkeep
