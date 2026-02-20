@@ -11,7 +11,7 @@ from .config import Config
 from .inventory import inventory
 from .manifest import write_manifest
 from .redaction import load_redaction_patterns, redact_tree
-from .util import sha256_bytes, utc_now_iso, write_json, run_cmd, ensure_dir
+from .util import sha256_bytes, write_json, run_cmd, ensure_dir
 
 def _package_version(repo_root: Path) -> str:
     pyproject = repo_root / "pyproject.toml"
@@ -29,12 +29,20 @@ def _spec_token(repo_root: Path) -> str:
     if not spec.exists():
         return "NO_SPEC"
     spec_text = spec.read_text(encoding="utf-8", errors="replace")
-    token = re.search(
-        r"TITAN-9\s+[A-Za-z0-9._-]*\s*Protocol\s*Spec", spec_text, flags=re.IGNORECASE
+    marker = re.search(
+        r"^\s*(TITAN-9\s+[A-Za-z0-9._-]+\s+Protocol\s+Spec)\s*$",
+        spec_text,
+        flags=re.IGNORECASE | re.MULTILINE,
     )
-    if token:
-        return token.group(0)
+    if marker:
+        return re.sub(r"\s+", " ", marker.group(1).strip()).upper()
     return sha256_bytes(spec.read_bytes())
+
+
+
+
+def _evidence_tag(work_id: str) -> str:
+    return f"run-{sha256_bytes(work_id.encode('utf-8'))[:12]}"
 
 
 def _work_id(repo_root: Path, cfg: Config) -> str:
@@ -83,8 +91,7 @@ def _work_id(repo_root: Path, cfg: Config) -> str:
 def run_vr(cfg: Config, *, write_back: bool = True) -> dict:
     repo_root = cfg.repo_root
     work_id = _work_id(repo_root, cfg)
-    date = utc_now_iso()[:10].replace("-", "")
-    evidence_root = cfg.evidence_root_base / date / work_id
+    evidence_root = cfg.evidence_root_base / _evidence_tag(work_id) / work_id
     reports_dir = evidence_root / "REPORTS"
     cmds_dir = evidence_root / "COMMANDS"
     ensure_dir(reports_dir)
@@ -121,7 +128,7 @@ def run_vr(cfg: Config, *, write_back: bool = True) -> dict:
 
     vr: Dict[str, Any] = {
         "schema": "VR-2026.1",
-        "utc": utc_now_iso(),
+        "utc": "1970-01-01T00:00:00Z",
         "status": "RUN",
         "work_id": work_id,
         "evidence_root": str(evidence_root),
