@@ -32,7 +32,9 @@ def test_isolation_removes_product_module_leaks_and_restores_environment() -> No
     assert _LEAK_MODULE_NAME not in sys.modules
     assert _LEAK_MODULE_NAME_SCRIPTS not in sys.modules
     assert _LEAK_ENV_KEY not in os.environ
-    assert _stable_environ_snapshot() == {k: v for k, v in _BASE_ENV.items() if k != "PYTEST_CURRENT_TEST"}
+    assert _stable_environ_snapshot() == {
+        k: v for k, v in _BASE_ENV.items() if k != "PYTEST_CURRENT_TEST"
+    }
 
 
 def test_environment_parity_restores_removed_or_modified_keys() -> None:
@@ -47,4 +49,6 @@ def test_environment_parity_restores_removed_or_modified_keys() -> None:
 
 
 def test_environment_parity_is_strict_after_mutation() -> None:
-    assert _stable_environ_snapshot() == {k: v for k, v in _BASE_ENV.items() if k != "PYTEST_CURRENT_TEST"}
+    assert _stable_environ_snapshot() == {
+        k: v for k, v in _BASE_ENV.items() if k != "PYTEST_CURRENT_TEST"
+    }
