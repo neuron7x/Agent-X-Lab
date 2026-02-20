@@ -1,0 +1,6 @@
+command: python -m pytest -q
+exit_code: 0
+stdout:
+............                                                             [100%]
+stderr:
+<empty>

@@ -1,0 +1,6 @@
+command: python --version
+exit_code: 0
+stdout:
+Python 3.10.19
+stderr:
+<empty>

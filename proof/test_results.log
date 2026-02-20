@@ -1,0 +1,38 @@
+command: make ci
+exit_code: 0
+stdout:
+ruff check .
+All checks passed!
+mypy .
+Success: no issues found in 21 source files
+python -m pytest -q
+............                                                             [100%]
+python scripts/validate_arsenal.py --repo-root . --strict
+{
+  "passed": true,
+  "strict": true,
+  "checks_total": 207,
+  "checks_passed": 207,
+  "checks_failed": 0,
+  "failed_checks": []
+}
+python scripts/run_object_evals.py --repo-root . --write-evidence
+{
+  "passed": true,
+  "objects_total": 2,
+  "objects_passed": 2,
+  "results": [
+    {
+      "passed": true,
+      "score": 100,
+      "object": "dse-fix-opt"
+    },
+    {
+      "passed": true,
+      "score": 100,
+      "object": "pr-orchestrator"
+    }
+  ]
+}
+stderr:
+<empty>
