@@ -1,0 +1,1 @@
+pip 26.0 from /mnt/data/exoneural-singularity-stack/.venv/lib/python3.11/site-packages/pip (python 3.11)

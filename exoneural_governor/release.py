@@ -1,0 +1,65 @@
+from __future__ import annotations
+
+import json
+import zipfile
+from pathlib import Path
+
+from .config import Config
+from .manifest import write_manifest
+from .util import ensure_dir, utc_now_iso
+
+
+INCLUDE_DEFAULT = [
+    "catalog",
+    "docs",
+    "configs",
+    "vendor/scpe-cimqa-2026.3.0",
+    "README.md",
+    "SECURITY.redaction.yml",
+    "requirements.lock",
+    "pyproject.toml",
+    "VR.json",
+    ".github",
+]
+
+
+def build_release(cfg: Config) -> dict:
+    repo_root = cfg.repo_root
+    ts = utc_now_iso().replace(":", "").replace("Z", "Z")
+    release_dir = repo_root / "artifacts" / "release"
+    ensure_dir(release_dir)
+
+    vr_path = repo_root / "VR.json"
+    evidence_root = None
+    if vr_path.exists():
+        vr = json.loads(vr_path.read_text(encoding="utf-8"))
+        evidence_root = vr.get("evidence_root")
+    zip_name = f"{cfg.artifact_name}-{ts}.zip"
+    zip_path = release_dir / zip_name
+
+    with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as z:
+        for item in INCLUDE_DEFAULT:
+            src = repo_root / item
+            if src.is_dir():
+                for p in sorted([x for x in src.rglob("*") if x.is_file()], key=lambda x: x.as_posix()):
+                    z.write(p, arcname=p.relative_to(repo_root).as_posix())
+            elif src.is_file():
+                z.write(src, arcname=src.relative_to(repo_root).as_posix())
+
+        if evidence_root:
+            epath = Path(evidence_root)
+            if epath.exists() and epath.is_dir():
+                for p in sorted([x for x in epath.rglob("*") if x.is_file()], key=lambda x: x.as_posix()):
+                    # include under evidence/ to keep release small and explicit
+                    z.write(p, arcname=("evidence/" + p.relative_to(epath).as_posix()))
+
+    manifest = write_manifest(release_dir, release_dir / "MANIFEST.release.json")
+    report = {
+        "utc": utc_now_iso(),
+        "zip_path": str(zip_path.relative_to(repo_root)),
+        "manifest_path": str((release_dir / "MANIFEST.release.json").relative_to(repo_root)),
+        "included": INCLUDE_DEFAULT,
+        "evidence_included": bool(evidence_root),
+    }
+    (release_dir / "release.report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return report

@@ -1,47 +1,32 @@
-[project]
-name = "agentx-lab"
-version = "1.1.0"
-description = "AgentX Lab: audit-grade agent-policy arsenal and cognitive architecture workbench."
-readme = "README.md"
-requires-python = ">=3.11"
-license = {text = "MIT"}
-authors = [{name = "AgentX Lab Contributors"}]
-keywords = ["agents", "cognitive-architecture", "evaluation", "governance", "prompt-engineering"]
+[build-system]
+requires = ["setuptools==75.6.0", "wheel==0.44.0"]
+build-backend = "setuptools.build_meta"
 
-[tool.ruff]
-line-length = 110
-target-version = "py311"
-extend-exclude = [
-  ".venv",
-  "dist",
-  "build",
-  "__pycache__",
-  ".mypy_cache",
-  ".pytest_cache",
+[project]
+name = "exoneural-singularity-stack"
+version = "0.1.0"
+description = "Deterministic, mechanized governance stack for prompt catalogs + proof bundles + release finalization."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Exo-Neural Stack"}]
+dependencies = [
+  "PyYAML==6.0.2",
+  "jsonschema==4.23.0",
 ]
 
-[tool.ruff.lint]
-select = ["E", "F", "I", "B", "UP", "SIM", "C4", "PIE", "RUF"]
-ignore = ["E501"]
+[project.optional-dependencies]
+dev = [
+  "pytest==8.2.2",
+]
 
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "lf"
+[project.scripts]
+sg = "exoneural_governor.cli:main"
 
-[tool.mypy]
-python_version = "3.11"
-warn_unused_configs = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-no_implicit_optional = true
-disallow_incomplete_defs = true
-disallow_untyped_defs = true
-check_untyped_defs = true
-strict_equality = true
-show_error_codes = true
+[tool.setuptools]
+packages = ["exoneural_governor"]
+include-package-data = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = ["-q"]
+addopts = "-q"

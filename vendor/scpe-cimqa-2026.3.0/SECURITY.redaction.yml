@@ -1,0 +1,23 @@
+scpe_release: v1.0
+schema_version: SEC-REDACTION-2026.3
+purpose: "fail-closed redaction rules for evidence bundles (EBS + META-EBS)"
+rules:
+  - id: "R.SEC.010"
+    description: "Redact GitHub tokens and common secret patterns."
+    patterns:
+      - "(ghp_[A-Za-z0-9]{36,})"
+      - "(github_pat_[A-Za-z0-9_]{20,})"
+      - "([A-Za-z0-9_\\-]{20,}\\.[A-Za-z0-9_\\-]{20,}\\.[A-Za-z0-9_\\-]{20,})"
+      - "(AKIA[0-9A-Z]{16})"
+      - "(-----BEGIN (RSA|EC|OPENSSH) PRIVATE KEY-----[\\s\\S]*?-----END (RSA|EC|OPENSSH) PRIVATE KEY-----)"
+    replacement: "[REDACTED]"
+  - id: "R.SEC.020"
+    description: "Redact generic API keys labeled as key/token/secret."
+    patterns:
+      - "(?i)(api[_-]?key\\s*[:=]\\s*['\\\"]?[A-Za-z0-9_\\-]{16,}['\\\"]?)"
+      - "(?i)(token\\s*[:=]\\s*['\\\"]?[A-Za-z0-9_\\-]{16,}['\\\"]?)"
+      - "(?i)(secret\\s*[:=]\\s*['\\\"]?[A-Za-z0-9_\\-]{16,}['\\\"]?)"
+    replacement: "[REDACTED]"
+enforcement:
+  required_before_manifest: true
+  fail_on_unredacted_match: true

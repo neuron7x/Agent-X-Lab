@@ -1,3 +1,17 @@
+Metadata-Version: 2.1
+Name: exoneural-singularity-stack
+Version: 0.1.0
+Summary: Deterministic, mechanized governance stack for prompt catalogs + proof bundles + release finalization.
+Author: Exo-Neural Stack
+License: MIT
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: PyYAML==6.0.2
+Requires-Dist: jsonschema==4.23.0
+Provides-Extra: dev
+Requires-Dist: pytest==8.2.2; extra == "dev"
+
 # Exo‑Neural Singularity Stack (in‑silico)
 
 A deterministic, mechanized governance stack for shipping **prompt catalogs + proof bundles** as a **GitHub‑ready** project.

@@ -1,0 +1,50 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/mnt/data/exoneural-singularity-stack",
+      "exit_code": 0,
+      "stderr_path": "/mnt/data/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/cmd0.stderr.txt",
+      "stdout_path": "/mnt/data/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/cmd0.stdout.txt"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": "/mnt/data/exoneural-singularity-stack",
+      "exit_code": 0,
+      "stderr_path": "/mnt/data/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/cmd1.stderr.txt",
+      "stdout_path": "/mnt/data/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/cmd1.stdout.txt"
+    },
+    {
+      "argv": [
+        "python",
+        "--version"
+      ],
+      "cwd": "/mnt/data/exoneural-singularity-stack",
+      "exit_code": 0,
+      "stderr_path": "/mnt/data/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/cmd2.stderr.txt",
+      "stdout_path": "/mnt/data/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/cmd2.stdout.txt"
+    },
+    {
+      "argv": [
+        "python",
+        "-m",
+        "pip",
+        "--version"
+      ],
+      "cwd": "/mnt/data/exoneural-singularity-stack",
+      "exit_code": 0,
+      "stderr_path": "/mnt/data/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/cmd3.stderr.txt",
+      "stdout_path": "/mnt/data/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/cmd3.stdout.txt"
+    }
+  ],
+  "repo_root": "/mnt/data/exoneural-singularity-stack",
+  "utc": "2026-02-20T11:18:27Z"
+}
