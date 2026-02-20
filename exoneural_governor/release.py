@@ -23,13 +23,21 @@ INCLUDE_DEFAULT = [
 ]
 
 
-def build_release(cfg: Config) -> dict:
+def build_release(
+    cfg: Config, *, vr_path: Path | None = None, output_dir: Path | None = None
+) -> dict:
     repo_root = cfg.repo_root
     ts = utc_now_iso().replace(":", "").replace("Z", "Z")
-    release_dir = repo_root / "artifacts" / "release"
+    release_dir = (
+        output_dir if output_dir is not None else (repo_root / "artifacts" / "release")
+    )
+    if not release_dir.is_absolute():
+        release_dir = repo_root / release_dir
     ensure_dir(release_dir)
 
-    vr_path = repo_root / "VR.json"
+    vr_path = vr_path if vr_path is not None else (repo_root / "VR.json")
+    if not vr_path.is_absolute():
+        vr_path = repo_root / vr_path
     evidence_root = None
     if vr_path.exists():
         vr = json.loads(vr_path.read_text(encoding="utf-8"))

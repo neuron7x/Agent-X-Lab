@@ -73,3 +73,39 @@ def test_sg_config_selftest_passes() -> None:
         ]
     )
     assert p.returncode == 0, p.stdout + "\n" + p.stderr
+
+
+def test_sg_vr_accepts_config_after_subcommand() -> None:
+    p = run(
+        [
+            "python",
+            "-m",
+            "exoneural_governor.cli",
+            "vr",
+            "--config",
+            "configs/sg.config.json",
+            "--out",
+            "VR.json",
+            "--no-write",
+        ]
+    )
+    assert p.returncode in (0, 3), p.stdout + "\n" + p.stderr
+    assert "unrecognized arguments" not in (p.stdout + p.stderr)
+
+
+def test_sg_release_accepts_config_after_subcommand() -> None:
+    p = run(
+        [
+            "python",
+            "-m",
+            "exoneural_governor.cli",
+            "release",
+            "--config",
+            "configs/sg.config.json",
+            "--vr",
+            "VR.json",
+            "--output",
+            "artifacts/release",
+        ]
+    )
+    assert p.returncode == 0, p.stdout + "\n" + p.stderr

@@ -33,7 +33,16 @@ testpaths = ["tests"]
 addopts = "-q"
 
 [tool.ruff]
-extend-exclude = ["vendor"]
+target-version = "py311"
+line-length = 88
+extend-exclude = [
+  "vendor",
+  "artifacts",
+  ".venv",
+  ".ruff_cache",
+  "build",
+  "dist",
+]
 
 [tool.mypy]
 python_version = "3.11"
