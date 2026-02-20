@@ -1,6 +1,6 @@
-# Exo‑Neural Singularity Stack (in‑silico)
+# AgentX Lab
 
-A deterministic, mechanized governance stack for shipping **prompt catalogs + proof bundles** as a **GitHub‑ready** project.
+A deterministic cognitive-agent architecture with mechanized validation for shipping prompt catalogs and proof bundles as a GitHub-ready project.
 
 This repository contains:
 - a curated **catalog** of top-tier system prompts / protocols (yours + curated packs)
@@ -12,16 +12,9 @@ This repository contains:
 ```bash
 python -m venv .venv
 . .venv/bin/activate
-python -m pip install -r requirements.lock
+make bootstrap
+make ci
 
-# fail-closed integrity check
-sg --config configs/sg.config.json validate-catalog
-
-# calibration run + evidence bundle + VR.json
-sg --config configs/sg.config.json vr
-
-# build release zip (includes latest VR evidence folder when available)
-sg --config configs/sg.config.json release
 ```
 
 Outputs:
@@ -42,3 +35,18 @@ Push to GitHub and enable Actions. CI runs:
 
 ## License
 MIT (see LICENSE).
+
+
+## Evidence tracking policy
+
+- Track only **reference evidence** required for deterministic verification (`objects/*/artifacts/evidence/reference/**`).
+- Ignore runtime evidence emitted during local/CI runs (`artifacts/evidence/**`, non-reference object evidence).
+
+
+## Optional SG CLI usage
+
+```bash
+sg --config configs/sg.config.json validate-catalog
+sg --config configs/sg.config.json vr
+sg --config configs/sg.config.json release
+```

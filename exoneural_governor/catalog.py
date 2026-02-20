@@ -35,11 +35,22 @@ def validate_catalog(repo_root: Path) -> dict:
             continue
         actual = sha256_file(abs_path)
         if actual != sha:
-            problems.append({"type": "sha_mismatch", "path": path, "expected": sha, "actual": actual})
+            problems.append(
+                {
+                    "type": "sha_mismatch",
+                    "path": path,
+                    "expected": sha,
+                    "actual": actual,
+                }
+            )
 
     # Also ensure no unindexed files in catalog/agents+protocols+stacks (fail-closed)
-    indexed = {o.get("path") for o in objects if isinstance(o, dict) and isinstance(o.get("path"), str)}
-    ignore = { (repo_root / "catalog" / "index.json").relative_to(repo_root).as_posix() }
+    indexed = {
+        o.get("path")
+        for o in objects
+        if isinstance(o, dict) and isinstance(o.get("path"), str)
+    }
+    ignore = {(repo_root / "catalog" / "index.json").relative_to(repo_root).as_posix()}
     for p in sorted((repo_root / "catalog").rglob("*")):
         if p.is_file():
             rel = p.relative_to(repo_root).as_posix()

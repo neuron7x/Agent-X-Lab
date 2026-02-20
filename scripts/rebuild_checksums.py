@@ -10,6 +10,7 @@ Fail-closed:
 - If MANIFEST.json is missing => FAIL
 - If any listed file is missing => FAIL
 """
+
 from __future__ import annotations
 
 import argparse
@@ -25,6 +26,7 @@ EXCLUDE_DIRS: Set[str] = {
     "__pycache__",
     ".mypy_cache",
     ".pytest_cache",
+    ".ruff_cache",
     "dist",
     "build",
 }
@@ -47,11 +49,31 @@ def iter_files(repo_root: Path) -> Iterable[Path]:
             continue
         if p.name in EXCLUDE_FILES:
             continue
-        parts = set(p.relative_to(repo_root).parts)
+        rel_parts = p.relative_to(repo_root).parts
+        parts = set(rel_parts)
         if parts & EXCLUDE_DIRS:
             continue
+        if any(part.endswith(".egg-info") for part in rel_parts):
+            continue
+        rel = p.relative_to(repo_root).as_posix()
+        if rel.startswith("artifacts/evidence/"):
+            continue
+        if rel.startswith("configs/artifacts/"):
+            continue
+        if (
+            rel.startswith("artifacts/reports/")
+            or rel.startswith("artifacts/tmp/")
+            or rel.startswith("artifacts/release/")
+            or rel.startswith("artifacts/proof/")
+        ):
+            continue
+        if (
+            "/artifacts/evidence/" in rel
+            and "/artifacts/evidence/reference/" not in rel
+        ):
+            continue
         # exclude root manifest itself to avoid recursion
-        if p.relative_to(repo_root).as_posix() == "MANIFEST.json":
+        if rel == "MANIFEST.json":
             continue
         yield p
 
@@ -59,7 +81,11 @@ def iter_files(repo_root: Path) -> Iterable[Path]:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo-root", default=".", help="Repo root (default: .)")
-    ap.add_argument("--manifest", default="MANIFEST.json", help="Root manifest (default: MANIFEST.json)")
+    ap.add_argument(
+        "--manifest",
+        default="MANIFEST.json",
+        help="Root manifest (default: MANIFEST.json)",
+    )
     args = ap.parse_args()
 
     repo_root = Path(args.repo_root).resolve()
@@ -69,15 +95,20 @@ def main() -> int:
         return 1
 
     m = json.loads(mpath.read_text(encoding="utf-8"))
-    checksums: Dict[str, str] = {}
+    checksums: Dict[str, Dict[str, str]] = {}
 
-    files: List[Path] = sorted(iter_files(repo_root), key=lambda p: p.relative_to(repo_root).as_posix())
+    files: List[Path] = sorted(
+        iter_files(repo_root), key=lambda p: p.relative_to(repo_root).as_posix()
+    )
     for p in files:
         rel = p.relative_to(repo_root).as_posix()
         checksums[rel] = {"sha256": sha256_file(p)}
 
     m["checksums"] = checksums
-    mpath.write_text(json.dumps(m, indent=2, ensure_ascii=False, sort_keys=False) + "\n", encoding="utf-8")
+    mpath.write_text(
+        json.dumps(m, indent=2, ensure_ascii=False, sort_keys=False) + "\n",
+        encoding="utf-8",
+    )
     print(f"OK: checksums rebuilt ({len(checksums)} files)")
     return 0
 

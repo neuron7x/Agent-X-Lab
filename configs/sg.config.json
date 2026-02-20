@@ -1,0 +1,25 @@
+{
+  "repo_root": "..",
+  "base_branch": "main",
+  "allowlist_globs": [
+    "README.md",
+    "MANIFEST.json",
+    "catalog/**",
+    "objects/**",
+    "architecture/**",
+    "protocols/**",
+    "scripts/**",
+    "schemas/**"
+  ],
+  "baseline_commands": [
+    ["python", "scripts/validate_arsenal.py", "--repo-root", ".", "--strict"],
+    ["python", "scripts/schema_validate.py", "--repo-root", "."]
+  ],
+  "artifact_name": "agentx-lab",
+  "budgets": {
+    "max_changed_files": 200,
+    "max_changed_lines": 10000
+  },
+  "redaction_policy_path": "SECURITY.redaction.yml",
+  "evidence_root_base": "artifacts/evidence"
+}

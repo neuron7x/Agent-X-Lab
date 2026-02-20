@@ -5,7 +5,6 @@ import json
 import os
 import re
 import subprocess
-import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -13,7 +12,12 @@ from typing import Iterable, Mapping, Sequence
 
 
 def utc_now_iso() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    return (
+        datetime.now(timezone.utc)
+        .replace(microsecond=0)
+        .isoformat()
+        .replace("+00:00", "Z")
+    )
 
 
 def sha256_bytes(data: bytes) -> str:
@@ -43,7 +47,14 @@ class CmdResult:
     stderr_path: str
 
 
-def run_cmd(argv: Sequence[str], *, cwd: Path, stdout_path: Path, stderr_path: Path, env: Mapping[str, str] | None = None) -> CmdResult:
+def run_cmd(
+    argv: Sequence[str],
+    *,
+    cwd: Path,
+    stdout_path: Path,
+    stderr_path: Path,
+    env: Mapping[str, str] | None = None,
+) -> CmdResult:
     """Run a command deterministically: no shell, explicit argv, captured stdout/stderr.
     Caller decides policy on non-zero exit codes."""
     ensure_dir(stdout_path.parent)

@@ -9,6 +9,7 @@ Usage:
   python scripts/run_object_evals.py --repo-root . --write-evidence
   python scripts/run_object_evals.py --repo-root . --deterministic --write-evidence
 """
+
 from __future__ import annotations
 
 import argparse
@@ -22,7 +23,9 @@ def load_json(path: Path) -> Dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def run_harness(repo_root: Path, harness: Path, write_evidence: bool, deterministic: bool) -> Dict[str, Any]:
+def run_harness(
+    repo_root: Path, harness: Path, write_evidence: bool, deterministic: bool
+) -> Dict[str, Any]:
     cmd = ["python", str(harness), "--repo-root", str(repo_root)]
     if deterministic:
         cmd.append("--deterministic")
@@ -64,9 +67,21 @@ def run_harness(repo_root: Path, harness: Path, write_evidence: bool, determinis
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo-root", default=".", help="Repo root (default: .)")
-    ap.add_argument("--manifest", default="MANIFEST.json", help="Root manifest (default: MANIFEST.json)")
-    ap.add_argument("--write-evidence", action="store_true", help="Forward --write-evidence to harnesses")
-    ap.add_argument("--deterministic", action="store_true", help="Forward --deterministic to harnesses")
+    ap.add_argument(
+        "--manifest",
+        default="MANIFEST.json",
+        help="Root manifest (default: MANIFEST.json)",
+    )
+    ap.add_argument(
+        "--write-evidence",
+        action="store_true",
+        help="Forward --write-evidence to harnesses",
+    )
+    ap.add_argument(
+        "--deterministic",
+        action="store_true",
+        help="Forward --deterministic to harnesses",
+    )
     args = ap.parse_args()
 
     repo_root = Path(args.repo_root).resolve()
@@ -78,27 +93,39 @@ def main() -> int:
     for obj in m.get("objects", []):
         name = (obj or {}).get("name")
         if not name:
-            results.append({"object": None, "passed": False, "error": "object entry missing name"})
+            results.append(
+                {"object": None, "passed": False, "error": "object entry missing name"}
+            )
             passed_all = False
             continue
 
         harness = repo_root / "objects" / name / "eval" / "run_harness.py"
         if not harness.exists():
-            results.append({"object": name, "passed": False, "error": "missing eval harness"})
+            results.append(
+                {"object": name, "passed": False, "error": "missing eval harness"}
+            )
             passed_all = False
             continue
 
         res = run_harness(repo_root, harness, args.write_evidence, args.deterministic)
         res["object"] = name
-        passed_all = passed_all and bool(res.get("passed")) and int(res.get("score", 0)) == 100
+        passed_all = (
+            passed_all and bool(res.get("passed")) and int(res.get("score", 0)) == 100
+        )
         results.append(res)
 
     out = {
         "passed": passed_all,
         "objects_total": len(results),
-        "objects_passed": sum(1 for r in results if r.get("passed") and int(r.get("score", 0)) == 100),
+        "objects_passed": sum(
+            1 for r in results if r.get("passed") and int(r.get("score", 0)) == 100
+        ),
         "results": [
-            {k: v for k, v in r.items() if k in {"object", "passed", "score", "error", "returncode"}}
+            {
+                k: v
+                for k, v in r.items()
+                if k in {"object", "passed", "score", "error", "returncode"}
+            }
             for r in results
         ],
     }

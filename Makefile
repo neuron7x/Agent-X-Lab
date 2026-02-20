@@ -1,16 +1,30 @@
-.PHONY: bootstrap test vr release validate
+.PHONY: bootstrap fmt lint type test validate eval ci precommit
 
 bootstrap:
-	python -m pip install -r requirements.lock
+	python scripts/bootstrap_env.py
 
-validate:
-	sg --config configs/sg.config.json validate-catalog
+fmt:
+	ruff format .
+
+lint:
+	ruff check .
+
+type:
+	mypy .
 
 test:
 	python -m pytest -q
 
-vr:
-	sg --config configs/sg.config.json vr
+validate:
+	python scripts/validate_arsenal.py --repo-root . --strict
 
-release:
-	sg --config configs/sg.config.json release
+eval:
+	python scripts/run_object_evals.py --repo-root . --write-evidence
+
+ci: lint type test validate eval
+
+precommit:
+	ruff check .
+	ruff format --check .
+	mypy .
+	python -m pytest -q

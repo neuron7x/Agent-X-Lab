@@ -124,49 +124,55 @@
   },
   "checksums": {
     ".editorconfig": {
-      "sha256": "fbb87bedc2547f38f12c655e34a4b44f568aa0e5e40d77b14d75bb5a1079a347"
+      "sha256": "3aaba4c99a60621a3af05afb1d923ea916db44716acf2b1cdf877cb33ec6ae73"
     },
     ".github/actions/pin-pip/action.yml": {
-      "sha256": "6f7bd5d6e1f11f0eb3b33b1ba2efb4ff5f748ad2c93623f59d417383d75734a6"
+      "sha256": "c939d54feec2f5653b263226ac5be934aef7484945709b9a100bee5293d3f543"
     },
     ".github/dependabot.yml": {
-      "sha256": "bf3d365bdf36a2cd1f88dd3269a18380701cb697640aed80f049c87b3bab7e31"
+      "sha256": "575c5bcd5d433560f5e40db5580c1e9bf824a3d1d4ed84a91eb4f8864065ef53"
     },
     ".github/pull_request_template.md": {
-      "sha256": "b8dbdb5293e5f6f132f54094f6a0ba28cec2904107d679d5f679dcc6472c9996"
+      "sha256": "7396b398eead8d78d36007a9c2c2296fdfdb37565190e1a581a900c0f75ff405"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "359a7e9400f27cab4360f73a2b6280c453ac7edc8bf6cebadf48f55817908b29"
+      "sha256": "588937805e9759aef5db7c43803f8f1fc317ce8de8da531435cd1eb28e2f70ac"
     },
-    ".github/workflows/codeql.yml": {
-      "sha256": "07ab82d4aaa24fefc1f2da0ab89a71ffc4fe72275a1067439a5e76b95e1d994f"
+    ".github/workflows/lint-actions.yml": {
+      "sha256": "93659ca5f5adf6bd945037cd1544869954d468ee821a3f1a79f6486b614f1704"
     },
-    ".github/workflows/dependency-review.yml": {
-      "sha256": "4540c20f663e24d09d185760501a676e06aacb75c4430e56ff42de98da7cfd98"
-    },
-    ".github/workflows/gitleaks.yml": {
-      "sha256": "81a6eacf3df604a230b641afc4e511c417253dd594e32149f4e41fd8fcce4706"
+    ".github/workflows/security.yml": {
+      "sha256": "03f21ec2ad975e6ced76d47151ea8c4a06ba68f55e4c73263154c8138c9e64d3"
     },
     ".gitignore": {
-      "sha256": "b1a691e83ba99d4abf472c539f7e36055d44467453c73fd30bef3e44a702e426"
+      "sha256": "bf9ae3f58a78022517d391f14556d25e0f113496e1bf9e43760819f0779191fd"
     },
     ".pre-commit-config.yaml": {
-      "sha256": "270efad745464f9c8e418fc8c050bd16184755a06386ccd60aa1c125b95bb7ab"
+      "sha256": "7ec7b4d68dc6cc2eecca0336bd1d4e1dcc222e79d08aed71e31e86d8f186382b"
     },
     "CONTRIBUTING.md": {
-      "sha256": "e650353bea8887ff332dfa910e93584e1d1c4044957cdc53efa0fb57d37b85e6"
+      "sha256": "bbe0fc34747a3f66f9dc72c0827569ffad5e39f70c8f8f56d9cdb30e3bb03114"
     },
     "LICENSE": {
       "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685"
     },
     "Makefile": {
-      "sha256": "e4c768f3a9921fc03deb2b7f0ac7f07a4f59484713877b6182fda0d855ed7fec"
+      "sha256": "a8dd3bfe1e2609f60a62d91f0c73abf2eae9b93fbb1645a0bfbd122da3d0dd64"
     },
     "README.md": {
-      "sha256": "69dcea7c39b8ef21b698121bda4a109e792453c13aea40e785aa32a8201bec3f"
+      "sha256": "daef86096681a9ad25343d4a6d919fa5c91c936153cbf1ad030de6bf4944bef6"
     },
     "SECURITY.md": {
       "sha256": "5715b12ebe6bcecf93a736a48d6d22881428f241e22c7bdd383aec8d2f1b0bc8"
+    },
+    "SECURITY.redaction.yml": {
+      "sha256": "518f57036835b352d9b2f19f923638abe23c23c94ff2d01accface17b08db462"
+    },
+    "VR.json": {
+      "sha256": "8aa6409a1d263280185d65786f86a7fad1c8dd7f5d70b5fdc0f775cffcf72a69"
+    },
+    "_STRIPPED_FOR_GITHUB.md": {
+      "sha256": "eb9221b8c6ce29163224352efd418ff57dd602e662a100ce7329cb2015bb31f4"
     },
     "architecture/ADVERSARIAL-ORCHESTRATION.md": {
       "sha256": "df00b08b219556ec287a41352ca1b25eec813fb857aff930eafa9af3139664fb"
@@ -180,8 +186,8 @@
     "architecture/NAMING-CONVENTIONS.md": {
       "sha256": "1273636bb026b96328d82f194a0a0e3c7e5b140f65e641d23e4a1a17b33397db"
     },
-    "catalog/INDEX.json": {
-      "sha256": "61fae26cfd7a232ea50cd25ff26a74cbabf9c4d699d3bf696f01e38fa5030468"
+    "catalog/agents/01_PR-Orchestrator_Repo-Readiness-Governor.txt": {
+      "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"
     },
     "catalog/agents/01_PR_Orchestrator_Repo_Readiness_Governor.txt": {
       "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"
@@ -192,11 +198,17 @@
     "catalog/agents/02_Staff_Platform_Engineer_Integration_Site_Reliability_Engineer_Production_Readiness.txt": {
       "sha256": "b5f82b4071a8d9b6a0c18c9f3f9456e649d6a9f377f13adb84df7bc150177310"
     },
+    "catalog/agents/02_Test-Reliability_Flake-Elimination-Agent.txt": {
+      "sha256": "012a6d5e3063c87207e3e69af9b1e2fcc65ba49435d763d3762cbb16683a258e"
+    },
     "catalog/agents/02_Test_Reliability_Flake_Elimination_Agent.txt": {
       "sha256": "012a6d5e3063c87207e3e69af9b1e2fcc65ba49435d763d3762cbb16683a258e"
     },
     "catalog/agents/03_Distinguished_Software_Engineer_Quality_Verification_Performance_Principal_Security_Engineer_AppSec_Supply_Chain.txt": {
       "sha256": "a210e256ee77b7838d7f0d6365f0fe062f884b37651fc29a246174ed338584d2"
+    },
+    "catalog/agents/03_Docs-Quickstart_Onboarding-Agent.txt": {
+      "sha256": "4d76ac75c876727d10f9f486fe051034ca37b8b83b0bb93bf5ef599a6df946e9"
     },
     "catalog/agents/03_Docs_Quickstart_Onboarding_Agent.txt": {
       "sha256": "4d76ac75c876727d10f9f486fe051034ca37b8b83b0bb93bf5ef599a6df946e9"
@@ -204,11 +216,20 @@
     "catalog/agents/04_Principal_Software_Engineer_Release_Engineering_Staff_Developer_Experience_Engineer_Packaging_Installability.txt": {
       "sha256": "f8cbd78c93992ec27eb774830edf550c7e85e675bc08b34579e70fcc03b6e989"
     },
+    "catalog/agents/04_Security_Supply-Chain-Hardening-Agent.txt": {
+      "sha256": "3a49beb9560d7244696d24f4f60643a95b7575b1ccb8dc1e1dcd132d3a1f673d"
+    },
     "catalog/agents/04_Security_Supply_Chain_Hardening_Agent.txt": {
       "sha256": "3a49beb9560d7244696d24f4f60643a95b7575b1ccb8dc1e1dcd132d3a1f673d"
     },
+    "catalog/agents/05_Security-PR_Finisher_Merge-Ready-Meta.txt": {
+      "sha256": "c599063097f11d303b2f7e9962c3a23c0f76dfae1005b620b480c90cd68bef34"
+    },
     "catalog/agents/05_Security_PR_Finisher_Merge_Ready_Meta.txt": {
       "sha256": "c599063097f11d303b2f7e9962c3a23c0f76dfae1005b620b480c90cd68bef34"
+    },
+    "catalog/agents/06_DSE_Codebase-Fixer-Optimizer_99.txt": {
+      "sha256": "2e80736d03a13f83cdb647400924e05db2ca0824eb86fb8ee65de2f1b020d4c7"
     },
     "catalog/agents/06_DSE_Codebase_Fixer_Optimizer_99.txt": {
       "sha256": "2e80736d03a13f83cdb647400924e05db2ca0824eb86fb8ee65de2f1b020d4c7"
@@ -219,8 +240,14 @@
     "catalog/agents/07_Distinguished_AI_Systems_Architect_LLM_Orchestration_Semantic_Intelligence_Principal_Systems_Engineer_Stability_Entropy_Control.txt": {
       "sha256": "c68a157c8c208ebd7c556ffa5de75b50eb869f8899a917f1dd5f4753f86a0d04"
     },
+    "catalog/agents/07_Universal-Repo-Governor_Multi-Stack_Monorepo_SLSA.txt": {
+      "sha256": "747adf64c3d878cb55924f7913e60a090cae4d2f6612d6d40d18bda5bcf1107c"
+    },
     "catalog/agents/07_Universal_Repo_Governor_Multi_Stack_Monorepo_SLSA.txt": {
       "sha256": "747adf64c3d878cb55924f7913e60a090cae4d2f6612d6d40d18bda5bcf1107c"
+    },
+    "catalog/agents/08_PR302_CI-Governance-Fix-Agent.txt": {
+      "sha256": "e5f5492f05283dad49947cb2aab9cfa344ce91ed07b66ae25b06f12da6306428"
     },
     "catalog/agents/08_PR302_CI_Governance_Fix_Agent.txt": {
       "sha256": "e5f5492f05283dad49947cb2aab9cfa344ce91ed07b66ae25b06f12da6306428"
@@ -228,14 +255,74 @@
     "catalog/agents/BIO_DIGITAL_S12_2026_2.yaml": {
       "sha256": "43b839b763ff3f05fe5798c481c3efc718071575f8c187877ab0180daf9307ba"
     },
+    "catalog/agents/CA-ERG_v2026.4_SYSTEM_PROMPT.md": {
+      "sha256": "9c2aa83b80bb94154e5c2d431d6657b326263ecca09b63369a7ab4d159f8c55d"
+    },
+    "catalog/agents/CODEX_PFRI_v2026.5.0.md": {
+      "sha256": "47b1ee88bf4a5f3a427e91ea78433ae9c2c17a78a66c6eae1c403b25c6bf2ab5"
+    },
     "catalog/agents/GHTPO_2026_02.md": {
       "sha256": "fc24f3f9dc74c181bccf98817513db02e5cf6b144e819b5d655993f828b04fec"
     },
     "catalog/agents/GHTPO_v1_0.md": {
       "sha256": "c1f70817e2184888058b31eefa2b2a3f3275801d42ae0b3aa279412862ab7cfe"
     },
+    "catalog/agents/VSMO_v2026.1.0.md": {
+      "sha256": "57238462f884e337c1d2dfeee0f3cf966547056828a89f4072ee4690d6d2f6b5"
+    },
     "catalog/agents/launch_readiness_selector.txt": {
       "sha256": "08f10b6f960916421c244832d4f0ae66acd538f067e35358a756836ba39ead15"
+    },
+    "catalog/index.json": {
+      "sha256": "dac0830f879f73e7f8881aea3fd2eee1ff7b39a772f7ec45dc77ded9031d7500"
+    },
+    "catalog/protocols/GHTPO-2026.02.md": {
+      "sha256": "fc24f3f9dc74c181bccf98817513db02e5cf6b144e819b5d655993f828b04fec"
+    },
+    "catalog/protocols/GHTPO-v1.0.md": {
+      "sha256": "c1f70817e2184888058b31eefa2b2a3f3275801d42ae0b3aa279412862ab7cfe"
+    },
+    "catalog/protocols/product-readiness-regulator.uk.txt": {
+      "sha256": "08f10b6f960916421c244832d4f0ae66acd538f067e35358a756836ba39ead15"
+    },
+    "catalog/stacks/BIO-DIGITAL-S12/BIO-DIGITAL-S12.yml": {
+      "sha256": "73ff94aaff34ed9879851a5f4208ce28de571c0a37f409538dd3ea5d9510ced9"
+    },
+    "configs/sg.config.json": {
+      "sha256": "77b6152dd4737908b4256827ea24c793046621f0663d01a18b679fa4f9069999"
+    },
+    "configs/sg.config.schema.json": {
+      "sha256": "8c12d50bacec508a633dcce893e19b583908b6e7f3cbb9e839f94317f453f497"
+    },
+    "exoneural_governor/__init__.py": {
+      "sha256": "b576d15ec3b4344fd45759081e26534d0407d1f8f45362a8c7136eb2efe0ceb3"
+    },
+    "exoneural_governor/catalog.py": {
+      "sha256": "5f9a161f1c399de0cc3ea69e97046879473f5debf71dedfa99a036bd2aca77e6"
+    },
+    "exoneural_governor/cli.py": {
+      "sha256": "dd970f6992e09b7f20e4abefa9fd52dae534fd123fa3214f23c2ad8fcc2f3833"
+    },
+    "exoneural_governor/config.py": {
+      "sha256": "498d8d448cfe8ab623d5ac0e329eb4499cc99cee21fd3635163b3af0c25c1dda"
+    },
+    "exoneural_governor/inventory.py": {
+      "sha256": "2999f2043e287ca28bfbc5f008311e0b2bf436358a428f4244fdb37307ecb85d"
+    },
+    "exoneural_governor/manifest.py": {
+      "sha256": "b932df358873b34d5025888074d90a4f67ef99c00799fbf04ef812854a71a1a9"
+    },
+    "exoneural_governor/redaction.py": {
+      "sha256": "398e830098ff072d4b626cdd1cd46c125ecd06f0b2799866de4fec2c4bb30e7c"
+    },
+    "exoneural_governor/release.py": {
+      "sha256": "4350afd500dac5ef3e88118aacf79d34146c466b11bd93aa3b0ff1a2c6996c4e"
+    },
+    "exoneural_governor/util.py": {
+      "sha256": "8731ba0fda88225b5117e2b8c63e7278169b573a66692fc2f465fd26c0db3581"
+    },
+    "exoneural_governor/vr.py": {
+      "sha256": "d6e5dbeb390ea914b5020163b3f281bfb10e69cb180e467e7d175fc217b056dd"
     },
     "objects/dse-fix-opt/CHANGELOG.md": {
       "sha256": "bb6b7628c1ecdbc925145c11ba0c801d319485e120b653d15cce0bb3f1e5798f"
@@ -246,9 +333,6 @@
     "objects/dse-fix-opt/MANIFEST.json": {
       "sha256": "9ecd3eca34ae2ad6377cee9fedbe7c8140e1ab40b4837f4665c38ee3990fb991"
     },
-    "objects/dse-fix-opt/artifacts/evidence/.gitkeep": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
     "objects/dse-fix-opt/artifacts/evidence/reference/eval/report.json": {
       "sha256": "5abcb7b8693dfa0044c707e244c40ffe1ffb2b94e3994730d6fc858cdc41f285"
     },
@@ -256,10 +340,10 @@
       "sha256": "75384c4ea3f9f536e63f493ab8e31788336d22d0a549c58258df7a32cccdaafb"
     },
     "objects/dse-fix-opt/eval/graders.py": {
-      "sha256": "c1dfb51f3fe7dc5c8a027c83c2eec04a0fcab9652b791eefe10296269c9d1a58"
+      "sha256": "55ecfdec5bbe444669b6ee9928a505e675a9092e6f3760436cae1db7ea1be5a2"
     },
     "objects/dse-fix-opt/eval/run_harness.py": {
-      "sha256": "36c81fcd3220c0cddfaac6df42f74fad4d91aedba0aaa368e1378416b09963e9"
+      "sha256": "901591243200ad2826ecb0dee6b8efba71d3b001a994ad73ed1c21b064de9e27"
     },
     "objects/dse-fix-opt/examples/adversarial/secret_exfiltration.md": {
       "sha256": "998039a53e07ea68a5bbd68703a5d010feefb9df04398d007f4b0097d07d507c"
@@ -279,9 +363,6 @@
     "objects/pr-orchestrator/PR-ORCH_IO-BUNDLE_v1_0_0.md": {
       "sha256": "e94ab8dfeb0d28fefa7c9d5a05cc06507f5a9197713fa35030b2a85d69d0367b"
     },
-    "objects/pr-orchestrator/artifacts/evidence/.gitkeep": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
     "objects/pr-orchestrator/artifacts/evidence/reference/eval/report.json": {
       "sha256": "e2d53c7ccb63d6c12931373209bb773d9154803049f0823730739423a66206ea"
     },
@@ -289,10 +370,10 @@
       "sha256": "ac4aaf24d3cadf53ea2f5d422a690ef82f03cc5dba8b06928d02f0c177ce8c11"
     },
     "objects/pr-orchestrator/eval/graders.py": {
-      "sha256": "c1dfb51f3fe7dc5c8a027c83c2eec04a0fcab9652b791eefe10296269c9d1a58"
+      "sha256": "55ecfdec5bbe444669b6ee9928a505e675a9092e6f3760436cae1db7ea1be5a2"
     },
     "objects/pr-orchestrator/eval/run_harness.py": {
-      "sha256": "0c259790acc2ceca004425d507062f2b71dc797e37944eeefb9eab9e487e7971"
+      "sha256": "028744df6c90b7383bf8c7558f6c03db0aa59644b6b0b68bf0339b022eccc832"
     },
     "objects/pr-orchestrator/examples/adversarial/disable_security.md": {
       "sha256": "32428e078e2d849fb1583437fc22f10a4305d75de714fbf4ec6349791703c40a"
@@ -310,10 +391,13 @@
       "sha256": "10d8d54318449dc76afbb54f37570f85e8cad8fc648d9dbc2cf658a84677ea6a"
     },
     "pyproject.toml": {
-      "sha256": "cb50222197f5fddd085211bdee03b1dff2f00248f2b6b192555171fff6e2fe07"
+      "sha256": "1ea8664995bbedd9104d9d9dcb75a749e3639798499e5f36c86bc7bc4c077bb9"
     },
     "requirements-dev.txt": {
-      "sha256": "dd2eef0f42e289ade190337a42b8fb23686495ec6ef00a0580ec5d0eafa257ad"
+      "sha256": "789adb96f8e4bb52bf29bd3f58713efa8d4323ae1e22223eefd65197f668ba4a"
+    },
+    "requirements.lock": {
+      "sha256": "c6510e2d2bfbd08ae31ee9d1042c91e2d748cca5b1c58a6fd879ae32f5fb073c"
     },
     "schemas/eval_report.schema.json": {
       "sha256": "bba1736cda56c1ca9f0a18f2d88179ae8b0e36f5a8be03cd0ed41c35007cb9d1"
@@ -325,348 +409,120 @@
       "sha256": "406664a58f9f5ff0a47aadecb5db5cd0c5ff8748ce09a6b1a7c2571d12f8239f"
     },
     "scripts/arsenal.py": {
-      "sha256": "9b462a7d75b827ab9bb5ececbfd88b7a5abe66dcebfad5958952bbbd0aed21d3"
+      "sha256": "e5dc0f9560a3452bea44bea29b05e1251f80f015aa43892d05cfabea29661629"
+    },
+    "scripts/bootstrap_env.py": {
+      "sha256": "13478f8f1e7e36440b782766e3f1407ba8f9fca4fd3b9b719522c6a0108df2c5"
     },
     "scripts/rebuild_catalog_index.py": {
-      "sha256": "dce211c692351a59e9e34e4a7122c0ea3a96ef69d15a8b41c98ff0070afb8ffb"
+      "sha256": "986ccdc8b168188b38deadea00a93a1e46a9e30f7c238f25e78bff3a7a68c2e5"
     },
     "scripts/rebuild_checksums.py": {
-      "sha256": "fc91f068ea919807b7e3c1586f6ee598085762400000fc7095c2007419f11470"
+      "sha256": "d72bb9b31c0d20382533be51f87ae666fab569078188c2e10ffe04e704cc71f0"
     },
     "scripts/run_object_evals.py": {
-      "sha256": "e8ca4e8233b959ecfb6c95ec3f4c8f74c561ebd86f6adc5bcde0cef7fb890011"
+      "sha256": "fb0a0961cb7bb9924931d65b052bcbc19c891362d3df99a74a8b2b026d35a256"
     },
     "scripts/schema_validate.py": {
-      "sha256": "d72ca91a9d2a1b005ea4c8d3ea033c41298e16806774ff9fb408c207f8edafe8"
+      "sha256": "3ca0da54d61a43935468c33abcb7dba9d23ebb19fa974657d290525ff65d088a"
     },
     "scripts/validate_arsenal.py": {
-      "sha256": "9358f3d7f3f4550bc20ccd690b594f273c5cb35da24ff3e070a724cacd27f29b"
+      "sha256": "018a6ff35bcb3145de33730905737053db6da1bf60f9bd720b6117b7d2aef88e"
     },
     "tests/test_repo_invariants.py": {
-      "sha256": "302d46b4da7e2d47557246e204438ee00fc37bad5c8a44ffa7276a828a3a4df1"
+      "sha256": "b4a6a51292790f1fd85ea4b13827fe73a894dd88a85af72cc5d2b782ea500dd3"
     },
-    "tools/exoneural-singularity-stack/.github/actions/pin-pip/action.yml": {
-      "sha256": "24a04f2b14c01691823d1a7a5906bd0b281aa740724d7d42e6df1637a30db151"
+    "tests/test_stack.py": {
+      "sha256": "8d44a31c5140fdea9f73d1cefd2ee61a2105096ec8809b859d49ad2453e1982f"
     },
-    "tools/exoneural-singularity-stack/.github/workflows/ci.yml": {
-      "sha256": "3ed6d9b9df861155797e7ade0130578912229e10fef7ef3f14fd84ff1ba869c7"
-    },
-    "tools/exoneural-singularity-stack/.gitignore": {
-      "sha256": "2343b861ff742776e215b4e34ebd0bbb2eccfdb52d19978a9112ee444f9451f6"
-    },
-    "tools/exoneural-singularity-stack/LICENSE": {
-      "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685"
-    },
-    "tools/exoneural-singularity-stack/Makefile": {
-      "sha256": "05fabd961b1343485c71cf728a202637647b1d138cfe90cd279b9db1f480bdc3"
-    },
-    "tools/exoneural-singularity-stack/README.md": {
-      "sha256": "8f6ded0997f234c498cca30b9646d5b53322b766d5fca04f81f39248fe28a5f1"
-    },
-    "tools/exoneural-singularity-stack/SECURITY.redaction.yml": {
-      "sha256": "518f57036835b352d9b2f19f923638abe23c23c94ff2d01accface17b08db462"
-    },
-    "tools/exoneural-singularity-stack/VR.json": {
-      "sha256": "8aa6409a1d263280185d65786f86a7fad1c8dd7f5d70b5fdc0f775cffcf72a69"
-    },
-    "tools/exoneural-singularity-stack/_STRIPPED_FOR_GITHUB.md": {
-      "sha256": "eb9221b8c6ce29163224352efd418ff57dd602e662a100ce7329cb2015bb31f4"
-    },
-    "tools/exoneural-singularity-stack/artifacts/.gitkeep": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/cmd0.stderr.txt": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/cmd0.stdout.txt": {
-      "sha256": "c2bdbb772be601fb7afcfe3ab9acdccd7128d8e0a167803de4dde8b7985c1ae9"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/cmd1.stderr.txt": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/cmd1.stdout.txt": {
-      "sha256": "63511facf062584b97b8fe07debe477127b00e13fb3c49c949167b84392e1138"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/cmd2.stderr.txt": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/cmd2.stdout.txt": {
-      "sha256": "cb64a3a0ddcaff0ce013ea3612beda0be4a4d3537087505bd8850d8f8476f4f8"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/cmd3.stderr.txt": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/cmd3.stdout.txt": {
-      "sha256": "dc2433d44a31035690ed2b1053db46d93330e46c13711bb25037b5fe98b6a2c1"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/aae8fc3edd426317/REPORTS/inventory/inventory.json": {
-      "sha256": "cb56e79a7d6ba52e739229b18458359f5389f0edc06e37d169d091a7fbf2ec43"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/ca6db3ef9fc931d7/REPORTS/inventory/cmd0.stderr.txt": {
-      "sha256": "d2b35cacadc66b7fad8dedd1be5244e17150a6625978c9330f831bd7a9cd6b1e"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/ca6db3ef9fc931d7/REPORTS/inventory/cmd0.stdout.txt": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/ca6db3ef9fc931d7/REPORTS/inventory/cmd1.stderr.txt": {
-      "sha256": "d2b35cacadc66b7fad8dedd1be5244e17150a6625978c9330f831bd7a9cd6b1e"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/ca6db3ef9fc931d7/REPORTS/inventory/cmd1.stdout.txt": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/ca6db3ef9fc931d7/REPORTS/inventory/cmd2.stderr.txt": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/ca6db3ef9fc931d7/REPORTS/inventory/cmd2.stdout.txt": {
-      "sha256": "cb64a3a0ddcaff0ce013ea3612beda0be4a4d3537087505bd8850d8f8476f4f8"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/ca6db3ef9fc931d7/REPORTS/inventory/cmd3.stderr.txt": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/ca6db3ef9fc931d7/REPORTS/inventory/cmd3.stdout.txt": {
-      "sha256": "dc2433d44a31035690ed2b1053db46d93330e46c13711bb25037b5fe98b6a2c1"
-    },
-    "tools/exoneural-singularity-stack/artifacts/evidence/20260220/ca6db3ef9fc931d7/REPORTS/inventory/inventory.json": {
-      "sha256": "3558284ce2cafa6feb775834aa9057ae509b6d7d7b7336c85b19783f27e8c5e1"
-    },
-    "tools/exoneural-singularity-stack/artifacts/reports/catalog.validate.json": {
-      "sha256": "842b6f884b87f248b10bf920251369005ec75b0b8daf1132fd5f576ac372bef1"
-    },
-    "tools/exoneural-singularity-stack/artifacts/tmp/head.stderr": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    "tools/exoneural-singularity-stack/artifacts/tmp/head.stdout": {
-      "sha256": "c2bdbb772be601fb7afcfe3ab9acdccd7128d8e0a167803de4dde8b7985c1ae9"
-    },
-    "tools/exoneural-singularity-stack/artifacts/tmp/vr_report.json": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    "tools/exoneural-singularity-stack/artifacts/tmp/vr_report.stderr": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/01_PR-Orchestrator_Repo-Readiness-Governor.txt": {
-      "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/01_Principal_Research_Engineer_Scientific_Simulation_Systems_Staff_ML_Infrastructure_Engineer_Reproducibility_CI.txt": {
-      "sha256": "d228d373ea96864198cfec9e71fe94704c095995dff0c6c36ae8255ebf229b9e"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/02_Staff_Platform_Engineer_Integration_Site_Reliability_Engineer_Production_Readiness.txt": {
-      "sha256": "b5f82b4071a8d9b6a0c18c9f3f9456e649d6a9f377f13adb84df7bc150177310"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/02_Test-Reliability_Flake-Elimination-Agent.txt": {
-      "sha256": "012a6d5e3063c87207e3e69af9b1e2fcc65ba49435d763d3762cbb16683a258e"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/03_Distinguished_Software_Engineer_Quality_Verification_Performance_Principal_Security_Engineer_AppSec_Supply_Chain.txt": {
-      "sha256": "a210e256ee77b7838d7f0d6365f0fe062f884b37651fc29a246174ed338584d2"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/03_Docs-Quickstart_Onboarding-Agent.txt": {
-      "sha256": "4d76ac75c876727d10f9f486fe051034ca37b8b83b0bb93bf5ef599a6df946e9"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/04_Principal_Software_Engineer_Release_Engineering_Staff_Developer_Experience_Engineer_Packaging_Installability.txt": {
-      "sha256": "f8cbd78c93992ec27eb774830edf550c7e85e675bc08b34579e70fcc03b6e989"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/04_Security_Supply-Chain-Hardening-Agent.txt": {
-      "sha256": "3a49beb9560d7244696d24f4f60643a95b7575b1ccb8dc1e1dcd132d3a1f673d"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/05_Security-PR_Finisher_Merge-Ready-Meta.txt": {
-      "sha256": "c599063097f11d303b2f7e9962c3a23c0f76dfae1005b620b480c90cd68bef34"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/06_DSE_Codebase-Fixer-Optimizer_99.txt": {
-      "sha256": "2e80736d03a13f83cdb647400924e05db2ca0824eb86fb8ee65de2f1b020d4c7"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/06_Principal_Applied_Scientist_Semantic_Mining_Staff_Knowledge_Systems_Engineer_KG_Retrieval_Orchestration.txt": {
-      "sha256": "cd77db7c213cdd8a02421248a992af35ae457a75c367c10ddff283a24d178faa"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/07_Distinguished_AI_Systems_Architect_LLM_Orchestration_Semantic_Intelligence_Principal_Systems_Engineer_Stability_Entropy_Control.txt": {
-      "sha256": "c68a157c8c208ebd7c556ffa5de75b50eb869f8899a917f1dd5f4753f86a0d04"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/07_Universal-Repo-Governor_Multi-Stack_Monorepo_SLSA.txt": {
-      "sha256": "747adf64c3d878cb55924f7913e60a090cae4d2f6612d6d40d18bda5bcf1107c"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/08_PR302_CI-Governance-Fix-Agent.txt": {
-      "sha256": "e5f5492f05283dad49947cb2aab9cfa344ce91ed07b66ae25b06f12da6306428"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/CA-ERG_v2026.4_SYSTEM_PROMPT.md": {
-      "sha256": "9c2aa83b80bb94154e5c2d431d6657b326263ecca09b63369a7ab4d159f8c55d"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/CODEX_PFRI_v2026.5.0.md": {
-      "sha256": "47b1ee88bf4a5f3a427e91ea78433ae9c2c17a78a66c6eae1c403b25c6bf2ab5"
-    },
-    "tools/exoneural-singularity-stack/catalog/agents/VSMO_v2026.1.0.md": {
-      "sha256": "57238462f884e337c1d2dfeee0f3cf966547056828a89f4072ee4690d6d2f6b5"
-    },
-    "tools/exoneural-singularity-stack/catalog/index.json": {
-      "sha256": "aaf8953b7065bf3b2e788b9537d87b1e3d5c3e8a7cbf3cab8c63e3b72c68883c"
-    },
-    "tools/exoneural-singularity-stack/catalog/protocols/GHTPO-2026.02.md": {
-      "sha256": "fc24f3f9dc74c181bccf98817513db02e5cf6b144e819b5d655993f828b04fec"
-    },
-    "tools/exoneural-singularity-stack/catalog/protocols/GHTPO-v1.0.md": {
-      "sha256": "c1f70817e2184888058b31eefa2b2a3f3275801d42ae0b3aa279412862ab7cfe"
-    },
-    "tools/exoneural-singularity-stack/catalog/protocols/product-readiness-regulator.uk.txt": {
-      "sha256": "08f10b6f960916421c244832d4f0ae66acd538f067e35358a756836ba39ead15"
-    },
-    "tools/exoneural-singularity-stack/catalog/stacks/BIO-DIGITAL-S12/BIO-DIGITAL-S12.yml": {
-      "sha256": "73ff94aaff34ed9879851a5f4208ce28de571c0a37f409538dd3ea5d9510ced9"
-    },
-    "tools/exoneural-singularity-stack/catalog/stacks/BIO-DIGITAL-S12/BIO-DIGITAL-S12_2026.2.yaml": {
-      "sha256": "43b839b763ff3f05fe5798c481c3efc718071575f8c187877ab0180daf9307ba"
-    },
-    "tools/exoneural-singularity-stack/catalog/stacks/BIO-DIGITAL-S12/README.md": {
-      "sha256": "154d951d265405a2d3c8fa0807bc236d126503f47d2cc95a155b29c7c34d5a2c"
-    },
-    "tools/exoneural-singularity-stack/configs/sg.config.json": {
-      "sha256": "11b70d870ae6dbc62f089080059280047b6fef6005536922452a6e3c1ef98ec9"
-    },
-    "tools/exoneural-singularity-stack/configs/sg.config.schema.json": {
-      "sha256": "b6c776456ad74c07da02bf894f61545afeacf24ab72d51cc3860c9e486685bb2"
-    },
-    "tools/exoneural-singularity-stack/exoneural_governor/__init__.py": {
-      "sha256": "b576d15ec3b4344fd45759081e26534d0407d1f8f45362a8c7136eb2efe0ceb3"
-    },
-    "tools/exoneural-singularity-stack/exoneural_governor/catalog.py": {
-      "sha256": "22ba5635365a55b875f05f0eb1e628e1c53d45aae7a350632f8151c64be64241"
-    },
-    "tools/exoneural-singularity-stack/exoneural_governor/cli.py": {
-      "sha256": "182a9ac6313c02b8345034e43694edbc47b7d56e9db9bb010fcb77eb2317adc9"
-    },
-    "tools/exoneural-singularity-stack/exoneural_governor/config.py": {
-      "sha256": "148c9dffe71b1963cf7b207f76adede77c4fc587c4a22ebf3f907ac37122f364"
-    },
-    "tools/exoneural-singularity-stack/exoneural_governor/inventory.py": {
-      "sha256": "71a7bdc34277b99ceeef5b0596966971e7eebc904e179fb409e9eb3a597e41ed"
-    },
-    "tools/exoneural-singularity-stack/exoneural_governor/manifest.py": {
-      "sha256": "ef0cf2e8e20619e4365588b2011b8b86897ff405562864b77ef4d8d68f0ba122"
-    },
-    "tools/exoneural-singularity-stack/exoneural_governor/redaction.py": {
-      "sha256": "78d4f0b179e833748c0759ecb40d6deb58e8ae0b50272b3fd2daa38059d632b4"
-    },
-    "tools/exoneural-singularity-stack/exoneural_governor/release.py": {
-      "sha256": "da4e88c3ff87b401164a58f1bd1cfbd9eb295ac49fd29e1d2bd1e644c29ed703"
-    },
-    "tools/exoneural-singularity-stack/exoneural_governor/util.py": {
-      "sha256": "da4b705eb71908bbf4f7ba2028d157f563600e813740bccf3a705a65ebf68383"
-    },
-    "tools/exoneural-singularity-stack/exoneural_governor/vr.py": {
-      "sha256": "2e3104318778331f9f51b71d22297f73646022de6e94ef228ee988b578cbdebb"
-    },
-    "tools/exoneural-singularity-stack/exoneural_singularity_stack.egg-info/PKG-INFO": {
-      "sha256": "64ecd4246bff92032889785da6e5fc30cc46f47e3bcbab3759a139699ecc372b"
-    },
-    "tools/exoneural-singularity-stack/exoneural_singularity_stack.egg-info/SOURCES.txt": {
-      "sha256": "136c6d12d6a718a087e960db718b64baa3a38c345b12de06c976801a4df77701"
-    },
-    "tools/exoneural-singularity-stack/exoneural_singularity_stack.egg-info/dependency_links.txt": {
-      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
-    },
-    "tools/exoneural-singularity-stack/exoneural_singularity_stack.egg-info/entry_points.txt": {
-      "sha256": "e1f362dae90792c90098a1f889fa6fb0affe4e356349971c781ec07370ffd850"
-    },
-    "tools/exoneural-singularity-stack/exoneural_singularity_stack.egg-info/requires.txt": {
-      "sha256": "9a53e5eecf5e306145cbd31e378f18df9cccc985fb25a312ebefb03c9221cb82"
-    },
-    "tools/exoneural-singularity-stack/exoneural_singularity_stack.egg-info/top_level.txt": {
-      "sha256": "da10a226cba6ed849e1404e007a25773735cf80a30e2029ff19966284489d5cd"
-    },
-    "tools/exoneural-singularity-stack/pyproject.toml": {
-      "sha256": "7421d7dd2fe8019928aa67ab8d10ba073e53a04c533be047834243c654d7fd74"
-    },
-    "tools/exoneural-singularity-stack/requirements.lock": {
-      "sha256": "92c867366b27fc619902891919b168ae6f2cce49a7021a42085d2a6f0c167bbc"
-    },
-    "tools/exoneural-singularity-stack/tests/test_stack.py": {
-      "sha256": "a6cca3ce5568afc14b2230d041eca1cbbaea6150e53ff8fc2c339e883fde9ff0"
-    },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/CG.json": {
+    "vendor/scpe-cimqa-2026.3.0/CG.json": {
       "sha256": "efdeb908577cd4aeea0710b53aea66c691ca0a659301dee99b75680ef3b66b04"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/ERM.yml": {
+    "vendor/scpe-cimqa-2026.3.0/ERM.yml": {
       "sha256": "3674f4adf8eedb0b6fde2b12432708d07a28659e0b31727b4ee3ebfbb87b0c7a"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/GM.yml": {
+    "vendor/scpe-cimqa-2026.3.0/GM.yml": {
       "sha256": "ea930b548e5f57248153777a623d78a49ce8b9ae91ba8c8716954648ba81f224"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/IM.yml": {
+    "vendor/scpe-cimqa-2026.3.0/IM.yml": {
       "sha256": "8e3d9c2937844be4835fbe8a3fea1fbbbab4f7c8cba71dfbcba1e70c64717164"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/META-EBS-2026.3.yml": {
+    "vendor/scpe-cimqa-2026.3.0/META-EBS-2026.3.yml": {
       "sha256": "1765c9a047d40d05be77b89869cc3836bfe0cbed77916b1cc8870308fbb096dc"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/OH.yml": {
+    "vendor/scpe-cimqa-2026.3.0/OH.yml": {
       "sha256": "d61779c18d2087538999d87374eb8ae4ef8c86a335c2804d22006b24a8d21ef9"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/PA.txt": {
+    "vendor/scpe-cimqa-2026.3.0/PA.txt": {
       "sha256": "b3208226120d9d8139461e0a44f2dedfadcf7f7d8c3e00f74bcd161d4fe41aa3"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/PL.json": {
+    "vendor/scpe-cimqa-2026.3.0/PL.json": {
       "sha256": "5501b2f948bfb217619b65386e8c72ef9b34da188a6d07c723b9cb1bfda4e702"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/PS.md": {
+    "vendor/scpe-cimqa-2026.3.0/PS.md": {
       "sha256": "2a5b9c7dc7cdab22c8e93f9aaf27cf51b3f3a37957b828b55dc7775aefe7a3c3"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/QM.yml": {
+    "vendor/scpe-cimqa-2026.3.0/QM.yml": {
       "sha256": "dc68346f8245f07fd161ee604aaba13a60bdc45d798b2b36fbc0974b495d5595"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/SECURITY.redaction.yml": {
+    "vendor/scpe-cimqa-2026.3.0/SECURITY.redaction.yml": {
       "sha256": "a61ad98f36c25a2ff5a1d61176899fa41b569912a0a7e905bcb59f3939a2ba24"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/VR.json": {
+    "vendor/scpe-cimqa-2026.3.0/VR.json": {
       "sha256": "ed598380b4759a94cef965afffb5c06c190b46439bad91c7dbfaa4261502277a"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/apply_erm_txn.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/apply_erm_txn.py": {
       "sha256": "e635e2f6dc0d6edcc149ce6e3e790f40db09a2d64374f5943546720637932fa3"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/compare_quality.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/compare_quality.py": {
       "sha256": "50462f5bb7b183ce4a8ad0fff7ceb5a149dd295abe08663fecaae7d03d6345e8"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/deadlock_fingerprint.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/deadlock_fingerprint.py": {
       "sha256": "c64ce4e50aa48400ac32222a0164efc0680b44fc28fc5697fd3f4648932202b4"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/decide_gates.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/decide_gates.py": {
       "sha256": "c7dacfbb26cad0e4ece64927bc565f9393969e060758904088d63e708c3ad2f6"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/make_manifest.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/make_manifest.py": {
       "sha256": "8cfc39f401a9f161a45651af187742c2349ba2d27f8e157c8c0cf8863896f8bf"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/make_manifest_meta.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/make_manifest_meta.py": {
       "sha256": "f44a340b4b6701d5a9adb0d3f6907ee9f57633f23cb79f774ee6bc273c2213da"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/observe_inventory.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/observe_inventory.py": {
       "sha256": "a96acd0c1ed9f2f2fe59cd01b3de8063af4b858aa18c4ebbd5ff5e150fc74716"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/observe_meta_state.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/observe_meta_state.py": {
       "sha256": "5b4235bd1f16ed48c22248c97f02f023f94be5b04605f2f894be3cb4f65c86d1"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/prove_meta_validity.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/prove_meta_validity.py": {
       "sha256": "8dcbf464f9c6d74ef6e4882e0a8c0fd8849462197f05207e56c5ce03ce1c105a"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/redaction.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/redaction.py": {
       "sha256": "1a32f66087832dfd2a16c571bf33a94bfe30b82a2d4e8b8d0f4b1645a1090c65"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/render_oh_output.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/render_oh_output.py": {
       "sha256": "5399d4bef027cd772ef22dc1e2e7414899672591b1769d9562de92ca8c1101f0"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/run_interpreter.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/run_interpreter.py": {
       "sha256": "61d962ed5550df704cabadc996a56f42a29fde79002897c9f603fbf05e28ba35"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/run_quality_suite.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/run_quality_suite.py": {
       "sha256": "99733aee0e80556cbaee021fa8570d9aece94b86fea54be61544acdab382fbf7"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/score_quality.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/score_quality.py": {
       "sha256": "3d90821b9d473d35216fa92072a6d76468fb85cd4cd62600987412d8b47d0f92"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/select_erm_txn.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/select_erm_txn.py": {
       "sha256": "08b2eaf78724c8d07526cfb710f88872e1c6cee6670cbfe3a17860508118abea"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/validate_erm_ast.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/validate_erm_ast.py": {
       "sha256": "6b55a133adaa6f320ec4bb0fce0b60962fef43bbf8699fea6329c513548e1a45"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/validate_interpretation.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/validate_interpretation.py": {
       "sha256": "28f3c55e543aa1bb53eaec8cfa3fb8354c05b4f15722539a4b2cfa542c681db4"
     },
-    "tools/exoneural-singularity-stack/vendor/scpe-cimqa-2026.3.0/tools/validate_quality_reports.py": {
+    "vendor/scpe-cimqa-2026.3.0/tools/validate_quality_reports.py": {
       "sha256": "acf2cfe2251ca9918fca2eeb6a26d2861748579b74cb8171028387efc6e1488e"
     }
   },

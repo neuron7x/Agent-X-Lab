@@ -15,7 +15,12 @@ def inventory(repo_root: Path, out_dir: Path) -> dict:
     ]
     results = []
     for i, argv in enumerate(commands):
-        res = run_cmd(argv, cwd=repo_root, stdout_path=out_dir / f"cmd{i}.stdout.txt", stderr_path=out_dir / f"cmd{i}.stderr.txt")
+        res = run_cmd(
+            argv,
+            cwd=repo_root,
+            stdout_path=out_dir / f"cmd{i}.stdout.txt",
+            stderr_path=out_dir / f"cmd{i}.stderr.txt",
+        )
         results.append(res.__dict__)
 
     inv = {

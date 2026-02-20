@@ -10,6 +10,7 @@ Checked artifacts:
 - Each object MANIFEST.json (schemas/object_manifest.schema.json)
 - Eval evidence JSON files (schemas/eval_report.schema.json), if present
 """
+
 from __future__ import annotations
 
 import argparse
@@ -39,8 +40,12 @@ def iter_eval_evidence(repo_root: Path) -> Iterable[Path]:
             yield p
 
 
-def validate_one(validator: Any, instance: Any, schema_name: str, path: Path) -> Tuple[bool, str]:
-    errors = sorted(validator.iter_errors(instance), key=lambda e: list(e.absolute_path))
+def validate_one(
+    validator: Any, instance: Any, schema_name: str, path: Path
+) -> Tuple[bool, str]:
+    errors = sorted(
+        validator.iter_errors(instance), key=lambda e: list(e.absolute_path)
+    )
     if not errors:
         return True, ""
     e = errors[0]
@@ -76,7 +81,9 @@ def main() -> int:
     obj_validator = Draft(obj_schema)
     eval_validator = Draft(eval_schema)
 
-    ok, msg = validate_one(root_validator, root_manifest, "root_manifest", repo_root / "MANIFEST.json")
+    ok, msg = validate_one(
+        root_validator, root_manifest, "root_manifest", repo_root / "MANIFEST.json"
+    )
     if not ok:
         print("FAIL:", msg)
         return 1

@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  PIP_VERSION: "26.0"
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: |
+            requirements.lock
+            requirements-dev.txt
+      - uses: ./.github/actions/pin-pip
+      - name: Install dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install -r requirements.lock
+          python -m pip install -r requirements-dev.txt
+      - name: Ruff lint
+        run: ruff check .
+      - name: Ruff format check
+        run: ruff format --check .
+      - name: Mypy
+        run: mypy .
+      - name: Pytest
+        run: pytest -q
+      - name: Validate
+        run: make validate
+      - name: Eval
+        run: make eval
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-and-eval-${{ matrix.python-version }}
+          if-no-files-found: error
+          path: |
+            artifacts/reports/**
+            objects/*/artifacts/evidence/reference/eval/report.json

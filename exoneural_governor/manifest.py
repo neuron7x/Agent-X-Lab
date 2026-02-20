@@ -17,9 +17,13 @@ class ManifestEntry:
 def build_manifest(root: Path, *, include_globs: Iterable[str] | None = None) -> dict:
     """Create a sha256 manifest for all files under root (deterministic order)."""
     entries: list[ManifestEntry] = []
-    for p in sorted([x for x in root.rglob("*") if x.is_file()], key=lambda x: x.as_posix()):
+    for p in sorted(
+        [x for x in root.rglob("*") if x.is_file()], key=lambda x: x.as_posix()
+    ):
         rel = p.relative_to(root).as_posix()
-        entries.append(ManifestEntry(path=rel, sha256=sha256_file(p), size_bytes=p.stat().st_size))
+        entries.append(
+            ManifestEntry(path=rel, sha256=sha256_file(p), size_bytes=p.stat().st_size)
+        )
 
     obj = {
         "utc": utc_now_iso(),
