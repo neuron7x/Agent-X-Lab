@@ -4,6 +4,13 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   PIP_VERSION: "26.0"
   PYTHONHASHSEED: "0"
@@ -11,6 +18,7 @@ env:
 jobs:
   quality:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     strategy:
       matrix:
         python-version: ["3.11"]
@@ -57,3 +65,14 @@ jobs:
           path: |
             artifacts/reports/**
             objects/*/artifacts/evidence/reference/eval/report.json
+
+  status-check:
+    name: status-check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [quality]
+    if: always()
+    steps:
+      - name: Enforce required job success
+        run: |
+          test "${{ needs.quality.result }}" = "success"

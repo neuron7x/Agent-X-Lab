@@ -56,7 +56,8 @@
       "python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json",
       "ruff check .",
       "ruff format --check .",
-      "set -euo pipefail"
+      "set -euo pipefail",
+      "test \"${{ needs.quality.result }}\" = \"success\""
     ]
   }
 }
