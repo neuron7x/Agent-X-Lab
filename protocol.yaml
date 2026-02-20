@@ -10,15 +10,37 @@ deficits:
 protocol_plan:
   - step_id: P0_REPO_INVENTORY_AND_SSOT
     fixes: [D12_README_DRIFT]
+    impl_paths:
+      - tools/titan9_inventory.py
+      - tools/verify_readme_contract.py
   - step_id: P1_RUFF_FORMAT_ENFORCEMENT
     fixes: [D13_FORMAT_GATE_FAIL]
+    impl_paths:
+      - Makefile
+      - .github/workflows/ci.yml
   - step_id: P9_HARD_DETERMINISM_STAMP_R6
     fixes: [D7_RACE_CONDITION_ID]
+    impl_paths:
+      - exoneural_governor/util.py
+      - exoneural_governor/manifest.py
+      - scripts/rebuild_checksums.py
   - step_id: P10_LAZY_IMPORT_ROBUSTNESS_R6
     fixes: [D8_FRAGILE_DYNAMIC_IMPORT]
+    impl_paths:
+      - scripts/generate_proof_bundle.py
+      - tests/test_generate_proof_bundle.py
   - step_id: P11_CLEAN_ROOM_ISOLATION_R6
     fixes: [D9_HIDDEN_STATE_LEAK]
+    impl_paths:
+      - scripts/run_object_evals.py
+      - exoneural_governor/cli.py
   - step_id: P12_FORMAL_SPEC_CROSS_CHECK_R6
     fixes: [D10_SPEC_DRIFT_UNVERIFIED]
+    impl_paths:
+      - docs/SPEC.md
+      - tools/verify_protocol_consistency.py
   - step_id: P13_DOC_SYNC_R6
     fixes: [D11_DOC_SYNC_GAP]
+    impl_paths:
+      - README.md
+      - docs/SPEC.md

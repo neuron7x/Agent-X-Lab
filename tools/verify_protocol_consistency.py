@@ -17,14 +17,18 @@ def verify(protocol_path: Path) -> dict[str, object]:
         for item in deficits
         if isinstance(item, dict) and isinstance(item.get("id"), str)
     ]
+    deficit_set = set(deficit_ids)
     step_fixes: dict[str, list[str]] = {}
+    step_paths: dict[str, list[str]] = {}
     for step in steps:
         if not isinstance(step, dict):
             continue
         step_id = step.get("step_id")
         fixes = step.get("fixes", [])
+        impl_paths = step.get("impl_paths", [])
         if isinstance(step_id, str):
             step_fixes[step_id] = [f for f in fixes if isinstance(f, str)]
+            step_paths[step_id] = [p for p in impl_paths if isinstance(p, str)]
 
     seen: dict[str, int] = {}
     for fixes in step_fixes.values():
@@ -34,10 +38,25 @@ def verify(protocol_path: Path) -> dict[str, object]:
     missing_deficits = sorted(d for d in deficit_ids if d not in seen)
     duplicate_deficits = sorted(d for d, count in seen.items() if count > 1)
     orphan_steps = sorted(step_id for step_id, fixes in step_fixes.items() if not fixes)
-    unknown_deficits = sorted(d for d in seen if d not in set(deficit_ids))
+    unknown_deficits = sorted(d for d in seen if d not in deficit_set)
+
+    repo_root = protocol_path.resolve().parent
+    steps_missing_impl_paths = sorted(
+        step_id for step_id, paths in step_paths.items() if not paths
+    )
+    missing_impl_paths: dict[str, list[str]] = {}
+    for step_id, paths in step_paths.items():
+        missing = [p for p in paths if not (repo_root / p).exists()]
+        if missing:
+            missing_impl_paths[step_id] = sorted(missing)
 
     passed = not (
-        missing_deficits or duplicate_deficits or orphan_steps or unknown_deficits
+        missing_deficits
+        or duplicate_deficits
+        or orphan_steps
+        or unknown_deficits
+        or steps_missing_impl_paths
+        or missing_impl_paths
     )
     return {
         "pass": passed,
@@ -45,6 +64,8 @@ def verify(protocol_path: Path) -> dict[str, object]:
         "duplicate_deficits": duplicate_deficits,
         "orphan_steps": orphan_steps,
         "unknown_deficits": unknown_deficits,
+        "steps_missing_impl_paths": steps_missing_impl_paths,
+        "missing_impl_paths": missing_impl_paths,
     }
 
 
