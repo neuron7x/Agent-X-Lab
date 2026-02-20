@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Any, Dict
 
@@ -13,7 +14,7 @@ from .util import sha256_bytes, utc_now_iso, write_json, run_cmd, ensure_dir
 
 
 def _work_id(repo_root: Path, cfg: Config) -> str:
-    # Prefer git HEAD when available; otherwise derive a stable local fingerprint.
+    # Prefer git HEAD when available; otherwise require BUILD_ID and derive a stable fingerprint.
     tmp_dir = repo_root / "artifacts" / "tmp"
     ensure_dir(tmp_dir)
     head = run_cmd(
@@ -23,22 +24,26 @@ def _work_id(repo_root: Path, cfg: Config) -> str:
         stderr_path=tmp_dir / "head.stderr",
     )
     if head.exit_code == 0:
-        head_sha = (
+        git_commit = (
             (tmp_dir / "head.stdout")
             .read_text(encoding="utf-8", errors="replace")
             .strip()
         )
-    else:
-        # Fail-soft here: project scaffolds may run before git init.
-        head_sha = "NO_GIT"
+        if git_commit:
+            return git_commit
 
-    # Include catalog index hash for stability.
+    build_id = os.environ.get("BUILD_ID", "").strip()
+    if not build_id:
+        raise ValueError(
+            "E_NO_GIT_NO_BUILD_ID: git commit unavailable; set BUILD_ID for deterministic provenance id."
+        )
+
+    # Include declarative inputs only; never include time/uuid/randomness.
     idx = repo_root / "catalog" / "index.json"
     idx_hash = sha256_bytes(idx.read_bytes()) if idx.exists() else "NO_INDEX"
-
     payload = json.dumps(
         {
-            "head": head_sha,
+            "build_id": build_id,
             "catalog_index": idx_hash,
             "config": {
                 "artifact_name": cfg.artifact_name,
@@ -47,7 +52,7 @@ def _work_id(repo_root: Path, cfg: Config) -> str:
         },
         sort_keys=True,
     ).encode("utf-8")
-    return sha256_bytes(payload)[:16]
+    return sha256_bytes(payload)[:32]
 
 
 def run_vr(cfg: Config, *, write_back: bool = True) -> dict:
