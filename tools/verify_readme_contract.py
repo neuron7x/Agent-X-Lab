@@ -8,13 +8,11 @@ from pathlib import Path
 import yaml
 
 QUICKSTART_HEADER = "## Quickstart"
-SEED_EXPORT = "export PYTHONHASHSEED=0"
-E_README_PYTHONHASHSEED_MISSING = (
-    "E_README_PYTHONHASHSEED_MISSING: README Quickstart must export "
-    "PYTHONHASHSEED=0 before running python tooling."
+QUICKSTART_COMMAND = "make setup && make test && make proof"
+E_README_QUICKSTART_MISSING = (
+    "E_README_QUICKSTART_MISSING: README Quickstart must be exactly 'make setup && make test && make proof'."
 )
-TOOLING_PREFIXES = ("python", "ruff", "mypy", "pytest")
-ALLOWED_README_ONLY_COMMANDS = {SEED_EXPORT}
+E_CI_MAKE_CI_MISSING = "E_CI_MAKE_CI_MISSING: CI workflow must run 'make ci'."
 
 
 def _extract_quickstart_commands(readme_text: str) -> list[str]:
@@ -47,28 +45,6 @@ def _extract_quickstart_commands(readme_text: str) -> list[str]:
     if not commands:
         raise ValueError("No commands found in README Quickstart code blocks")
     return commands
-
-
-def _is_tooling_command(command: str) -> bool:
-    return command.startswith(TOOLING_PREFIXES)
-
-
-def _validate_seed_before_tooling(quickstart_commands: list[str]) -> None:
-    try:
-        seed_index = quickstart_commands.index(SEED_EXPORT)
-    except ValueError as exc:
-        raise SystemExit(E_README_PYTHONHASHSEED_MISSING) from exc
-
-    tooling_index = next(
-        (
-            index
-            for index, cmd in enumerate(quickstart_commands)
-            if _is_tooling_command(cmd)
-        ),
-        None,
-    )
-    if tooling_index is not None and seed_index > tooling_index:
-        raise SystemExit(E_README_PYTHONHASHSEED_MISSING)
 
 
 def _parse_workflow_commands(workflows_dir: Path) -> set[str]:
@@ -108,7 +84,7 @@ def _workflow_seed_violations(workflows_dir: Path) -> list[str]:
                 run_lines = [
                     line.strip() for line in step["run"].splitlines() if line.strip()
                 ]
-                if not any(_is_tooling_command(line) for line in run_lines):
+                if not any(line.startswith(("python", "ruff", "mypy", "pytest", "make")) for line in run_lines):
                     continue
                 step_env = dict(job_env)
                 if isinstance(step.get("env"), dict):
@@ -137,9 +113,13 @@ def main() -> int:
     repo_root = Path.cwd()
     readme_text = args.readme.read_text(encoding="utf-8")
     quickstart_commands = _extract_quickstart_commands(readme_text)
-    _validate_seed_before_tooling(quickstart_commands)
+    if quickstart_commands != [QUICKSTART_COMMAND]:
+        raise SystemExit(E_README_QUICKSTART_MISSING)
 
     workflow_commands = _parse_workflow_commands(args.workflows)
+    if "make ci" not in workflow_commands:
+        raise SystemExit(E_CI_MAKE_CI_MISSING)
+
     seed_violations = _workflow_seed_violations(args.workflows)
     if seed_violations:
         raise SystemExit(
@@ -156,17 +136,16 @@ def main() -> int:
         if isinstance(cmd, str)
     }
 
-    missing_in_ci = sorted(
-        cmd
-        for cmd in quickstart_commands
-        if cmd not in ALLOWED_README_ONLY_COMMANDS
-        and cmd not in workflow_commands
-        and cmd not in canonical_flat
-    )
-    if missing_in_ci:
+    quickstart_parts = [part.strip() for part in QUICKSTART_COMMAND.split("&&")]
+    missing_parts = [
+        part
+        for part in quickstart_parts
+        if part not in canonical_flat and part not in workflow_commands
+    ]
+    if missing_parts:
         raise SystemExit(
             "README commands are not represented in workflow/inventory canonical set: "
-            + ", ".join(missing_in_ci)
+            + ", ".join(missing_parts)
         )
 
     missing_links = _validate_readme_links(repo_root, readme_text)
