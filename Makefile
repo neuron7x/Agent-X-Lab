@@ -3,7 +3,7 @@ export PYTHONHASHSEED
 
 .PHONY: \
 	setup bootstrap fmt format_check fmt-check lint type typecheck test validate eval evals \
-	protocol inventory readme_contract proof check verify all demo ci precommit doctor quickstart clean reset vuln-scan workflow-hygiene action-pinning check_r8
+	protocol inventory readme_contract proof proof-verify check verify all demo ci precommit doctor quickstart clean reset vuln-scan workflow-hygiene action-pinning check_r8
 
 setup:
 	python -m pip install -r requirements.lock
@@ -52,6 +52,11 @@ readme_contract: inventory
 
 proof:
 	python tools/generate_titan9_proof.py --repo-root .
+	python tools/derive_proof.py --evidence artifacts/agent/evidence.jsonl --out artifacts/agent/proof.json
+
+proof-verify:
+	python tools/derive_proof.py --evidence artifacts/agent/evidence.jsonl --out artifacts/agent/proof.derived.json
+	cmp -s artifacts/agent/proof.derived.json artifacts/agent/proof.json
 
 vuln-scan:
 	python tools/pip_audit_gate.py --requirements requirements.lock --requirements requirements-dev.txt --allowlist policies/pip_audit_allowlist.json --out artifacts/security/pip-audit.json
@@ -65,7 +70,7 @@ action-pinning:
 check_r8: check
 	python tools/feg_r8_verify.py
 
-check: doctor format_check lint typecheck test validate evals protocol inventory readme_contract
+check: doctor format_check lint typecheck test validate evals protocol inventory readme_contract workflow-hygiene action-pinning
 
 verify: check
 

@@ -137,7 +137,9 @@ def main() -> int:
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
 
-    pip_audit_version = _pip_audit_version()
+    force_missing = str(
+        __import__("os").environ.get("PIP_AUDIT_FORCE_MISSING", "")
+    ).lower() in {"1", "true", "yes"}
 
     try:
         entries = _load_allowlist(args.allowlist)
@@ -148,7 +150,7 @@ def main() -> int:
             str(exc),
             "fix policies/pip_audit_allowlist.json format",
             4,
-            version=pip_audit_version,
+            version=None,
         )
 
     today = datetime.now(timezone.utc).date()
@@ -162,7 +164,7 @@ def main() -> int:
                     remediation="refresh or remove expired allowlist entries",
                     detail="expired vulnerability allowlist entries detected",
                     exit_code=2,
-                    version=pip_audit_version,
+                    version=None,
                 ),
                 "expired_entries": expired,
             },
@@ -171,6 +173,17 @@ def main() -> int:
         for line in expired:
             print(f"  - {line}")
         return 2
+
+    pip_audit_version = None if force_missing else _pip_audit_version()
+    if force_missing or pip_audit_version is None:
+        return _fail_report(
+            args.out,
+            "pip-audit-missing",
+            "pip-audit is not installed. Run `python -m pip install pip-audit==2.9.0`.",
+            "install pip-audit==2.9.0",
+            3,
+            version=None,
+        )
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
     cmd = [
@@ -213,7 +226,7 @@ def main() -> int:
                     exit_code=proc.returncode,
                     stdout=proc.stdout,
                     stderr=proc.stderr,
-                    version=pip_audit_version,
+                    version=None,
                 ),
             )
         print(
@@ -230,7 +243,7 @@ def main() -> int:
                 remediation="rerun pip-audit with --format json --output <path>",
                 detail="pip-audit succeeded but did not write JSON output",
                 exit_code=5,
-                version=pip_audit_version,
+                version=None,
             ),
         )
         print(

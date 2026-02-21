@@ -37,7 +37,10 @@ def test_scorecard_workflow_has_fail_closed_sarif_contract() -> None:
     scorecard_step = named_steps["Run Scorecard"]
     assert scorecard_step.get("id") == "scorecard"
     assert scorecard_step.get("continue-on-error") is True
-    assert scorecard_step.get("uses") == "ossf/scorecard-action@v2.3.1"
+    assert (
+        scorecard_step.get("uses")
+        == "ossf/scorecard-action@62b7fcb92755d80d6e46e3f6d2f13213dcd89f05"
+    )
     assert scorecard_step.get("with", {}).get("results_format") == "sarif"
     assert scorecard_step.get("with", {}).get("results_file") == (
         "artifacts/security/scorecard-results.sarif"
@@ -51,7 +54,10 @@ def test_scorecard_workflow_has_fail_closed_sarif_contract() -> None:
 
     assert "Upload Scorecard SARIF to code scanning" in named_steps
     upload_cs = named_steps["Upload Scorecard SARIF to code scanning"]
-    assert upload_cs.get("uses") == "github/codeql-action/upload-sarif@v3"
+    assert (
+        upload_cs.get("uses")
+        == "github/codeql-action/upload-sarif@b8f6507f3f5d3b9332f3d3e6585f6f8eecc65c0a"
+    )
     assert upload_cs.get("with", {}).get("sarif_file") == (
         "artifacts/security/scorecard-results.sarif"
     )

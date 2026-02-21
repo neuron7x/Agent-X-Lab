@@ -44,6 +44,8 @@ def test_main_writes_report_when_pip_audit_missing(tmp_path: Path) -> None:
     out = tmp_path / "pip-audit.json"
     allow = tmp_path / "allow.json"
     allow.write_text('{"ignore": []}\n', encoding="utf-8")
+    env = dict(__import__("os").environ)
+    env["PIP_AUDIT_FORCE_MISSING"] = "1"
     proc = subprocess.run(
         [
             sys.executable,
@@ -58,6 +60,7 @@ def test_main_writes_report_when_pip_audit_missing(tmp_path: Path) -> None:
         cwd=REPO_ROOT,
         capture_output=True,
         text=True,
+        env=env,
     )
     assert proc.returncode == 3
     assert out.exists()

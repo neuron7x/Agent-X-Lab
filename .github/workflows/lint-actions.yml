@@ -23,7 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: reviewdog/action-actionlint@v1
-        with:
-          fail_level: error
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+      - name: Workflow hygiene gate
+        run: python tools/verify_workflow_hygiene.py
+      - name: Action pinning gate
+        run: python tools/verify_action_pinning.py
