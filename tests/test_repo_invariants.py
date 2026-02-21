@@ -123,5 +123,6 @@ def test_manifest_checksums_exclude_transient_artifacts() -> None:
         or p.startswith("artifacts/feg_r8/")
         or p.startswith("artifacts/titan9/")
         or p.startswith("artifacts/security/")
+        or p.startswith("artifacts/agent/")
     ]
     assert bad == [], f"transient artifacts must not be checksummed: {bad}"

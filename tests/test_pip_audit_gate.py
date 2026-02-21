@@ -62,7 +62,11 @@ def test_main_writes_report_when_pip_audit_missing(tmp_path: Path) -> None:
     assert proc.returncode == 3
     assert out.exists()
     payload = json.loads(out.read_text(encoding="utf-8"))
-    assert payload["reason"] == "pip_audit_missing"
+    assert payload["reason_code"] == "pip-audit-missing"
+    assert payload["remediation"] == "install pip-audit==2.9.0"
+    assert payload["status"] == "error"
+    assert payload["tool"] == "pip-audit"
+    assert payload["version"] is None
 
 
 def test_main_writes_report_on_allowlist_parse_error(tmp_path: Path) -> None:
@@ -86,4 +90,22 @@ def test_main_writes_report_on_allowlist_parse_error(tmp_path: Path) -> None:
     )
     assert proc.returncode == 4
     payload = json.loads(out.read_text(encoding="utf-8"))
-    assert payload["reason"] == "allowlist_parse_error"
+    assert payload["reason_code"] == "allowlist-parse-error"
+    assert payload["status"] == "error"
+    assert payload["tool"] == "pip-audit"
+    assert payload["version"] is None
+
+
+def test_fail_report_for_missing_tool_has_expected_remediation(tmp_path: Path) -> None:
+    out = tmp_path / "pip-audit.json"
+    rc = pip_audit_gate._fail_report(
+        out,
+        "pip-audit-missing",
+        "pip-audit is not installed. Run `python -m pip install pip-audit==2.9.0`.",
+        "install pip-audit==2.9.0",
+        3,
+    )
+    assert rc == 3
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["reason_code"] == "pip-audit-missing"
+    assert payload["remediation"] == "install pip-audit==2.9.0"
