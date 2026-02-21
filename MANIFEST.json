@@ -145,7 +145,7 @@
       "sha256": "7396b398eead8d78d36007a9c2c2296fdfdb37565190e1a581a900c0f75ff405"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "099facf9361fab2a586ffd820a169ddb953b9ffbd32295ffa81a79d74d09ccaa"
+      "sha256": "be7a5de0d5c7db7ddd7d64a857679d41b94e9d6fbdf441429ecdbb282a13d36a"
     },
     ".github/workflows/lint-actions.yml": {
       "sha256": "c9ced8eb40bc3c9f92e51c2173b9a3c00e07c2d9ef5866d2f74b7327fd8a3b34"
@@ -166,10 +166,10 @@
       "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685"
     },
     "Makefile": {
-      "sha256": "bb54797ac3feb5b29e97081aed45ff1ee9ed3bdb170614d4b94567bb34c9084a"
+      "sha256": "3dec1156927f97138bd8a2fe1321a7f618533fde8a3bfadcbf4d5ab3b2beabc2"
     },
     "README.md": {
-      "sha256": "3eaa2e16c68842af2756b22e6df67a406b377877893964b2187a5bbbce255087"
+      "sha256": "36ae67b3e6386bceee2575182d0b9f09981d935a5f838d579f948beca7330286"
     },
     "SECURITY.md": {
       "sha256": "5715b12ebe6bcecf93a736a48d6d22881428f241e22c7bdd383aec8d2f1b0bc8"
@@ -202,16 +202,16 @@
       "sha256": "1dacd8a6edc4484e7395a4b42e94273e793ae040d51b33f2b06b17c096388afc"
     },
     "artifacts/titan9/hashes.json": {
-      "sha256": "abb107190c1af79048e110d5407ae621dba0f6d0d81a1b6e2ddd8228e41a3882"
+      "sha256": "61c20a88dc075caab95e4181bb34ec03ba5743c1bab10d0d58fbabd0717366ca"
     },
     "artifacts/titan9/inventory.json": {
-      "sha256": "e75e5728bf7c3c71c7604abc98c2de98b1c61272384163941a33fe9d5b0c7ba5"
+      "sha256": "af595a0c3d552668ebefc2b2a082516efd978af5feb17699a9ec57ef04a8b3f9"
     },
     "artifacts/titan9/proof.log": {
-      "sha256": "4e454487947518f18ec475aee4ad84085ebaaa39f072b26251e29df258db29b1"
+      "sha256": "272d67bc9a43193d048bae71161ad8de526726fd06c3fc4ce7da71d9dbbb5496"
     },
     "artifacts/titan9/readme_commands.json": {
-      "sha256": "4e2329a7785504aa8c99030082c642cea7a90151d259c0c7ca14950af3615389"
+      "sha256": "0ba776937f08e4d113919f0306061a3464c2bc3c69c5ad9888aa78072f6e6128"
     },
     "catalog/agents/01_PR-Orchestrator_Repo-Readiness-Governor.txt": {
       "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"

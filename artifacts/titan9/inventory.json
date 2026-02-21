@@ -44,8 +44,9 @@
       "echo \"Dependency graph is disabled; skipping dependency review action.\"",
       "git rev-parse --verify \"$BASE_SHA\"",
       "git rev-parse --verify \"$HEAD_SHA\"",
+      "make check",
+      "make proof",
       "make setup",
-      "make verify",
       "set -euo pipefail",
       "test \"${{ needs.quality.result }}\" = \"success\""
     ]
