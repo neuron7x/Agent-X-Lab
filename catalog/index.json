@@ -1,8 +1,8 @@
 {
   "catalog_id": "AGENTX-LAB",
   "version": "0.1.0",
-  "generated_utc": "2026-02-20T15:23:21Z",
-  "count": 33,
+  "generated_utc": "2026-02-21T17:57:41Z",
+  "count": 34,
   "objects": [
     {
       "name": "01_PR-Orchestrator_Repo-Readiness-Governor",
@@ -137,6 +137,12 @@
       "type": "agent"
     },
     {
+      "name": "Agent-X-Lab_Integrated_Deterministic_PR_Orchestrator_v2026.03-kernel",
+      "path": "catalog/agents/Agent-X-Lab_Integrated_Deterministic_PR_Orchestrator_v2026.03-kernel.md",
+      "sha256": "1b6de7487ab270e6e4ce252d6cc042b47a8bc23b325dd87e424aaa0e0985532c",
+      "type": "agent"
+    },
+    {
       "name": "BIO_DIGITAL_S12_2026_2",
       "path": "catalog/agents/BIO_DIGITAL_S12_2026_2.yaml",
       "sha256": "43b839b763ff3f05fe5798c481c3efc718071575f8c187877ab0180daf9307ba",
@@ -226,6 +232,7 @@
     "07_Universal_Repo_Governor_Multi_Stack_Monorepo_SLSA.txt",
     "08_PR302_CI-Governance-Fix-Agent.txt",
     "08_PR302_CI_Governance_Fix_Agent.txt",
+    "Agent-X-Lab_Integrated_Deterministic_PR_Orchestrator_v2026.03-kernel.md",
     "BIO_DIGITAL_S12_2026_2.yaml",
     "CA-ERG_v2026.4_SYSTEM_PROMPT.md",
     "CODEX_PFRI_v2026.5.0.md",

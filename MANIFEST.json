@@ -264,6 +264,9 @@
     "catalog/agents/08_PR302_CI_Governance_Fix_Agent.txt": {
       "sha256": "e5f5492f05283dad49947cb2aab9cfa344ce91ed07b66ae25b06f12da6306428"
     },
+    "catalog/agents/Agent-X-Lab_Integrated_Deterministic_PR_Orchestrator_v2026.03-kernel.md": {
+      "sha256": "1b6de7487ab270e6e4ce252d6cc042b47a8bc23b325dd87e424aaa0e0985532c"
+    },
     "catalog/agents/BIO_DIGITAL_S12_2026_2.yaml": {
       "sha256": "43b839b763ff3f05fe5798c481c3efc718071575f8c187877ab0180daf9307ba"
     },
@@ -286,7 +289,7 @@
       "sha256": "08f10b6f960916421c244832d4f0ae66acd538f067e35358a756836ba39ead15"
     },
     "catalog/index.json": {
-      "sha256": "dac0830f879f73e7f8881aea3fd2eee1ff7b39a772f7ec45dc77ded9031d7500"
+      "sha256": "53969a919ec08f3ddf8fa294ffebf8fbd2408974bba76ee4f50e3467b6bf4def"
     },
     "catalog/protocols/GHTPO-2026.02.md": {
       "sha256": "fc24f3f9dc74c181bccf98817513db02e5cf6b144e819b5d655993f828b04fec"
@@ -469,7 +472,7 @@
       "sha256": "9ebd63262d5e872e0b415d66cc89f1146ea5d566904fd5fde1712b1ff2a4286e"
     },
     "scripts/rebuild_catalog_index.py": {
-      "sha256": "986ccdc8b168188b38deadea00a93a1e46a9e30f7c238f25e78bff3a7a68c2e5"
+      "sha256": "8e209b4024ffc75fc4076317f531a825aeb15f820a6b1498468cc1a67d1eb400"
     },
     "scripts/rebuild_checksums.py": {
       "sha256": "48f65525345ad59a5ceac3cf1bf8da2b164cdf16428d8d10a6d6a270bbba01ef"
