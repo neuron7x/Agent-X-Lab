@@ -472,7 +472,7 @@
       "sha256": "9ebd63262d5e872e0b415d66cc89f1146ea5d566904fd5fde1712b1ff2a4286e"
     },
     "scripts/rebuild_catalog_index.py": {
-      "sha256": "986ccdc8b168188b38deadea00a93a1e46a9e30f7c238f25e78bff3a7a68c2e5"
+      "sha256": "8e209b4024ffc75fc4076317f531a825aeb15f820a6b1498468cc1a67d1eb400"
     },
     "scripts/rebuild_checksums.py": {
       "sha256": "48f65525345ad59a5ceac3cf1bf8da2b164cdf16428d8d10a6d6a270bbba01ef"
