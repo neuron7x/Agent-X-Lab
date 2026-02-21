@@ -148,13 +148,13 @@
       "sha256": "770d8357f0121be06a764ccbfbbb2a0d5d7a00a7644969a4c3a4e5fdfbc7a32f"
     },
     ".github/workflows/lint-actions.yml": {
-      "sha256": "26ec528e342ea1ddb4d5e73aee9f1bc33563b11ca927e961599572d1c0611d34"
+      "sha256": "6b4eacb9a1daa39a8722c8d825fddc6b18dc6d9b3eff2a26bf48367438c2e937"
     },
     ".github/workflows/scorecard.yml": {
       "sha256": "f8f6e8ae3619744a39d6bb32a77412dc8f9d461dd2030d9dabed55a0fe4ca84e"
     },
     ".github/workflows/security.yml": {
-      "sha256": "60b60c0152ecb6dddbe5a57f58994d8e25a0044e782bb5452b06dfd85d12b766"
+      "sha256": "57af895d3b81671f1b515a713c982af274109db8bd24aca99a933f65ea1b423a"
     },
     ".gitignore": {
       "sha256": "fbf2356dd6dc26b3409d8c7ff89e9060794d679736f32e6af8306a52e2acde5d"

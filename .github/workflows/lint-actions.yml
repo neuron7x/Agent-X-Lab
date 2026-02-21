@@ -24,6 +24,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
-      - uses: reviewdog/action-actionlint@c4f5a5f15cd9f6d9639efefab9f06b9a3170f12e # v1
-        with:
-          fail_level: error
+      - name: Workflow hygiene gate
+        run: python tools/verify_workflow_hygiene.py
+      - name: Action pinning gate
+        run: python tools/verify_action_pinning.py

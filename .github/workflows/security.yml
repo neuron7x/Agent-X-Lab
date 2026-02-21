@@ -23,21 +23,28 @@ env:
   PYTHONHASHSEED: "0"
 
 jobs:
-  codeql:
+  sast:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     permissions:
-      actions: read
       contents: read
-      security-events: write
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5
         with:
-          fetch-depth: 0
-      - uses: github/codeql-action/init@b8f6507f3f5d3b9332f3d3e6585f6f8eecc65c0a # v3
-        with:
-          languages: python
-      - uses: github/codeql-action/analyze@b8f6507f3f5d3b9332f3d3e6585f6f8eecc65c0a # v3
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: |
+            requirements.lock
+            requirements-dev.txt
+      - uses: ./.github/actions/pin-pip
+      - name: Install dependencies
+        run: make setup
+      - name: Static security checks
+        run: |
+          python tools/verify_action_pinning.py
+          python tools/verify_workflow_hygiene.py
+
   gitleaks:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -69,23 +76,16 @@ jobs:
       pull-requests: read
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
-      - id: depgraph
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+      - name: Deterministic dependency review policy
+        run: |
+          python tools/dependency_review_gate.py             --requirements requirements.lock             --requirements requirements-dev.txt             --out artifacts/security/dependency-review.json
+      - name: Upload dependency-review report
+        if: always()
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4
         with:
-          script: |
-            const { data } = await github.request('GET /repos/{owner}/{repo}', {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-            });
-            const enabled = data?.security_and_analysis?.dependency_graph?.status === 'enabled';
-            core.info(`dependency_graph=${data?.security_and_analysis?.dependency_graph?.status || 'unknown'}`);
-            core.setOutput('enabled', enabled ? 'true' : 'false');
-      - name: Run dependency review
-        if: steps.depgraph.outputs.enabled == 'true'
-        uses: actions/dependency-review-action@0c155d3d7a5fd09c8e5e9f44d3f10f5f4f2f0fcb # v4
-      - name: Skip dependency review (dependency graph disabled)
-        if: steps.depgraph.outputs.enabled != 'true'
-        run: echo "Dependency graph is disabled; skipping dependency review action."
+          name: dependency-review-report
+          if-no-files-found: error
+          path: artifacts/security/dependency-review.json
 
   pip-audit:
     if: github.event_name == 'pull_request'
