@@ -59,7 +59,7 @@ proof-verify:
 	cmp -s artifacts/agent/proof.derived.json artifacts/agent/proof.json
 
 vuln-scan:
-	python tools/pip_audit_gate.py --requirements requirements.lock --requirements requirements-dev.txt --allowlist policies/pip_audit_allowlist.json --out artifacts/security/pip-audit.json
+	python tools/pip_audit_gate.py --requirements requirements.lock --requirements requirements-dev.txt --allowlist policies/pip_audit_allowlist.json --out artifacts/security/pipaudit.json
 
 workflow-hygiene:
 	python tools/verify_workflow_hygiene.py
