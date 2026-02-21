@@ -2,7 +2,7 @@
 
 ![CI badge](https://img.shields.io/badge/CI-GitHub_Actions-blue)
 
-A deterministic cognitive-agent architecture with mechanized validation for shipping prompt catalogs and proof bundles as a GitHub-ready project.
+A deterministic cognitive-agent architecture with mechanized validation for shipping prompt catalogs and proof bundles.
 
 ## Quickstart
 
@@ -28,7 +28,7 @@ Or run the scripted flow with `./scripts/quickstart.sh`.
 
 CI runs formatting, linting, typing, tests, validation/eval, protocol checks, inventory/readme contract checks, and proof generation from `.github/workflows/ci.yml`.
 
-Security PR checks in `.github/workflows/security.yml` run a full lockfile vulnerability audit via `make vuln-scan` (`pip-audit`), writing `artifacts/security/pip-audit.json`. Temporary ignores must be listed in `policies/pip_audit_allowlist.json` with an expiry date.
+Security PR checks in `.github/workflows/security.yml` run a lockfile vulnerability audit via `make vuln-scan` (`pip-audit`), writing `artifacts/security/pip-audit.json`. Temporary ignores must be listed in `policies/pip_audit_allowlist.json` with an expiry date.
 
 Use `make check_r8` to run the standard checks plus workflow hygiene/action pinning/readme-contract verification and emit `artifacts/feg_r8/gates.jsonl`.
 
