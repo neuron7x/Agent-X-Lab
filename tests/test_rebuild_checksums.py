@@ -72,3 +72,57 @@ def test_rebuild_checksums_excludes_transient_artifact_paths(tmp_path: Path) -> 
         if any(path.startswith(prefix) for prefix in bad_prefixes)
     ]
     assert bad_paths == [], f"transient artifact paths must be excluded: {bad_paths}"
+
+
+def test_rebuild_checksums_uses_git_tracked_files_only(tmp_path: Path) -> None:
+    subprocess.run(
+        ["git", "init"], cwd=tmp_path, check=True, capture_output=True, text=True
+    )
+    subprocess.run(
+        ["git", "config", "user.email", "test@example.com"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    subprocess.run(
+        ["git", "config", "user.name", "Test User"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    (tmp_path / "tracked.txt").write_text("tracked\n", encoding="utf-8")
+    (tmp_path / "MANIFEST.json").write_text(
+        json.dumps(
+            {
+                "arsenal": {},
+                "objects": [],
+                "protocols": [],
+                "architecture": [],
+                "metrics": {},
+                "checksums": {},
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    subprocess.run(
+        ["git", "add", "tracked.txt", "MANIFEST.json"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    (tmp_path / "untracked.txt").write_text("temp\n", encoding="utf-8")
+
+    proc = run_rebuild(tmp_path)
+    assert proc.returncode == 0, proc.stdout + "\n" + proc.stderr
+
+    manifest = json.loads((tmp_path / "MANIFEST.json").read_text(encoding="utf-8"))
+    checksums = manifest["checksums"]
+    assert "tracked.txt" in checksums
+    assert "untracked.txt" not in checksums

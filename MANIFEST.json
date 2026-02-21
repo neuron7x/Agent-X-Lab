@@ -198,15 +198,6 @@
     "architecture/NAMING-CONVENTIONS.md": {
       "sha256": "1273636bb026b96328d82f194a0a0e3c7e5b140f65e641d23e4a1a17b33397db"
     },
-    "artifacts/ghtpo/EVIDENCE.md": {
-      "sha256": "7e362f47e69c986459ff5d53596b778aa01597a068a3fb4348030f5750df9c3a"
-    },
-    "artifacts/ghtpo/quality.json": {
-      "sha256": "1dacd8a6edc4484e7395a4b42e94273e793ae040d51b33f2b06b17c096388afc"
-    },
-    "artifacts/pr_evidence/report.json": {
-      "sha256": "facab49f3f47bc7b96060f1303971dada72a10447c41fe401327e4ccd9d04b31"
-    },
     "catalog/agents/01_PR-Orchestrator_Repo-Readiness-Governor.txt": {
       "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"
     },
@@ -478,7 +469,7 @@
       "sha256": "986ccdc8b168188b38deadea00a93a1e46a9e30f7c238f25e78bff3a7a68c2e5"
     },
     "scripts/rebuild_checksums.py": {
-      "sha256": "4f9abc9db5ac6fb7706eaf99c730baa8dfcec6d7797ee3790455aedd58173eae"
+      "sha256": "4d1938df449b68325e9f1ead295e1c53dbb6146cec4d2f12ea0fc6dfed3ab1ad"
     },
     "scripts/run_object_evals.py": {
       "sha256": "b50848541f2b74cfb719c3778aff65acb9d112d36b0c7e89dfcc273b66f03d7d"
@@ -487,7 +478,7 @@
       "sha256": "3ca0da54d61a43935468c33abcb7dba9d23ebb19fa974657d290525ff65d088a"
     },
     "scripts/validate_arsenal.py": {
-      "sha256": "018a6ff35bcb3145de33730905737053db6da1bf60f9bd720b6117b7d2aef88e"
+      "sha256": "e108b8d4703c776ce073d625c8af7c1e1c1bd33d71ec87bb134c0b1251f6e49d"
     },
     "tests/conftest.py": {
       "sha256": "93ea3036a9dcee8c35157a947e8db0c0ef74f48f0ed505530f9e1d047bae98fa"
@@ -517,7 +508,7 @@
       "sha256": "af44c7259d0544305d2fa4165fa581f936b197a496ef26e4864e0a4bfcd01ae5"
     },
     "tests/test_rebuild_checksums.py": {
-      "sha256": "183c4e4a256fa0047af43cc2d229d53559dc73af99505f36985d8ba5df96a8d8"
+      "sha256": "39096e2e9c678dbf902822e369636014644d3de8de935c62eb570c247a756c05"
     },
     "tests/test_repo_invariants.py": {
       "sha256": "e9234f9f66325028c9d3f9cb4b5058cd8afe306b0dd713954e39e2dddf6a3acf"
