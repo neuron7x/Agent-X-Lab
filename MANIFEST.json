@@ -145,7 +145,7 @@
       "sha256": "7396b398eead8d78d36007a9c2c2296fdfdb37565190e1a581a900c0f75ff405"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "b16fd22073e42bebdbd22c70d56d58f52d2d78bcb566eb67b6e0cf2ec84738a9"
+      "sha256": "099facf9361fab2a586ffd820a169ddb953b9ffbd32295ffa81a79d74d09ccaa"
     },
     ".github/workflows/lint-actions.yml": {
       "sha256": "c9ced8eb40bc3c9f92e51c2173b9a3c00e07c2d9ef5866d2f74b7327fd8a3b34"
@@ -166,10 +166,10 @@
       "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685"
     },
     "Makefile": {
-      "sha256": "8c547da2214db51828378b5280dc98465b49f88af762b1dad399b74d49de923d"
+      "sha256": "bb54797ac3feb5b29e97081aed45ff1ee9ed3bdb170614d4b94567bb34c9084a"
     },
     "README.md": {
-      "sha256": "f67d64f7fa6b27fdeb9e19beb23da97f42bd4c29677a2d51fdb0bdb63c567fd8"
+      "sha256": "3eaa2e16c68842af2756b22e6df67a406b377877893964b2187a5bbbce255087"
     },
     "SECURITY.md": {
       "sha256": "5715b12ebe6bcecf93a736a48d6d22881428f241e22c7bdd383aec8d2f1b0bc8"
@@ -195,17 +195,23 @@
     "architecture/NAMING-CONVENTIONS.md": {
       "sha256": "1273636bb026b96328d82f194a0a0e3c7e5b140f65e641d23e4a1a17b33397db"
     },
+    "artifacts/ghtpo/EVIDENCE.md": {
+      "sha256": "7e362f47e69c986459ff5d53596b778aa01597a068a3fb4348030f5750df9c3a"
+    },
+    "artifacts/ghtpo/quality.json": {
+      "sha256": "1dacd8a6edc4484e7395a4b42e94273e793ae040d51b33f2b06b17c096388afc"
+    },
     "artifacts/titan9/hashes.json": {
-      "sha256": "4c4b02849ed54403ef7cc9c3e3666e79875b5f416824d307b375596877255f09"
+      "sha256": "abb107190c1af79048e110d5407ae621dba0f6d0d81a1b6e2ddd8228e41a3882"
     },
     "artifacts/titan9/inventory.json": {
-      "sha256": "77e14d929059d009d3a7ccd90e629fa1b1c82f011dcbfa17007efe05037908a3"
+      "sha256": "e75e5728bf7c3c71c7604abc98c2de98b1c61272384163941a33fe9d5b0c7ba5"
     },
     "artifacts/titan9/proof.log": {
-      "sha256": "8eab134e4a910c0a9c762be9aa6a9bfd0eb02a72c064a0b0164ad7a0f2f99b48"
+      "sha256": "4e454487947518f18ec475aee4ad84085ebaaa39f072b26251e29df258db29b1"
     },
     "artifacts/titan9/readme_commands.json": {
-      "sha256": "53525bf3f094d0d9e53ff950a2f71fcec44f4004a7772bc490e2e7f7dc4d9ff4"
+      "sha256": "4e2329a7785504aa8c99030082c642cea7a90151d259c0c7ca14950af3615389"
     },
     "catalog/agents/01_PR-Orchestrator_Repo-Readiness-Governor.txt": {
       "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"
@@ -463,7 +469,7 @@
       "sha256": "986ccdc8b168188b38deadea00a93a1e46a9e30f7c238f25e78bff3a7a68c2e5"
     },
     "scripts/rebuild_checksums.py": {
-      "sha256": "d72bb9b31c0d20382533be51f87ae666fab569078188c2e10ffe04e704cc71f0"
+      "sha256": "312e129d19952ddefc7b71a7227f320771389fce2832d921f5865ae91420e8a9"
     },
     "scripts/run_object_evals.py": {
       "sha256": "b50848541f2b74cfb719c3778aff65acb9d112d36b0c7e89dfcc273b66f03d7d"

@@ -1,0 +1,15 @@
+python - <<'PY2'
+from pathlib import Path
+import yaml,re
+readme=Path('README.md').read_text()
+m=re.search(r'## Quickstart\n\n```bash\n(.*?)\n```',readme,re.S)
+assert m, 'missing quickstart'
+qs=[l.strip() for l in m.group(1).splitlines() if l.strip()]
+expected=['export PYTHONHASHSEED=0','make setup','make verify']
+assert qs==expected, f'readme quickstart mismatch: {qs}'
+wf=yaml.safe_load(Path('.github/workflows/ci.yml').read_text())
+steps=wf['jobs']['quality']['steps']
+runs=[s.get('run','').strip() for s in steps if isinstance(s,dict) and 'run' in s]
+assert 'make setup' in runs and 'make verify' in runs, f'ci missing setup/verify: {runs}'
+print('SSOT aligned')
+PY2

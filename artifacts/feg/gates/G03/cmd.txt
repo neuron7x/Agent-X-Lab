@@ -1,0 +1,12 @@
+python - <<'PY2'
+from pathlib import Path
+import yaml
+for wf in Path('.github/workflows').glob('*.yml'):
+ data=yaml.safe_load(wf.read_text()) or {}
+ assert 'permissions' in data, f'{wf} missing top permissions'
+ assert 'concurrency' in data, f'{wf} missing concurrency'
+ jobs=data.get('jobs',{})
+ for jn,j in jobs.items():
+  assert isinstance(j,dict) and 'timeout-minutes' in j, f'{wf}:{jn} missing timeout-minutes'
+print('workflow quality gates present')
+PY2

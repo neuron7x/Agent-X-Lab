@@ -1,0 +1,1 @@
+python scripts/rebuild_checksums.py --repo-root . && python scripts/validate_arsenal.py --repo-root . --strict

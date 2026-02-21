@@ -32,31 +32,10 @@ jobs:
             requirements.lock
             requirements-dev.txt
       - uses: ./.github/actions/pin-pip
-      - name: Install dependencies
-        run: |
-          set -euo pipefail
-          python -m pip install -r requirements.lock
-          python -m pip install -r requirements-dev.txt
-      - name: Ruff lint
-        run: ruff check .
-      - name: Ruff format check
-        run: ruff format --check .
-      - name: Mypy
-        run: mypy .
-      - name: Pytest
-        run: python -m pytest -q -W error
-      - name: Validate
-        run: make validate
-      - name: Eval
-        run: make eval
-      - name: Verify protocol consistency
-        run: python tools/verify_protocol_consistency.py --protocol protocol.yaml
-      - name: Build inventory
-        run: python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json
-      - name: Verify README contract
-        run: python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json
-      - name: Generate Titan9 proof bundle
-        run: python tools/generate_titan9_proof.py --repo-root .
+      - name: Setup environment
+        run: make setup
+      - name: Verify
+        run: make verify
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:

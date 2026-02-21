@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "strict": true,
+  "checks_total": 236,
+  "checks_passed": 236,
+  "checks_failed": 0,
+  "failed_checks": []
+}
