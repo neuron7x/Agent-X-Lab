@@ -310,7 +310,7 @@
       "sha256": "6ac378f0eaf7b223cdc0d2a7c466e4461d2f8c450f4dc739c0cfebbf83e19e63"
     },
     "docs/ERRORS.md": {
-      "sha256": "76cfd543e4ce18e6f1974524bb01241bdab87cd8736a0dbb3c487ecc9ce9f142"
+      "sha256": "e678c7dfa101cd97eea17a7a780c502dd25074a05b452239d073f15e914d943a"
     },
     "docs/SPEC.md": {
       "sha256": "c9ac37023740a231ebe057dcfb60b16c5398dcfc695f9b8c8ebf77765ce8c3ad"
@@ -322,7 +322,7 @@
       "sha256": "b576d15ec3b4344fd45759081e26534d0407d1f8f45362a8c7136eb2efe0ceb3"
     },
     "exoneural_governor/backend.py": {
-      "sha256": "dcde98077960bc8a40f22b733dbfd60b8b4f16c8ef5c037ac7e6745ccb5355bc"
+      "sha256": "8bfa8f2673a253c81a5e3d918aeb59e09e83155cd98391bf8e9cc32d0bed898c"
     },
     "exoneural_governor/catalog.py": {
       "sha256": "5f9a161f1c399de0cc3ea69e97046879473f5debf71dedfa99a036bd2aca77e6"

@@ -3,7 +3,7 @@
 ## Documented deterministic errors
 
 - `E_BACKEND_TORCH_MISSING`
-  - Meaning: accelerated backend requested but torch is unavailable.
+  - Meaning: accelerated backend requires torch.
   - Message: `E_BACKEND_TORCH_MISSING: accelerated backend requires torch. Fix: install torch or use backend='reference'.`
   - Fix: install torch or set `backend='reference'`.
 - `E_NO_GIT_NO_BUILD_ID`
