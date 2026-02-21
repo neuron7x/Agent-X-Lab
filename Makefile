@@ -3,13 +3,16 @@ export PYTHONHASHSEED
 
 .PHONY: \
 	setup bootstrap fmt format_check fmt-check lint type typecheck test validate eval evals \
-	protocol inventory readme_contract proof check verify all demo ci precommit
+	protocol inventory readme_contract proof check verify all demo ci precommit doctor quickstart clean reset
 
 setup:
 	python -m pip install -r requirements.lock
 	python -m pip install -r requirements-dev.txt
 
 bootstrap: setup
+
+doctor:
+	python tools/doctor.py
 
 fmt:
 	ruff format .
@@ -50,11 +53,21 @@ readme_contract: inventory
 proof:
 	python tools/generate_titan9_proof.py --repo-root .
 
-check: format_check lint typecheck test validate evals protocol inventory readme_contract
+check: doctor format_check lint typecheck test validate evals protocol inventory readme_contract
 
 verify: check
 
 demo: proof
+
+quickstart:
+	sh scripts/quickstart.sh
+
+clean:
+	rm -rf .pytest_cache .mypy_cache .ruff_cache
+	rm -rf artifacts/titan9 artifacts/evidence artifacts/release
+
+reset: clean
+	rm -rf .venv
 
 all: setup check proof
 

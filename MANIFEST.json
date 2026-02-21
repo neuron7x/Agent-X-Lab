@@ -166,10 +166,10 @@
       "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685"
     },
     "Makefile": {
-      "sha256": "8c10831405f177f21f62ba9c2593f9a5ae6a163096fe230d7cdac452f100b85e"
+      "sha256": "9445864ea134d7cafe6560e270978455eca7804e238944867d1e2ed9fc5a2c7a"
     },
     "README.md": {
-      "sha256": "e70a1892000b60fd78b1d14deee99b46dc2180bcdec970d48e7f537aff8b4283"
+      "sha256": "613c410f19324868b4c86b6c2c4a4f26bac9e12d1c9e826204e430c666677da1"
     },
     "SECURITY.md": {
       "sha256": "5715b12ebe6bcecf93a736a48d6d22881428f241e22c7bdd383aec8d2f1b0bc8"
@@ -202,7 +202,7 @@
       "sha256": "1dacd8a6edc4484e7395a4b42e94273e793ae040d51b33f2b06b17c096388afc"
     },
     "artifacts/titan9/hashes.json": {
-      "sha256": "c8d873b66c51d266c083d55ac6f695ae0fa2dcde58833f459f2ebc7d937e1a0b"
+      "sha256": "26223942912df07e0412fb362043f1c87ed30a086887af83e10a28f1eff21157"
     },
     "artifacts/titan9/inventory.json": {
       "sha256": "af595a0c3d552668ebefc2b2a082516efd978af5feb17699a9ec57ef04a8b3f9"
@@ -471,6 +471,9 @@
     "scripts/generate_proof_bundle.py": {
       "sha256": "a029343b3ddf8f5555f41f5fb891dc0b289d1dd26fad92ba798a89d5d68bc8ed"
     },
+    "scripts/quickstart.sh": {
+      "sha256": "9ebd63262d5e872e0b415d66cc89f1146ea5d566904fd5fde1712b1ff2a4286e"
+    },
     "scripts/rebuild_catalog_index.py": {
       "sha256": "986ccdc8b168188b38deadea00a93a1e46a9e30f7c238f25e78bff3a7a68c2e5"
     },
@@ -491,6 +494,9 @@
     },
     "tests/test_backend.py": {
       "sha256": "80bca4a339c242e0ae8f1ba89b7e24299f66c5a7d5744301204ea4c977880061"
+    },
+    "tests/test_doctor.py": {
+      "sha256": "86805d42a9086292a9641e2852cc8ee6dffe543d404f88a2c6ec8ac50cf4cb43"
     },
     "tests/test_generate_proof_bundle.py": {
       "sha256": "ef00fd15dcc75257ec47423a33c7ee69f16935bfec171817dabaf8ec68431b28"
@@ -521,6 +527,9 @@
     },
     "tools/__init__.py": {
       "sha256": "a1fc730a05d03df8da3925d353007ed2ba72ecad965f50fea33033bca782a089"
+    },
+    "tools/doctor.py": {
+      "sha256": "0a9b0edf18fece17911c8dcce1a5476ca361a86bf3dde071a9fd95aee7ea739e"
     },
     "tools/generate_titan9_proof.py": {
       "sha256": "a0db4202435e8f3bff3113792a476185dd3324b342f2825fbf039d72436a5413"

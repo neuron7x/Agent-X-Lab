@@ -12,6 +12,8 @@ make check
 make proof
 ```
 
+Or run the scripted flow with `./scripts/quickstart.sh`.
+
 ## Repository outputs
 
 - `VR.json`
