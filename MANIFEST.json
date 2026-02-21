@@ -154,7 +154,7 @@
       "sha256": "de477fd80d3f02331dbfcb306da01ec3b85d143c2f370287a8afa388415536dd"
     },
     ".github/workflows/security.yml": {
-      "sha256": "823aa950b343163e9a5764f6b4799b76191553de34b874d1d4d92f17cbb18ac9"
+      "sha256": "88f301c997b89ab13327668ae03e759520302e4dc45a1ec54b93308a13ea8e0c"
     },
     ".gitignore": {
       "sha256": "fbf2356dd6dc26b3409d8c7ff89e9060794d679736f32e6af8306a52e2acde5d"
@@ -559,7 +559,7 @@
       "sha256": "07e85b7fb62d5e60cac9d3cb6c6660b7df758d414efd1a9ca6f1c5b22b818a14"
     },
     "tools/verify_workflow_hygiene.py": {
-      "sha256": "586d660b181f8cbe917923fea3389dd6245d942c5f136482f911ab862f2b4beb"
+      "sha256": "16bded81a0bd7ea97c321db2dd9b730809b653eff23d35a5337e926d18621b3a"
     },
     "tools/witness.py": {
       "sha256": "7744bcf7cf050775ccf170fbe7d31cfb3589814cb6b58b9dbd9fa055acb39e95"
