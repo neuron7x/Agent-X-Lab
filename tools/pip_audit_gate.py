@@ -50,6 +50,13 @@ def _load_allowlist(path: Path) -> list[AllowEntry]:
     return parsed
 
 
+def _write_report(path: Path, payload: dict[str, object]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+
+
 def _split_allowlist(
     entries: list[AllowEntry], today: date
 ) -> tuple[list[str], list[str]]:
@@ -75,6 +82,14 @@ def main() -> int:
     today = datetime.now(timezone.utc).date()
     active_ignores, expired = _split_allowlist(entries, today)
     if expired:
+        _write_report(
+            args.out,
+            {
+                "status": "error",
+                "reason": "expired_allowlist",
+                "expired_entries": expired,
+            },
+        )
         print("FAIL: expired vulnerability allowlist entries detected:")
         for line in expired:
             print(f"  - {line}")
@@ -99,6 +114,15 @@ def main() -> int:
     if proc.returncode != 0:
         combined = (proc.stdout or "") + (proc.stderr or "")
         if "No module named pip_audit" in combined:
+            _write_report(
+                args.out,
+                {
+                    "status": "error",
+                    "reason": "pip_audit_missing",
+                    "stderr": proc.stderr,
+                    "stdout": proc.stdout,
+                },
+            )
             print(
                 "FAIL: pip-audit is not installed. Run `python -m pip install pip-audit==2.9.0`."
             )
@@ -107,11 +131,25 @@ def main() -> int:
             print(proc.stdout.rstrip())
         if proc.stderr:
             print(proc.stderr.rstrip())
+        if not args.out.exists():
+            _write_report(
+                args.out,
+                {
+                    "status": "error",
+                    "reason": "pip_audit_failed_without_report",
+                    "exit": proc.returncode,
+                    "stderr": proc.stderr,
+                    "stdout": proc.stdout,
+                },
+            )
         print(
             "FAIL: dependency vulnerabilities found; see "
             f"{args.out.as_posix()} for full report."
         )
         return proc.returncode
+
+    if not args.out.exists():
+        _write_report(args.out, {"status": "ok", "dependencies": []})
 
     print(
         f"PASS: dependency vulnerability audit succeeded; report={args.out.as_posix()}"
