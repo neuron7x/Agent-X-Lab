@@ -1,0 +1,36 @@
+{
+  "status": "pass",
+  "gates_run": [
+    {
+      "command": "make check",
+      "exit_code": 0
+    },
+    {
+      "command": "python tools/feg_r8_verify.py",
+      "exit_code": 0
+    },
+    {
+      "command": "make proof",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m pytest -q tests/test_rebuild_checksums.py tests/test_repo_invariants.py tests/test_pip_audit_gate.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python tools/pip_audit_gate.py --requirements requirements.lock --requirements requirements-dev.txt --allowlist policies/pip_audit_allowlist.json --out artifacts/security/pip-audit.json",
+      "exit_code": 3
+    }
+  ],
+  "artifact_paths_verified": [
+    {
+      "path": "artifacts/security/pip-audit.json",
+      "exists_after_producer": true
+    },
+    {
+      "path": "objects/*/artifacts/evidence/reference/eval/report.json",
+      "exists_after_producer": true
+    }
+  ],
+  "notes": "pip-audit gate returns non-zero when pip-audit is missing, but deterministic error envelope is written to required artifact path."
+}

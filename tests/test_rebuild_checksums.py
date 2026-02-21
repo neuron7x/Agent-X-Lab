@@ -21,6 +21,24 @@ def run_rebuild(repo_root: Path) -> subprocess.CompletedProcess[str]:
 
 
 def test_rebuild_checksums_excludes_transient_artifact_paths(tmp_path: Path) -> None:
+    subprocess.run(
+        ["git", "init"], cwd=tmp_path, check=True, capture_output=True, text=True
+    )
+    subprocess.run(
+        ["git", "config", "user.email", "test@example.com"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    subprocess.run(
+        ["git", "config", "user.name", "Test User"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
     (tmp_path / "artifacts/security").mkdir(parents=True)
     (tmp_path / "artifacts/titan9").mkdir(parents=True)
     (tmp_path / "artifacts/reports").mkdir(parents=True)
@@ -51,6 +69,20 @@ def test_rebuild_checksums_excludes_transient_artifact_paths(tmp_path: Path) -> 
         )
         + "\n",
         encoding="utf-8",
+    )
+
+    subprocess.run(
+        [
+            "git",
+            "add",
+            "src/stable.txt",
+            "objects/x/artifacts/evidence/reference/eval/report.json",
+            "MANIFEST.json",
+        ],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
     )
 
     proc = run_rebuild(tmp_path)
@@ -108,7 +140,6 @@ def test_rebuild_checksums_uses_git_tracked_files_only(tmp_path: Path) -> None:
         + "\n",
         encoding="utf-8",
     )
-
     subprocess.run(
         ["git", "add", "tracked.txt", "MANIFEST.json"],
         cwd=tmp_path,

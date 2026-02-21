@@ -51,6 +51,7 @@ EXCLUDE_PATH_PREFIXES: Set[str] = {
     "artifacts/agent/",
 }
 
+
 ALLOWED_ARTIFACT_PATTERNS: tuple[str, ...] = (
     "objects/*/artifacts/evidence/reference/**",
     "objects/*/artifacts/evidence/.gitkeep",
@@ -70,7 +71,7 @@ def _allowed_artifact_path(rel: str) -> bool:
     return any(rel_path.match(pattern) for pattern in ALLOWED_ARTIFACT_PATTERNS)
 
 
-def _iter_repo_files(repo_root: Path) -> Iterable[Path]:
+def _tracked_files(repo_root: Path) -> list[Path]:
     proc = subprocess.run(
         ["git", "ls-files", "-z"],
         cwd=repo_root,
@@ -79,17 +80,14 @@ def _iter_repo_files(repo_root: Path) -> Iterable[Path]:
         check=False,
     )
     if proc.returncode != 0:
-        yield from repo_root.rglob("*")
-        return
-    for raw in proc.stdout.split(b"\x00"):
-        if not raw:
-            continue
-        rel = raw.decode("utf-8")
-        yield repo_root / rel
+        raise RuntimeError("git ls-files failed; run from a git checkout")
+    return [
+        repo_root / raw.decode("utf-8") for raw in proc.stdout.split(b"\x00") if raw
+    ]
 
 
 def iter_files(repo_root: Path) -> Iterable[Path]:
-    for p in _iter_repo_files(repo_root):
+    for p in _tracked_files(repo_root):
         if p.is_dir():
             continue
         if p.name in EXCLUDE_FILES:

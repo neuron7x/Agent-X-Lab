@@ -469,7 +469,7 @@
       "sha256": "986ccdc8b168188b38deadea00a93a1e46a9e30f7c238f25e78bff3a7a68c2e5"
     },
     "scripts/rebuild_checksums.py": {
-      "sha256": "4d1938df449b68325e9f1ead295e1c53dbb6146cec4d2f12ea0fc6dfed3ab1ad"
+      "sha256": "48f65525345ad59a5ceac3cf1bf8da2b164cdf16428d8d10a6d6a270bbba01ef"
     },
     "scripts/run_object_evals.py": {
       "sha256": "b50848541f2b74cfb719c3778aff65acb9d112d36b0c7e89dfcc273b66f03d7d"
@@ -508,7 +508,7 @@
       "sha256": "af44c7259d0544305d2fa4165fa581f936b197a496ef26e4864e0a4bfcd01ae5"
     },
     "tests/test_rebuild_checksums.py": {
-      "sha256": "39096e2e9c678dbf902822e369636014644d3de8de935c62eb570c247a756c05"
+      "sha256": "c9df9884dbee0f312d07696f409593123fbc6a8dca88d19f2b50f33e8dd6f7ed"
     },
     "tests/test_repo_invariants.py": {
       "sha256": "e9234f9f66325028c9d3f9cb4b5058cd8afe306b0dd713954e39e2dddf6a3acf"
