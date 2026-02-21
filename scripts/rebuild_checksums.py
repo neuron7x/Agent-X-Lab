@@ -34,6 +34,21 @@ EXCLUDE_FILES: Set[str] = {
     ".DS_Store",
 }
 
+EXCLUDE_PATH_PREFIXES: Set[str] = {
+    "artifacts/evidence/",
+    "configs/artifacts/",
+    "artifacts/reports/",
+    "artifacts/tmp/",
+    "artifacts/release/",
+    "artifacts/proof/",
+    "artifacts/feg/",
+    "artifacts/feg_r8/",
+    "artifacts/fegr7/",
+    "artifacts/titan9/",
+    "artifacts/security/",
+    "artifacts/agent/",
+}
+
 
 def sha256_file(path: Path) -> str:
     h = hashlib.sha256()
@@ -56,22 +71,7 @@ def iter_files(repo_root: Path) -> Iterable[Path]:
         if any(part.endswith(".egg-info") for part in rel_parts):
             continue
         rel = p.relative_to(repo_root).as_posix()
-        if rel.startswith("artifacts/evidence/"):
-            continue
-        if rel.startswith("configs/artifacts/"):
-            continue
-        if (
-            rel.startswith("artifacts/reports/")
-            or rel.startswith("artifacts/tmp/")
-            or rel.startswith("artifacts/release/")
-            or rel.startswith("artifacts/proof/")
-            or rel.startswith("artifacts/feg/")
-            or rel.startswith("artifacts/feg_r8/")
-            or rel.startswith("artifacts/fegr7/")
-            or rel.startswith("artifacts/titan9/")
-            or rel.startswith("artifacts/security/")
-            or rel.startswith("artifacts/agent/")
-        ):
+        if any(rel.startswith(prefix) for prefix in EXCLUDE_PATH_PREFIXES):
             continue
         if (
             "/artifacts/evidence/" in rel
