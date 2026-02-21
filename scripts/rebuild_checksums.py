@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 from typing import Dict, Iterable, List, Set
 
@@ -35,6 +36,7 @@ EXCLUDE_FILES: Set[str] = {
 }
 
 EXCLUDE_PATH_PREFIXES: Set[str] = {
+    "artifacts/",
     "artifacts/evidence/",
     "configs/artifacts/",
     "artifacts/reports/",
@@ -50,6 +52,12 @@ EXCLUDE_PATH_PREFIXES: Set[str] = {
 }
 
 
+ALLOWED_ARTIFACT_PATTERNS: tuple[str, ...] = (
+    "objects/*/artifacts/evidence/reference/**",
+    "objects/*/artifacts/evidence/.gitkeep",
+)
+
+
 def sha256_file(path: Path) -> str:
     h = hashlib.sha256()
     with path.open("rb") as f:
@@ -58,8 +66,28 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
+def _allowed_artifact_path(rel: str) -> bool:
+    rel_path = Path(rel)
+    return any(rel_path.match(pattern) for pattern in ALLOWED_ARTIFACT_PATTERNS)
+
+
+def _tracked_files(repo_root: Path) -> list[Path]:
+    proc = subprocess.run(
+        ["git", "ls-files", "-z"],
+        cwd=repo_root,
+        capture_output=True,
+        text=False,
+        check=False,
+    )
+    if proc.returncode != 0:
+        raise RuntimeError("git ls-files failed; run from a git checkout")
+    return [
+        repo_root / raw.decode("utf-8") for raw in proc.stdout.split(b"\x00") if raw
+    ]
+
+
 def iter_files(repo_root: Path) -> Iterable[Path]:
-    for p in repo_root.rglob("*"):
+    for p in _tracked_files(repo_root):
         if p.is_dir():
             continue
         if p.name in EXCLUDE_FILES:
@@ -71,6 +99,8 @@ def iter_files(repo_root: Path) -> Iterable[Path]:
         if any(part.endswith(".egg-info") for part in rel_parts):
             continue
         rel = p.relative_to(repo_root).as_posix()
+        if rel.startswith("artifacts/") and not _allowed_artifact_path(rel):
+            continue
         if any(rel.startswith(prefix) for prefix in EXCLUDE_PATH_PREFIXES):
             continue
         if (

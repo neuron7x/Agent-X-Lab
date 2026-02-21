@@ -1,0 +1,132 @@
+{
+  "default_branch": "work",
+  "required_checks": [
+    {
+      "name": "CI/quality: make check",
+      "source": "workflow",
+      "command": "make check",
+      "required_artifacts": [
+        "artifacts/reports/**",
+        "objects/*/artifacts/evidence/reference/eval/report.json"
+      ]
+    },
+    {
+      "name": "CI/quality: R8 verification",
+      "source": "workflow",
+      "command": "python tools/feg_r8_verify.py",
+      "required_artifacts": []
+    },
+    {
+      "name": "CI/quality: proof",
+      "source": "workflow",
+      "command": "make proof",
+      "required_artifacts": [
+        "artifacts/titan9/inventory.json",
+        "artifacts/titan9/readme_commands.json",
+        "artifacts/titan9/proof.log",
+        "artifacts/titan9/hashes.json"
+      ]
+    },
+    {
+      "name": "Security/pip-audit",
+      "source": "workflow",
+      "command": "make vuln-scan",
+      "required_artifacts": [
+        "artifacts/security/pip-audit.json"
+      ]
+    },
+    {
+      "name": "Security/codeql",
+      "source": "workflow",
+      "command": "github/codeql-action/analyze@v3",
+      "required_artifacts": []
+    },
+    {
+      "name": "Security/gitleaks",
+      "source": "workflow",
+      "command": "gitleaks/gitleaks-action@v2",
+      "required_artifacts": []
+    },
+    {
+      "name": "Security/dependency-review",
+      "source": "workflow",
+      "command": "actions/dependency-review-action@v4",
+      "required_artifacts": []
+    }
+  ],
+  "local_entrypoints": [
+    {
+      "name": "setup",
+      "command": "make setup"
+    },
+    {
+      "name": "check",
+      "command": "make check"
+    },
+    {
+      "name": "r8",
+      "command": "python tools/feg_r8_verify.py"
+    },
+    {
+      "name": "proof",
+      "command": "make proof"
+    },
+    {
+      "name": "security-scan",
+      "command": "python tools/pip_audit_gate.py --requirements requirements.lock --requirements requirements-dev.txt --allowlist policies/pip_audit_allowlist.json --out artifacts/security/pip-audit.json"
+    }
+  ],
+  "validators": [
+    {
+      "id": "manifest-checksums",
+      "enforced_by": "scripts/validate_arsenal.py",
+      "requires_paths": [
+        "MANIFEST.json",
+        "checksums entries"
+      ],
+      "classification": "stable",
+      "rationale": "strict mode verifies checksums and rejects transient artifacts/untracked paths"
+    },
+    {
+      "id": "checksum-builder",
+      "enforced_by": "scripts/rebuild_checksums.py",
+      "requires_paths": [
+        "git ls-files tracked paths"
+      ],
+      "classification": "stable",
+      "rationale": "checksums built from tracked files and artifact allowlist only"
+    },
+    {
+      "id": "pip-audit-allowlist-expiry",
+      "enforced_by": "tools/pip_audit_gate.py",
+      "requires_paths": [
+        "policies/pip_audit_allowlist.json"
+      ],
+      "classification": "stable",
+      "rationale": "expired allowlist entries fail with reason_code allowlist-expired"
+    }
+  ],
+  "artifact_uploads": [
+    {
+      "workflow": "ci.yml",
+      "path": "artifacts/reports/**",
+      "must_exist": true,
+      "producer_step": "make check",
+      "missing_behavior": "error"
+    },
+    {
+      "workflow": "ci.yml",
+      "path": "objects/*/artifacts/evidence/reference/eval/report.json",
+      "must_exist": true,
+      "producer_step": "make check",
+      "missing_behavior": "error"
+    },
+    {
+      "workflow": "security.yml",
+      "path": "artifacts/security/pip-audit.json",
+      "must_exist": true,
+      "producer_step": "Initialize pip-audit report artifact + make vuln-scan",
+      "missing_behavior": "error"
+    }
+  ]
+}

@@ -14,6 +14,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import hashlib
 import json
 import subprocess
@@ -75,6 +76,29 @@ def add(checks: List[Check], cid: str, cond: bool, details: str) -> None:
     checks.append(Check(cid, bool(cond), details))
 
 
+ALLOWED_ARTIFACT_PATTERNS = (
+    "objects/*/artifacts/evidence/reference/*",
+    "objects/*/artifacts/evidence/reference/**/*",
+    "objects/*/artifacts/evidence/.gitkeep",
+)
+
+
+def _load_tracked_files(repo_root: Path) -> set[str]:
+    proc = subprocess.run(
+        ["git", "ls-files", "-z"],
+        cwd=repo_root,
+        capture_output=True,
+        text=False,
+    )
+    if proc.returncode != 0:
+        return set()
+    return {raw.decode("utf-8") for raw in proc.stdout.split(b"\x00") if raw}
+
+
+def _is_allowed_artifact_path(path: str) -> bool:
+    return any(fnmatch.fnmatch(path, pattern) for pattern in ALLOWED_ARTIFACT_PATTERNS)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo-root", default=".", help="Repo root (default: .)")
@@ -92,6 +116,7 @@ def main() -> int:
 
     repo_root = Path(args.repo_root).resolve()
     checks: List[Check] = []
+    tracked_files = _load_tracked_files(repo_root)
 
     # --- Root files
     for idx, rel in enumerate(REQUIRED_ROOT_FILES, start=1):
@@ -302,6 +327,22 @@ def main() -> int:
         )
         add(checks, "C00", bool(csum), "MANIFEST.checksums present (strict)")
         for i, (rel, meta) in enumerate(sorted(csum.items()), start=1):
+            if tracked_files and rel not in tracked_files:
+                add(
+                    checks,
+                    f"C{i:03d}.T",
+                    False,
+                    f"checksum path must be git-tracked stable file: {rel}",
+                )
+                continue
+            if rel.startswith("artifacts/") and not _is_allowed_artifact_path(rel):
+                add(
+                    checks,
+                    f"C{i:03d}.A",
+                    False,
+                    f"checksum path forbidden for transient artifacts: {rel}",
+                )
+                continue
             fp = repo_root / rel
             if not fp.exists():
                 add(checks, f"C{i:03d}", False, f"checksum path missing: {rel}")
