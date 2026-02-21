@@ -7,6 +7,7 @@ import subprocess
 import sys
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
+from importlib import metadata
 from pathlib import Path
 
 
@@ -57,8 +58,60 @@ def _write_report(path: Path, payload: dict[str, object]) -> None:
     )
 
 
-def _fail_report(path: Path, reason: str, detail: str, exit_code: int) -> int:
-    _write_report(path, {"status": "error", "reason": reason, "detail": detail})
+def _pip_audit_version() -> str | None:
+    try:
+        return metadata.version("pip-audit")
+    except metadata.PackageNotFoundError:
+        return None
+
+
+def _error_envelope(
+    *,
+    reason_code: str,
+    remediation: str,
+    detail: str,
+    exit_code: int | None = None,
+    stdout: str | None = None,
+    stderr: str | None = None,
+    version: str | None = None,
+) -> dict[str, object]:
+    payload: dict[str, object] = {
+        "status": "error",
+        "tool": "pip-audit",
+        "version": version,
+        "reason_code": reason_code,
+        "remediation": remediation,
+        "reason": reason_code,
+        "detail": detail,
+    }
+    if exit_code is not None:
+        payload["exit_code"] = exit_code
+    if stdout:
+        payload["stdout"] = stdout
+    if stderr:
+        payload["stderr"] = stderr
+    return payload
+
+
+def _fail_report(
+    path: Path,
+    reason_code: str,
+    detail: str,
+    remediation: str,
+    exit_code: int,
+    *,
+    version: str | None = None,
+) -> int:
+    _write_report(
+        path,
+        _error_envelope(
+            reason_code=reason_code,
+            remediation=remediation,
+            detail=detail,
+            exit_code=exit_code,
+            version=version,
+        ),
+    )
     print(f"FAIL: {detail}")
     return exit_code
 
@@ -84,10 +137,19 @@ def main() -> int:
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
 
+    pip_audit_version = _pip_audit_version()
+
     try:
         entries = _load_allowlist(args.allowlist)
     except Exception as exc:
-        return _fail_report(args.out, "allowlist_parse_error", str(exc), 4)
+        return _fail_report(
+            args.out,
+            "allowlist-parse-error",
+            str(exc),
+            "fix policies/pip_audit_allowlist.json format",
+            4,
+            version=pip_audit_version,
+        )
 
     today = datetime.now(timezone.utc).date()
     active_ignores, expired = _split_allowlist(entries, today)
@@ -95,8 +157,13 @@ def main() -> int:
         _write_report(
             args.out,
             {
-                "status": "error",
-                "reason": "expired_allowlist",
+                **_error_envelope(
+                    reason_code="allowlist-expired",
+                    remediation="refresh or remove expired allowlist entries",
+                    detail="expired vulnerability allowlist entries detected",
+                    exit_code=2,
+                    version=pip_audit_version,
+                ),
                 "expired_entries": expired,
             },
         )
@@ -126,9 +193,11 @@ def main() -> int:
         if "No module named pip_audit" in combined:
             return _fail_report(
                 args.out,
-                "pip_audit_missing",
+                "pip-audit-missing",
                 "pip-audit is not installed. Run `python -m pip install pip-audit==2.9.0`.",
+                "install pip-audit==2.9.0",
                 3,
+                version=None,
             )
         if proc.stdout:
             print(proc.stdout.rstrip())
@@ -137,13 +206,15 @@ def main() -> int:
         if not args.out.exists():
             _write_report(
                 args.out,
-                {
-                    "status": "error",
-                    "reason": "pip_audit_failed_without_report",
-                    "exit": proc.returncode,
-                    "stderr": proc.stderr,
-                    "stdout": proc.stdout,
-                },
+                _error_envelope(
+                    reason_code="pip-audit-failed",
+                    remediation="review stderr/stdout and fix vulnerable dependencies",
+                    detail="pip-audit exited non-zero and did not produce a report",
+                    exit_code=proc.returncode,
+                    stdout=proc.stdout,
+                    stderr=proc.stderr,
+                    version=pip_audit_version,
+                ),
             )
         print(
             "FAIL: dependency vulnerabilities found; see "
@@ -152,7 +223,21 @@ def main() -> int:
         return proc.returncode
 
     if not args.out.exists():
-        _write_report(args.out, {"status": "ok", "dependencies": []})
+        _write_report(
+            args.out,
+            _error_envelope(
+                reason_code="pip-audit-missing-report",
+                remediation="rerun pip-audit with --format json --output <path>",
+                detail="pip-audit succeeded but did not write JSON output",
+                exit_code=5,
+                version=pip_audit_version,
+            ),
+        )
+        print(
+            "FAIL: pip-audit did not write expected JSON output; "
+            f"created envelope report at {args.out.as_posix()}."
+        )
+        return 5
 
     print(
         f"PASS: dependency vulnerability audit succeeded; report={args.out.as_posix()}"
