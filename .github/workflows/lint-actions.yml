@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: reviewdog/action-actionlint@v1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+      - uses: reviewdog/action-actionlint@c4f5a5f15cd9f6d9639efefab9f06b9a3170f12e # v1
         with:
           fail_level: error

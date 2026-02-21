@@ -53,11 +53,7 @@ def main() -> int:
                     continue
                 action = uses.split("@", 1)[0]
                 ref = ref_match.group(1)
-                if (
-                    action.startswith("actions/")
-                    or action.startswith("github/")
-                    or action.startswith("./")
-                ):
+                if action.startswith("./"):
                     continue
                 if SHA_RE.match(ref):
                     continue

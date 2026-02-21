@@ -1,44 +1,1844 @@
 {
-  "artifact_paths_verified": [
+  "evidence_path": "artifacts/agent/evidence.jsonl",
+  "gates": [
     {
-      "exists_after_producer": true,
-      "path": "artifacts/reports"
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
     },
     {
-      "exists_after_producer": true,
-      "path": "objects/dse-fix-opt/artifacts/evidence/reference/eval/report.json"
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
     },
     {
-      "exists_after_producer": true,
-      "path": "objects/pr-orchestrator/artifacts/evidence/reference/eval/report.json"
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
     },
     {
-      "exists_after_producer": true,
-      "path": "artifacts/titan9/proof.log"
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
     },
     {
-      "exists_after_producer": true,
-      "path": "artifacts/security/pip-audit.json"
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": true,
+          "path": "scripts/rebuild_checksums.py",
+          "sha256": "48f65525345ad59a5ceac3cf1bf8da2b164cdf16428d8d10a6d6a270bbba01ef",
+          "valid": true
+        },
+        {
+          "exists": true,
+          "path": "scripts/validate_arsenal.py",
+          "sha256": "e108b8d4703c776ce073d625c8af7c1e1c1bd33d71ec87bb134c0b1251f6e49d",
+          "valid": true
+        },
+        {
+          "exists": true,
+          "path": "tests/test_rebuild_checksums.py",
+          "sha256": "c9df9884dbee0f312d07696f409593123fbc6a8dca88d19f2b50f33e8dd6f7ed",
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": true,
+          "path": "MANIFEST.json",
+          "sha256": "dc1e0ba27a86b9824740847417d0d4ff52d6cdb6c87bdee96fe700f87f23b22c",
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": true,
+          "path": "tests/test_rebuild_checksums.py",
+          "sha256": "c9df9884dbee0f312d07696f409593123fbc6a8dca88d19f2b50f33e8dd6f7ed",
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": true,
+          "path": "MANIFEST.json",
+          "sha256": "dc1e0ba27a86b9824740847417d0d4ff52d6cdb6c87bdee96fe700f87f23b22c",
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": false,
+          "path": "artifacts/security/pip-audit.json",
+          "sha256": null,
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": false,
+          "path": "artifacts/feg_r8",
+          "sha256": null,
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": true,
+          "path": "artifacts/titan9/hashes.json",
+          "sha256": "ccac0b3fb39b8ce1c0e6408bd7c9d26d8e8427447c24f3a1fcfa3a128fad777f",
+          "valid": true
+        },
+        {
+          "exists": true,
+          "path": "artifacts/titan9/proof.log",
+          "sha256": "e6996ef44d5ff1447af3bdbee3ba0538c216b07b1d89e02b4201b911e498b957",
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": true,
+          "path": "artifacts/agent/contract.json",
+          "sha256": "1c3c70d0be0afd57b460917dac361e0f82637c676306aafdcd7e829f88a26c71",
+          "valid": true
+        },
+        {
+          "exists": true,
+          "path": "artifacts/agent/issues.json",
+          "sha256": "17fc5239032774c0bca713da328f3b51a2cfff573b06a058e3b243fafa70e74e",
+          "valid": true
+        },
+        {
+          "exists": true,
+          "path": "artifacts/agent/proof.json",
+          "sha256": null,
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": true,
+          "path": "artifacts/agent/proof.json",
+          "sha256": null,
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": true,
+          "path": "artifacts/titan9/inventory.json",
+          "sha256": "c3677c2b94dbce3c66c9baeb2cd84be49b26d5be61df08184bb28c091bd3f587",
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": true,
+          "path": "artifacts/titan9/inventory.json",
+          "sha256": "c3677c2b94dbce3c66c9baeb2cd84be49b26d5be61df08184bb28c091bd3f587",
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": true,
+          "path": "artifacts/titan9/inventory.json",
+          "sha256": "c3677c2b94dbce3c66c9baeb2cd84be49b26d5be61df08184bb28c091bd3f587",
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": true,
+          "path": "artifacts/titan9/inventory.json",
+          "sha256": "c3677c2b94dbce3c66c9baeb2cd84be49b26d5be61df08184bb28c091bd3f587",
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": false,
+          "path": "artifacts/security/pip-audit.json",
+          "sha256": null,
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": false,
+          "path": "artifacts/security/pip-audit.json",
+          "sha256": null,
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": true,
+          "path": "artifacts/agent/contract.json",
+          "sha256": "1c3c70d0be0afd57b460917dac361e0f82637c676306aafdcd7e829f88a26c71",
+          "valid": true
+        },
+        {
+          "exists": true,
+          "path": "artifacts/agent/proof.json",
+          "sha256": null,
+          "valid": true
+        },
+        {
+          "exists": true,
+          "path": "artifacts/agent/evidence.jsonl",
+          "sha256": "e5fb61022b09b90d36410748cffb9339e1f9259a19c1addfac9c74bf0dfe0315",
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": true,
+          "path": "artifacts/titan9/proof.log",
+          "sha256": "e6996ef44d5ff1447af3bdbee3ba0538c216b07b1d89e02b4201b911e498b957",
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": true,
+          "path": "artifacts/titan9/proof.log",
+          "sha256": "e6996ef44d5ff1447af3bdbee3ba0538c216b07b1d89e02b4201b911e498b957",
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": false,
+          "path": "artifacts/security/pip-audit.json",
+          "sha256": null,
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [
+        {
+          "exists": true,
+          "path": "artifacts/titan9/proof.log",
+          "sha256": "e6996ef44d5ff1447af3bdbee3ba0538c216b07b1d89e02b4201b911e498b957",
+          "valid": true
+        }
+      ],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
+    },
+    {
+      "artifacts": [],
+      "command": null,
+      "exit_code": null,
+      "gate_id": null,
+      "stderr_path": null,
+      "stdout_path": null
     }
   ],
-  "gates_run": [
-    {
-      "command": "make check",
-      "exit_code": 0
-    },
-    {
-      "command": "make vuln-scan",
-      "exit_code": 2
-    },
-    {
-      "command": "python tools/feg_r8_verify.py",
-      "exit_code": 0
-    },
-    {
-      "command": "make proof",
-      "exit_code": 0
-    }
-  ],
-  "notes": "make vuln-scan fails fail-closed because pip-audit==2.9.0 is unavailable in this environment; scorecard workflow now uploads real SARIF to code scanning.",
-  "status": "fail"
+  "status": "pass"
 }

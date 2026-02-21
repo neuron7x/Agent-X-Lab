@@ -1,11 +1,22 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from pathlib import Path
 
 import yaml
+
+
+def _normalize_inline_command(line: str) -> str:
+    cleaned = line.strip()
+    if not cleaned or cleaned.startswith("#"):
+        return ""
+    if "python -c " in cleaned or "node -e " in cleaned:
+        digest = hashlib.sha256(cleaned.encode("utf-8")).hexdigest()
+        return f"inline-script sha256:{digest}"
+    return cleaned
 
 
 def _parse_workflow_commands(workflows_dir: Path) -> list[str]:
@@ -19,11 +30,26 @@ def _parse_workflow_commands(workflows_dir: Path) -> list[str]:
             if not isinstance(job, dict):
                 continue
             for step in job.get("steps", []):
-                if isinstance(step, dict) and isinstance(step.get("run"), str):
-                    for line in step["run"].splitlines():
-                        cleaned = line.strip()
-                        if cleaned and not cleaned.startswith("#"):
-                            commands.append(cleaned)
+                if not (isinstance(step, dict) and isinstance(step.get("run"), str)):
+                    continue
+                heredoc_end: str | None = None
+                for raw in step["run"].splitlines():
+                    line = raw.strip()
+                    if heredoc_end is not None:
+                        if line == heredoc_end:
+                            commands.append(
+                                f"heredoc-body sha256:<normalized:{heredoc_end}>"
+                            )
+                            heredoc_end = None
+                        continue
+                    match = re.search(r"<<[-~]?['\"]?([A-Za-z0-9_]+)['\"]?", line)
+                    if match:
+                        heredoc_end = match.group(1)
+                        commands.append(_normalize_inline_command(raw))
+                        continue
+                    normalized = _normalize_inline_command(raw)
+                    if normalized:
+                        commands.append(normalized)
     return sorted(set(commands))
 
 
