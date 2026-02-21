@@ -119,6 +119,9 @@ def test_manifest_checksums_exclude_transient_artifacts() -> None:
     bad = [
         p
         for p in checksums
-        if p.startswith("artifacts/fegr7/") or p.startswith("artifacts/titan9/")
+        if p.startswith("artifacts/fegr7/")
+        or p.startswith("artifacts/feg_r8/")
+        or p.startswith("artifacts/titan9/")
+        or p.startswith("artifacts/security/")
     ]
     assert bad == [], f"transient artifacts must not be checksummed: {bad}"

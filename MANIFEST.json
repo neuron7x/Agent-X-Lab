@@ -204,9 +204,6 @@
     "artifacts/ghtpo/quality.json": {
       "sha256": "1dacd8a6edc4484e7395a4b42e94273e793ae040d51b33f2b06b17c096388afc"
     },
-    "artifacts/security/pip-audit.json": {
-      "sha256": "4d06db8235166983ca95e836772074b0b64e6136fc67f6a683f15f0e6446edc9"
-    },
     "catalog/agents/01_PR-Orchestrator_Repo-Readiness-Governor.txt": {
       "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"
     },
@@ -478,7 +475,7 @@
       "sha256": "986ccdc8b168188b38deadea00a93a1e46a9e30f7c238f25e78bff3a7a68c2e5"
     },
     "scripts/rebuild_checksums.py": {
-      "sha256": "6684a1d57fba50e47a0cee51d23553244cd55f8778497936fde9883fde859cf8"
+      "sha256": "471ccc69070e75f897bc345648de2204ae376e51aecb80bbdbca04ff3f7cc3fb"
     },
     "scripts/run_object_evals.py": {
       "sha256": "b50848541f2b74cfb719c3778aff65acb9d112d36b0c7e89dfcc273b66f03d7d"
@@ -517,7 +514,7 @@
       "sha256": "af44c7259d0544305d2fa4165fa581f936b197a496ef26e4864e0a4bfcd01ae5"
     },
     "tests/test_repo_invariants.py": {
-      "sha256": "4931e012e1375dc16887e3e494d6ad61d3ceae15a764a167ea83aabc3d5798b8"
+      "sha256": "b69340d17fd6b4e6f022dc6b6351c0c58f85b10b3b0154083474161a39caf39f"
     },
     "tests/test_stack.py": {
       "sha256": "8d44a31c5140fdea9f73d1cefd2ee61a2105096ec8809b859d49ad2453e1982f"
@@ -527,6 +524,9 @@
     },
     "tests/test_vr_provenance_id.py": {
       "sha256": "87b8a8ed09328206e22d2d3afd634a7fc89b94c1328d71c10ddfb6ff2ffefda2"
+    },
+    "tests/test_witness.py": {
+      "sha256": "a7b65b2262f6e298830c38b15329254e57d5779991c07648cff351be3a01db89"
     },
     "tests/test_workflow_guards.py": {
       "sha256": "700c2f0125d18399d8b35d4bb40c7c3451ec1e024d6975c6c4d36730fac41aa4"
@@ -538,7 +538,7 @@
       "sha256": "33ad2693fad563a385f01d6d953e2ad90c3c63cf8810444637f4f2761c145ea9"
     },
     "tools/feg_r8_verify.py": {
-      "sha256": "89d884dd73e018cbc38a4315336b70f700ae5696da9d09acd2e2b2c31e5e7c00"
+      "sha256": "fa97334a70930a58095ffa481f4906beaccbd88e3c06c35596a2507951094150"
     },
     "tools/generate_titan9_proof.py": {
       "sha256": "a0db4202435e8f3bff3113792a476185dd3324b342f2825fbf039d72436a5413"
@@ -560,6 +560,9 @@
     },
     "tools/verify_workflow_hygiene.py": {
       "sha256": "586d660b181f8cbe917923fea3389dd6245d942c5f136482f911ab862f2b4beb"
+    },
+    "tools/witness.py": {
+      "sha256": "7744bcf7cf050775ccf170fbe7d31cfb3589814cb6b58b9dbd9fa055acb39e95"
     },
     "vendor/scpe-cimqa-2026.3.0/CG.json": {
       "sha256": "efdeb908577cd4aeea0710b53aea66c691ca0a659301dee99b75680ef3b66b04"
