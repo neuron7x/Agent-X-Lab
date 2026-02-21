@@ -1,5 +1,17 @@
 PYTHONHASHSEED ?= 0
 export PYTHONHASHSEED
+LC_ALL ?= C
+export LC_ALL
+LANG ?= C
+export LANG
+TZ ?= UTC
+export TZ
+PYTHONDONTWRITEBYTECODE ?= 1
+export PYTHONDONTWRITEBYTECODE
+GIT_PAGER ?= cat
+export GIT_PAGER
+PAGER ?= cat
+export PAGER
 
 .PHONY: \
 	setup bootstrap fmt format_check fmt-check lint type typecheck test validate eval evals \
