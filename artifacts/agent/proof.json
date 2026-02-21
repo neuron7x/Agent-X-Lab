@@ -14,7 +14,7 @@
       "exit_code": 0
     },
     {
-      "command": "python -m pytest -q tests/test_rebuild_checksums.py tests/test_repo_invariants.py tests/test_pip_audit_gate.py",
+      "command": "python -m pytest -q -W error tests/test_workflow_guards.py tests/test_repo_invariants.py",
       "exit_code": 0
     },
     {
@@ -28,9 +28,13 @@
       "exists_after_producer": true
     },
     {
+      "path": "artifacts/security/scorecard-results.sarif",
+      "exists_after_producer": true
+    },
+    {
       "path": "objects/*/artifacts/evidence/reference/eval/report.json",
       "exists_after_producer": true
     }
   ],
-  "notes": "pip-audit gate returns non-zero when pip-audit is missing, but deterministic error envelope is written to required artifact path."
+  "notes": "pip-audit install blocked by proxy in this environment; gate still emits deterministic error envelope at required artifact path."
 }

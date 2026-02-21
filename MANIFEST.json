@@ -151,7 +151,7 @@
       "sha256": "45d4b7e0ac16bf60d32ee3b16f5e5ded6104db05562cbd5849d3806c39a64fad"
     },
     ".github/workflows/scorecard.yml": {
-      "sha256": "de477fd80d3f02331dbfcb306da01ec3b85d143c2f370287a8afa388415536dd"
+      "sha256": "b845d213166a0317ba3d97621ffa0d705602da7b616536b427c422583915708e"
     },
     ".github/workflows/security.yml": {
       "sha256": "82e2c133a1bd8eadb4a3ef38f96fdfe1caed79b416a323b3aea75243e5c17303"

@@ -127,6 +127,13 @@
       "must_exist": true,
       "producer_step": "Initialize pip-audit report artifact + make vuln-scan",
       "missing_behavior": "error"
+    },
+    {
+      "workflow": "scorecard.yml",
+      "path": "artifacts/security/scorecard-results.sarif",
+      "must_exist": true,
+      "producer_step": "Initialize Scorecard SARIF artifact + ossf/scorecard-action",
+      "missing_behavior": "error"
     }
   ]
 }
