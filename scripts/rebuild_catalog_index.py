@@ -29,6 +29,17 @@ def utc_now_iso() -> str:
     )
 
 
+def existing_generated_utc(index_path: Path) -> str | None:
+    if not index_path.exists():
+        return None
+    try:
+        data = json.loads(index_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    value = data.get("generated_utc")
+    return value if isinstance(value, str) else None
+
+
 def _kind(rel: str) -> str:
     if rel.startswith("catalog/agents/"):
         return "agent"
@@ -71,10 +82,13 @@ def main() -> int:
             stacks.append(p.relative_to(catalog).as_posix())
         objects.append({"name": name, "path": rel, "sha256": sha256_file(p), "type": k})
 
+    idx_path = catalog / "index.json"
+    generated_utc = existing_generated_utc(idx_path) or utc_now_iso()
+
     idx: Dict[str, Any] = {
         "catalog_id": "AGENTX-LAB",
         "version": "0.1.0",
-        "generated_utc": utc_now_iso(),
+        "generated_utc": generated_utc,
         "count": len(objects),
         "objects": objects,
         "agents": sorted(agents),
@@ -82,7 +96,6 @@ def main() -> int:
         "stacks": sorted(stacks),
     }
 
-    idx_path = catalog / "index.json"
     idx_path.write_text(
         json.dumps(idx, indent=2, ensure_ascii=False, sort_keys=False) + "\n",
         encoding="utf-8",
