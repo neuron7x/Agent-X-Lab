@@ -8,7 +8,6 @@ export PYTHONHASHSEED
 setup:
 	python -m pip install -r requirements.lock
 	python -m pip install -r requirements-dev.txt
-	python -m pip install pip-audit==2.9.0
 
 bootstrap: setup
 

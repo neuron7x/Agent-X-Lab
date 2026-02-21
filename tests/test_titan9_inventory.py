@@ -45,3 +45,22 @@ jobs:
     assert "cat > out.json <<'JSON'" in commands
     assert "echo done" in commands
     assert not any("large-body" in c for c in commands)
+
+
+def test_inventory_normalizes_bash_c_inline(tmp_path: Path) -> None:
+    wf = tmp_path / "c.yml"
+    wf.write_text(
+        """
+name: t
+jobs:
+  j:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          bash -c "echo dangerous"
+""",
+        encoding="utf-8",
+    )
+    commands = _parse_workflow_commands(tmp_path)
+    assert any(c.startswith("inline-script sha256:") for c in commands)
+    assert not any("dangerous" in c for c in commands)

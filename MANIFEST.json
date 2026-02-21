@@ -169,7 +169,7 @@
       "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685"
     },
     "Makefile": {
-      "sha256": "62bed72974b4fdbee3b40edf5ceb43c48625e6211384b626d52e8b5f77687e40"
+      "sha256": "5b2885707ea3ca73b07b6ffb39295945ac93910036a42650c68d9287102efffc"
     },
     "README.md": {
       "sha256": "bcaf90b04631637b9df2a43c4c275e4cc98d2355f7571fc4e97fff06c3dae02e"
@@ -310,7 +310,7 @@
       "sha256": "6ac378f0eaf7b223cdc0d2a7c466e4461d2f8c450f4dc739c0cfebbf83e19e63"
     },
     "docs/ERRORS.md": {
-      "sha256": "d0c14becac5027c05f32138f976c6925ceeeb1b2b2edee04baa34e68f115ff7f"
+      "sha256": "76cfd543e4ce18e6f1974524bb01241bdab87cd8736a0dbb3c487ecc9ce9f142"
     },
     "docs/SPEC.md": {
       "sha256": "c9ac37023740a231ebe057dcfb60b16c5398dcfc695f9b8c8ebf77765ce8c3ad"
@@ -322,7 +322,7 @@
       "sha256": "b576d15ec3b4344fd45759081e26534d0407d1f8f45362a8c7136eb2efe0ceb3"
     },
     "exoneural_governor/backend.py": {
-      "sha256": "11c9f47146f18ad2687cd17b12ca083030e8498d53a2defce2f4062d62be3fb3"
+      "sha256": "dcde98077960bc8a40f22b733dbfd60b8b4f16c8ef5c037ac7e6745ccb5355bc"
     },
     "exoneural_governor/catalog.py": {
       "sha256": "5f9a161f1c399de0cc3ea69e97046879473f5debf71dedfa99a036bd2aca77e6"
@@ -442,7 +442,7 @@
       "sha256": "bc0299089166088626586aea35242d382442892559a115cdcb1473674eae1e4a"
     },
     "requirements-dev.txt": {
-      "sha256": "789adb96f8e4bb52bf29bd3f58713efa8d4323ae1e22223eefd65197f668ba4a"
+      "sha256": "690e7f010bbe295cfccec8c1db276ea92ce2b2f57ec4e16fe10c18c38925f773"
     },
     "requirements.lock": {
       "sha256": "c6510e2d2bfbd08ae31ee9d1042c91e2d748cca5b1c58a6fd879ae32f5fb073c"
@@ -519,11 +519,14 @@
     "tests/test_repo_invariants.py": {
       "sha256": "e9234f9f66325028c9d3f9cb4b5058cd8afe306b0dd713954e39e2dddf6a3acf"
     },
+    "tests/test_secret_scan_gate.py": {
+      "sha256": "c888f28ee1a60172e9c9ec13e2f5377116d71485ced8df285e0c45f4062274b5"
+    },
     "tests/test_stack.py": {
       "sha256": "8d44a31c5140fdea9f73d1cefd2ee61a2105096ec8809b859d49ad2453e1982f"
     },
     "tests/test_titan9_inventory.py": {
-      "sha256": "a8229f94c6a43d79bed1e57844483a259e902f9057bdfc11912d0a1dea7a3369"
+      "sha256": "9765cc81b1df57b7e18f87c569211a26870866c65b3a0af1bb83b77a2031f1a8"
     },
     "tests/test_verify_protocol_consistency.py": {
       "sha256": "cbae4cc9aca710be821f2c4382cad0574a494dffd518719258a80fca33f56eb4"
@@ -558,9 +561,6 @@
     "tools/generate_titan9_proof.py": {
       "sha256": "a0db4202435e8f3bff3113792a476185dd3324b342f2825fbf039d72436a5413"
     },
-    "tools/pin_actions.py": {
-      "sha256": "e8356a399f1dc322230ef39cce1df6df079b1d1ba4ee10ba40724f20a2654b96"
-    },
     "tools/pip_audit_gate.py": {
       "sha256": "ee80f69a12a71d3e704b3d6ee266b72f24b7e375e640e996d9eb9706b5e5d37f"
     },
@@ -570,11 +570,14 @@
     "tools/scorecard_failure_envelope.py": {
       "sha256": "83680a918bb97e97d90a386e78541d00e4f11a2bf2aca62237e07b4977f6c530"
     },
+    "tools/secret_scan_gate.py": {
+      "sha256": "dce0e94936aab41075fea5067ef02f99082e2c9d524ea39a6aed2a9fcb6e7790"
+    },
     "tools/titan9_inventory.py": {
-      "sha256": "4ac867f2a7bd5ce24ec23b19e280286f99db08d64ac08c6fd159be55b90aeae1"
+      "sha256": "3005644b1f02e53dc76b786c365f8cab1c5509830bd88db2ae3d75d7e43f97df"
     },
     "tools/verify_action_pinning.py": {
-      "sha256": "b6116e63f84963a9118faae73ca32d1f248b814ab7e42149fc6ffe8ae13c7fa8"
+      "sha256": "255aa06ac85174de3358be8d981fa2af08d5ec6766a67ada6f5e7f75fa42a8a9"
     },
     "tools/verify_protocol_consistency.py": {
       "sha256": "0eb11e0260015e37f2804f3c17c8ae9bf799f503485b8b0a25677c91b9a4a3e2"

@@ -13,7 +13,15 @@ def _normalize_inline_command(line: str) -> str:
     cleaned = line.strip()
     if not cleaned or cleaned.startswith("#"):
         return ""
-    if "python -c " in cleaned or "node -e " in cleaned:
+    suspicious_patterns = [
+        r"python\s+-c",
+        r"node\s+-e",
+        r"bash\s+-c",
+        r"sh\s+-c",
+        r"eval\s+",
+        r"\|\s*(bash|sh)",
+    ]
+    if any(re.search(pattern, cleaned) for pattern in suspicious_patterns):
         digest = hashlib.sha256(cleaned.encode("utf-8")).hexdigest()
         return f"inline-script sha256:{digest}"
     return cleaned

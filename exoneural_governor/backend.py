@@ -4,7 +4,7 @@ import importlib
 
 
 E_BACKEND_TORCH_MISSING = "E_BACKEND_TORCH_MISSING"
-BACKEND_TORCH_MISSING_MESSAGE = "E_BACKEND_TORCH_MISSING: accelerated backend was requested without torch availability."
+BACKEND_TORCH_MISSING_MESSAGE = "E_BACKEND_TORCH_MISSING: accelerated backend requires torch. Fix: install torch or use backend='reference'."
 
 
 def _torch_available() -> bool:
