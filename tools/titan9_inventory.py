@@ -48,21 +48,10 @@ def build_inventory(repo_root: Path) -> dict[str, object]:
         "entrypoints": scripts,
         "demo_artifacts": ["VR.json", "artifacts/release/*.zip"],
         "canonical_commands": {
-            "install": [
-                "python -m pip install -r requirements.lock",
-                "python -m pip install -r requirements-dev.txt",
-            ],
-            "tests": ["python -m pytest -q -W error"],
-            "lint_format": ["ruff check .", "ruff format --check ."],
-            "typecheck": ["mypy ."],
-            "validate": [
-                "python scripts/validate_arsenal.py --repo-root . --strict",
-                "python scripts/run_object_evals.py --repo-root .",
-                "python tools/verify_protocol_consistency.py --protocol protocol.yaml",
-                "python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json",
-                "python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json",
-                "python tools/generate_titan9_proof.py --repo-root .",
-            ],
+            "setup": ["make setup"],
+            "tests": ["make test"],
+            "proof": ["make proof"],
+            "ci": ["make ci"],
         },
         "workflows": {
             "commands": _parse_workflow_commands(repo_root / ".github" / "workflows")

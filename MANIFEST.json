@@ -123,6 +123,9 @@
     "all_objects_above_threshold": true
   },
   "checksums": {
+    ".devcontainer/devcontainer.json": {
+      "sha256": "230acd4d4c96f25167b558b2b6e019d6201f287befaacd66b5b8e903543ee2dd"
+    },
     ".editorconfig": {
       "sha256": "3aaba4c99a60621a3af05afb1d923ea916db44716acf2b1cdf877cb33ec6ae73"
     },
@@ -136,7 +139,7 @@
       "sha256": "7396b398eead8d78d36007a9c2c2296fdfdb37565190e1a581a900c0f75ff405"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "ededb0e3cd8843df478e011a7f8e6fb116f07ab6698c653e3e7af7baedcdc087"
+      "sha256": "75763e22c92853becaa36cc5bafe8b87ba2f028c3bcdd97704558cfdb562fe6b"
     },
     ".github/workflows/lint-actions.yml": {
       "sha256": "25b2f8f69e344d541b2705e721db58c470766dd215568eae18aee9f029a0a0ee"
@@ -157,10 +160,10 @@
       "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685"
     },
     "Makefile": {
-      "sha256": "8c547da2214db51828378b5280dc98465b49f88af762b1dad399b74d49de923d"
+      "sha256": "c78a6c8830bad98f9f74de0f115266cfb07824d29d10a1e5092b2098480e5f82"
     },
     "README.md": {
-      "sha256": "733cd5fa3a1657f8cee07db3fb93065ec0a5cb5ab8945ccc9b7bdc809606e9cb"
+      "sha256": "153f5d197a8c890c8c6250d43078f93e5063d4a4f5d78ab4d92eb762bdb64675"
     },
     "SECURITY.md": {
       "sha256": "5715b12ebe6bcecf93a736a48d6d22881428f241e22c7bdd383aec8d2f1b0bc8"
@@ -187,16 +190,16 @@
       "sha256": "1273636bb026b96328d82f194a0a0e3c7e5b140f65e641d23e4a1a17b33397db"
     },
     "artifacts/titan9/hashes.json": {
-      "sha256": "5b0e8e4e5954e3476b23a7a1a0e2402b434b2122a52069bb2adb1f7441d0dd6c"
+      "sha256": "f2d03ff9450b8fe5b582cbd06531ce8f8ed8bcb9c732c2d88d948d52b3cc2a79"
     },
     "artifacts/titan9/inventory.json": {
-      "sha256": "ad76383c3f6899e973c58461800ef5bd2f70f75f760b0432fd57ec59a86dc9af"
+      "sha256": "666f419a2819addd9cd88cb1f7c155975c983239a1af4805b34431d4b54a9641"
     },
     "artifacts/titan9/proof.log": {
-      "sha256": "5afcec59fc085b99194dbaa2fac4e7251df442904f62925d4a9273932ebc0026"
+      "sha256": "357c54ae053198ce21c47201a96a873752a8f9a275d62b2f4cb02417a3eeabb2"
     },
     "artifacts/titan9/readme_commands.json": {
-      "sha256": "53525bf3f094d0d9e53ff950a2f71fcec44f4004a7772bc490e2e7f7dc4d9ff4"
+      "sha256": "c80681d348dfa291872147cb34471455feb83689cd151013bb8619f127702331"
     },
     "catalog/agents/01_PR-Orchestrator_Repo-Readiness-Governor.txt": {
       "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"
@@ -309,6 +312,9 @@
     "docs/ERRORS.md": {
       "sha256": "ad374d64ceb26c1f589908f2cd28fe78173ef6e1373521b6f9866f0df30d280e"
     },
+    "docs/LLM_INTELLIGENCE_MAP.md": {
+      "sha256": "9b44ed36e075defb8b8a06aee45b4a4eafcd4f7fe3703e2597d547cddf5651df"
+    },
     "docs/SPEC.md": {
       "sha256": "c5dc53e4498eeb7642baa24b1070988e1fa67e4e00a07ecf8c7050e4a1f9be3f"
     },
@@ -411,6 +417,21 @@
     "proof/.gitkeep": {
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
+    "proof/change_summary.md": {
+      "sha256": "f0bba13dd03854ba72cf8e55db7803f0287d71d7e8949dd10fb09f586a6f8894"
+    },
+    "proof/fix_validation.log": {
+      "sha256": "36ec505ddface3d55dd29f87e691eae52a33c55cd7aaf1a13890090bc7a20a1a"
+    },
+    "proof/reproduction.log": {
+      "sha256": "257eaee8930e11c72f0f9f047a6c887fa6d4b9c8cdebc69a4bb24665ce8f6e10"
+    },
+    "proof/test_results.log": {
+      "sha256": "090fdc99e27069cf616d0b38b9fcba4893d074669292340a3ed9e4c45a5d928f"
+    },
+    "proof/tool_versions.txt": {
+      "sha256": "86e363ef7bcb76cf4a384cb1e04074d5210a91f80e7efe6e4ab5f996c6bc8331"
+    },
     "protocol.yaml": {
       "sha256": "b172ba5d64bc09c53ae73b0c64ec2365d1a19840d0b1454627fe04e414fc6d6f"
     },
@@ -448,7 +469,7 @@
       "sha256": "13478f8f1e7e36440b782766e3f1407ba8f9fca4fd3b9b719522c6a0108df2c5"
     },
     "scripts/generate_proof_bundle.py": {
-      "sha256": "a029343b3ddf8f5555f41f5fb891dc0b289d1dd26fad92ba798a89d5d68bc8ed"
+      "sha256": "af4075bbd355959e71bc93364f0102b6333c489cdb8afe5b35036c073eb0207f"
     },
     "scripts/rebuild_catalog_index.py": {
       "sha256": "986ccdc8b168188b38deadea00a93a1e46a9e30f7c238f25e78bff3a7a68c2e5"
@@ -480,14 +501,17 @@
     "tests/test_network_backend.py": {
       "sha256": "ccdb671aa3a7d9b37d5f85c3dbb7c11e3eec1cdac47d7c7df70e529f2787188a"
     },
+    "tests/test_prompt_lint.py": {
+      "sha256": "95b7c0aa9a16b2ca535e55aa9eb9b54ddedb4a00c0a08625eb5b4b7811b5561f"
+    },
     "tests/test_protocol_step_paths.py": {
       "sha256": "2601f7952e6d66f1663fb4a75e637e023b746837997cc127d397b57d6eca5421"
     },
     "tests/test_readme_contract.py": {
-      "sha256": "539360225c6e075b3550b6888198105728d3b69d017debd3a17bf435d1d93996"
+      "sha256": "1e26c3bb0dbcd8e51a9b17ead6eeb30007d727393db32cd147079dbcb248991d"
     },
     "tests/test_repo_invariants.py": {
-      "sha256": "c5011d0ee39f5b92d65cacd66c1703d5c8d34e5aec9561eff0d5297e86d70589"
+      "sha256": "fa5e0dde6077bfa228a5639e6b8116819b27a89b7f8d194d8ccaded71c03e73d"
     },
     "tests/test_stack.py": {
       "sha256": "8d44a31c5140fdea9f73d1cefd2ee61a2105096ec8809b859d49ad2453e1982f"
@@ -504,14 +528,17 @@
     "tools/generate_titan9_proof.py": {
       "sha256": "a0db4202435e8f3bff3113792a476185dd3324b342f2825fbf039d72436a5413"
     },
+    "tools/prompt_lint.py": {
+      "sha256": "6a17e3c7ddd92ec43f8b7ae8f1a6019b5859b7349fb7da1a394e2d98d7870c4d"
+    },
     "tools/titan9_inventory.py": {
-      "sha256": "39f0cdeb3f9710b6746fb8a9d246978c725db42edfaf8dce4a1050edb2137829"
+      "sha256": "c2559a6f12d52348fcb05411705b1d864b3aa70ea8d47edf078ca7685e0601b8"
     },
     "tools/verify_protocol_consistency.py": {
       "sha256": "0eb11e0260015e37f2804f3c17c8ae9bf799f503485b8b0a25677c91b9a4a3e2"
     },
     "tools/verify_readme_contract.py": {
-      "sha256": "4623b9a631d9ccce67bb6bf893c62ee4985b38cbf5b44efd800472919f3a5e72"
+      "sha256": "5d224411617cf09cc3fd0b238a4a69c96905ec71e8b5e1bf81ff2822b043b7c4"
     },
     "vendor/scpe-cimqa-2026.3.0/CG.json": {
       "sha256": "efdeb908577cd4aeea0710b53aea66c691ca0a659301dee99b75680ef3b66b04"
