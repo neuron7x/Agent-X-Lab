@@ -193,7 +193,7 @@
         {
           "exists": true,
           "path": "MANIFEST.json",
-          "sha256": "bd5c468e2a282918e3ec75f386a878b058fa81d17546e9d462a28a6e4a2cefc1",
+          "sha256": "582e50cc6329da330cedacf5bf5d792a785332a35ec76f3cd720a37b60500708",
           "valid": true
         }
       ],
@@ -239,7 +239,7 @@
         {
           "exists": true,
           "path": "MANIFEST.json",
-          "sha256": "bd5c468e2a282918e3ec75f386a878b058fa81d17546e9d462a28a6e4a2cefc1",
+          "sha256": "582e50cc6329da330cedacf5bf5d792a785332a35ec76f3cd720a37b60500708",
           "valid": true
         }
       ],
@@ -300,13 +300,13 @@
         {
           "exists": true,
           "path": "artifacts/titan9/hashes.json",
-          "sha256": "3877aa2d9513532ea4a3a0f2146dbe682857c44c940f596ad8a044f5f96a2ef0",
+          "sha256": "0fbb924b7efe80f70464b97ef381c040c05a413ea50fdf51c994dfec5a3713e9",
           "valid": true
         },
         {
           "exists": true,
           "path": "artifacts/titan9/proof.log",
-          "sha256": "48eb09fe1764b83284b2a73dd4cf271012e246c2a2492a83b2f89522ecf7974b",
+          "sha256": "8a07c306b86fe58dee0ea02ebca2c9aa5b028c2df2ca0c2ed3c843cc68a1ff76",
           "valid": true
         }
       ],
@@ -699,7 +699,7 @@
         {
           "exists": true,
           "path": "artifacts/titan9/inventory.json",
-          "sha256": "1769249ca9b9ac30c18cc91802a47c12f54e4a673e8e3d0938be4a759b6719b0",
+          "sha256": "f3b9fae855951c0dfe04cd0def7735b1ef73a4e1cf1f6b8daae30898f233175e",
           "valid": true
         }
       ],
@@ -722,7 +722,7 @@
         {
           "exists": true,
           "path": "artifacts/titan9/inventory.json",
-          "sha256": "1769249ca9b9ac30c18cc91802a47c12f54e4a673e8e3d0938be4a759b6719b0",
+          "sha256": "f3b9fae855951c0dfe04cd0def7735b1ef73a4e1cf1f6b8daae30898f233175e",
           "valid": true
         }
       ],
@@ -745,7 +745,7 @@
         {
           "exists": true,
           "path": "artifacts/titan9/inventory.json",
-          "sha256": "1769249ca9b9ac30c18cc91802a47c12f54e4a673e8e3d0938be4a759b6719b0",
+          "sha256": "f3b9fae855951c0dfe04cd0def7735b1ef73a4e1cf1f6b8daae30898f233175e",
           "valid": true
         }
       ],
@@ -784,7 +784,7 @@
         {
           "exists": true,
           "path": "artifacts/titan9/inventory.json",
-          "sha256": "1769249ca9b9ac30c18cc91802a47c12f54e4a673e8e3d0938be4a759b6719b0",
+          "sha256": "f3b9fae855951c0dfe04cd0def7735b1ef73a4e1cf1f6b8daae30898f233175e",
           "valid": true
         }
       ],
@@ -1040,7 +1040,7 @@
         {
           "exists": true,
           "path": "artifacts/titan9/proof.log",
-          "sha256": "48eb09fe1764b83284b2a73dd4cf271012e246c2a2492a83b2f89522ecf7974b",
+          "sha256": "8a07c306b86fe58dee0ea02ebca2c9aa5b028c2df2ca0c2ed3c843cc68a1ff76",
           "valid": true
         }
       ],
@@ -1175,7 +1175,7 @@
         {
           "exists": true,
           "path": "artifacts/titan9/proof.log",
-          "sha256": "48eb09fe1764b83284b2a73dd4cf271012e246c2a2492a83b2f89522ecf7974b",
+          "sha256": "8a07c306b86fe58dee0ea02ebca2c9aa5b028c2df2ca0c2ed3c843cc68a1ff76",
           "valid": true
         }
       ],
@@ -1437,7 +1437,7 @@
         {
           "exists": true,
           "path": "artifacts/titan9/proof.log",
-          "sha256": "48eb09fe1764b83284b2a73dd4cf271012e246c2a2492a83b2f89522ecf7974b",
+          "sha256": "8a07c306b86fe58dee0ea02ebca2c9aa5b028c2df2ca0c2ed3c843cc68a1ff76",
           "valid": true
         }
       ],

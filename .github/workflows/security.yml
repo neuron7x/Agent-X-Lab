@@ -62,10 +62,15 @@ jobs:
           HEAD_SHA='${{ github.event.pull_request.head.sha }}'
           git rev-parse --verify "$BASE_SHA"
           git rev-parse --verify "$HEAD_SHA"
-      - name: Gitleaks scan
-        uses: gitleaks/gitleaks-action@5f01c89e30d8f6f99de11e2f38f58d1826e02f8a # v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deterministic secret scan
+        run: python tools/secret_scan_gate.py --repo-root . --out artifacts/security/secret-scan.json
+      - name: Upload secret scan report
+        if: always()
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4
+        with:
+          name: secret-scan-report
+          if-no-files-found: error
+          path: artifacts/security/secret-scan.json
 
   dependency-review:
     if: github.event_name == 'pull_request'

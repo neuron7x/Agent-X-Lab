@@ -56,6 +56,7 @@
       "python tools/dependency_review_gate.py             --requirements requirements.lock             --requirements requirements-dev.txt             --out artifacts/security/dependency-review.json",
       "python tools/feg_r8_verify.py",
       "python tools/scorecard_failure_envelope.py",
+      "python tools/secret_scan_gate.py --repo-root . --out artifacts/security/secret-scan.json",
       "python tools/verify_action_pinning.py",
       "python tools/verify_workflow_hygiene.py",
       "set -euo pipefail",
