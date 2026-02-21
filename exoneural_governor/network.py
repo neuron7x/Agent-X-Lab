@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from exoneural_governor.backend import BACKEND_TORCH_MISSING_MESSAGE
+
 try:
     import torch as _torch  # noqa: F401
 
@@ -10,7 +12,4 @@ except Exception:
 
 def validate_backend(backend: str) -> None:
     if backend == "accelerated" and not HAS_TORCH:
-        raise RuntimeError(
-            "E_BACKEND_TORCH_MISSING: accelerated backend requires torch. "
-            "Fix: install torch or use backend='reference'."
-        )
+        raise RuntimeError(BACKEND_TORCH_MISSING_MESSAGE)
