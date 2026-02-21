@@ -343,7 +343,7 @@
       "sha256": "b932df358873b34d5025888074d90a4f67ef99c00799fbf04ef812854a71a1a9"
     },
     "exoneural_governor/network.py": {
-      "sha256": "12d44a2ea25c946784910f52b6807e951cef083c607ccc2d93411a83f306f240"
+      "sha256": "c27a661447b025814d2b7a5885197bc2c90b80553fa4cc5c25de8a0bab5d0716"
     },
     "exoneural_governor/redaction.py": {
       "sha256": "398e830098ff072d4b626cdd1cd46c125ecd06f0b2799866de4fec2c4bb30e7c"
