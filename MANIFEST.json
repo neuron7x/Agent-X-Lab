@@ -195,60 +195,6 @@
     "architecture/NAMING-CONVENTIONS.md": {
       "sha256": "1273636bb026b96328d82f194a0a0e3c7e5b140f65e641d23e4a1a17b33397db"
     },
-    "artifacts/fegr7/baseline/01.doctor.cmd.txt": {
-      "sha256": "92c94538b7ec5713a8024c0e4f34b2b820feb82d29f4400485f96c106d58e7c9"
-    },
-    "artifacts/fegr7/baseline/01.doctor.meta.json": {
-      "sha256": "50267b8f3732a86e96dee8d9b1d2338d8f0d456999ab3abf78fc8fee045d0ad7"
-    },
-    "artifacts/fegr7/baseline/01.doctor.stderr.txt": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    "artifacts/fegr7/baseline/01.doctor.stdout.txt": {
-      "sha256": "48c5dca04e55acdd30a2ccf553300dbbcc89758664aba35f842d402bcc997c92"
-    },
-    "artifacts/fegr7/baseline/02.setup.cmd.txt": {
-      "sha256": "0566d0c47d5f62c721c604586a266cb753b66d80f77cd9805de856dba4c0d00c"
-    },
-    "artifacts/fegr7/baseline/02.setup.meta.json": {
-      "sha256": "b951995ba6ba2d8e0e2c5e0274b11467bb26af8eee30f64c8ddc39bb78e2ecc8"
-    },
-    "artifacts/fegr7/baseline/02.setup.stderr.txt": {
-      "sha256": "3bcb5c669d699a882b13f1a732ff5a775bd3f1038812de1796c9110e2b9eebf3"
-    },
-    "artifacts/fegr7/baseline/02.setup.stdout.txt": {
-      "sha256": "9385f588970e326cdab3c0b18b721787db651c4c4a9fa798da3d34236aa10b11"
-    },
-    "artifacts/fegr7/baseline/03.check.cmd.txt": {
-      "sha256": "d064dfa48b8d12f6adf6815dfae7d3431ad44943c11091bcc8b53891c8b5ea26"
-    },
-    "artifacts/fegr7/baseline/03.check.meta.json": {
-      "sha256": "646fe2187f9ae0278589b139c45caacf2c216e72af7bab4710af589394c20686"
-    },
-    "artifacts/fegr7/baseline/03.check.stderr.txt": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    "artifacts/fegr7/baseline/03.check.stdout.txt": {
-      "sha256": "0b5e779d3816ba2fefbad4980ce9bfbf32d20fdc8950d978306ab2d0cb421fc3"
-    },
-    "artifacts/fegr7/baseline/04.proof.cmd.txt": {
-      "sha256": "cfae4135b3a2b64f44dab5b5e5d55a53af41381c3174a4e46ef6d0695b79cbc0"
-    },
-    "artifacts/fegr7/baseline/04.proof.meta.json": {
-      "sha256": "a9084da9a67b1463ebe971fedfd30dcb9ea250d0e34c1dc02bf6544a31277601"
-    },
-    "artifacts/fegr7/baseline/04.proof.stderr.txt": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    "artifacts/fegr7/baseline/04.proof.stdout.txt": {
-      "sha256": "4d2a1bf9dc1f258ed30bc8c1f4d1dc130346b33d2e834bf9579f441dc88b8d3f"
-    },
-    "artifacts/fegr7/baseline/HEAD_SHA.txt": {
-      "sha256": "2c8f617841445b09025b933a51c6e2ec7074f0a024558cb4d7efeb9f192643fe"
-    },
-    "artifacts/fegr7/baseline/status.porcelain.txt": {
-      "sha256": "9e3ea4d64a5324dc3846001fd416d44594398463e9b1c740f82da510961d8da8"
-    },
     "artifacts/ghtpo/EVIDENCE.md": {
       "sha256": "7e362f47e69c986459ff5d53596b778aa01597a068a3fb4348030f5750df9c3a"
     },
@@ -532,7 +478,7 @@
       "sha256": "986ccdc8b168188b38deadea00a93a1e46a9e30f7c238f25e78bff3a7a68c2e5"
     },
     "scripts/rebuild_checksums.py": {
-      "sha256": "312e129d19952ddefc7b71a7227f320771389fce2832d921f5865ae91420e8a9"
+      "sha256": "7174b1ab6fb2a8fbd71439fb585bdf44a51dc4c3c8498f093c956e47c0ba5ffc"
     },
     "scripts/run_object_evals.py": {
       "sha256": "b50848541f2b74cfb719c3778aff65acb9d112d36b0c7e89dfcc273b66f03d7d"
@@ -568,7 +514,7 @@
       "sha256": "af44c7259d0544305d2fa4165fa581f936b197a496ef26e4864e0a4bfcd01ae5"
     },
     "tests/test_repo_invariants.py": {
-      "sha256": "c5011d0ee39f5b92d65cacd66c1703d5c8d34e5aec9561eff0d5297e86d70589"
+      "sha256": "e0ae206c0533083785c4e65eed394f55e2ae0a302a83eb06a1d1adb419928afd"
     },
     "tests/test_stack.py": {
       "sha256": "8d44a31c5140fdea9f73d1cefd2ee61a2105096ec8809b859d49ad2453e1982f"
