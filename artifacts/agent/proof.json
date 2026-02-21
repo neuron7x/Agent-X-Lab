@@ -1,36 +1,39 @@
 {
-  "status": "pass",
-  "gates_run": [
+  "artifacts": {
+    "contract": "artifacts/agent/contract.json",
+    "evidence": "artifacts/agent/evidence.jsonl",
+    "issues": "artifacts/agent/issues.json",
+    "pip_audit_report": "artifacts/security/pip-audit.json"
+  },
+  "gates": [
     {
       "command": "make check",
-      "exit_code": 0
-    },
-    {
-      "command": "python tools/feg_r8_verify.py",
-      "exit_code": 0
+      "result": "pass"
     },
     {
       "command": "make proof",
-      "exit_code": 0
+      "result": "pass"
     },
     {
-      "command": "python -m pytest -q tests/test_rebuild_checksums.py tests/test_repo_invariants.py tests/test_pip_audit_gate.py",
-      "exit_code": 0
+      "command": "make workflow-hygiene action-pinning",
+      "result": "pass"
     },
     {
-      "command": "python tools/pip_audit_gate.py --requirements requirements.lock --requirements requirements-dev.txt --allowlist policies/pip_audit_allowlist.json --out artifacts/security/pip-audit.json",
-      "exit_code": 3
+      "command": "make vuln-scan",
+      "reason": "pip-audit-missing in local env",
+      "result": "fail"
+    },
+    {
+      "command": "python -m pip install pip-audit==2.9.0",
+      "reason": "proxy 403 to package index",
+      "result": "fail"
     }
   ],
-  "artifact_paths_verified": [
-    {
-      "path": "artifacts/security/pip-audit.json",
-      "exists_after_producer": true
-    },
-    {
-      "path": "objects/*/artifacts/evidence/reference/eval/report.json",
-      "exists_after_producer": true
-    }
-  ],
-  "notes": "pip-audit gate returns non-zero when pip-audit is missing, but deterministic error envelope is written to required artifact path."
+  "hashes": {
+    "artifacts/agent/contract.json": "75c774d85b3feb2872a47fe57a589e2bc5d1c2b6f4fa0c045b3a99e076d93771",
+    "artifacts/agent/evidence.jsonl": "0e805211d2d1f970285c754e7dfb467e4dba0a5b9b4f27c8f6106dbf1c5ff2e5",
+    "artifacts/agent/issues.json": "17fc5239032774c0bca713da328f3b51a2cfff573b06a058e3b243fafa70e74e",
+    "artifacts/security/pip-audit.json": null
+  },
+  "ts_utc": "2026-02-21T13:24:12Z"
 }

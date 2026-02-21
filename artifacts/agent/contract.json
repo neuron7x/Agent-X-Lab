@@ -1,132 +1,123 @@
 {
+  "artifact_uploads": [
+    {
+      "missing_behavior": "error",
+      "must_exist": true,
+      "path": "artifacts/reports/**",
+      "producer_step": "make proof",
+      "workflow": "ci.yml"
+    },
+    {
+      "missing_behavior": "error",
+      "must_exist": true,
+      "path": "objects/*/artifacts/evidence/reference/eval/report.json",
+      "producer_step": "make check (evals)",
+      "workflow": "ci.yml"
+    },
+    {
+      "missing_behavior": "error",
+      "must_exist": true,
+      "path": "artifacts/security/pip-audit.json",
+      "producer_step": "Initialize pip-audit report artifact + make vuln-scan",
+      "workflow": "security.yml"
+    },
+    {
+      "missing_behavior": "error",
+      "must_exist": true,
+      "path": "artifacts/security/scorecard-results.sarif",
+      "producer_step": "ossf/scorecard-action",
+      "workflow": "scorecard.yml"
+    }
+  ],
   "default_branch": "work",
+  "local_entrypoints": [
+    {
+      "command": "make setup",
+      "name": "setup"
+    },
+    {
+      "command": "make check",
+      "name": "check"
+    },
+    {
+      "command": "make proof",
+      "name": "proof"
+    },
+    {
+      "command": "make vuln-scan",
+      "name": "vuln-scan"
+    },
+    {
+      "command": "make workflow-hygiene",
+      "name": "workflow-hygiene"
+    },
+    {
+      "command": "make action-pinning",
+      "name": "action-pinning"
+    }
+  ],
   "required_checks": [
     {
-      "name": "CI/quality: make check",
-      "source": "workflow",
-      "command": "make check",
+      "command": "make setup && make check && python tools/feg_r8_verify.py && make proof",
+      "name": "CI/quality",
       "required_artifacts": [
         "artifacts/reports/**",
         "objects/*/artifacts/evidence/reference/eval/report.json"
-      ]
+      ],
+      "source": "workflow"
     },
     {
-      "name": "CI/quality: R8 verification",
-      "source": "workflow",
-      "command": "python tools/feg_r8_verify.py",
-      "required_artifacts": []
+      "command": "test \"${needs.quality.result}\" = \"success\"",
+      "name": "CI/status-check",
+      "required_artifacts": [],
+      "source": "workflow"
     },
     {
-      "name": "CI/quality: proof",
-      "source": "workflow",
-      "command": "make proof",
-      "required_artifacts": [
-        "artifacts/titan9/inventory.json",
-        "artifacts/titan9/readme_commands.json",
-        "artifacts/titan9/proof.log",
-        "artifacts/titan9/hashes.json"
-      ]
-    },
-    {
+      "command": "make setup && python -m pip install pip-audit==2.9.0 && make vuln-scan",
       "name": "Security/pip-audit",
-      "source": "workflow",
-      "command": "make vuln-scan",
       "required_artifacts": [
         "artifacts/security/pip-audit.json"
-      ]
+      ],
+      "source": "workflow"
     },
     {
-      "name": "Security/codeql",
-      "source": "workflow",
-      "command": "github/codeql-action/analyze@v3",
-      "required_artifacts": []
-    },
-    {
-      "name": "Security/gitleaks",
-      "source": "workflow",
-      "command": "gitleaks/gitleaks-action@v2",
-      "required_artifacts": []
-    },
-    {
-      "name": "Security/dependency-review",
-      "source": "workflow",
-      "command": "actions/dependency-review-action@v4",
-      "required_artifacts": []
-    }
-  ],
-  "local_entrypoints": [
-    {
-      "name": "setup",
-      "command": "make setup"
-    },
-    {
-      "name": "check",
-      "command": "make check"
-    },
-    {
-      "name": "r8",
-      "command": "python tools/feg_r8_verify.py"
-    },
-    {
-      "name": "proof",
-      "command": "make proof"
-    },
-    {
-      "name": "security-scan",
-      "command": "python tools/pip_audit_gate.py --requirements requirements.lock --requirements requirements-dev.txt --allowlist policies/pip_audit_allowlist.json --out artifacts/security/pip-audit.json"
+      "command": "reviewdog/action-actionlint@v1",
+      "name": "Lint GitHub Actions/actionlint",
+      "required_artifacts": [],
+      "source": "workflow"
     }
   ],
   "validators": [
     {
-      "id": "manifest-checksums",
+      "classification": "stable",
       "enforced_by": "scripts/validate_arsenal.py",
+      "id": "arsenal-strict",
+      "rationale": "checks tracked repo inputs and policies under strict mode",
       "requires_paths": [
         "MANIFEST.json",
-        "checksums entries"
-      ],
-      "classification": "stable",
-      "rationale": "strict mode verifies checksums and rejects transient artifacts/untracked paths"
+        "catalog/**",
+        "objects/**",
+        "protocols/**"
+      ]
     },
     {
-      "id": "checksum-builder",
-      "enforced_by": "scripts/rebuild_checksums.py",
+      "classification": "transient",
+      "enforced_by": "tools/titan9_inventory.py",
+      "id": "titan9-inventory",
+      "rationale": "generated at runtime and consumed by README contract verifier in same run",
       "requires_paths": [
-        "git ls-files tracked paths"
-      ],
-      "classification": "stable",
-      "rationale": "checksums built from tracked files and artifact allowlist only"
+        "artifacts/titan9/inventory.json"
+      ]
     },
     {
-      "id": "pip-audit-allowlist-expiry",
+      "classification": "transient",
       "enforced_by": "tools/pip_audit_gate.py",
+      "id": "pip-audit-gate",
+      "rationale": "security report artifact is CI upload target; script writes deterministic envelope on error",
       "requires_paths": [
+        "artifacts/security/pip-audit.json",
         "policies/pip_audit_allowlist.json"
-      ],
-      "classification": "stable",
-      "rationale": "expired allowlist entries fail with reason_code allowlist-expired"
-    }
-  ],
-  "artifact_uploads": [
-    {
-      "workflow": "ci.yml",
-      "path": "artifacts/reports/**",
-      "must_exist": true,
-      "producer_step": "make check",
-      "missing_behavior": "error"
-    },
-    {
-      "workflow": "ci.yml",
-      "path": "objects/*/artifacts/evidence/reference/eval/report.json",
-      "must_exist": true,
-      "producer_step": "make check",
-      "missing_behavior": "error"
-    },
-    {
-      "workflow": "security.yml",
-      "path": "artifacts/security/pip-audit.json",
-      "must_exist": true,
-      "producer_step": "Initialize pip-audit report artifact + make vuln-scan",
-      "missing_behavior": "error"
+      ]
     }
   ]
 }
