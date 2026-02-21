@@ -109,3 +109,46 @@ def test_fail_report_for_missing_tool_has_expected_remediation(tmp_path: Path) -
     payload = json.loads(out.read_text(encoding="utf-8"))
     assert payload["reason_code"] == "pip-audit-missing"
     assert payload["remediation"] == "install pip-audit==2.9.0"
+
+
+def test_main_fails_on_expired_allowlist_and_writes_report(tmp_path: Path) -> None:
+    out = tmp_path / "pip-audit.json"
+    allow = tmp_path / "allow.json"
+    allow.write_text(
+        json.dumps(
+            {
+                "ignore": [
+                    {
+                        "id": "CVE-2020-0001",
+                        "reason": "temporary",
+                        "expires": "2020-01-01",
+                    }
+                ]
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "tools/pip_audit_gate.py",
+            "--requirements",
+            "requirements.lock",
+            "--allowlist",
+            str(allow),
+            "--out",
+            str(out),
+        ],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 2
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["reason_code"] == "allowlist-expired"
+    assert payload["status"] == "error"
+    assert payload["tool"] == "pip-audit"
+    assert payload["expired_entries"] == [
+        "CVE-2020-0001 (expires=2020-01-01, reason=temporary)"
+    ]

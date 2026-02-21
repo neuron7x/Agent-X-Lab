@@ -1,0 +1,41 @@
+{
+  "changes": [
+    {
+      "file": ".github/workflows/security.yml",
+      "rationale": "Pre-create artifacts/security/pip-audit.json so upload-artifact has a deterministic file even if earlier scan steps fail fast."
+    },
+    {
+      "file": "scripts/rebuild_checksums.py",
+      "rationale": "Centralize transient artifact path exclusions into a single constant to keep checksum scope deterministic and fail-closed."
+    },
+    {
+      "file": "tests/test_pip_audit_gate.py",
+      "rationale": "Add regression test that expired allowlist entries fail with a structured error artifact."
+    },
+    {
+      "file": "tests/test_rebuild_checksums.py",
+      "rationale": "Add regression test proving transient artifact paths are excluded while stable reference evidence remains checksummed."
+    }
+  ],
+  "evidence_paths": [
+    "artifacts/pr_evidence/report.json"
+  ],
+  "gates_run": [
+    {
+      "command": "python -m pytest -q tests/test_pip_audit_gate.py tests/test_rebuild_checksums.py",
+      "exit_code": 0
+    },
+    {
+      "command": "make check",
+      "exit_code": 0
+    }
+  ],
+  "observed_failures": [
+    {
+      "id": "SECURITY-ARTIFACT-NONDETERMINISM",
+      "message": "Security workflow artifact upload can fail if pip-audit output file is absent before upload-artifact executes."
+    }
+  ],
+  "remaining_risks": [],
+  "root_cause": "Security artifact upload depended on runtime scan output existence without a deterministic pre-created file contract; checksum exclusion logic was duplicated and easy to drift."
+}

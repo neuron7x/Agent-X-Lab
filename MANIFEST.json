@@ -154,7 +154,7 @@
       "sha256": "de477fd80d3f02331dbfcb306da01ec3b85d143c2f370287a8afa388415536dd"
     },
     ".github/workflows/security.yml": {
-      "sha256": "88f301c997b89ab13327668ae03e759520302e4dc45a1ec54b93308a13ea8e0c"
+      "sha256": "82e2c133a1bd8eadb4a3ef38f96fdfe1caed79b416a323b3aea75243e5c17303"
     },
     ".gitignore": {
       "sha256": "fbf2356dd6dc26b3409d8c7ff89e9060794d679736f32e6af8306a52e2acde5d"
@@ -203,6 +203,9 @@
     },
     "artifacts/ghtpo/quality.json": {
       "sha256": "1dacd8a6edc4484e7395a4b42e94273e793ae040d51b33f2b06b17c096388afc"
+    },
+    "artifacts/pr_evidence/report.json": {
+      "sha256": "facab49f3f47bc7b96060f1303971dada72a10447c41fe401327e4ccd9d04b31"
     },
     "catalog/agents/01_PR-Orchestrator_Repo-Readiness-Governor.txt": {
       "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"
@@ -475,7 +478,7 @@
       "sha256": "986ccdc8b168188b38deadea00a93a1e46a9e30f7c238f25e78bff3a7a68c2e5"
     },
     "scripts/rebuild_checksums.py": {
-      "sha256": "9acb66d3452e7ef986e99587bd194dfb410b256fd211db2ca1f8eda5f4b1bc31"
+      "sha256": "4f9abc9db5ac6fb7706eaf99c730baa8dfcec6d7797ee3790455aedd58173eae"
     },
     "scripts/run_object_evals.py": {
       "sha256": "b50848541f2b74cfb719c3778aff65acb9d112d36b0c7e89dfcc273b66f03d7d"
@@ -505,13 +508,16 @@
       "sha256": "ccdb671aa3a7d9b37d5f85c3dbb7c11e3eec1cdac47d7c7df70e529f2787188a"
     },
     "tests/test_pip_audit_gate.py": {
-      "sha256": "8cbaf689ff198498b113256f0d9f0a64f415aa58e1d0177101e1ac0be25846ed"
+      "sha256": "17e0a613f3733298e484d0f0cb8a1af4c58d2ffe7facc4c4aca3085caf4d142c"
     },
     "tests/test_protocol_step_paths.py": {
       "sha256": "2601f7952e6d66f1663fb4a75e637e023b746837997cc127d397b57d6eca5421"
     },
     "tests/test_readme_contract.py": {
       "sha256": "af44c7259d0544305d2fa4165fa581f936b197a496ef26e4864e0a4bfcd01ae5"
+    },
+    "tests/test_rebuild_checksums.py": {
+      "sha256": "183c4e4a256fa0047af43cc2d229d53559dc73af99505f36985d8ba5df96a8d8"
     },
     "tests/test_repo_invariants.py": {
       "sha256": "e9234f9f66325028c9d3f9cb4b5058cd8afe306b0dd713954e39e2dddf6a3acf"

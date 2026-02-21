@@ -106,6 +106,16 @@ jobs:
       - uses: ./.github/actions/pin-pip
       - name: Install dependencies
         run: make setup
+      - name: Initialize pip-audit report artifact
+        run: |
+          mkdir -p artifacts/security
+          cat > artifacts/security/pip-audit.json <<'JSON'
+          {
+            "status": "pending",
+            "tool": "pip-audit",
+            "reason": "scan-not-run"
+          }
+          JSON
       - name: Install pip-audit
         run: python -m pip install pip-audit==2.9.0
       - name: Run full dependency vulnerability audit
