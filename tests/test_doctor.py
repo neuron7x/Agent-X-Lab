@@ -8,7 +8,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 def test_doctor_passes_in_ci_env() -> None:
     proc = subprocess.run(
-        ["python", "tools/doctor.py", "--quiet"],
+        [__import__("sys").executable, "tools/doctor.py", "--quiet"],
         cwd=REPO_ROOT,
         capture_output=True,
         text=True,

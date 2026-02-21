@@ -13,6 +13,7 @@ EXIT_PYTHON = 10
 EXIT_GIT = 11
 EXIT_INSTALLER = 12
 EXIT_OS = 13
+EXIT_MAKE = 14
 
 SUPPORTED_SYSTEMS = {"Linux", "Darwin"}
 
@@ -72,18 +73,15 @@ def _installer_check() -> CheckResult:
     )
     uv_path = shutil.which("uv")
 
-    if pip_proc.returncode != 0 and uv_path is None:
+    if pip_proc.returncode != 0:
         return CheckResult(
             ok=False,
-            message="installer=FAIL python -m pip unavailable and uv missing",
+            message="installer=FAIL python -m pip unavailable",
             exit_code=EXIT_INSTALLER,
         )
 
     parts: list[str] = []
-    if pip_proc.returncode == 0:
-        parts.append(f"pip=PASS {pip_proc.stdout.strip()}")
-    else:
-        parts.append(f"pip=FAIL rc={pip_proc.returncode}")
+    parts.append(f"pip=PASS {pip_proc.stdout.strip()}")
 
     if uv_path is None:
         parts.append("uv=MISS")
@@ -102,6 +100,17 @@ def _installer_check() -> CheckResult:
     return CheckResult(ok=True, message="installer=PASS " + " ; ".join(parts))
 
 
+def _make_check() -> CheckResult:
+    make_path = shutil.which("make")
+    if make_path is None:
+        return CheckResult(
+            ok=False,
+            message="make.binary=FAIL missing",
+            exit_code=EXIT_MAKE,
+        )
+    return CheckResult(ok=True, message=f"make.binary=PASS {make_path}")
+
+
 def _os_check() -> CheckResult:
     system = platform.system()
     if system not in SUPPORTED_SYSTEMS:
@@ -118,7 +127,13 @@ def main() -> int:
     parser.add_argument("--quiet", action="store_true")
     args = parser.parse_args()
 
-    checks = [_python_check(), _git_check(), _installer_check(), _os_check()]
+    checks = [
+        _python_check(),
+        _git_check(),
+        _installer_check(),
+        _make_check(),
+        _os_check(),
+    ]
     for check in checks:
         if not args.quiet:
             print(check.message)
