@@ -2,7 +2,7 @@
 
 ![CI badge](https://img.shields.io/badge/CI-GitHub_Actions-blue)
 
-A deterministic cognitive-agent architecture with mechanized validation for shipping prompt catalogs and proof bundles.
+A deterministic cognitive-agent architecture with mechanized validation for shipping prompt catalogs and proof bundles as a GitHub-ready project.
 
 ## Quickstart
 
