@@ -19,6 +19,7 @@ This repository encodes TITAN-9 remediation mapping as a bijection between defic
 ## README SSOT contract
 
 README must contain exactly one `## Quickstart` section with executable commands.
+Quickstart is Makefile-only and must include `make setup`, `make check`, and `make proof`.
 Contract is enforced by `tools/verify_readme_contract.py` against CI workflows and generated inventory.
 
 

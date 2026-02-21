@@ -19,8 +19,8 @@
   - Message: `E_COLLISION_TEST_BUDGET_EXCEEDED: uniqueness simulation exceeded runtime budget`
   - Fix: increase `TITAN9_MAX_RUNTIME_SECONDS` or optimize the test/runtime environment.
 
-- `E_README_PYTHONHASHSEED_MISSING`
-  - Meaning: README Quickstart does not set deterministic PYTHONHASHSEED before python tooling commands.
-  - Message: `E_README_PYTHONHASHSEED_MISSING: README Quickstart must export PYTHONHASHSEED=0 before running python tooling.`
-  - Fix: add `export PYTHONHASHSEED=0` before python/ruff/mypy/pytest commands in `README.md` Quickstart.
+- `E_README_QUICKSTART_MAKE_ONLY`
+  - Meaning: README Quickstart is not Makefile-only or is missing canonical onboarding commands.
+  - Message: `E_README_QUICKSTART_MAKE_ONLY: README Quickstart must use Makefile commands only and include 'make setup', 'make check', and 'make proof'.`
+  - Fix: update `README.md` Quickstart to include only `make setup`, `make check`, and `make proof`.
 README links to this file as the SSOT for user-facing deterministic error codes.

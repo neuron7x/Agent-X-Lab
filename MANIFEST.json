@@ -169,7 +169,7 @@
       "sha256": "8c10831405f177f21f62ba9c2593f9a5ae6a163096fe230d7cdac452f100b85e"
     },
     "README.md": {
-      "sha256": "36ae67b3e6386bceee2575182d0b9f09981d935a5f838d579f948beca7330286"
+      "sha256": "e70a1892000b60fd78b1d14deee99b46dc2180bcdec970d48e7f537aff8b4283"
     },
     "SECURITY.md": {
       "sha256": "5715b12ebe6bcecf93a736a48d6d22881428f241e22c7bdd383aec8d2f1b0bc8"
@@ -202,16 +202,16 @@
       "sha256": "1dacd8a6edc4484e7395a4b42e94273e793ae040d51b33f2b06b17c096388afc"
     },
     "artifacts/titan9/hashes.json": {
-      "sha256": "61c20a88dc075caab95e4181bb34ec03ba5743c1bab10d0d58fbabd0717366ca"
+      "sha256": "c8d873b66c51d266c083d55ac6f695ae0fa2dcde58833f459f2ebc7d937e1a0b"
     },
     "artifacts/titan9/inventory.json": {
       "sha256": "af595a0c3d552668ebefc2b2a082516efd978af5feb17699a9ec57ef04a8b3f9"
     },
     "artifacts/titan9/proof.log": {
-      "sha256": "272d67bc9a43193d048bae71161ad8de526726fd06c3fc4ce7da71d9dbbb5496"
+      "sha256": "4b966ec3d0cf000f43df2beb1aaf8fc78ab17324a7538b7d3577eb3e91db812d"
     },
     "artifacts/titan9/readme_commands.json": {
-      "sha256": "0ba776937f08e4d113919f0306061a3464c2bc3c69c5ad9888aa78072f6e6128"
+      "sha256": "3218e977a8363052b510d078ed2d4edd2b82bc59e894a83fe1254f2a604f015d"
     },
     "catalog/agents/01_PR-Orchestrator_Repo-Readiness-Governor.txt": {
       "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"
@@ -321,11 +321,17 @@
     "configs/sg.config.schema.json": {
       "sha256": "8c12d50bacec508a633dcce893e19b583908b6e7f3cbb9e839f94317f453f497"
     },
+    "docs/ARCHITECTURE.md": {
+      "sha256": "6ac378f0eaf7b223cdc0d2a7c466e4461d2f8c450f4dc739c0cfebbf83e19e63"
+    },
     "docs/ERRORS.md": {
-      "sha256": "ad374d64ceb26c1f589908f2cd28fe78173ef6e1373521b6f9866f0df30d280e"
+      "sha256": "d0c14becac5027c05f32138f976c6925ceeeb1b2b2edee04baa34e68f115ff7f"
     },
     "docs/SPEC.md": {
-      "sha256": "c5dc53e4498eeb7642baa24b1070988e1fa67e4e00a07ecf8c7050e4a1f9be3f"
+      "sha256": "c9ac37023740a231ebe057dcfb60b16c5398dcfc695f9b8c8ebf77765ce8c3ad"
+    },
+    "docs/merge-gates.md": {
+      "sha256": "da5694ad080b4396d64fb29daa428ad5975275f00a07c80b6d209d03190a75f1"
     },
     "exoneural_governor/__init__.py": {
       "sha256": "b576d15ec3b4344fd45759081e26534d0407d1f8f45362a8c7136eb2efe0ceb3"
@@ -499,7 +505,7 @@
       "sha256": "2601f7952e6d66f1663fb4a75e637e023b746837997cc127d397b57d6eca5421"
     },
     "tests/test_readme_contract.py": {
-      "sha256": "539360225c6e075b3550b6888198105728d3b69d017debd3a17bf435d1d93996"
+      "sha256": "af44c7259d0544305d2fa4165fa581f936b197a496ef26e4864e0a4bfcd01ae5"
     },
     "tests/test_repo_invariants.py": {
       "sha256": "c5011d0ee39f5b92d65cacd66c1703d5c8d34e5aec9561eff0d5297e86d70589"
@@ -526,7 +532,7 @@
       "sha256": "0eb11e0260015e37f2804f3c17c8ae9bf799f503485b8b0a25677c91b9a4a3e2"
     },
     "tools/verify_readme_contract.py": {
-      "sha256": "4623b9a631d9ccce67bb6bf893c62ee4985b38cbf5b44efd800472919f3a5e72"
+      "sha256": "07e85b7fb62d5e60cac9d3cb6c6660b7df758d414efd1a9ca6f1c5b22b818a14"
     },
     "vendor/scpe-cimqa-2026.3.0/CG.json": {
       "sha256": "efdeb908577cd4aeea0710b53aea66c691ca0a659301dee99b75680ef3b66b04"

@@ -6,7 +6,7 @@ import tempfile
 from pathlib import Path
 
 
-from tools.verify_readme_contract import E_README_PYTHONHASHSEED_MISSING
+from tools.verify_readme_contract import E_README_QUICKSTART_MAKE_ONLY
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
@@ -55,8 +55,8 @@ def test_readme_contract_passes() -> None:
     assert p.returncode == 0, p.stdout + "\n" + p.stderr
 
 
-def test_readme_contract_fails_when_seed_export_missing_stable() -> None:
-    expected = E_README_PYTHONHASHSEED_MISSING
+def test_readme_contract_fails_when_quickstart_not_make_only_stable() -> None:
+    expected = E_README_QUICKSTART_MAKE_ONLY
     outputs: list[str] = []
 
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -74,7 +74,7 @@ jobs:
       PYTHONHASHSEED: "0"
     steps:
       - name: Example
-        run: python -m pytest -q -W error
+        run: make check
 """.strip()
             + "\n",
             encoding="utf-8",
@@ -82,10 +82,7 @@ jobs:
 
         inventory = temp_path / "inventory.json"
         inventory.write_text(
-            json.dumps(
-                {"canonical_commands": {"tests": ["python -m pytest -q -W error"]}}
-            )
-            + "\n",
+            json.dumps({"canonical_commands": {"tests": ["make check"]}}) + "\n",
             encoding="utf-8",
         )
 
