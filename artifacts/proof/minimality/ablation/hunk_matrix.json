@@ -1,0 +1,387 @@
+{
+  "hunks": [
+    {
+      "hunk_id": "c56e796e653720bc",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "340e5d5eb41b8cec",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "9b26bfa20c835ceb",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "ca3fbc23c9e5a0d7",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "b42a3078fd200d61",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "13463a3c4aae4d2a",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "a613d5e16e85ffcb",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "b42a3078fd200d61",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "03339795d26bd20d",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "96b10bdec3dd50ba",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "ccdba072dfd46615",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "866a745932dbce5c",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "7f3588b974862ef8",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "3ebcc1c5e1b7f5ea",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "7b186f71f322ab8b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "d8e8addbc6fde00c",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "746677e5f4690e23",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "47b211039349a29d",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "d389774aa08a12ed",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "cf1a19d1546e1a9f",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "52a215a335c45145",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "68a6bd1c1f77b28c",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "cd51d5cb1c1a0862",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "80dd3a445b5d3ee0",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "59ca691fbe2b7c75",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "290c519983b6f471",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "382a3cbb73d4f8e4",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "ccdde64f6f240e58",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "17f5434bbd875a85",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "ecdbb4d02582118e",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "41631593bb342fe1",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "d8e8addbc6fde00c",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "746677e5f4690e23",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "c07ba128732101e9",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "7ed561699ce69c97",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "840ace502cbee65a",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "d7b13c5f42a48fce",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "2aaacb3eff3361ad",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "6e5e51753e2fefa6",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "4a4ac815627f1cb0",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "9c2318f353805aaa",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "6120bdba0a650b60",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "7c1d1daff7394679",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "c15b731fd01fbe68",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "77bbc5b35ff82b0b",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "4a4ac815627f1cb0",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "9c2318f353805aaa",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "a83149c405669b64",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "e108fb39c2675779",
+      "removable": false,
+      "required": true
+    },
+    {
+      "hunk_id": "73a19b0b22a5b637",
+      "removable": false,
+      "required": true
+    }
+  ],
+  "required_gate_witnesses": [
+    {
+      "cmd": "ruff check .",
+      "exit_code": 0,
+      "gate_id": "REQ_RUFF",
+      "log_tail_sha256": "f0d0b1081d9d3ebb26c4c93543053ecdc0a58998f22c071dc4ddb26021b57645"
+    },
+    {
+      "cmd": "mypy .",
+      "exit_code": 0,
+      "gate_id": "REQ_MYPY",
+      "log_tail_sha256": "db3c89effd0803ca80ae32812e7af10284d9f4fdf16a97207e56ba0dcfdb8b38"
+    },
+    {
+      "cmd": "python -m pytest -q -W error",
+      "exit_code": 0,
+      "gate_id": "REQ_PYTEST",
+      "log_tail_sha256": "9fb239f8c9b75ec199c5c813a99577cca4c3b99db730be85d9566467a710fbb8"
+    },
+    {
+      "cmd": "python scripts/validate_arsenal.py --repo-root . --strict",
+      "exit_code": 0,
+      "gate_id": "REQ_VALIDATE",
+      "log_tail_sha256": "1567c5c27b60c270376ea65459d4ccbd2360410ee4b3327d773046318f82f78d"
+    },
+    {
+      "cmd": "python tools/verify_protocol_consistency.py --protocol protocol.yaml",
+      "exit_code": 0,
+      "gate_id": "REQ_PROTOCOL",
+      "log_tail_sha256": "ab74195858040951dfaff94630fb83ff6e405ef50d82d161eb5482fd9d1d2ec1"
+    },
+    {
+      "cmd": "python scripts/run_object_evals.py --repo-root . --write-evidence",
+      "exit_code": 0,
+      "gate_id": "REQ_EVAL",
+      "log_tail_sha256": "0d45a21a73914da113c0e63bacbaae95c773f75aa56f9e2200bf1df1d0986d56"
+    }
+  ]
+}

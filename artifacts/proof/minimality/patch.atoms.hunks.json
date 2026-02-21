@@ -1,0 +1,418 @@
+{
+  "atoms": [
+    {
+      "changed_lines": 3,
+      "file": ".gitignore",
+      "hunk_id": "c56e796e653720bc",
+      "hunk_start_line": 5
+    },
+    {
+      "changed_lines": 2,
+      "file": "MANIFEST.json",
+      "hunk_id": "340e5d5eb41b8cec",
+      "hunk_start_line": 16
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/01/cmd.txt",
+      "hunk_id": "9b26bfa20c835ceb",
+      "hunk_start_line": 30
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/01/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 37
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/02/cmd.txt",
+      "hunk_id": "ca3fbc23c9e5a0d7",
+      "hunk_start_line": 50
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/02/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 57
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/02/stderr.txt",
+      "hunk_id": "b42a3078fd200d61",
+      "hunk_start_line": 64
+    },
+    {
+      "changed_lines": 7,
+      "file": "artifacts/feg/baseline/02/stdout.txt",
+      "hunk_id": "13463a3c4aae4d2a",
+      "hunk_start_line": 71
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/03/cmd.txt",
+      "hunk_id": "a613d5e16e85ffcb",
+      "hunk_start_line": 84
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/03/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 91
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/03/stderr.txt",
+      "hunk_id": "b42a3078fd200d61",
+      "hunk_start_line": 98
+    },
+    {
+      "changed_lines": 18,
+      "file": "artifacts/feg/baseline/03/stdout.txt",
+      "hunk_id": "03339795d26bd20d",
+      "hunk_start_line": 105
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/04/cmd.txt",
+      "hunk_id": "96b10bdec3dd50ba",
+      "hunk_start_line": 129
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/04/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 136
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/04/stdout.txt",
+      "hunk_id": "ccdba072dfd46615",
+      "hunk_start_line": 146
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/05/cmd.txt",
+      "hunk_id": "866a745932dbce5c",
+      "hunk_start_line": 153
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/05/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 160
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/05/stdout.txt",
+      "hunk_id": "7f3588b974862ef8",
+      "hunk_start_line": 170
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/06/cmd.txt",
+      "hunk_id": "3ebcc1c5e1b7f5ea",
+      "hunk_start_line": 177
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/06/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 184
+    },
+    {
+      "changed_lines": 2,
+      "file": "artifacts/feg/baseline/06/stdout.txt",
+      "hunk_id": "7b186f71f322ab8b",
+      "hunk_start_line": 194
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/07/cmd.txt",
+      "hunk_id": "d8e8addbc6fde00c",
+      "hunk_start_line": 202
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/07/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 209
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/07/stdout.txt",
+      "hunk_id": "746677e5f4690e23",
+      "hunk_start_line": 219
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/08/cmd.txt",
+      "hunk_id": "47b211039349a29d",
+      "hunk_start_line": 226
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/08/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 233
+    },
+    {
+      "changed_lines": 8,
+      "file": "artifacts/feg/baseline/08/stdout.txt",
+      "hunk_id": "d389774aa08a12ed",
+      "hunk_start_line": 243
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/09/cmd.txt",
+      "hunk_id": "cf1a19d1546e1a9f",
+      "hunk_start_line": 257
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/09/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 264
+    },
+    {
+      "changed_lines": 17,
+      "file": "artifacts/feg/baseline/09/stdout.txt",
+      "hunk_id": "52a215a335c45145",
+      "hunk_start_line": 274
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/10/cmd.txt",
+      "hunk_id": "68a6bd1c1f77b28c",
+      "hunk_start_line": 297
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/10/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 304
+    },
+    {
+      "changed_lines": 6,
+      "file": "artifacts/feg/baseline/10/stdout.txt",
+      "hunk_id": "cd51d5cb1c1a0862",
+      "hunk_start_line": 314
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/11/cmd.txt",
+      "hunk_id": "80dd3a445b5d3ee0",
+      "hunk_start_line": 326
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/11/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 333
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/12/cmd.txt",
+      "hunk_id": "59ca691fbe2b7c75",
+      "hunk_start_line": 346
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/12/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 353
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/13/cmd.txt",
+      "hunk_id": "290c519983b6f471",
+      "hunk_start_line": 366
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/baseline/13/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 373
+    },
+    {
+      "changed_lines": 9,
+      "file": "artifacts/feg/declared_inputs.json",
+      "hunk_id": "382a3cbb73d4f8e4",
+      "hunk_start_line": 386
+    },
+    {
+      "changed_lines": 15,
+      "file": "artifacts/feg/gates/G00/cmd.txt",
+      "hunk_id": "ccdde64f6f240e58",
+      "hunk_start_line": 401
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/gates/G00/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 422
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/gates/G00/stdout.txt",
+      "hunk_id": "17f5434bbd875a85",
+      "hunk_start_line": 432
+    },
+    {
+      "changed_lines": 16,
+      "file": "artifacts/feg/gates/G01/cmd.txt",
+      "hunk_id": "ecdbb4d02582118e",
+      "hunk_start_line": 439
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/gates/G01/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 461
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/gates/G01/stdout.txt",
+      "hunk_id": "41631593bb342fe1",
+      "hunk_start_line": 471
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/gates/G02/cmd.txt",
+      "hunk_id": "d8e8addbc6fde00c",
+      "hunk_start_line": 478
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/gates/G02/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 485
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/gates/G02/stdout.txt",
+      "hunk_id": "746677e5f4690e23",
+      "hunk_start_line": 495
+    },
+    {
+      "changed_lines": 12,
+      "file": "artifacts/feg/gates/G03/cmd.txt",
+      "hunk_id": "c07ba128732101e9",
+      "hunk_start_line": 502
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/gates/G03/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 520
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/gates/G03/stdout.txt",
+      "hunk_id": "7ed561699ce69c97",
+      "hunk_start_line": 530
+    },
+    {
+      "changed_lines": 17,
+      "file": "artifacts/feg/gates/G04/cmd.txt",
+      "hunk_id": "840ace502cbee65a",
+      "hunk_start_line": 537
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/gates/G04/exit_code.txt",
+      "hunk_id": "d7b13c5f42a48fce",
+      "hunk_start_line": 560
+    },
+    {
+      "changed_lines": 14,
+      "file": "artifacts/feg/gates/G04/stdout.txt",
+      "hunk_id": "2aaacb3eff3361ad",
+      "hunk_start_line": 570
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/gates/G05/cmd.txt",
+      "hunk_id": "6e5e51753e2fefa6",
+      "hunk_start_line": 590
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/gates/G05/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 597
+    },
+    {
+      "changed_lines": 2,
+      "file": "artifacts/feg/gates/G05/stderr.txt",
+      "hunk_id": "4a4ac815627f1cb0",
+      "hunk_start_line": 604
+    },
+    {
+      "changed_lines": 70,
+      "file": "artifacts/feg/gates/G05/stdout.txt",
+      "hunk_id": "9c2318f353805aaa",
+      "hunk_start_line": 612
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/gates/G06/cmd.txt",
+      "hunk_id": "6120bdba0a650b60",
+      "hunk_start_line": 688
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/gates/G06/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 695
+    },
+    {
+      "changed_lines": 9,
+      "file": "artifacts/feg/gates/G06/stdout.txt",
+      "hunk_id": "7c1d1daff7394679",
+      "hunk_start_line": 705
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/gates/G07/cmd.txt",
+      "hunk_id": "c15b731fd01fbe68",
+      "hunk_start_line": 720
+    },
+    {
+      "changed_lines": 1,
+      "file": "artifacts/feg/gates/G07/exit_code.txt",
+      "hunk_id": "77bbc5b35ff82b0b",
+      "hunk_start_line": 727
+    },
+    {
+      "changed_lines": 2,
+      "file": "artifacts/feg/gates/G07/stderr.txt",
+      "hunk_id": "4a4ac815627f1cb0",
+      "hunk_start_line": 734
+    },
+    {
+      "changed_lines": 70,
+      "file": "artifacts/feg/gates/G07/stdout.txt",
+      "hunk_id": "9c2318f353805aaa",
+      "hunk_start_line": 742
+    },
+    {
+      "changed_lines": 51,
+      "file": "artifacts/feg/proof/decision.json",
+      "hunk_id": "a83149c405669b64",
+      "hunk_start_line": 818
+    },
+    {
+      "changed_lines": 16,
+      "file": "artifacts/feg/proof/manifest.json",
+      "hunk_id": "e108fb39c2675779",
+      "hunk_start_line": 875
+    },
+    {
+      "changed_lines": 10,
+      "file": "artifacts/feg/proof/summary.md",
+      "hunk_id": "73a19b0b22a5b637",
+      "hunk_start_line": 897
+    }
+  ]
+}

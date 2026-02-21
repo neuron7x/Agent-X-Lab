@@ -1,0 +1,105 @@
+{
+  "density_pass": true,
+  "hunk_minimality_pass": true,
+  "replay": [
+    [
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_RUFF",
+        "log_tail_sha256": "f0d0b1081d9d3ebb26c4c93543053ecdc0a58998f22c071dc4ddb26021b57645"
+      },
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_MYPY",
+        "log_tail_sha256": "db3c89effd0803ca80ae32812e7af10284d9f4fdf16a97207e56ba0dcfdb8b38"
+      },
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_PYTEST",
+        "log_tail_sha256": "9fb239f8c9b75ec199c5c813a99577cca4c3b99db730be85d9566467a710fbb8"
+      },
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_VALIDATE",
+        "log_tail_sha256": "1567c5c27b60c270376ea65459d4ccbd2360410ee4b3327d773046318f82f78d"
+      },
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_PROTOCOL",
+        "log_tail_sha256": "ab74195858040951dfaff94630fb83ff6e405ef50d82d161eb5482fd9d1d2ec1"
+      },
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_EVAL",
+        "log_tail_sha256": "0d45a21a73914da113c0e63bacbaae95c773f75aa56f9e2200bf1df1d0986d56"
+      }
+    ],
+    [
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_RUFF",
+        "log_tail_sha256": "f0d0b1081d9d3ebb26c4c93543053ecdc0a58998f22c071dc4ddb26021b57645"
+      },
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_MYPY",
+        "log_tail_sha256": "db3c89effd0803ca80ae32812e7af10284d9f4fdf16a97207e56ba0dcfdb8b38"
+      },
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_PYTEST",
+        "log_tail_sha256": "9fb239f8c9b75ec199c5c813a99577cca4c3b99db730be85d9566467a710fbb8"
+      },
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_VALIDATE",
+        "log_tail_sha256": "1567c5c27b60c270376ea65459d4ccbd2360410ee4b3327d773046318f82f78d"
+      },
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_PROTOCOL",
+        "log_tail_sha256": "ab74195858040951dfaff94630fb83ff6e405ef50d82d161eb5482fd9d1d2ec1"
+      },
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_EVAL",
+        "log_tail_sha256": "0d45a21a73914da113c0e63bacbaae95c773f75aa56f9e2200bf1df1d0986d56"
+      }
+    ],
+    [
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_RUFF",
+        "log_tail_sha256": "f0d0b1081d9d3ebb26c4c93543053ecdc0a58998f22c071dc4ddb26021b57645"
+      },
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_MYPY",
+        "log_tail_sha256": "db3c89effd0803ca80ae32812e7af10284d9f4fdf16a97207e56ba0dcfdb8b38"
+      },
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_PYTEST",
+        "log_tail_sha256": "9fb239f8c9b75ec199c5c813a99577cca4c3b99db730be85d9566467a710fbb8"
+      },
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_VALIDATE",
+        "log_tail_sha256": "1567c5c27b60c270376ea65459d4ccbd2360410ee4b3327d773046318f82f78d"
+      },
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_PROTOCOL",
+        "log_tail_sha256": "ab74195858040951dfaff94630fb83ff6e405ef50d82d161eb5482fd9d1d2ec1"
+      },
+      {
+        "exit_code": 0,
+        "gate_id": "REQ_EVAL",
+        "log_tail_sha256": "0d45a21a73914da113c0e63bacbaae95c773f75aa56f9e2200bf1df1d0986d56"
+      }
+    ]
+  ],
+  "required_gate_replay_stable_3x": true,
+  "statement_minimality_pass": true,
+  "status": "PASS"
+}

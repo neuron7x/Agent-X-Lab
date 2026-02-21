@@ -1,9 +1,0 @@
-{
-  "base_branch": "main",
-  "build_id": "NO_BUILD_ID",
-  "contract": "FEG-CORE v2026.02",
-  "git_commit": "1d4fa7c71ef701d4c1cdce20f4601cf5f9bdea0d",
-  "mode": "DEGRADED_API_ACCESS",
-  "pr_branch": "work",
-  "repo_root": "/workspace/Agent-X-Lab"
-}

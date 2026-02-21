@@ -1,1 +1,0 @@
-python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json

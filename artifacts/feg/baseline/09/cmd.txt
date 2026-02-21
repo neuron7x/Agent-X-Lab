@@ -1,1 +1,0 @@
-python scripts/run_object_evals.py --repo-root .

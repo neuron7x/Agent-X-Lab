@@ -1,1 +1,0 @@
-python tools/generate_titan9_proof.py --repo-root .

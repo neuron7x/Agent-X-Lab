@@ -1,1 +1,0 @@
-python tools/verify_protocol_consistency.py --protocol protocol.yaml
