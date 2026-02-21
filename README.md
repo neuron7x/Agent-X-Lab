@@ -36,6 +36,21 @@ Use `make check_r8` to run the standard checks plus workflow hygiene/action pinn
 
 See [docs/ERRORS.md](docs/ERRORS.md) for SSOT user-facing deterministic error identifiers.
 
+## Cleanup run input contract
+
+For deterministic post-development cleanup runs, provide a complete cleanup spec before execution:
+
+- `target_branch`
+- `allowed_change_types`
+- `disallowed_change_types`
+- `gates`
+- `artifacts_policy.forbidden_tracked_globs`
+- `artifacts_policy.allowed_tracked_globs`
+- `offline_policy`
+- `output_mode`
+
+If any required field is missing, treat the run as fail-closed (`E_INPUT_AMBIGUITY`) and avoid making repository changes.
+
 ## Protocol mapping and governance
 
 - Human-readable protocol spec: [docs/SPEC.md](docs/SPEC.md)
