@@ -28,8 +28,15 @@ artifacts/reports/*
 artifacts/tmp/*
 artifacts/release/*
 artifacts/proof/*
+!artifacts/proof/minimality/
+!artifacts/proof/minimality/**
+!artifacts/proof/gates/
+!artifacts/proof/gates/**
 configs/artifacts/
 
 # Local CSI proof bundles
 proof/*
 !proof/.gitkeep
+
+# FEG runtime evidence
+artifacts/feg/

@@ -1,4 +1,7 @@
-.PHONY: bootstrap fmt fmt-check lint type test validate eval ci precommit
+.PHONY: setup bootstrap fmt fmt-check lint type test validate eval verify demo ci precommit
+
+setup:
+	python scripts/bootstrap_env.py
 
 bootstrap:
 	python scripts/bootstrap_env.py
@@ -28,7 +31,12 @@ validate:
 eval:
 	python scripts/run_object_evals.py --repo-root . --write-evidence
 
-ci: lint type test validate eval
+verify: lint type test validate eval
+
+demo:
+	python tools/generate_titan9_proof.py --repo-root .
+
+ci: verify
 
 precommit:
 	ruff check .
