@@ -25,40 +25,14 @@
       "missing_behavior": "error",
       "must_exist": true,
       "path": "artifacts/security/scorecard-results.sarif",
-      "producer_step": "ossf/scorecard-action",
+      "producer_step": "ossf/scorecard-action@v2.3.1",
       "workflow": "scorecard.yml"
     }
   ],
-  "default_branch": "work",
-  "local_entrypoints": [
-    {
-      "command": "make setup",
-      "name": "setup"
-    },
-    {
-      "command": "make check",
-      "name": "check"
-    },
-    {
-      "command": "make proof",
-      "name": "proof"
-    },
-    {
-      "command": "make vuln-scan",
-      "name": "vuln-scan"
-    },
-    {
-      "command": "make workflow-hygiene",
-      "name": "workflow-hygiene"
-    },
-    {
-      "command": "make action-pinning",
-      "name": "action-pinning"
-    }
-  ],
+  "default_branch": "work (assumed: origin/HEAD unavailable and no main/master branches)",
   "required_checks": [
     {
-      "command": "make setup && make check && python tools/feg_r8_verify.py && make proof",
+      "command": "make check && python tools/feg_r8_verify.py && make proof",
       "name": "CI/quality",
       "required_artifacts": [
         "artifacts/reports/**",
@@ -67,17 +41,9 @@
       "source": "workflow"
     },
     {
-      "command": "test \"${needs.quality.result}\" = \"success\"",
+      "command": "test \"$QUALITY_RESULT\" = success",
       "name": "CI/status-check",
       "required_artifacts": [],
-      "source": "workflow"
-    },
-    {
-      "command": "make setup && python -m pip install pip-audit==2.9.0 && make vuln-scan",
-      "name": "Security/pip-audit",
-      "required_artifacts": [
-        "artifacts/security/pip-audit.json"
-      ],
       "source": "workflow"
     },
     {
@@ -85,38 +51,64 @@
       "name": "Lint GitHub Actions/actionlint",
       "required_artifacts": [],
       "source": "workflow"
+    },
+    {
+      "command": "gitleaks/gitleaks-action@v2",
+      "name": "Security/gitleaks",
+      "required_artifacts": [],
+      "source": "workflow"
+    },
+    {
+      "command": "actions/dependency-review-action@v4",
+      "name": "Security/dependency-review",
+      "required_artifacts": [],
+      "source": "workflow"
+    },
+    {
+      "command": "make vuln-scan",
+      "name": "Security/pip-audit",
+      "required_artifacts": [
+        "artifacts/security/pip-audit.json"
+      ],
+      "source": "workflow"
     }
   ],
   "validators": [
     {
       "classification": "stable",
-      "enforced_by": "scripts/validate_arsenal.py",
-      "id": "arsenal-strict",
-      "rationale": "checks tracked repo inputs and policies under strict mode",
+      "enforced_by": "scripts/validate_arsenal.py:321",
+      "id": "validate_arsenal.strict",
+      "rationale": "strict checksum validation enforces git-tracked stable files and rejects transient artifacts",
       "requires_paths": [
-        "MANIFEST.json",
-        "catalog/**",
-        "objects/**",
-        "protocols/**"
+        "MANIFEST.json"
       ]
     },
     {
-      "classification": "transient",
-      "enforced_by": "tools/titan9_inventory.py",
-      "id": "titan9-inventory",
-      "rationale": "generated at runtime and consumed by README contract verifier in same run",
+      "classification": "stable",
+      "enforced_by": "scripts/rebuild_checksums.py:85",
+      "id": "rebuild_checksums.git_tracked_only",
+      "rationale": "checksum generator iterates git-tracked files only",
       "requires_paths": [
-        "artifacts/titan9/inventory.json"
+        "MANIFEST.json"
       ]
     },
     {
-      "classification": "transient",
-      "enforced_by": "tools/pip_audit_gate.py",
-      "id": "pip-audit-gate",
-      "rationale": "security report artifact is CI upload target; script writes deterministic envelope on error",
+      "classification": "stable",
+      "enforced_by": "tools/pip_audit_gate.py:146",
+      "id": "pip_audit_allowlist_expiry",
+      "rationale": "allowlist entries require expires and gate fails when expired",
       "requires_paths": [
-        "artifacts/security/pip-audit.json",
         "policies/pip_audit_allowlist.json"
+      ]
+    },
+    {
+      "classification": "transient",
+      "enforced_by": ".github/workflows/ci.yml:51",
+      "id": "upload_artifact_guard",
+      "rationale": "artifact upload is fail-closed with if-no-files-found:error",
+      "requires_paths": [
+        "artifacts/reports/**",
+        "objects/*/artifacts/evidence/reference/eval/report.json"
       ]
     }
   ]
