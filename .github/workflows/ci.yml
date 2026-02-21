@@ -34,8 +34,10 @@ jobs:
       - uses: ./.github/actions/pin-pip
       - name: Setup environment
         run: make setup
-      - name: Verify
-        run: make verify
+      - name: Check
+        run: make check
+      - name: Proof
+        run: make proof
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:

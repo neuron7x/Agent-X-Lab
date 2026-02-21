@@ -1,45 +1,63 @@
-.PHONY: setup bootstrap fmt fmt-check lint type test validate eval verify demo ci precommit
+PYTHONHASHSEED ?= 0
+export PYTHONHASHSEED
+
+.PHONY: \
+	setup bootstrap fmt format_check fmt-check lint type typecheck test validate eval evals \
+	protocol inventory readme_contract proof check verify all demo ci precommit
 
 setup:
-	python scripts/bootstrap_env.py
+	python -m pip install -r requirements.lock
+	python -m pip install -r requirements-dev.txt
 
-bootstrap:
-	python scripts/bootstrap_env.py
+bootstrap: setup
 
 fmt:
 	ruff format .
 
-fmt-check:
+format_check:
 	ruff format --check .
+
+fmt-check: format_check
 
 lint:
 	ruff check .
 
-type:
+typecheck:
 	mypy .
+
+type: typecheck
 
 test:
 	python -m pytest -q -W error
 
 validate:
 	python scripts/validate_arsenal.py --repo-root . --strict
-	python tools/verify_protocol_consistency.py --protocol protocol.yaml
-	python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json
-	python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json
-	python tools/generate_titan9_proof.py --repo-root .
 
-eval:
+evals:
 	python scripts/run_object_evals.py --repo-root . --write-evidence
 
-verify: lint type test validate eval
+eval: evals
 
-demo:
+protocol:
+	python tools/verify_protocol_consistency.py --protocol protocol.yaml
+
+inventory:
+	python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json
+
+readme_contract: inventory
+	python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json
+
+proof:
 	python tools/generate_titan9_proof.py --repo-root .
 
-ci: verify
+check: format_check lint typecheck test validate evals protocol inventory readme_contract
 
-precommit:
-	ruff check .
-	ruff format --check .
-	mypy .
-	python -m pytest -q
+verify: check
+
+demo: proof
+
+all: setup check proof
+
+ci: check
+
+precommit: format_check lint typecheck test

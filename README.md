@@ -9,7 +9,8 @@ A deterministic cognitive-agent architecture with mechanized validation for ship
 ```bash
 export PYTHONHASHSEED=0
 make setup
-make verify
+make check
+make proof
 ```
 
 ## Repository outputs
@@ -24,7 +25,7 @@ make verify
 
 ## CI
 
-CI runs formatting, linting, typing, tests, validation/eval, and README contract checks from `.github/workflows/ci.yml`.
+CI runs formatting, linting, typing, tests, validation/eval, protocol checks, inventory/readme contract checks, and proof generation from `.github/workflows/ci.yml`.
 
 ## Deterministic error codes
 
