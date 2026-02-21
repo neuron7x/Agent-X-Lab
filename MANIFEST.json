@@ -505,7 +505,7 @@
       "sha256": "ccdb671aa3a7d9b37d5f85c3dbb7c11e3eec1cdac47d7c7df70e529f2787188a"
     },
     "tests/test_pip_audit_gate.py": {
-      "sha256": "9f1c0f5917d60ec8cd3f4e2bbb86ba49d24402bd8b760aefde5d4db61753bc23"
+      "sha256": "dd08da47912ea1b7577747cbed8be9a79f1cb5acbd62df5c326f262724137c33"
     },
     "tests/test_protocol_step_paths.py": {
       "sha256": "2601f7952e6d66f1663fb4a75e637e023b746837997cc127d397b57d6eca5421"
@@ -544,7 +544,7 @@
       "sha256": "a0db4202435e8f3bff3113792a476185dd3324b342f2825fbf039d72436a5413"
     },
     "tools/pip_audit_gate.py": {
-      "sha256": "95c9d612b708a77c52300cf802561a1dae5a78c334f0f286f1f21e709b6eda5e"
+      "sha256": "43402251a12dfb582bc395066225a98929ca989c23293af3383d68c73f0de5f0"
     },
     "tools/titan9_inventory.py": {
       "sha256": "39f0cdeb3f9710b6746fb8a9d246978c725db42edfaf8dce4a1050edb2137829"

@@ -63,3 +63,27 @@ def test_main_writes_report_when_pip_audit_missing(tmp_path: Path) -> None:
     assert out.exists()
     payload = json.loads(out.read_text(encoding="utf-8"))
     assert payload["reason"] == "pip_audit_missing"
+
+
+def test_main_writes_report_on_allowlist_parse_error(tmp_path: Path) -> None:
+    out = tmp_path / "pip-audit.json"
+    allow = tmp_path / "allow.json"
+    allow.write_text('{"ignore": "bad"}\n', encoding="utf-8")
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "tools/pip_audit_gate.py",
+            "--requirements",
+            "requirements.lock",
+            "--allowlist",
+            str(allow),
+            "--out",
+            str(out),
+        ],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 4
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["reason"] == "allowlist_parse_error"

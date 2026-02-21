@@ -57,6 +57,12 @@ def _write_report(path: Path, payload: dict[str, object]) -> None:
     )
 
 
+def _fail_report(path: Path, reason: str, detail: str, exit_code: int) -> int:
+    _write_report(path, {"status": "error", "reason": reason, "detail": detail})
+    print(f"FAIL: {detail}")
+    return exit_code
+
+
 def _split_allowlist(
     entries: list[AllowEntry], today: date
 ) -> tuple[list[str], list[str]]:
@@ -78,7 +84,11 @@ def main() -> int:
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
 
-    entries = _load_allowlist(args.allowlist)
+    try:
+        entries = _load_allowlist(args.allowlist)
+    except Exception as exc:
+        return _fail_report(args.out, "allowlist_parse_error", str(exc), 4)
+
     today = datetime.now(timezone.utc).date()
     active_ignores, expired = _split_allowlist(entries, today)
     if expired:
@@ -114,19 +124,12 @@ def main() -> int:
     if proc.returncode != 0:
         combined = (proc.stdout or "") + (proc.stderr or "")
         if "No module named pip_audit" in combined:
-            _write_report(
+            return _fail_report(
                 args.out,
-                {
-                    "status": "error",
-                    "reason": "pip_audit_missing",
-                    "stderr": proc.stderr,
-                    "stdout": proc.stdout,
-                },
+                "pip_audit_missing",
+                "pip-audit is not installed. Run `python -m pip install pip-audit==2.9.0`.",
+                3,
             )
-            print(
-                "FAIL: pip-audit is not installed. Run `python -m pip install pip-audit==2.9.0`."
-            )
-            return 3
         if proc.stdout:
             print(proc.stdout.rstrip())
         if proc.stderr:
