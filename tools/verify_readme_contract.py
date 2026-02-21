@@ -8,13 +8,12 @@ from pathlib import Path
 import yaml
 
 QUICKSTART_HEADER = "## Quickstart"
-SEED_EXPORT = "export PYTHONHASHSEED=0"
-E_README_PYTHONHASHSEED_MISSING = (
-    "E_README_PYTHONHASHSEED_MISSING: README Quickstart must export "
-    "PYTHONHASHSEED=0 before running python tooling."
+REQUIRED_QUICKSTART_COMMANDS = ["make setup", "make check", "make proof"]
+E_README_QUICKSTART_MAKE_ONLY = (
+    "E_README_QUICKSTART_MAKE_ONLY: README Quickstart must use Makefile commands "
+    "only and include 'make setup', 'make check', and 'make proof'."
 )
 TOOLING_PREFIXES = ("python", "ruff", "mypy", "pytest")
-ALLOWED_README_ONLY_COMMANDS = {SEED_EXPORT}
 
 
 def _extract_quickstart_commands(readme_text: str) -> list[str]:
@@ -53,22 +52,17 @@ def _is_tooling_command(command: str) -> bool:
     return command.startswith(TOOLING_PREFIXES)
 
 
-def _validate_seed_before_tooling(quickstart_commands: list[str]) -> None:
-    try:
-        seed_index = quickstart_commands.index(SEED_EXPORT)
-    except ValueError as exc:
-        raise SystemExit(E_README_PYTHONHASHSEED_MISSING) from exc
+def _validate_quickstart_make_only(quickstart_commands: list[str]) -> None:
+    if any(not cmd.startswith("make ") for cmd in quickstart_commands):
+        raise SystemExit(E_README_QUICKSTART_MAKE_ONLY)
 
-    tooling_index = next(
-        (
-            index
-            for index, cmd in enumerate(quickstart_commands)
-            if _is_tooling_command(cmd)
-        ),
-        None,
-    )
-    if tooling_index is not None and seed_index > tooling_index:
-        raise SystemExit(E_README_PYTHONHASHSEED_MISSING)
+    missing = [
+        required
+        for required in REQUIRED_QUICKSTART_COMMANDS
+        if required not in quickstart_commands
+    ]
+    if missing:
+        raise SystemExit(E_README_QUICKSTART_MAKE_ONLY)
 
 
 def _parse_workflow_commands(workflows_dir: Path) -> set[str]:
@@ -137,7 +131,7 @@ def main() -> int:
     repo_root = Path.cwd()
     readme_text = args.readme.read_text(encoding="utf-8")
     quickstart_commands = _extract_quickstart_commands(readme_text)
-    _validate_seed_before_tooling(quickstart_commands)
+    _validate_quickstart_make_only(quickstart_commands)
 
     workflow_commands = _parse_workflow_commands(args.workflows)
     seed_violations = _workflow_seed_violations(args.workflows)
@@ -159,9 +153,7 @@ def main() -> int:
     missing_in_ci = sorted(
         cmd
         for cmd in quickstart_commands
-        if cmd not in ALLOWED_README_ONLY_COMMANDS
-        and cmd not in workflow_commands
-        and cmd not in canonical_flat
+        if cmd not in workflow_commands and cmd not in canonical_flat
     )
     if missing_in_ci:
         raise SystemExit(

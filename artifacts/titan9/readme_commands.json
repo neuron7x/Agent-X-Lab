@@ -1,6 +1,5 @@
 {
   "quickstart_commands": [
-    "export PYTHONHASHSEED=0",
     "make setup",
     "make check",
     "make proof"

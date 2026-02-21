@@ -7,7 +7,6 @@ A deterministic cognitive-agent architecture with mechanized validation for ship
 ## Quickstart
 
 ```bash
-export PYTHONHASHSEED=0
 make setup
 make check
 make proof
