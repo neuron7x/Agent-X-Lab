@@ -157,7 +157,7 @@
       "sha256": "3a31b66326969ed2152ac834f3fb501d60676a1e38deb5a7f6c38f05c8698b15"
     },
     ".gitignore": {
-      "sha256": "fbf2356dd6dc26b3409d8c7ff89e9060794d679736f32e6af8306a52e2acde5d"
+      "sha256": "d3956ad5abb1d2dfbe465063b334b55d5ab64b6b2e3f1c9e4bf97a7211ca8561"
     },
     ".pre-commit-config.yaml": {
       "sha256": "ddbee8173e272f2c1386593b8cde2b42acbba8428642fdbe4f641ee256d35e5d"
@@ -169,7 +169,7 @@
       "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685"
     },
     "Makefile": {
-      "sha256": "7da6f5e0d5363e706da17d6c0cd73b2b6f102bd54b9369dd75837e1e63cdfb4b"
+      "sha256": "a06bf1375008736eb0763074f5d76d68b843cea10bff797f79278583f77cfd0d"
     },
     "README.md": {
       "sha256": "1ec07e23faab75f66de5ffb2b12554665d6527ffa91b288136809b73c6b036c0"
