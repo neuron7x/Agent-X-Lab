@@ -1,50 +1,34 @@
 {
   "artifact_paths_verified": [
     {
-      "exists_after_producer": false,
-      "path": "artifacts/reports/proof.titan9.json"
-    },
-    {
-      "exists_after_producer": false,
-      "path": "artifacts/reports/validate_arsenal.report.json"
+      "exists_after_producer": true,
+      "path": "artifacts/reports"
     },
     {
       "exists_after_producer": true,
-      "path": "artifacts/titan9/inventory.json"
+      "path": "objects/dse-fix-opt/artifacts/evidence/reference/eval/report.json"
     },
     {
-      "exists_after_producer": false,
-      "path": "objects/O3/artifacts/evidence/reference/eval/report.json"
+      "exists_after_producer": true,
+      "path": "objects/pr-orchestrator/artifacts/evidence/reference/eval/report.json"
+    },
+    {
+      "exists_after_producer": true,
+      "path": "artifacts/titan9/proof.log"
     },
     {
       "exists_after_producer": true,
       "path": "artifacts/security/pip-audit.json"
-    },
-    {
-      "exists_after_producer": true,
-      "path": "artifacts/agent/contract.json"
-    },
-    {
-      "exists_after_producer": true,
-      "path": "artifacts/agent/evidence.jsonl"
     }
   ],
   "gates_run": [
     {
       "command": "make check",
-      "exit_code": 2
-    },
-    {
-      "command": "make check",
-      "exit_code": 2
-    },
-    {
-      "command": "make check",
-      "exit_code": 2
-    },
-    {
-      "command": "make check",
       "exit_code": 0
+    },
+    {
+      "command": "make vuln-scan",
+      "exit_code": 2
     },
     {
       "command": "python tools/feg_r8_verify.py",
@@ -53,20 +37,8 @@
     {
       "command": "make proof",
       "exit_code": 0
-    },
-    {
-      "command": "make workflow-hygiene",
-      "exit_code": 0
-    },
-    {
-      "command": "make action-pinning",
-      "exit_code": 0
-    },
-    {
-      "command": "make vuln-scan",
-      "exit_code": 2
     }
   ],
-  "notes": "Local hardening gates passed except pip-audit execution which produced a deterministic error envelope due missing pip-audit module install path.",
+  "notes": "make vuln-scan fails fail-closed because pip-audit==2.9.0 is unavailable in this environment; scorecard workflow now uploads real SARIF to code scanning.",
   "status": "fail"
 }

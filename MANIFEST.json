@@ -151,7 +151,7 @@
       "sha256": "45d4b7e0ac16bf60d32ee3b16f5e5ded6104db05562cbd5849d3806c39a64fad"
     },
     ".github/workflows/scorecard.yml": {
-      "sha256": "de477fd80d3f02331dbfcb306da01ec3b85d143c2f370287a8afa388415536dd"
+      "sha256": "9b079ad76a821674a9e41f98211805cebab5835cca1acc5d009d9af3b523671b"
     },
     ".github/workflows/security.yml": {
       "sha256": "82e2c133a1bd8eadb4a3ef38f96fdfe1caed79b416a323b3aea75243e5c17303"
@@ -526,10 +526,13 @@
       "sha256": "a7b65b2262f6e298830c38b15329254e57d5779991c07648cff351be3a01db89"
     },
     "tests/test_workflow_guards.py": {
-      "sha256": "700c2f0125d18399d8b35d4bb40c7c3451ec1e024d6975c6c4d36730fac41aa4"
+      "sha256": "fa32302d4d904db8d9907a88f052fa7485af858ce8c2dbc0e900c32840aa316b"
     },
     "tools/__init__.py": {
       "sha256": "a1fc730a05d03df8da3925d353007ed2ba72ecad965f50fea33033bca782a089"
+    },
+    "tools/agent/run_and_log.py": {
+      "sha256": "04368c6266a438b87e9a5c20e44effded1f08dfe37ab15e4c65238ee141a0574"
     },
     "tools/doctor.py": {
       "sha256": "33ad2693fad563a385f01d6d953e2ad90c3c63cf8810444637f4f2761c145ea9"

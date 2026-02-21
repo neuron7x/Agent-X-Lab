@@ -25,11 +25,18 @@
       "missing_behavior": "error",
       "must_exist": true,
       "path": "artifacts/security/scorecard-results.sarif",
-      "producer_step": "ossf/scorecard-action@v2.3.1",
+      "producer_step": "ossf/scorecard-action@v2.3.1 with fallback envelope only when action fails before writing SARIF",
+      "workflow": "scorecard.yml"
+    },
+    {
+      "missing_behavior": "ignore",
+      "must_exist": false,
+      "path": "artifacts/security/scorecard-failure.sarif",
+      "producer_step": "deterministic fallback envelope for scorecard pre-output failure",
       "workflow": "scorecard.yml"
     }
   ],
-  "default_branch": "work (assumed: origin/HEAD unavailable and no main/master branches)",
+  "default_branch": "main (inferred from .github/workflows/security.yml push.branches when origin/HEAD is unavailable)",
   "required_checks": [
     {
       "command": "make check && python tools/feg_r8_verify.py && make proof",
@@ -71,6 +78,14 @@
         "artifacts/security/pip-audit.json"
       ],
       "source": "workflow"
+    },
+    {
+      "command": "ossf/scorecard-action@v2.3.1 + github/codeql-action/upload-sarif@v3 + Enforce Scorecard success",
+      "name": "Scorecard/analysis",
+      "required_artifacts": [
+        "artifacts/security/scorecard-results.sarif"
+      ],
+      "source": "workflow"
     }
   ],
   "validators": [
@@ -109,6 +124,15 @@
       "requires_paths": [
         "artifacts/reports/**",
         "objects/*/artifacts/evidence/reference/eval/report.json"
+      ]
+    },
+    {
+      "classification": "transient",
+      "enforced_by": ".github/workflows/scorecard.yml:28",
+      "id": "scorecard_sarif_fail_closed",
+      "rationale": "Scorecard action produces real SARIF, upload-sarif publishes to code scanning, and deterministic fallback is emitted only if action fails before output while upload-artifact remains fail-closed.",
+      "requires_paths": [
+        "artifacts/security/scorecard-results.sarif"
       ]
     }
   ]
