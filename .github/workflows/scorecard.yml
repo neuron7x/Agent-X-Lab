@@ -31,16 +31,42 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Prepare Scorecard artifact path
+        run: mkdir -p artifacts/security
       - name: Run Scorecard
+        id: scorecard
+        continue-on-error: true
         uses: ossf/scorecard-action@v2.3.1
         with:
           results_file: artifacts/security/scorecard-results.sarif
           results_format: sarif
           publish_results: false
-      - name: Upload Scorecard SARIF
+      - name: Write deterministic Scorecard failure envelope
+        if: steps.scorecard.outcome != 'success' && !hashFiles('artifacts/security/scorecard-results.sarif')
+        env:
+          PYTHONHASHSEED: "0"
+        run: |
+          python -c "import json, pathlib; p=pathlib.Path('artifacts/security/scorecard-failure.sarif'); payload={'$schema':'https://json.schemastore.org/sarif-2.1.0.json','version':'2.1.0','runs':[{'tool':{'driver':{'name':'ossf/scorecard-action','version':'v2.3.1'}},'results':[{'level':'error','message':{'text':'scorecard action failed before SARIF generation'},'properties':{'status':'error','reason_code':'scorecard_action_failed_before_output','remediation':'inspect scorecard action logs and rerun after fixing the failing check','tool':{'name':'ossf/scorecard-action','version':'v2.3.1'}}}]}]}; p.write_text(json.dumps(payload,separators=(',',':')),encoding='utf-8')"
+          cp artifacts/security/scorecard-failure.sarif artifacts/security/scorecard-results.sarif
+      - name: Validate Scorecard SARIF JSON
+        if: always()
+        env:
+          PYTHONHASHSEED: "0"
+        run: python -c "import json;json.load(open('artifacts/security/scorecard-results.sarif','rb'))"
+      - name: Upload Scorecard SARIF to code scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: artifacts/security/scorecard-results.sarif
+      - name: Upload Scorecard SARIF artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: scorecard-sarif
           if-no-files-found: error
-          path: artifacts/security/scorecard-results.sarif
+          path: |
+            artifacts/security/scorecard-results.sarif
+            artifacts/security/scorecard-failure.sarif
+      - name: Enforce Scorecard success
+        if: always()
+        run: test "${{ steps.scorecard.outcome }}" = "success"

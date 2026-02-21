@@ -39,8 +39,14 @@
   ],
   "workflows": {
     "commands": [
+      "\"reason\": \"scan-not-run\"",
+      "\"status\": \"pending\",",
+      "\"tool\": \"pip-audit\",",
       "BASE_SHA='${{ github.event.pull_request.base.sha }}'",
       "HEAD_SHA='${{ github.event.pull_request.head.sha }}'",
+      "JSON",
+      "cat > artifacts/security/pip-audit.json <<'JSON'",
+      "cp artifacts/security/scorecard-failure.sarif artifacts/security/scorecard-results.sarif",
       "echo \"Dependency graph is disabled; skipping dependency review action.\"",
       "git rev-parse --verify \"$BASE_SHA\"",
       "git rev-parse --verify \"$HEAD_SHA\"",
@@ -48,10 +54,16 @@
       "make proof",
       "make setup",
       "make vuln-scan",
+      "mkdir -p artifacts/security",
+      "python -c \"import json, pathlib; p=pathlib.Path('artifacts/security/scorecard-failure.sarif'); payload={'$schema':'https://json.schemastore.org/sarif-2.1.0.json','version':'2.1.0','runs':[{'tool':{'driver':{'name':'ossf/scorecard-action','version':'v2.3.1'}},'results':[{'level':'error','message':{'text':'scorecard action failed before SARIF generation'},'properties':{'status':'error','reason_code':'scorecard_action_failed_before_output','remediation':'inspect scorecard action logs and rerun after fixing the failing check','tool':{'name':'ossf/scorecard-action','version':'v2.3.1'}}}]}]}; p.write_text(json.dumps(payload,separators=(',',':')),encoding='utf-8')\"",
+      "python -c \"import json;json.load(open('artifacts/security/scorecard-results.sarif','rb'))\"",
       "python -m pip install pip-audit==2.9.0",
       "python tools/feg_r8_verify.py",
       "set -euo pipefail",
-      "test \"${{ needs.quality.result }}\" = \"success\""
+      "test \"${{ needs.quality.result }}\" = \"success\"",
+      "test \"${{ steps.scorecard.outcome }}\" = \"success\"",
+      "{",
+      "}"
     ]
   }
 }
