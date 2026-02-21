@@ -11,6 +11,10 @@ concurrency:
   group: lint-actions-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: bash
+
 env:
   PYTHONHASHSEED: "0"
 

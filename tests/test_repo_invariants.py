@@ -109,3 +109,19 @@ def test_sg_release_accepts_config_after_subcommand() -> None:
         ]
     )
     assert p.returncode == 0, p.stdout + "\n" + p.stderr
+
+
+def test_manifest_checksums_exclude_transient_artifacts() -> None:
+    import json
+
+    manifest = json.loads((REPO_ROOT / "MANIFEST.json").read_text(encoding="utf-8"))
+    checksums = manifest.get("checksums", {})
+    bad = [
+        p
+        for p in checksums
+        if p.startswith("artifacts/fegr7/")
+        or p.startswith("artifacts/feg_r8/")
+        or p.startswith("artifacts/titan9/")
+        or p.startswith("artifacts/security/")
+    ]
+    assert bad == [], f"transient artifacts must not be checksummed: {bad}"

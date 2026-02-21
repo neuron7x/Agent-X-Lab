@@ -12,6 +12,8 @@ make check
 make proof
 ```
 
+Or run the scripted flow with `./scripts/quickstart.sh`.
+
 ## Repository outputs
 
 - `VR.json`
@@ -25,6 +27,10 @@ make proof
 ## CI
 
 CI runs formatting, linting, typing, tests, validation/eval, protocol checks, inventory/readme contract checks, and proof generation from `.github/workflows/ci.yml`.
+
+Security PR checks in `.github/workflows/security.yml` run a full lockfile vulnerability audit via `make vuln-scan` (`pip-audit`), writing `artifacts/security/pip-audit.json`. Temporary ignores must be listed in `policies/pip_audit_allowlist.json` with an expiry date.
+
+Use `make check_r8` to run the standard checks plus workflow hygiene/action pinning/readme-contract verification and emit `artifacts/feg_r8/gates.jsonl`.
 
 ## Deterministic error codes
 

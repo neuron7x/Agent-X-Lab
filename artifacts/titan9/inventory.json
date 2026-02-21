@@ -47,6 +47,9 @@
       "make check",
       "make proof",
       "make setup",
+      "make vuln-scan",
+      "python -m pip install pip-audit==2.9.0",
+      "python tools/feg_r8_verify.py",
       "set -euo pipefail",
       "test \"${{ needs.quality.result }}\" = \"success\""
     ]

@@ -11,6 +11,10 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: bash
+
 env:
   PIP_VERSION: "26.0"
   PYTHONHASHSEED: "0"
@@ -36,6 +40,8 @@ jobs:
         run: make setup
       - name: Check
         run: make check
+      - name: R8 verification
+        run: python tools/feg_r8_verify.py
       - name: Proof
         run: make proof
       - name: Upload artifacts
