@@ -1,11 +1,11 @@
 {
   "issues": [
     {
-      "id": "R10-MANIFEST-TRACKED-ONLY",
-      "failing_gate": "strict-manifest/checksum determinism",
-      "root_cause": "checksum rebuild walked filesystem and could include untracked runtime files, diverging from clean-checkout CI state",
-      "fix": "rebuild from git-tracked files only and fail strict validator on untracked/forbidden artifacts",
-      "status": "resolved"
+      "fix": "No repository code change required; retain deterministic error-envelope behavior and CI install step.",
+      "gate": "make vuln-scan (local equivalent of Security/pip-audit)",
+      "id": "local-pip-audit-install-network",
+      "root_cause": "Environment cannot reach package index (proxy 403), preventing pip-audit installation; gate logic itself is deterministic and fail-closed.",
+      "status": "environment-limited"
     }
   ]
 }
