@@ -193,7 +193,7 @@
         {
           "exists": true,
           "path": "MANIFEST.json",
-          "sha256": "582e50cc6329da330cedacf5bf5d792a785332a35ec76f3cd720a37b60500708",
+          "sha256": "fe73f5b33687ad7485d362fbf9edcbb6e4fa3ad604cb7c152080f9603785e5e8",
           "valid": true
         }
       ],
@@ -239,7 +239,7 @@
         {
           "exists": true,
           "path": "MANIFEST.json",
-          "sha256": "582e50cc6329da330cedacf5bf5d792a785332a35ec76f3cd720a37b60500708",
+          "sha256": "fe73f5b33687ad7485d362fbf9edcbb6e4fa3ad604cb7c152080f9603785e5e8",
           "valid": true
         }
       ],
@@ -268,9 +268,9 @@
     {
       "artifacts": [
         {
-          "exists": true,
+          "exists": false,
           "path": "artifacts/security/pip-audit.json",
-          "sha256": "fcf8e94dfbd1192d9f7f210b0440135452faf8b353a63fc16ad1824a795133b7",
+          "sha256": null,
           "valid": true
         }
       ],
@@ -335,7 +335,7 @@
         {
           "exists": true,
           "path": "artifacts/agent/issues.json",
-          "sha256": "17fc5239032774c0bca713da328f3b51a2cfff573b06a058e3b243fafa70e74e",
+          "sha256": "ae2cc4cb296bb8c88e8fb93a12f6e03c1d0f7e6bfc8ccd4c81aa4e250eef7197",
           "valid": true
         },
         {
@@ -829,9 +829,9 @@
     {
       "artifacts": [
         {
-          "exists": true,
+          "exists": false,
           "path": "artifacts/security/pip-audit.json",
-          "sha256": "fcf8e94dfbd1192d9f7f210b0440135452faf8b353a63fc16ad1824a795133b7",
+          "sha256": null,
           "valid": true
         }
       ],
@@ -860,9 +860,9 @@
     {
       "artifacts": [
         {
-          "exists": true,
+          "exists": false,
           "path": "artifacts/security/pip-audit.json",
-          "sha256": "fcf8e94dfbd1192d9f7f210b0440135452faf8b353a63fc16ad1824a795133b7",
+          "sha256": null,
           "valid": true
         }
       ],
@@ -1188,9 +1188,9 @@
     {
       "artifacts": [
         {
-          "exists": true,
+          "exists": false,
           "path": "artifacts/security/pip-audit.json",
-          "sha256": "fcf8e94dfbd1192d9f7f210b0440135452faf8b353a63fc16ad1824a795133b7",
+          "sha256": null,
           "valid": true
         }
       ],

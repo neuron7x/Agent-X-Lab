@@ -37,7 +37,9 @@ def main() -> int:
                 if not SHA_RE.match(ref):
                     violations.append(f"{wf.name}:{job_name}:step_{idx}:{uses}")
     if violations:
-        print("FAIL: unpinned actions detected (all non-local actions must be full SHA)")
+        print(
+            "FAIL: unpinned actions detected (all non-local actions must be full SHA)"
+        )
         for v in violations:
             print(v)
         return 1

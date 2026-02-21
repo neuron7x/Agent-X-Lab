@@ -577,7 +577,7 @@
       "sha256": "3005644b1f02e53dc76b786c365f8cab1c5509830bd88db2ae3d75d7e43f97df"
     },
     "tools/verify_action_pinning.py": {
-      "sha256": "255aa06ac85174de3358be8d981fa2af08d5ec6766a67ada6f5e7f75fa42a8a9"
+      "sha256": "ddb64eb12c89f8a604db37e8657f4cb50c5ee5a18d51a06eec674531eef95318"
     },
     "tools/verify_protocol_consistency.py": {
       "sha256": "0eb11e0260015e37f2804f3c17c8ae9bf799f503485b8b0a25677c91b9a4a3e2"
