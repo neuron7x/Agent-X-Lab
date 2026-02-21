@@ -67,6 +67,7 @@ def iter_files(repo_root: Path) -> Iterable[Path]:
             or rel.startswith("artifacts/proof/")
             or rel.startswith("artifacts/feg/")
             or rel.startswith("artifacts/fegr7/")
+            or rel.startswith("artifacts/titan9/")
         ):
             continue
         if (

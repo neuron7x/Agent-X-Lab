@@ -3,7 +3,7 @@ export PYTHONHASHSEED
 
 .PHONY: \
 	setup bootstrap fmt format_check fmt-check lint type typecheck test validate eval evals \
-	protocol inventory readme_contract proof check verify all demo ci precommit doctor quickstart clean reset
+	protocol inventory readme_contract proof check verify all demo ci precommit doctor quickstart clean reset vuln-scan
 
 setup:
 	python -m pip install -r requirements.lock
@@ -52,6 +52,9 @@ readme_contract: inventory
 
 proof:
 	python tools/generate_titan9_proof.py --repo-root .
+
+vuln-scan:
+	python tools/pip_audit_gate.py --requirements requirements.lock --requirements requirements-dev.txt --allowlist policies/pip_audit_allowlist.json --out artifacts/security/pip-audit.json
 
 check: doctor format_check lint typecheck test validate evals protocol inventory readme_contract
 
