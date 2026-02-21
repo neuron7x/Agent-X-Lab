@@ -3,7 +3,7 @@ export PYTHONHASHSEED
 
 .PHONY: \
 	setup bootstrap fmt format_check fmt-check lint type typecheck test validate eval evals \
-	protocol inventory readme_contract proof check verify all demo ci precommit doctor quickstart clean reset vuln-scan
+	protocol inventory readme_contract proof check verify all demo ci precommit doctor quickstart clean reset vuln-scan workflow-hygiene action-pinning check_r8
 
 setup:
 	python -m pip install -r requirements.lock
@@ -55,6 +55,15 @@ proof:
 
 vuln-scan:
 	python tools/pip_audit_gate.py --requirements requirements.lock --requirements requirements-dev.txt --allowlist policies/pip_audit_allowlist.json --out artifacts/security/pip-audit.json
+
+workflow-hygiene:
+	python tools/verify_workflow_hygiene.py
+
+action-pinning:
+	python tools/verify_action_pinning.py
+
+check_r8: check
+	python tools/feg_r8_verify.py
 
 check: doctor format_check lint typecheck test validate evals protocol inventory readme_contract
 

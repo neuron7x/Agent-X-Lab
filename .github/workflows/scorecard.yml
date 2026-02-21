@@ -1,0 +1,46 @@
+name: Scorecard
+
+on:
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+concurrency:
+  group: scorecard-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  analysis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Run Scorecard
+        uses: ossf/scorecard-action@v2.3.1
+        with:
+          results_file: artifacts/security/scorecard-results.sarif
+          results_format: sarif
+          publish_results: false
+      - name: Upload Scorecard SARIF
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scorecard-sarif
+          if-no-files-found: error
+          path: artifacts/security/scorecard-results.sarif

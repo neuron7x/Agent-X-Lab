@@ -1,0 +1,19 @@
+{
+  "allow": [
+    {
+      "action": "gitleaks/gitleaks-action",
+      "reason": "network-restricted env prevented tag->SHA resolution",
+      "expires": "2026-06-30"
+    },
+    {
+      "action": "reviewdog/action-actionlint",
+      "reason": "network-restricted env prevented tag->SHA resolution",
+      "expires": "2026-06-30"
+    },
+    {
+      "action": "ossf/scorecard-action",
+      "reason": "pending SHA pin migration for scorecard workflow",
+      "expires": "2026-06-30"
+    }
+  ]
+}
