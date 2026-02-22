@@ -32,3 +32,9 @@ Human labels remain: *Creator / Critic / Auditor / Verifier* (for readability).
 
 - Deterministic checksums are tracked in root `MANIFEST.json` under `checksums`.
 - Do not commit volatile caches (`__pycache__`, `.pytest_cache`, `.mypy_cache`, `.venv`).
+
+## Catalog agent filename convention
+
+- Canonical filenames under `catalog/agents/` use **underscored tokens** (for example: `01_PR_Orchestrator_Repo_Readiness_Governor.txt`).
+- Hyphenated aliases are not stored as duplicate files. When backwards compatibility is needed, use `catalog/agents/compatibility-aliases.json` to map historical alias filenames to canonical filenames.
+- CI guard: `scripts/check_agent_duplicate_content.py` must pass; it fails if two files in `catalog/agents/` are byte-identical.

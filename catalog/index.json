@@ -2,14 +2,8 @@
   "catalog_id": "AGENTX-LAB",
   "version": "0.1.0",
   "generated_utc": "2026-02-21T17:57:41Z",
-  "count": 34,
+  "count": 27,
   "objects": [
-    {
-      "name": "01_PR-Orchestrator_Repo-Readiness-Governor",
-      "path": "catalog/agents/01_PR-Orchestrator_Repo-Readiness-Governor.txt",
-      "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0",
-      "type": "agent"
-    },
     {
       "name": "01_PR_Orchestrator_Repo_Readiness_Governor",
       "path": "catalog/agents/01_PR_Orchestrator_Repo_Readiness_Governor.txt",
@@ -29,12 +23,6 @@
       "type": "agent"
     },
     {
-      "name": "02_Test-Reliability_Flake-Elimination-Agent",
-      "path": "catalog/agents/02_Test-Reliability_Flake-Elimination-Agent.txt",
-      "sha256": "012a6d5e3063c87207e3e69af9b1e2fcc65ba49435d763d3762cbb16683a258e",
-      "type": "agent"
-    },
-    {
       "name": "02_Test_Reliability_Flake_Elimination_Agent",
       "path": "catalog/agents/02_Test_Reliability_Flake_Elimination_Agent.txt",
       "sha256": "012a6d5e3063c87207e3e69af9b1e2fcc65ba49435d763d3762cbb16683a258e",
@@ -44,12 +32,6 @@
       "name": "03_Distinguished_Software_Engineer_Quality_Verification_Performance_Principal_Security_Engineer_AppSec_Supply_Chain",
       "path": "catalog/agents/03_Distinguished_Software_Engineer_Quality_Verification_Performance_Principal_Security_Engineer_AppSec_Supply_Chain.txt",
       "sha256": "a210e256ee77b7838d7f0d6365f0fe062f884b37651fc29a246174ed338584d2",
-      "type": "agent"
-    },
-    {
-      "name": "03_Docs-Quickstart_Onboarding-Agent",
-      "path": "catalog/agents/03_Docs-Quickstart_Onboarding-Agent.txt",
-      "sha256": "4d76ac75c876727d10f9f486fe051034ca37b8b83b0bb93bf5ef599a6df946e9",
       "type": "agent"
     },
     {
@@ -65,33 +47,15 @@
       "type": "agent"
     },
     {
-      "name": "04_Security_Supply-Chain-Hardening-Agent",
-      "path": "catalog/agents/04_Security_Supply-Chain-Hardening-Agent.txt",
-      "sha256": "3a49beb9560d7244696d24f4f60643a95b7575b1ccb8dc1e1dcd132d3a1f673d",
-      "type": "agent"
-    },
-    {
       "name": "04_Security_Supply_Chain_Hardening_Agent",
       "path": "catalog/agents/04_Security_Supply_Chain_Hardening_Agent.txt",
       "sha256": "3a49beb9560d7244696d24f4f60643a95b7575b1ccb8dc1e1dcd132d3a1f673d",
       "type": "agent"
     },
     {
-      "name": "05_Security-PR_Finisher_Merge-Ready-Meta",
-      "path": "catalog/agents/05_Security-PR_Finisher_Merge-Ready-Meta.txt",
-      "sha256": "c599063097f11d303b2f7e9962c3a23c0f76dfae1005b620b480c90cd68bef34",
-      "type": "agent"
-    },
-    {
       "name": "05_Security_PR_Finisher_Merge_Ready_Meta",
       "path": "catalog/agents/05_Security_PR_Finisher_Merge_Ready_Meta.txt",
       "sha256": "c599063097f11d303b2f7e9962c3a23c0f76dfae1005b620b480c90cd68bef34",
-      "type": "agent"
-    },
-    {
-      "name": "06_DSE_Codebase-Fixer-Optimizer_99",
-      "path": "catalog/agents/06_DSE_Codebase-Fixer-Optimizer_99.txt",
-      "sha256": "2e80736d03a13f83cdb647400924e05db2ca0824eb86fb8ee65de2f1b020d4c7",
       "type": "agent"
     },
     {
@@ -113,21 +77,9 @@
       "type": "agent"
     },
     {
-      "name": "07_Universal-Repo-Governor_Multi-Stack_Monorepo_SLSA",
-      "path": "catalog/agents/07_Universal-Repo-Governor_Multi-Stack_Monorepo_SLSA.txt",
-      "sha256": "747adf64c3d878cb55924f7913e60a090cae4d2f6612d6d40d18bda5bcf1107c",
-      "type": "agent"
-    },
-    {
       "name": "07_Universal_Repo_Governor_Multi_Stack_Monorepo_SLSA",
       "path": "catalog/agents/07_Universal_Repo_Governor_Multi_Stack_Monorepo_SLSA.txt",
       "sha256": "747adf64c3d878cb55924f7913e60a090cae4d2f6612d6d40d18bda5bcf1107c",
-      "type": "agent"
-    },
-    {
-      "name": "08_PR302_CI-Governance-Fix-Agent",
-      "path": "catalog/agents/08_PR302_CI-Governance-Fix-Agent.txt",
-      "sha256": "e5f5492f05283dad49947cb2aab9cfa344ce91ed07b66ae25b06f12da6306428",
       "type": "agent"
     },
     {
@@ -179,6 +131,12 @@
       "type": "agent"
     },
     {
+      "name": "compatibility-aliases",
+      "path": "catalog/agents/compatibility-aliases.json",
+      "sha256": "0ca284a46ca82cf498844c1041f0f65af43dabca86076b8041501e6ada67ae5b",
+      "type": "agent"
+    },
+    {
       "name": "launch_readiness_selector",
       "path": "catalog/agents/launch_readiness_selector.txt",
       "sha256": "08f10b6f960916421c244832d4f0ae66acd538f067e35358a756836ba39ead15",
@@ -210,27 +168,19 @@
     }
   ],
   "agents": [
-    "01_PR-Orchestrator_Repo-Readiness-Governor.txt",
     "01_PR_Orchestrator_Repo_Readiness_Governor.txt",
     "01_Principal_Research_Engineer_Scientific_Simulation_Systems_Staff_ML_Infrastructure_Engineer_Reproducibility_CI.txt",
     "02_Staff_Platform_Engineer_Integration_Site_Reliability_Engineer_Production_Readiness.txt",
-    "02_Test-Reliability_Flake-Elimination-Agent.txt",
     "02_Test_Reliability_Flake_Elimination_Agent.txt",
     "03_Distinguished_Software_Engineer_Quality_Verification_Performance_Principal_Security_Engineer_AppSec_Supply_Chain.txt",
-    "03_Docs-Quickstart_Onboarding-Agent.txt",
     "03_Docs_Quickstart_Onboarding_Agent.txt",
     "04_Principal_Software_Engineer_Release_Engineering_Staff_Developer_Experience_Engineer_Packaging_Installability.txt",
-    "04_Security_Supply-Chain-Hardening-Agent.txt",
     "04_Security_Supply_Chain_Hardening_Agent.txt",
-    "05_Security-PR_Finisher_Merge-Ready-Meta.txt",
     "05_Security_PR_Finisher_Merge_Ready_Meta.txt",
-    "06_DSE_Codebase-Fixer-Optimizer_99.txt",
     "06_DSE_Codebase_Fixer_Optimizer_99.txt",
     "06_Principal_Applied_Scientist_Semantic_Mining_Staff_Knowledge_Systems_Engineer_KG_Retrieval_Orchestration.txt",
     "07_Distinguished_AI_Systems_Architect_LLM_Orchestration_Semantic_Intelligence_Principal_Systems_Engineer_Stability_Entropy_Control.txt",
-    "07_Universal-Repo-Governor_Multi-Stack_Monorepo_SLSA.txt",
     "07_Universal_Repo_Governor_Multi_Stack_Monorepo_SLSA.txt",
-    "08_PR302_CI-Governance-Fix-Agent.txt",
     "08_PR302_CI_Governance_Fix_Agent.txt",
     "Agent-X-Lab_Integrated_Deterministic_PR_Orchestrator_v2026.03-kernel.md",
     "BIO_DIGITAL_S12_2026_2.yaml",
@@ -239,6 +189,7 @@
     "GHTPO_2026_02.md",
     "GHTPO_v1_0.md",
     "VSMO_v2026.1.0.md",
+    "compatibility-aliases.json",
     "launch_readiness_selector.txt"
   ],
   "protocols": [

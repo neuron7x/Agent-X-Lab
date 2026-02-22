@@ -196,10 +196,7 @@
       "sha256": "08c523c25affdd58348ff085f8e7fdaff0f1a65654b3860c924754f0becdf8ca"
     },
     "architecture/NAMING-CONVENTIONS.md": {
-      "sha256": "1273636bb026b96328d82f194a0a0e3c7e5b140f65e641d23e4a1a17b33397db"
-    },
-    "catalog/agents/01_PR-Orchestrator_Repo-Readiness-Governor.txt": {
-      "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"
+      "sha256": "3e66b9bc177d50084c59863a19f65138108fbc2d1270a2ac12191dd792ea7e0a"
     },
     "catalog/agents/01_PR_Orchestrator_Repo_Readiness_Governor.txt": {
       "sha256": "45629a1cde2d2d6d252300651d38c5c739160d845bcb40cde5ccd45e62ca0fc0"
@@ -210,17 +207,11 @@
     "catalog/agents/02_Staff_Platform_Engineer_Integration_Site_Reliability_Engineer_Production_Readiness.txt": {
       "sha256": "b5f82b4071a8d9b6a0c18c9f3f9456e649d6a9f377f13adb84df7bc150177310"
     },
-    "catalog/agents/02_Test-Reliability_Flake-Elimination-Agent.txt": {
-      "sha256": "012a6d5e3063c87207e3e69af9b1e2fcc65ba49435d763d3762cbb16683a258e"
-    },
     "catalog/agents/02_Test_Reliability_Flake_Elimination_Agent.txt": {
       "sha256": "012a6d5e3063c87207e3e69af9b1e2fcc65ba49435d763d3762cbb16683a258e"
     },
     "catalog/agents/03_Distinguished_Software_Engineer_Quality_Verification_Performance_Principal_Security_Engineer_AppSec_Supply_Chain.txt": {
       "sha256": "a210e256ee77b7838d7f0d6365f0fe062f884b37651fc29a246174ed338584d2"
-    },
-    "catalog/agents/03_Docs-Quickstart_Onboarding-Agent.txt": {
-      "sha256": "4d76ac75c876727d10f9f486fe051034ca37b8b83b0bb93bf5ef599a6df946e9"
     },
     "catalog/agents/03_Docs_Quickstart_Onboarding_Agent.txt": {
       "sha256": "4d76ac75c876727d10f9f486fe051034ca37b8b83b0bb93bf5ef599a6df946e9"
@@ -228,20 +219,11 @@
     "catalog/agents/04_Principal_Software_Engineer_Release_Engineering_Staff_Developer_Experience_Engineer_Packaging_Installability.txt": {
       "sha256": "f8cbd78c93992ec27eb774830edf550c7e85e675bc08b34579e70fcc03b6e989"
     },
-    "catalog/agents/04_Security_Supply-Chain-Hardening-Agent.txt": {
-      "sha256": "3a49beb9560d7244696d24f4f60643a95b7575b1ccb8dc1e1dcd132d3a1f673d"
-    },
     "catalog/agents/04_Security_Supply_Chain_Hardening_Agent.txt": {
       "sha256": "3a49beb9560d7244696d24f4f60643a95b7575b1ccb8dc1e1dcd132d3a1f673d"
     },
-    "catalog/agents/05_Security-PR_Finisher_Merge-Ready-Meta.txt": {
-      "sha256": "c599063097f11d303b2f7e9962c3a23c0f76dfae1005b620b480c90cd68bef34"
-    },
     "catalog/agents/05_Security_PR_Finisher_Merge_Ready_Meta.txt": {
       "sha256": "c599063097f11d303b2f7e9962c3a23c0f76dfae1005b620b480c90cd68bef34"
-    },
-    "catalog/agents/06_DSE_Codebase-Fixer-Optimizer_99.txt": {
-      "sha256": "2e80736d03a13f83cdb647400924e05db2ca0824eb86fb8ee65de2f1b020d4c7"
     },
     "catalog/agents/06_DSE_Codebase_Fixer_Optimizer_99.txt": {
       "sha256": "2e80736d03a13f83cdb647400924e05db2ca0824eb86fb8ee65de2f1b020d4c7"
@@ -252,14 +234,8 @@
     "catalog/agents/07_Distinguished_AI_Systems_Architect_LLM_Orchestration_Semantic_Intelligence_Principal_Systems_Engineer_Stability_Entropy_Control.txt": {
       "sha256": "c68a157c8c208ebd7c556ffa5de75b50eb869f8899a917f1dd5f4753f86a0d04"
     },
-    "catalog/agents/07_Universal-Repo-Governor_Multi-Stack_Monorepo_SLSA.txt": {
-      "sha256": "747adf64c3d878cb55924f7913e60a090cae4d2f6612d6d40d18bda5bcf1107c"
-    },
     "catalog/agents/07_Universal_Repo_Governor_Multi_Stack_Monorepo_SLSA.txt": {
       "sha256": "747adf64c3d878cb55924f7913e60a090cae4d2f6612d6d40d18bda5bcf1107c"
-    },
-    "catalog/agents/08_PR302_CI-Governance-Fix-Agent.txt": {
-      "sha256": "e5f5492f05283dad49947cb2aab9cfa344ce91ed07b66ae25b06f12da6306428"
     },
     "catalog/agents/08_PR302_CI_Governance_Fix_Agent.txt": {
       "sha256": "e5f5492f05283dad49947cb2aab9cfa344ce91ed07b66ae25b06f12da6306428"
@@ -285,11 +261,14 @@
     "catalog/agents/VSMO_v2026.1.0.md": {
       "sha256": "57238462f884e337c1d2dfeee0f3cf966547056828a89f4072ee4690d6d2f6b5"
     },
+    "catalog/agents/compatibility-aliases.json": {
+      "sha256": "0ca284a46ca82cf498844c1041f0f65af43dabca86076b8041501e6ada67ae5b"
+    },
     "catalog/agents/launch_readiness_selector.txt": {
       "sha256": "08f10b6f960916421c244832d4f0ae66acd538f067e35358a756836ba39ead15"
     },
     "catalog/index.json": {
-      "sha256": "53969a919ec08f3ddf8fa294ffebf8fbd2408974bba76ee4f50e3467b6bf4def"
+      "sha256": "5cfb42f797d0bb4bf3bfa64b07aec3446774418c4ae243763c04dec706473f86"
     },
     "catalog/protocols/GHTPO-2026.02.md": {
       "sha256": "fc24f3f9dc74c181bccf98817513db02e5cf6b144e819b5d655993f828b04fec"
@@ -465,6 +444,9 @@
     "scripts/bootstrap_env.py": {
       "sha256": "13478f8f1e7e36440b782766e3f1407ba8f9fca4fd3b9b719522c6a0108df2c5"
     },
+    "scripts/check_agent_duplicate_content.py": {
+      "sha256": "a2bc762077be03685143a2525f1ddcdeee4fd3041f43d403b34bd1da8e2208e6"
+    },
     "scripts/generate_proof_bundle.py": {
       "sha256": "a029343b3ddf8f5555f41f5fb891dc0b289d1dd26fad92ba798a89d5d68bc8ed"
     },
@@ -488,6 +470,9 @@
     },
     "tests/conftest.py": {
       "sha256": "93ea3036a9dcee8c35157a947e8db0c0ef74f48f0ed505530f9e1d047bae98fa"
+    },
+    "tests/test_agent_catalog_duplicates.py": {
+      "sha256": "91a213b3c80d4b4d36529060433d1a3c5ffd91ac87f3d4756ed1125a5bd0b752"
     },
     "tests/test_backend.py": {
       "sha256": "80bca4a339c242e0ae8f1ba89b7e24299f66c5a7d5744301204ea4c977880061"
