@@ -142,7 +142,7 @@
       "sha256": "818d0ffa2455a62bf8386723109dc4419e9dd08665a23987278f38f0112efdd5"
     },
     ".github/pull_request_template.md": {
-      "sha256": "7396b398eead8d78d36007a9c2c2296fdfdb37565190e1a581a900c0f75ff405"
+      "sha256": "cdfd2385355082cf6cbf6068ec4b8e32f9da46ac37617fe3210ae11d16417789"
     },
     ".github/workflows/ci.yml": {
       "sha256": "33d8638e0a51de003432c66d2e9f79035a2e1d58dfb03c881105d382b4ab4e97"
@@ -163,7 +163,7 @@
       "sha256": "ddbee8173e272f2c1386593b8cde2b42acbba8428642fdbe4f641ee256d35e5d"
     },
     "CONTRIBUTING.md": {
-      "sha256": "bbe0fc34747a3f66f9dc72c0827569ffad5e39f70c8f8f56d9cdb30e3bb03114"
+      "sha256": "f949d1925ecb774e337486cd6947bf1f664e7d53861b8d975b3d2a6ea0771309"
     },
     "LICENSE": {
       "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685"
@@ -172,7 +172,7 @@
       "sha256": "ec42203d783f4098721eb816ceb8f71ee0dc2a635e33d9bbc96e228f3122746c"
     },
     "README.md": {
-      "sha256": "1ec07e23faab75f66de5ffb2b12554665d6527ffa91b288136809b73c6b036c0"
+      "sha256": "c47a185d208a560b2b601b33951716cc2c8a7457e6530ba584d63af98916ff4a"
     },
     "SECURITY.md": {
       "sha256": "5715b12ebe6bcecf93a736a48d6d22881428f241e22c7bdd383aec8d2f1b0bc8"
@@ -289,16 +289,16 @@
       "sha256": "8c12d50bacec508a633dcce893e19b583908b6e7f3cbb9e839f94317f453f497"
     },
     "docs/ARCHITECTURE.md": {
-      "sha256": "6ac378f0eaf7b223cdc0d2a7c466e4461d2f8c450f4dc739c0cfebbf83e19e63"
+      "sha256": "4a6be257daaeab24696cc926387b3d3861e876fb861354caf33ca244bc64df85"
     },
     "docs/ERRORS.md": {
       "sha256": "e678c7dfa101cd97eea17a7a780c502dd25074a05b452239d073f15e914d943a"
     },
     "docs/SPEC.md": {
-      "sha256": "c9ac37023740a231ebe057dcfb60b16c5398dcfc695f9b8c8ebf77765ce8c3ad"
+      "sha256": "65b8ffa62c4b9eb10e0964e83581d48fdf6c0042cb402ae1cb99b133e074d5f8"
     },
     "docs/merge-gates.md": {
-      "sha256": "da5694ad080b4396d64fb29daa428ad5975275f00a07c80b6d209d03190a75f1"
+      "sha256": "c9682652328728af03566f91f90c463fe3bbef90d172e576e25f9995d2c04b87"
     },
     "exoneural_governor/__init__.py": {
       "sha256": "b576d15ec3b4344fd45759081e26534d0407d1f8f45362a8c7136eb2efe0ceb3"
