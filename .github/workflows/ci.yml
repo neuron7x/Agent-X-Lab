@@ -40,6 +40,9 @@ jobs:
         run: make setup
       - name: Check
         run: make check
+      - name: Release discipline (PR)
+        if: github.event_name == 'pull_request'
+        run: python tools/release_guard.py --mode pr --base-ref "${{ github.base_ref }}"
       - name: R8 verification
         run: python tools/feg_r8_verify.py
       - name: Proof
