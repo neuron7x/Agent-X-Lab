@@ -34,11 +34,14 @@ def test_witness_writes_report_and_signature() -> None:
     assert report["signature"] == sig
 
 
-
-def test_witness_run_treats_shell_metacharacters_as_literal_arguments(tmp_path: Path) -> None:
+def test_witness_run_treats_shell_metacharacters_as_literal_arguments(
+    tmp_path: Path,
+) -> None:
     sentinel = tmp_path / "should_not_exist"
     payload = f"literal;touch {sentinel}"
-    result = witness._run([sys.executable, "-c", "import sys;print(sys.argv[1])", payload])
+    result = witness._run(
+        [sys.executable, "-c", "import sys;print(sys.argv[1])", payload]
+    )
 
     assert result["exit"] == 0
     assert not sentinel.exists()

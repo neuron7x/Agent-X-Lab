@@ -498,6 +498,9 @@
     "tests/test_doctor.py": {
       "sha256": "a7dbce042e00999662f54f7e2c6bd51410b91a3a7234c7a0e90aeee39edc7072"
     },
+    "tests/test_feg_r8_verify.py": {
+      "sha256": "817836f3c319437cdaffa3638b68262b915f35d7931644e2afafec4a3151a7f7"
+    },
     "tests/test_generate_proof_bundle.py": {
       "sha256": "ef00fd15dcc75257ec47423a33c7ee69f16935bfec171817dabaf8ec68431b28"
     },
@@ -544,7 +547,7 @@
       "sha256": "87b8a8ed09328206e22d2d3afd634a7fc89b94c1328d71c10ddfb6ff2ffefda2"
     },
     "tests/test_witness.py": {
-      "sha256": "a7b65b2262f6e298830c38b15329254e57d5779991c07648cff351be3a01db89"
+      "sha256": "9c895d732d23ec9fa2dca30dc682ee7209e0f903a2ef01893884af5480588b37"
     },
     "tests/test_workflow_guards.py": {
       "sha256": "fea48e737a38beef2166cbc8712715c8fedc8c3d3fff72161ea4d98f12d8dfdf"
@@ -565,7 +568,7 @@
       "sha256": "33ad2693fad563a385f01d6d953e2ad90c3c63cf8810444637f4f2761c145ea9"
     },
     "tools/feg_r8_verify.py": {
-      "sha256": "fa97334a70930a58095ffa481f4906beaccbd88e3c06c35596a2507951094150"
+      "sha256": "a97b019b111d5f76b2ae00993225a3bb2e15789f6ed45e0dbdd7051f1e783b76"
     },
     "tools/generate_titan9_proof.py": {
       "sha256": "a0db4202435e8f3bff3113792a476185dd3324b342f2825fbf039d72436a5413"
@@ -598,7 +601,7 @@
       "sha256": "16bded81a0bd7ea97c321db2dd9b730809b653eff23d35a5337e926d18621b3a"
     },
     "tools/witness.py": {
-      "sha256": "7744bcf7cf050775ccf170fbe7d31cfb3589814cb6b58b9dbd9fa055acb39e95"
+      "sha256": "9fb03421d0249a70ba8c65aa222773eb7a2993a252e073ec14926ccb6e000de7"
     },
     "vendor/scpe-cimqa-2026.3.0/CG.json": {
       "sha256": "efdeb908577cd4aeea0710b53aea66c691ca0a659301dee99b75680ef3b66b04"
