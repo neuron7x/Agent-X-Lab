@@ -38,8 +38,8 @@ def build_release(
     vr_path = vr_path if vr_path is not None else (repo_root / "VR.json")
     if not vr_path.is_absolute():
         vr_path = repo_root / vr_path
-    evidence_root = None
     evidence_root_path: Path | None = None
+    evidence_files_included = 0
     if vr_path.exists():
         vr = json.loads(vr_path.read_text(encoding="utf-8"))
         evidence_root = vr.get("evidence_root")
@@ -84,6 +84,7 @@ def build_release(
                         )
                     # include under evidence/ to keep release small and explicit
                     z.write(p, arcname=("evidence/" + p.relative_to(epath).as_posix()))
+                    evidence_files_included += 1
 
     write_manifest(release_dir, release_dir / "MANIFEST.release.json")
     report = {
@@ -93,7 +94,7 @@ def build_release(
             (release_dir / "MANIFEST.release.json").relative_to(repo_root)
         ),
         "included": INCLUDE_DEFAULT,
-        "evidence_included": bool(evidence_root),
+        "evidence_included": evidence_files_included > 0,
     }
     (release_dir / "release.report.json").write_text(
         json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8"

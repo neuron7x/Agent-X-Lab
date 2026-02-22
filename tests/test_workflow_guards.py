@@ -64,7 +64,38 @@ jobs:
     )
 
     assert p.returncode != 0
-    assert "bad.yaml" in p.stdout
+    assert "bad.yaml:t:step_0:actions/setup-python@v5" in p.stdout
+
+
+def test_verify_action_pinning_reports_relative_workflow_path(tmp_path: Path) -> None:
+    workflows_dir = tmp_path / "workflows"
+    nested_dir = workflows_dir / "nested"
+    nested_dir.mkdir(parents=True)
+    bad = nested_dir / "bad.yaml"
+    bad.write_text(
+        """
+name: unpinned
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+""".strip()
+        + "\n",
+        encoding="utf-8",
+    )
+
+    p = _run(
+        [
+            "python",
+            "tools/verify_action_pinning.py",
+            "--workflows",
+            str(workflows_dir),
+        ]
+    )
+
+    assert p.returncode != 0
+    assert "nested/bad.yaml:t:step_0:actions/setup-python@v5" in p.stdout
 
 
 def test_scorecard_workflow_has_fail_closed_sarif_contract() -> None:

@@ -34,6 +34,40 @@ def _run_with_cwd(run_cwd: Path, target_cwd: Path, stdout: Path, stderr: Path) -
     assert proc.returncode == 0, proc.stdout + "\n" + proc.stderr
 
 
+def _run_with_relative_evidence_file(
+    run_cwd: Path,
+    target_cwd: Path,
+    evidence_file: str,
+    stdout: Path,
+    stderr: Path,
+) -> None:
+    proc = subprocess.run(
+        [
+            "python",
+            str(REPO_ROOT / "tools" / "run_gate.py"),
+            "--gate-id",
+            "T",
+            "--cwd",
+            str(target_cwd),
+            "--stdout",
+            str(stdout),
+            "--stderr",
+            str(stderr),
+            "--evidence-file",
+            evidence_file,
+            "--",
+            "python",
+            "-c",
+            "print('ok')",
+        ],
+        cwd=run_cwd,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert proc.returncode == 0, proc.stdout + "\n" + proc.stderr
+
+
 def test_run_gate_writes_default_evidence_under_repo_root(tmp_path: Path) -> None:
     target_cwd = REPO_ROOT / "tests"
     run_cwd = tmp_path / "outside"
@@ -84,3 +118,25 @@ def test_run_gate_default_evidence_path_stable_across_cwds(tmp_path: Path) -> No
     assert not (run_cwd_a / "artifacts" / "agent" / "evidence.jsonl").exists()
     assert not (run_cwd_b / "artifacts" / "agent" / "evidence.jsonl").exists()
     _ = json.loads(lines[-1])
+
+
+def test_run_gate_relative_evidence_file_is_repo_root_anchored(tmp_path: Path) -> None:
+    target_cwd = REPO_ROOT / "tests"
+    run_cwd = tmp_path / "outside"
+    run_cwd.mkdir()
+
+    rel_evidence = "artifacts/agent/custom-evidence.jsonl"
+    repo_evidence_path = REPO_ROOT / rel_evidence
+    if repo_evidence_path.exists():
+        repo_evidence_path.unlink()
+
+    _run_with_relative_evidence_file(
+        run_cwd=run_cwd,
+        target_cwd=target_cwd,
+        evidence_file=rel_evidence,
+        stdout=tmp_path / "out_custom.txt",
+        stderr=tmp_path / "err_custom.txt",
+    )
+
+    assert repo_evidence_path.exists()
+    assert not (run_cwd / rel_evidence).exists()

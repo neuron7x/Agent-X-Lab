@@ -113,7 +113,7 @@ def main() -> int:
     if ev is None:
         ev = repo_root / "artifacts" / "agent" / "evidence.jsonl"
     elif not ev.is_absolute():
-        ev = cwd / ev
+        ev = repo_root / ev
     ev.parent.mkdir(parents=True, exist_ok=True)
     with ev.open("a", encoding="utf-8") as f:
         f.write(json.dumps(record, sort_keys=True) + "\n")
