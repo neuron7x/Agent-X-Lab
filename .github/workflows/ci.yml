@@ -18,7 +18,7 @@ defaults:
     shell: bash
 
 env:
-  PIP_VERSION: "26.0"
+  PIP_VERSION: "25.3"
   PYTHONHASHSEED: "0"
 
 jobs:
