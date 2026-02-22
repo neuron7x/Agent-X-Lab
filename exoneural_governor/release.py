@@ -26,7 +26,7 @@ INCLUDE_DEFAULT = [
 def build_release(
     cfg: Config, *, vr_path: Path | None = None, output_dir: Path | None = None
 ) -> dict:
-    repo_root = cfg.repo_root
+    repo_root = cfg.repo_root.resolve()
     ts = utc_now_iso().replace(":", "").replace("Z", "Z")
     release_dir = (
         output_dir if output_dir is not None else (repo_root / "artifacts" / "release")
@@ -38,10 +38,24 @@ def build_release(
     vr_path = vr_path if vr_path is not None else (repo_root / "VR.json")
     if not vr_path.is_absolute():
         vr_path = repo_root / vr_path
-    evidence_root = None
+    evidence_root_path: Path | None = None
+    evidence_files_included = 0
     if vr_path.exists():
         vr = json.loads(vr_path.read_text(encoding="utf-8"))
         evidence_root = vr.get("evidence_root")
+        if evidence_root:
+            candidate = Path(str(evidence_root))
+            evidence_root_path = (
+                candidate.resolve()
+                if candidate.is_absolute()
+                else (repo_root / candidate).resolve()
+            )
+            if not evidence_root_path.is_relative_to(repo_root):
+                if evidence_root_path.exists():
+                    raise ValueError(
+                        "E_EVIDENCE_ROOT_OUTSIDE_REPO: evidence_root must be within repo_root"
+                    )
+                evidence_root_path = None
     zip_name = f"{cfg.artifact_name}-{ts}.zip"
     zip_path = release_dir / zip_name
 
@@ -57,15 +71,22 @@ def build_release(
             elif src.is_file():
                 z.write(src, arcname=src.relative_to(repo_root).as_posix())
 
-        if evidence_root:
-            epath = Path(evidence_root)
+        if evidence_root_path is not None:
+            epath = evidence_root_path
             if epath.exists() and epath.is_dir():
                 for p in sorted(
                     [x for x in epath.rglob("*") if x.is_file()],
                     key=lambda x: x.as_posix(),
                 ):
+                    if not p.resolve().is_relative_to(
+                        epath
+                    ) or not p.resolve().is_relative_to(repo_root):
+                        raise ValueError(
+                            "E_EVIDENCE_PATH_OUTSIDE_REPO: evidence file escaped allowed roots"
+                        )
                     # include under evidence/ to keep release small and explicit
                     z.write(p, arcname=("evidence/" + p.relative_to(epath).as_posix()))
+                    evidence_files_included += 1
 
     write_manifest(release_dir, release_dir / "MANIFEST.release.json")
     report = {
@@ -75,7 +96,7 @@ def build_release(
             (release_dir / "MANIFEST.release.json").relative_to(repo_root)
         ),
         "included": INCLUDE_DEFAULT,
-        "evidence_included": bool(evidence_root),
+        "evidence_included": evidence_files_included > 0,
     }
     (release_dir / "release.report.json").write_text(
         json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8"

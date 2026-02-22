@@ -145,7 +145,7 @@
       "sha256": "7396b398eead8d78d36007a9c2c2296fdfdb37565190e1a581a900c0f75ff405"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "2e343574b83733f8024629fe810824da561f63f89048c30d0127656295c0c809"
+      "sha256": "33d8638e0a51de003432c66d2e9f79035a2e1d58dfb03c881105d382b4ab4e97"
     },
     ".github/workflows/lint-actions.yml": {
       "sha256": "6b4eacb9a1daa39a8722c8d825fddc6b18dc6d9b3eff2a26bf48367438c2e937"
@@ -328,7 +328,7 @@
       "sha256": "ab850d6a2400db83b143df3668e415edc509e0245e850df6d4ee565a656a343b"
     },
     "exoneural_governor/release.py": {
-      "sha256": "4361597b9279979bb7c6b72c38943dec9486042a01bc3949609687588262228f"
+      "sha256": "45a7edd5807c907a91ab727e883b00763742e0e0630246ad96c03a644661c2bf"
     },
     "exoneural_governor/util.py": {
       "sha256": "8731ba0fda88225b5117e2b8c63e7278169b573a66692fc2f465fd26c0db3581"
@@ -418,7 +418,7 @@
       "sha256": "10d8d54318449dc76afbb54f37570f85e8cad8fc648d9dbc2cf658a84677ea6a"
     },
     "pyproject.toml": {
-      "sha256": "ff868b3671415ff7bccca0bf514cda1a14415873cdfc01c1aba189542d850549"
+      "sha256": "258e5a0836391f2f949dc7f794da0644b9ba3e28bae96491dd6c0c3c122211f6"
     },
     "reports/production-readiness-verified-2026-02-20.md": {
       "sha256": "bc0299089166088626586aea35242d382442892559a115cdcb1473674eae1e4a"
@@ -466,7 +466,7 @@
       "sha256": "3ca0da54d61a43935468c33abcb7dba9d23ebb19fa974657d290525ff65d088a"
     },
     "scripts/validate_arsenal.py": {
-      "sha256": "e108b8d4703c776ce073d625c8af7c1e1c1bd33d71ec87bb134c0b1251f6e49d"
+      "sha256": "5e83af1b6a30acfe341acdd1287134080b35b933cd7b7ae96b08cdab736bbd1d"
     },
     "tests/conftest.py": {
       "sha256": "2baa724957c26eebddd4d06cf64351d2d6a026e5e9cdbf5e864723605b20435d"
@@ -476,6 +476,9 @@
     },
     "tests/test_backend.py": {
       "sha256": "80bca4a339c242e0ae8f1ba89b7e24299f66c5a7d5744301204ea4c977880061"
+    },
+    "tests/test_config.py": {
+      "sha256": "b673a9ae6f2d596265b3e29d9d2863e9c71c41750ebc67ab4c4dece6cc7d1291"
     },
     "tests/test_dependency_review_gate.py": {
       "sha256": "9bb429f4e475e0598e7098b35b829d1780fa90e5563b72d8eb134ecb745f3152"
@@ -494,6 +497,9 @@
     },
     "tests/test_network_backend.py": {
       "sha256": "ccdb671aa3a7d9b37d5f85c3dbb7c11e3eec1cdac47d7c7df70e529f2787188a"
+    },
+    "tests/test_nongit_runner.py": {
+      "sha256": "cc98421b9148d4023a4b80fd1cb4a47e1d8959fa40709aee8b41297e2e04eb1a"
     },
     "tests/test_pip_audit_gate.py": {
       "sha256": "d6da74c21cb46b2a52620b8895d29795c77e72e38cfafda499a9e5cd8f41270c"
@@ -516,11 +522,14 @@
     "tests/test_repo_invariants.py": {
       "sha256": "4bb53fac5e0117de057871d7368632025f42a0dbc4374bef4e529d682a3259ea"
     },
+    "tests/test_run_gate.py": {
+      "sha256": "2b7d89565bf7eba100739d0da298edc7c902005f51fc1f4b494dc436cba2877d"
+    },
     "tests/test_secret_scan_gate.py": {
       "sha256": "c888f28ee1a60172e9c9ec13e2f5377116d71485ced8df285e0c45f4062274b5"
     },
     "tests/test_stack.py": {
-      "sha256": "0c8517b9a705b84344eff64f054043c7c98a01c51535f2ac4e94833b6220ef53"
+      "sha256": "495c27319776ff865e0c024326462736df36cbabfb2011e646624adc409d605c"
     },
     "tests/test_titan9_inventory.py": {
       "sha256": "9765cc81b1df57b7e18f87c569211a26870866c65b3a0af1bb83b77a2031f1a8"
@@ -535,7 +544,7 @@
       "sha256": "9c895d732d23ec9fa2dca30dc682ee7209e0f903a2ef01893884af5480588b37"
     },
     "tests/test_workflow_guards.py": {
-      "sha256": "fea48e737a38beef2166cbc8712715c8fedc8c3d3fff72161ea4d98f12d8dfdf"
+      "sha256": "9163033d9e64a132a64c025fadc5f6461a44a0e3162e03958d569084f53d7c20"
     },
     "tools/__init__.py": {
       "sha256": "a1fc730a05d03df8da3925d353007ed2ba72ecad965f50fea33033bca782a089"
@@ -558,11 +567,14 @@
     "tools/generate_titan9_proof.py": {
       "sha256": "a0db4202435e8f3bff3113792a476185dd3324b342f2825fbf039d72436a5413"
     },
+    "tools/nongit_runner.py": {
+      "sha256": "f710b8e716dceba009bd4930d763e8d72fbd1790e232d1de113e20004d1e0f79"
+    },
     "tools/pip_audit_gate.py": {
       "sha256": "ee80f69a12a71d3e704b3d6ee266b72f24b7e375e640e996d9eb9706b5e5d37f"
     },
     "tools/run_gate.py": {
-      "sha256": "def4bb920d51ab9ac4e99072ab1273d8b410635aa2263246b77be8f7f3ad0fbd"
+      "sha256": "f53449bb34bfb3027341207035c6c90618effe34d51906953f363c96c9642f9e"
     },
     "tools/scorecard_failure_envelope.py": {
       "sha256": "83680a918bb97e97d90a386e78541d00e4f11a2bf2aca62237e07b4977f6c530"
@@ -574,7 +586,7 @@
       "sha256": "3005644b1f02e53dc76b786c365f8cab1c5509830bd88db2ae3d75d7e43f97df"
     },
     "tools/verify_action_pinning.py": {
-      "sha256": "ddb64eb12c89f8a604db37e8657f4cb50c5ee5a18d51a06eec674531eef95318"
+      "sha256": "8200440cbd6f5df312d12e7d3ee23ec68a78d6c7cc9de1108c0807148d24af61"
     },
     "tools/verify_protocol_consistency.py": {
       "sha256": "0eb11e0260015e37f2804f3c17c8ae9bf799f503485b8b0a25677c91b9a4a3e2"

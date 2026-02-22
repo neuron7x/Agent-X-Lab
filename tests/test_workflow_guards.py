@@ -22,6 +22,82 @@ def test_verify_action_pinning_passes() -> None:
     assert p.returncode == 0, p.stdout + "\n" + p.stderr
 
 
+def test_verify_action_pinning_scans_yaml_files(tmp_path: Path) -> None:
+    workflows_dir = tmp_path / "workflows"
+    workflows_dir.mkdir()
+
+    pinned = workflows_dir / "ok.yml"
+    pinned.write_text(
+        """
+name: pinned
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@1234567890123456789012345678901234567890
+""".strip()
+        + "\n",
+        encoding="utf-8",
+    )
+
+    unpinned_yaml = workflows_dir / "bad.yaml"
+    unpinned_yaml.write_text(
+        """
+name: unpinned
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+""".strip()
+        + "\n",
+        encoding="utf-8",
+    )
+
+    p = _run(
+        [
+            "python",
+            "tools/verify_action_pinning.py",
+            "--workflows",
+            str(workflows_dir),
+        ]
+    )
+
+    assert p.returncode != 0
+    assert "bad.yaml:t:step_0:actions/setup-python@v5" in p.stdout
+
+
+def test_verify_action_pinning_reports_relative_workflow_path(tmp_path: Path) -> None:
+    workflows_dir = tmp_path / "workflows"
+    nested_dir = workflows_dir / "nested"
+    nested_dir.mkdir(parents=True)
+    bad = nested_dir / "bad.yaml"
+    bad.write_text(
+        """
+name: unpinned
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+""".strip()
+        + "\n",
+        encoding="utf-8",
+    )
+
+    p = _run(
+        [
+            "python",
+            "tools/verify_action_pinning.py",
+            "--workflows",
+            str(workflows_dir),
+        ]
+    )
+
+    assert p.returncode != 0
+    assert "nested/bad.yaml:t:step_0:actions/setup-python@v5" in p.stdout
+
+
 def test_scorecard_workflow_has_fail_closed_sarif_contract() -> None:
     workflow_path = REPO_ROOT / ".github/workflows/scorecard.yml"
     workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))

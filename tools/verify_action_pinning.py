@@ -16,8 +16,14 @@ def main() -> int:
     p.add_argument("--workflows", type=Path, default=Path(".github/workflows"))
     args = p.parse_args()
 
+    workflows_root = args.workflows.resolve()
     violations: list[str] = []
-    for wf in sorted(args.workflows.glob("*.yml")):
+    workflows = sorted(
+        set(workflows_root.rglob("*.yml")).union(workflows_root.rglob("*.yaml")),
+        key=lambda p: p.relative_to(workflows_root).as_posix(),
+    )
+    for wf in workflows:
+        wf_rel = wf.relative_to(workflows_root).as_posix()
         data = yaml.safe_load(wf.read_text(encoding="utf-8")) or {}
         jobs = data.get("jobs", {}) if isinstance(data, dict) else {}
         for job_name, job in jobs.items():
@@ -35,7 +41,7 @@ def main() -> int:
                 if action.startswith("./"):
                     continue
                 if not SHA_RE.match(ref):
-                    violations.append(f"{wf.name}:{job_name}:step_{idx}:{uses}")
+                    violations.append(f"{wf_rel}:{job_name}:step_{idx}:{uses}")
     if violations:
         print(
             "FAIL: unpinned actions detected (all non-local actions must be full SHA)"
