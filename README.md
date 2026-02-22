@@ -64,6 +64,16 @@ sg --config configs/sg.config.json vr
 sg --config configs/sg.config.json release
 ```
 
+## Operations
+
+Operational runbooks for incident handling and recovery:
+
+- [Incident response](docs/runbooks/incident-response.md) — severity model, triage algorithm, and escalation path.
+- [Release rollback](docs/runbooks/rollback.md) — deterministic rollback and post-rollback verification.
+- [Disaster recovery](docs/runbooks/disaster-recovery.md) — RTO/RPO targets and recovery procedure.
+
+For evidence localization during operations, start with `artifacts/titan9/proof.log` and use `python tools/generate_titan9_proof.py --repo-root . --cycles 3` to regenerate a consistent proof set under `artifacts/titan9/`.
+
 ## License
 
 MIT (see LICENSE).
