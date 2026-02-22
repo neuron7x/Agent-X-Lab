@@ -42,6 +42,8 @@ jobs:
         run: make setup
       - name: Check
         run: make check
+      - name: Secret scan gate
+        run: make secret-scan
       - name: R8 verification
         run: python tools/feg_r8_verify.py
       - name: Proof

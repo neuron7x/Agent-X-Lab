@@ -42,13 +42,18 @@
       "BASE_SHA='${{ github.event.pull_request.base.sha }}'",
       "HEAD_SHA='${{ github.event.pull_request.head.sha }}'",
       "cat > artifacts/security/pip-audit.json <<'JSON'",
+      "echo \"quality job result was '${{ needs.quality.result }}'\" >&2",
+      "exit 1",
+      "fi",
       "git rev-parse --verify \"$BASE_SHA\"",
       "git rev-parse --verify \"$HEAD_SHA\"",
       "heredoc-body sha256:<normalized:JSON>",
+      "if [ \"${{ needs.quality.result }}\" != \"success\" ]; then",
       "inline-script sha256:43e83f317b5d32d914b40beb1ba9a1f61db3341e40982f472ff1b44073844be6",
       "make check",
       "make proof",
       "make proof-verify",
+      "make secret-scan",
       "make setup",
       "make vuln-scan",
       "mkdir -p artifacts/security",
@@ -60,7 +65,6 @@
       "python tools/verify_action_pinning.py",
       "python tools/verify_workflow_hygiene.py",
       "set -euo pipefail",
-      "test \"${{ needs.quality.result }}\" = \"success\"",
       "test \"${{ steps.scorecard.outcome }}\" = \"success\""
     ]
   }

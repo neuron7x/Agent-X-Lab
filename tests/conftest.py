@@ -19,6 +19,27 @@ def _canonical_env_hash(env: dict[str, str]) -> str:
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
+def _git_head_available() -> bool:
+    import subprocess
+
+    p = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return p.returncode == 0
+
+
+@pytest.fixture(autouse=True)
+def ensure_build_id_without_git() -> None:
+    if os.environ.get("BUILD_ID", "").strip():
+        return
+    if _git_head_available():
+        return
+    os.environ["BUILD_ID"] = "test-ci-stub-session"
+
+
 @pytest.fixture(autouse=True)
 def isolate_runtime_state() -> Iterator[None]:
     modules_before = set(sys.modules.keys())

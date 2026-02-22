@@ -145,7 +145,7 @@
       "sha256": "7396b398eead8d78d36007a9c2c2296fdfdb37565190e1a581a900c0f75ff405"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "1a2f43cfc634f29964bc25941dabe47bf9066fd077cd57a639684cb5a893becb"
+      "sha256": "2e343574b83733f8024629fe810824da561f63f89048c30d0127656295c0c809"
     },
     ".github/workflows/lint-actions.yml": {
       "sha256": "6b4eacb9a1daa39a8722c8d825fddc6b18dc6d9b3eff2a26bf48367438c2e937"
@@ -313,7 +313,7 @@
       "sha256": "b2fe4b6cd56244909fbbb2db87cd2884517fe964e78027adb495b8b1533754cd"
     },
     "exoneural_governor/config.py": {
-      "sha256": "498d8d448cfe8ab623d5ac0e329eb4499cc99cee21fd3635163b3af0c25c1dda"
+      "sha256": "88c0287168c3eb8f9cfa9090dd6439a993a727f204fff13b925239061ac5b666"
     },
     "exoneural_governor/inventory.py": {
       "sha256": "2999f2043e287ca28bfbc5f008311e0b2bf436358a428f4244fdb37307ecb85d"
@@ -469,7 +469,7 @@
       "sha256": "e108b8d4703c776ce073d625c8af7c1e1c1bd33d71ec87bb134c0b1251f6e49d"
     },
     "tests/conftest.py": {
-      "sha256": "93ea3036a9dcee8c35157a947e8db0c0ef74f48f0ed505530f9e1d047bae98fa"
+      "sha256": "2baa724957c26eebddd4d06cf64351d2d6a026e5e9cdbf5e864723605b20435d"
     },
     "tests/test_agent_catalog_duplicates.py": {
       "sha256": "91a213b3c80d4b4d36529060433d1a3c5ffd91ac87f3d4756ed1125a5bd0b752"
