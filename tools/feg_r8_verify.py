@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import shlex
 import subprocess
 import tempfile
 import time
@@ -11,14 +12,14 @@ from pathlib import Path
 from typing import Any
 
 
-def run(cmd: str, cwd: Path | None = None) -> dict[str, Any]:
+def run(cmd: list[str], cwd: Path | None = None) -> dict[str, Any]:
     t0 = time.time()
-    p = subprocess.run(cmd, shell=True, text=True, capture_output=True, cwd=cwd)
+    p = subprocess.run(cmd, shell=False, text=True, capture_output=True, cwd=cwd)
     output = (p.stdout or "") + (p.stderr or "")
     tail_lines = output.splitlines()[-20:]
     tail = "\n".join(tail_lines)
     return {
-        "cmd": cmd,
+        "cmd": shlex.join(cmd),
         "exit": p.returncode,
         "duration_s": round(time.time() - t0, 3),
         "log_tail": tail_lines,
@@ -59,9 +60,18 @@ def get_candidate_files(base_sha: str) -> list[str]:
 
 def run_required_gates(cwd: Path | None = None) -> list[dict[str, Any]]:
     gates = [
-        "python tools/verify_workflow_hygiene.py",
-        "python tools/verify_action_pinning.py",
-        "python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json",
+        ["python", "tools/verify_workflow_hygiene.py"],
+        ["python", "tools/verify_action_pinning.py"],
+        [
+            "python",
+            "tools/verify_readme_contract.py",
+            "--readme",
+            "README.md",
+            "--workflows",
+            ".github/workflows",
+            "--inventory",
+            "artifacts/titan9/inventory.json",
+        ],
     ]
     return [run(cmd, cwd=cwd) for cmd in gates]
 
@@ -194,7 +204,7 @@ def main() -> int:
         report = ablation_report(get_base_sha(), outdir, args.max_ablations)
         minimality_ok = bool(report.get("minimality_pass", False))
 
-    witness = run("python tools/witness.py", cwd=Path.cwd())
+    witness = run(["python", "tools/witness.py"], cwd=Path.cwd())
     (outdir / "attestation" / "witness_runner.json").parent.mkdir(
         parents=True, exist_ok=True
     )
