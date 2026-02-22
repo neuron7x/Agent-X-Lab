@@ -5,6 +5,7 @@ import hashlib
 import hmac
 import json
 import os
+import shlex
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -18,12 +19,12 @@ def _sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
-def _run(cmd: str) -> dict[str, Any]:
-    p = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+def _run(cmd: list[str]) -> dict[str, Any]:
+    p = subprocess.run(cmd, shell=False, capture_output=True, text=True)
     output = (p.stdout or "") + (p.stderr or "")
     tail = "\n".join(output.splitlines()[-20:])
     return {
-        "cmd": cmd,
+        "cmd": shlex.join(cmd),
         "exit": p.returncode,
         "tail_sha256": hashlib.sha256(tail.encode("utf-8")).hexdigest(),
     }
@@ -34,8 +35,8 @@ def main() -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     replay = [
-        _run("python tools/verify_workflow_hygiene.py"),
-        _run("python tools/verify_action_pinning.py"),
+        _run(["python", "tools/verify_workflow_hygiene.py"]),
+        _run(["python", "tools/verify_action_pinning.py"]),
     ]
 
     watched = [
