@@ -17,7 +17,11 @@ def main() -> int:
     args = p.parse_args()
 
     violations: list[str] = []
-    for wf in sorted(args.workflows.glob("*.yml")):
+    workflows = sorted(
+        set(args.workflows.rglob("*.yml")).union(args.workflows.rglob("*.yaml")),
+        key=lambda p: p.as_posix(),
+    )
+    for wf in workflows:
         data = yaml.safe_load(wf.read_text(encoding="utf-8")) or {}
         jobs = data.get("jobs", {}) if isinstance(data, dict) else {}
         for job_name, job in jobs.items():
