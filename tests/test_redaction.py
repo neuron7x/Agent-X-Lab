@@ -24,7 +24,9 @@ def test_redact_tree_returns_changed_files_in_stable_lexicographic_order(tmp_pat
         path.write_text("token=SECRET\n", encoding="utf-8")
     ignored_file.write_text("token=SECRET\n", encoding="utf-8")
 
-    expected = [str(path) for path in sorted(files_with_secret, key=lambda x: x.as_posix())]
+    expected = [
+        str(path) for path in sorted(files_with_secret, key=lambda x: x.as_posix())
+    ]
 
     first = redact_tree(root, ["SECRET"])
 
