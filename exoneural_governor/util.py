@@ -5,10 +5,13 @@ import json
 import os
 import re
 import subprocess
+import uuid
+from contextvars import ContextVar
 from dataclasses import dataclass
 from datetime import datetime, timezone
+import logging
 from pathlib import Path
-from typing import Iterable, Mapping, Sequence
+from typing import IO, Iterable, Mapping, Sequence
 
 
 def utc_now_iso() -> str:
@@ -99,3 +102,94 @@ def write_json(path: Path, obj) -> None:
 
 def read_json(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+_REQUEST_ID: ContextVar[str | None] = ContextVar("request_id", default=None)
+
+
+def generate_request_id() -> str:
+    return uuid.uuid4().hex
+
+
+def set_request_id(request_id: str | None) -> None:
+    _REQUEST_ID.set(request_id)
+
+
+def get_request_id() -> str:
+    existing = _REQUEST_ID.get()
+    if existing:
+        return existing
+    request_id = generate_request_id()
+    _REQUEST_ID.set(request_id)
+    return request_id
+
+
+class JsonLogFormatter(logging.Formatter):
+    def format(self, record: logging.LogRecord) -> str:
+        payload = {
+            "event": getattr(record, "event", record.msg),
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+            "request_id": getattr(record, "request_id", get_request_id()),
+            "ts": utc_now_iso(),
+        }
+        fields = getattr(record, "fields", {})
+        if isinstance(fields, dict):
+            payload.update({k: fields[k] for k in sorted(fields)})
+        return json.dumps(payload, sort_keys=True)
+
+
+def setup_json_logger(name: str, *, stream: IO[str] | None = None) -> logging.Logger:
+    logger = logging.getLogger(name)
+    if not logger.handlers:
+        handler = logging.StreamHandler(stream)
+        handler.setFormatter(JsonLogFormatter())
+        logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+    return logger
+
+
+def log_event(logger: logging.Logger, event: str, **fields: object) -> None:
+    logger.info(
+        event,
+        extra={"event": event, "fields": fields, "request_id": get_request_id()},
+    )
+
+
+class MetricsEmitter:
+    def __init__(self, path: Path) -> None:
+        self.path = path
+        ensure_dir(path.parent)
+
+    @staticmethod
+    def _latency_bucket(latency_ms: float) -> str:
+        buckets = [50, 100, 250, 500, 1000]
+        for bucket in buckets:
+            if latency_ms <= bucket:
+                return f"le_{bucket}ms"
+        return "gt_1000ms"
+
+    def emit(
+        self,
+        *,
+        metric: str,
+        status: str,
+        latency_ms: float,
+        gate_outcome: str,
+        error: str | None = None,
+    ) -> None:
+        payload = {
+            "error": error,
+            "gate_outcome": gate_outcome,
+            "latency_bucket": self._latency_bucket(latency_ms),
+            "latency_ms": round(latency_ms, 3),
+            "metric": metric,
+            "request_id": get_request_id(),
+            "status": status,
+            "success": status == "success",
+            "ts": utc_now_iso(),
+        }
+        with self.path.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(payload, sort_keys=True) + "\n")

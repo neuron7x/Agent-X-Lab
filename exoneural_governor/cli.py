@@ -3,14 +3,25 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
 
+from .catalog import validate_catalog
 from .config import load_config
 from .inventory import inventory
-from .catalog import validate_catalog
-from .vr import run_vr
 from .release import build_release
-from .util import ensure_dir
+from .util import (
+    MetricsEmitter,
+    ensure_dir,
+    generate_request_id,
+    get_request_id,
+    log_event,
+    set_request_id,
+    setup_json_logger,
+)
+from .vr import run_vr
+
+_LOG = setup_json_logger("exoneural_governor.cli")
 
 
 def _default_config_path() -> Path:
@@ -28,7 +39,7 @@ def _normalize_global_flags(argv: list[str]) -> list[str]:
         return argv
 
     out = list(argv)
-    for flag in ("--config",):
+    for flag in ("--config", "--metrics-out", "--request-id"):
         if flag in out:
             i = out.index(flag)
             if i + 1 < len(out):
@@ -83,6 +94,56 @@ def cmd_selftest(cfg_path: Path) -> int:
     return 0
 
 
+def _run_command_with_observability(
+    *,
+    command_name: str,
+    fn,
+    metrics: MetricsEmitter,
+) -> int:
+    started = time.perf_counter()
+    log_event(_LOG, "cli.command.start", command=command_name)
+    try:
+        rc = fn()
+    except Exception as exc:
+        latency_ms = (time.perf_counter() - started) * 1000.0
+        log_event(
+            _LOG,
+            "cli.command.error",
+            command=command_name,
+            error=str(exc),
+            gate_outcome="error",
+            latency_ms=round(latency_ms, 3),
+        )
+        metrics.emit(
+            metric="sg.command",
+            status="error",
+            latency_ms=latency_ms,
+            gate_outcome="error",
+            error=type(exc).__name__,
+        )
+        raise
+
+    latency_ms = (time.perf_counter() - started) * 1000.0
+    gate_outcome = "success" if rc == 0 else "failure"
+    status = "success" if rc == 0 else "error"
+    log_event(
+        _LOG,
+        "cli.command.finish",
+        command=command_name,
+        gate_outcome=gate_outcome,
+        latency_ms=round(latency_ms, 3),
+        status=status,
+    )
+    metrics.emit(
+        metric="sg.command",
+        status=status,
+        latency_ms=latency_ms,
+        gate_outcome=gate_outcome,
+        error=(None if rc == 0 else f"exit_code={rc}"),
+    )
+    return rc
+
+
 def main(argv: list[str] | None = None) -> None:
     argv = _normalize_global_flags(argv or sys.argv[1:])
     p = argparse.ArgumentParser(
@@ -90,6 +151,16 @@ def main(argv: list[str] | None = None) -> None:
     )
     p.add_argument(
         "--config", default=str(_default_config_path()), help="Path to sg.config.json"
+    )
+    p.add_argument(
+        "--metrics-out",
+        default="artifacts/observability/metrics.jsonl",
+        help="Path to JSONL metrics file emitter output.",
+    )
+    p.add_argument(
+        "--request-id",
+        default=None,
+        help="Correlation/request identifier for all structured logs and metrics.",
     )
 
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -121,20 +192,45 @@ def main(argv: list[str] | None = None) -> None:
     args = p.parse_args(argv)
     cfg_path = Path(args.config)
 
+    req_id = args.request_id or generate_request_id()
+    set_request_id(req_id)
+    metrics = MetricsEmitter(Path(args.metrics_out))
+    log_event(_LOG, "cli.request.context", request_id=get_request_id(), command=args.cmd)
+
     if args.cmd == "inventory":
-        rc = cmd_inventory(cfg_path)
+        rc = _run_command_with_observability(
+            command_name=args.cmd,
+            fn=lambda: cmd_inventory(cfg_path),
+            metrics=metrics,
+        )
     elif args.cmd == "validate-catalog":
-        rc = cmd_validate(cfg_path)
+        rc = _run_command_with_observability(
+            command_name=args.cmd,
+            fn=lambda: cmd_validate(cfg_path),
+            metrics=metrics,
+        )
     elif args.cmd == "vr":
-        rc = cmd_vr(cfg_path, out_path=Path(args.out), write_back=(not args.no_write))
+        rc = _run_command_with_observability(
+            command_name=args.cmd,
+            fn=lambda: cmd_vr(cfg_path, out_path=Path(args.out), write_back=(not args.no_write)),
+            metrics=metrics,
+        )
     elif args.cmd == "release":
-        rc = cmd_release(
-            cfg_path,
-            vr_path=Path(args.vr),
-            output_dir=Path(args.output),
+        rc = _run_command_with_observability(
+            command_name=args.cmd,
+            fn=lambda: cmd_release(
+                cfg_path,
+                vr_path=Path(args.vr),
+                output_dir=Path(args.output),
+            ),
+            metrics=metrics,
         )
     elif args.cmd == "selftest":
-        rc = cmd_selftest(cfg_path)
+        rc = _run_command_with_observability(
+            command_name=args.cmd,
+            fn=lambda: cmd_selftest(cfg_path),
+            metrics=metrics,
+        )
     else:
         raise RuntimeError("unreachable")
 
