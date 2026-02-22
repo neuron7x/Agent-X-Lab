@@ -1,0 +1,53 @@
+name: Perf regression
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: perf-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  PIP_VERSION: "26.0"
+  PYTHONHASHSEED: "0"
+  LC_ALL: C
+  LANG: C
+  TZ: UTC
+
+jobs:
+  perf-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: |
+            requirements.lock
+            requirements-dev.txt
+      - uses: ./.github/actions/pin-pip
+      - name: Setup environment
+        run: make setup
+      - name: Run perf regression gate
+        env:
+          PERF_RELEASE: ${{ github.ref_name }}-${{ github.run_number }}
+        run: python -m pytest -q tests/perf/test_perf_regression.py
+      - name: Upload perf reports
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4
+        with:
+          name: perf-reports-${{ github.run_number }}
+          if-no-files-found: error
+          path: |
+            artifacts/reports/perf/latest.json
+            artifacts/reports/perf/trend.json
