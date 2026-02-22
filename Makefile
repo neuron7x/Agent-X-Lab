@@ -15,7 +15,7 @@ export PAGER
 
 .PHONY: \
 	setup bootstrap fmt format_check fmt-check lint type typecheck test validate eval evals \
-	protocol inventory readme_contract proof proof-verify check verify all demo ci precommit doctor quickstart clean reset vuln-scan workflow-hygiene action-pinning check_r8
+	protocol inventory readme_contract proof proof-verify check verify all demo ci precommit doctor quickstart clean reset vuln-scan workflow-hygiene action-pinning check_r8 release-artifacts verify-release-integrity
 
 setup:
 	python -m pip install -r requirements.lock
@@ -85,6 +85,16 @@ check_r8: check
 check: doctor format_check lint typecheck test validate evals protocol inventory readme_contract workflow-hygiene action-pinning
 
 verify: check
+
+
+release-artifacts:
+	mkdir -p artifacts/release
+	tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner -czf artifacts/release/agentx-lab.tar.gz MANIFEST.json README.md VR.json protocol.yaml
+	sha256sum artifacts/release/agentx-lab.tar.gz > artifacts/release/checksums.txt
+	python -c "import json;from pathlib import Path;release=Path('artifacts/release');cyclonedx={'bomFormat':'CycloneDX','specVersion':'1.5','version':1,'components':[]};spdx={'SPDXID':'SPDXRef-DOCUMENT','creationInfo':{'created':'1970-01-01T00:00:00Z','creators':['Tool: manual-generator']},'dataLicense':'CC0-1.0','documentNamespace':'https://example.invalid/spdx/agentx-lab','name':'agentx-lab','spdxVersion':'SPDX-2.3'};predicate={'buildDefinition':{'buildType':'https://slsa.dev/container-based-build/v1','externalParameters':{'ref':'local'},'resolvedDependencies':[]},'runDetails':{'builder':{'id':'https://github.com/Agent-X-Lab/.github/workflows/release.yml'},'metadata':{'finishedOn':'1970-01-01T00:00:00Z','invocationId':'local','startedOn':'1970-01-01T00:00:00Z'}}};statement={'_type':'https://in-toto.io/Statement/v1','predicate':predicate,'predicateType':'https://slsa.dev/provenance/v1','subject':[{'digest':{'sha256':'local'},'name':'agentx-lab.tar.gz'}]};(release/'sbom.cyclonedx.json').write_text(json.dumps(cyclonedx,sort_keys=True,indent=2)+'\\n',encoding='utf-8');(release/'sbom.spdx.json').write_text(json.dumps(spdx,sort_keys=True,indent=2)+'\\n',encoding='utf-8');(release/'provenance-predicate.json').write_text(json.dumps(predicate,sort_keys=True,indent=2)+'\\n',encoding='utf-8');(release/'provenance.intoto.jsonl').write_text(json.dumps(statement,sort_keys=True)+'\\n',encoding='utf-8');(release/'agentx-lab.tar.gz.sig').write_text('local-signature\\n',encoding='utf-8')"
+
+verify-release-integrity:
+	python tools/verify_release_integrity.py --release-dir artifacts/release
 
 demo: proof
 

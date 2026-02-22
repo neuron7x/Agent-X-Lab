@@ -1,0 +1,95 @@
+name: Release Integrity
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  PIP_VERSION: "26.0"
+  PYTHONHASHSEED: "0"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5
+        with:
+          python-version: "3.11"
+      - uses: ./.github/actions/pin-pip
+      - name: Build release bundle
+        run: |
+          mkdir -p artifacts/release
+          tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner -czf artifacts/release/agentx-lab-${GITHUB_SHA}.tar.gz MANIFEST.json README.md VR.json protocol.yaml
+          sha256sum artifacts/release/agentx-lab-${GITHUB_SHA}.tar.gz > artifacts/release/checksums.txt
+      - name: Install Syft
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin v1.20.0
+      - name: Generate SBOM (CycloneDX + SPDX)
+        run: |
+          syft dir:. -o cyclonedx-json=artifacts/release/sbom.cyclonedx.json
+          syft dir:. -o spdx-json=artifacts/release/sbom.spdx.json
+      - name: Install cosign
+        run: |
+          curl -sSfL https://github.com/sigstore/cosign/releases/download/v2.4.1/cosign-linux-amd64 -o /usr/local/bin/cosign
+          chmod +x /usr/local/bin/cosign
+      - name: Generate provenance predicate
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          sha = os.environ["GITHUB_SHA"]
+          predicate = {
+            "buildDefinition": {
+              "buildType": "https://slsa.dev/container-based-build/v1",
+              "externalParameters": {
+                "repository": os.environ.get("GITHUB_REPOSITORY", ""),
+                "ref": os.environ.get("GITHUB_REF", ""),
+              },
+              "resolvedDependencies": [],
+            },
+            "runDetails": {
+              "builder": {"id": f"https://github.com/{os.environ.get('GITHUB_REPOSITORY', '')}/.github/workflows/release.yml@{sha}"},
+              "metadata": {
+                "invocationId": os.environ.get("GITHUB_RUN_ID", ""),
+                "startedOn": "1970-01-01T00:00:00Z",
+                "finishedOn": "1970-01-01T00:00:00Z",
+              },
+            },
+          }
+          Path("artifacts/release/provenance-predicate.json").write_text(
+            json.dumps(predicate, sort_keys=True, indent=2) + "\n", encoding="utf-8"
+          )
+          PY
+      - name: Sign and attest release artifacts
+        env:
+          COSIGN_PASSWORD: ""
+        run: |
+          cosign generate-key-pair
+          cosign sign-blob --yes --key cosign.key --output-signature artifacts/release/agentx-lab-${GITHUB_SHA}.tar.gz.sig artifacts/release/agentx-lab-${GITHUB_SHA}.tar.gz
+          cosign attest-blob --yes --key cosign.key --type slsaprovenance --predicate artifacts/release/provenance-predicate.json --bundle artifacts/release/provenance.intoto.jsonl artifacts/release/agentx-lab-${GITHUB_SHA}.tar.gz
+      - name: Verification gate
+        run: python tools/verify_release_integrity.py --release-dir artifacts/release
+      - name: Upload release integrity artifacts
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4
+        with:
+          name: release-integrity-${{ github.sha }}
+          if-no-files-found: error
+          path: artifacts/release/**
