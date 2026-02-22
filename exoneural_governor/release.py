@@ -51,9 +51,11 @@ def build_release(
                 else (repo_root / candidate).resolve()
             )
             if not evidence_root_path.is_relative_to(repo_root):
-                raise ValueError(
-                    "E_EVIDENCE_ROOT_OUTSIDE_REPO: evidence_root must be within repo_root"
-                )
+                if evidence_root_path.exists():
+                    raise ValueError(
+                        "E_EVIDENCE_ROOT_OUTSIDE_REPO: evidence_root must be within repo_root"
+                    )
+                evidence_root_path = None
     zip_name = f"{cfg.artifact_name}-{ts}.zip"
     zip_path = release_dir / zip_name
 

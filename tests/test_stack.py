@@ -107,6 +107,33 @@ def test_release_rejects_out_of_repo_evidence_root(tmp_path: Path) -> None:
         )
 
 
+def test_release_allows_missing_out_of_repo_evidence_root(tmp_path: Path) -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    missing_outside = tmp_path / "missing-outside-evidence"
+
+    vr_path = tmp_path / "VR.json"
+    vr_path.write_text(
+        f'{{"evidence_root": "{missing_outside.as_posix()}"}}\n',
+        encoding="utf-8",
+    )
+
+    cfg = Config(
+        repo_root=repo_root,
+        base_branch="main",
+        allowlist_globs=[],
+        baseline_commands=[],
+        artifact_name="test-release",
+        budgets={},
+        redaction_policy_path=repo_root / "SECURITY.redaction.yml",
+        evidence_root_base=repo_root / "artifacts" / "evidence",
+    )
+
+    rep = build_release(
+        cfg, vr_path=vr_path, output_dir=repo_root / "artifacts" / "release-test"
+    )
+    assert rep["evidence_included"] is False
+
+
 def test_release_sets_evidence_included_false_when_missing_dir(tmp_path: Path) -> None:
     repo_root = Path(__file__).resolve().parents[1]
     vr_path = tmp_path / "VR.json"
