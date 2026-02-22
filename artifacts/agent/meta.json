@@ -1,0 +1,8 @@
+{
+  "branch": "work",
+  "git_sha": "eb566865dcc01ebf67e94cbfd1032e6e7f233a43",
+  "git_status_porcelain": [],
+  "os": "Linux-6.12.47-x86_64-with-glibc2.39",
+  "pip_version": "pip 25.3 from /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages/pip (python 3.10)",
+  "python_version": "Python 3.10.19"
+}
