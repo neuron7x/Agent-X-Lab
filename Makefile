@@ -15,7 +15,7 @@ export PAGER
 
 .PHONY: \
 	setup bootstrap fmt format_check fmt-check lint type typecheck test validate eval evals \
-	protocol inventory readme_contract proof proof-verify check verify all demo ci precommit doctor quickstart clean reset vuln-scan workflow-hygiene action-pinning check_r8
+	protocol inventory readme_contract proof proof-verify check verify all demo ci precommit doctor quickstart clean reset vuln-scan workflow-hygiene action-pinning secret-scan check_r8
 
 setup:
 	python -m pip install -r requirements.lock
@@ -82,7 +82,7 @@ action-pinning:
 check_r8: check
 	python tools/feg_r8_verify.py
 
-check: doctor format_check lint typecheck test validate evals protocol inventory readme_contract workflow-hygiene action-pinning
+check: doctor format_check lint typecheck test validate evals protocol inventory readme_contract workflow-hygiene action-pinning secret-scan
 
 verify: check
 
@@ -103,3 +103,6 @@ all: setup check proof
 ci: check
 
 precommit: format_check lint typecheck test
+
+secret-scan:
+	python tools/secret_scan_gate.py --repo-root . --out artifacts/security/secret-scan.json

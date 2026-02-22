@@ -56,7 +56,11 @@ def cmd_validate(cfg_path: Path) -> int:
 
 def cmd_vr(cfg_path: Path, out_path: Path, write_back: bool) -> int:
     cfg = load_config(cfg_path)
-    vr = run_vr(cfg, write_back=False)
+    try:
+        vr = run_vr(cfg, write_back=False)
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 3
     if write_back:
         target = out_path if out_path.is_absolute() else (cfg.repo_root / out_path)
         target.parent.mkdir(parents=True, exist_ok=True)

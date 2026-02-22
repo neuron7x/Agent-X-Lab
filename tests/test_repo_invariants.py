@@ -11,6 +11,11 @@ def run(cmd: list[str]) -> subprocess.CompletedProcess[str]:
     return subprocess.run(cmd, cwd=REPO_ROOT, capture_output=True, text=True)
 
 
+def _in_git_checkout() -> bool:
+    p = run(["git", "rev-parse", "--is-inside-work-tree"])
+    return p.returncode == 0 and p.stdout.strip() == "true"
+
+
 def test_validate_arsenal_strict_passes() -> None:
     p = run(["python", "scripts/validate_arsenal.py", "--repo-root", ".", "--strict"])
     assert p.returncode == 0, p.stdout + "\n" + p.stderr
@@ -27,6 +32,10 @@ def test_object_eval_harnesses_pass() -> None:
 
 
 def test_no_generated_artifacts_tracked() -> None:
+    if not _in_git_checkout():
+        import pytest
+
+        pytest.skip("requires git checkout")
     p = run(["git", "ls-files"])
     assert p.returncode == 0, p.stderr
     tracked = p.stdout.splitlines()

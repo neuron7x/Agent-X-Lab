@@ -1,0 +1,56 @@
+python tools/doctor.py
+python.version=PASS actual=3.10.19
+git.version=PASS git version 2.43.0
+installer=PASS pip=PASS pip 25.3 from /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages/pip (python 3.10) ; uv=PASS uv 0.7.22
+make.binary=PASS /usr/bin/make
+os=PASS Linux
+ruff format --check .
+65 files already formatted
+ruff check .
+All checks passed!
+mypy .
+Success: no issues found in 61 source files
+python -m pytest -q -W error
+.............................................................            [100%]
+python scripts/validate_arsenal.py --repo-root . --strict
+{
+  "passed": true,
+  "strict": true,
+  "checks_total": 258,
+  "checks_passed": 258,
+  "checks_failed": 0,
+  "failed_checks": []
+}
+python scripts/run_object_evals.py --repo-root . --write-evidence
+{
+  "passed": true,
+  "objects_total": 2,
+  "objects_passed": 2,
+  "results": [
+    {
+      "passed": true,
+      "score": 100,
+      "object": "dse-fix-opt"
+    },
+    {
+      "passed": true,
+      "score": 100,
+      "object": "pr-orchestrator"
+    }
+  ]
+}
+python tools/verify_protocol_consistency.py --protocol protocol.yaml
+{
+  "duplicate_deficits": [],
+  "missing_deficits": [],
+  "orphan_steps": [],
+  "pass": true
+}
+python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json
+python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json
+python tools/verify_workflow_hygiene.py
+PASS: workflow hygiene policy satisfied
+python tools/verify_action_pinning.py
+PASS: action pinning policy satisfied
+python tools/secret_scan_gate.py --repo-root . --out artifacts/security/secret-scan.json
+PASS: no hardcoded secrets detected
