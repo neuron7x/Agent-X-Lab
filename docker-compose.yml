@@ -1,0 +1,19 @@
+services:
+  exoneural-governor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: agentx-lab/exoneural-governor:local
+    command: ["validate-catalog", "--config", "configs/sg.config.json"]
+    environment:
+      LC_ALL: C
+      LANG: C
+      TZ: UTC
+      PYTHONHASHSEED: "0"
+    read_only: true
+    tmpfs:
+      - /tmp
+    user: "10001:10001"
+    volumes:
+      - ./:/workspace:ro
+    working_dir: /workspace

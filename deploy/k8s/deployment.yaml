@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exoneural-governor
+  labels:
+    app.kubernetes.io/name: exoneural-governor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: exoneural-governor
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: exoneural-governor
+    spec:
+      containers:
+        - name: exoneural-governor
+          image: agentx-lab/exoneural-governor:local
+          imagePullPolicy: IfNotPresent
+          args: ["--help"]
+          envFrom:
+            - configMapRef:
+                name: exoneural-governor-config
+            - secretRef:
+                name: exoneural-governor-secrets
+                optional: true
+          ports:
+            - name: http
+              containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001

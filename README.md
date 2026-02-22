@@ -67,3 +67,29 @@ sg --config configs/sg.config.json release
 ## License
 
 MIT (see LICENSE).
+
+## Deployment
+
+### 1) Build runtime image (deterministic base digest + non-root user)
+
+```bash
+docker build -t agentx-lab/exoneural-governor:local .
+```
+
+### 2) Local production-like smoke run via Docker Compose
+
+```bash
+docker compose up --build --abort-on-container-exit --exit-code-from exoneural-governor
+```
+
+### 3) Kubernetes manifests (minimal Deployment/Job/Service)
+
+```bash
+kubectl apply -k deploy/k8s
+kubectl get deploy,job,svc -l app.kubernetes.io/name=exoneural-governor
+kubectl logs job/exoneural-governor-smoke
+```
+
+> `deploy/k8s/deployment.yaml` and `deploy/k8s/job-smoke.yaml` reference:
+> - ConfigMap: `exoneural-governor-config`
+> - Secret: `exoneural-governor-secrets` (optional)

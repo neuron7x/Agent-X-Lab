@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: exoneural-governor
+  labels:
+    app.kubernetes.io/name: exoneural-governor
+spec:
+  selector:
+    app.kubernetes.io/name: exoneural-governor
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080

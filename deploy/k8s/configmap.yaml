@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: exoneural-governor-config
+  labels:
+    app.kubernetes.io/name: exoneural-governor
+data:
+  PYTHONHASHSEED: "0"
+  LANG: C
+  LC_ALL: C
+  TZ: UTC
