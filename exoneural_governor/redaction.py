@@ -39,7 +39,7 @@ def redact_tree(
         ".yml",
         ".yaml",
     }
-    for p in root.rglob("*"):
+    for p in sorted(root.rglob("*"), key=lambda x: x.as_posix()):
         if p.is_file() and p.suffix.lower() in include_exts:
             before = p.read_bytes()
             after = redact_bytes(before, patterns)
