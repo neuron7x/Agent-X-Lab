@@ -346,7 +346,7 @@
       "sha256": "c27a661447b025814d2b7a5885197bc2c90b80553fa4cc5c25de8a0bab5d0716"
     },
     "exoneural_governor/redaction.py": {
-      "sha256": "398e830098ff072d4b626cdd1cd46c125ecd06f0b2799866de4fec2c4bb30e7c"
+      "sha256": "ab850d6a2400db83b143df3668e415edc509e0245e850df6d4ee565a656a343b"
     },
     "exoneural_governor/release.py": {
       "sha256": "4361597b9279979bb7c6b72c38943dec9486042a01bc3949609687588262228f"
@@ -521,6 +521,9 @@
     },
     "tests/test_rebuild_checksums.py": {
       "sha256": "c9df9884dbee0f312d07696f409593123fbc6a8dca88d19f2b50f33e8dd6f7ed"
+    },
+    "tests/test_redaction.py": {
+      "sha256": "206e03129e75f5e78bb52c00e15dcd0801d5bd6b1ed57f368d912691dd1fb6b8"
     },
     "tests/test_repo_invariants.py": {
       "sha256": "e9234f9f66325028c9d3f9cb4b5058cd8afe306b0dd713954e39e2dddf6a3acf"
