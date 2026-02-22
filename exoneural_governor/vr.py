@@ -11,7 +11,7 @@ from .config import Config
 from .inventory import inventory
 from .manifest import write_manifest
 from .redaction import load_redaction_patterns, redact_tree
-from .util import sha256_bytes, write_json, run_cmd, ensure_dir
+from .util import ensure_dir, run_cmd, sha256_bytes, utc_now_iso, write_json
 
 
 def _package_version(repo_root: Path) -> str:
@@ -127,7 +127,7 @@ def run_vr(cfg: Config, *, write_back: bool = True) -> dict:
 
     vr: Dict[str, Any] = {
         "schema": "VR-2026.1",
-        "utc": "1970-01-01T00:00:00Z",
+        "utc": utc_now_iso(),
         "status": "RUN",
         "work_id": work_id,
         "evidence_root": str(evidence_root),

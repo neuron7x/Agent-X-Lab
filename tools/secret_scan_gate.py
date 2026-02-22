@@ -15,12 +15,35 @@ PATTERNS: list[tuple[str, re.Pattern[str]]] = [
 ]
 
 
+def _all_files_fallback(repo_root: Path) -> list[Path]:
+    files: list[Path] = []
+    for path in sorted(repo_root.rglob("*")):
+        if not path.is_file():
+            continue
+        rel = path.relative_to(repo_root)
+        if any(
+            part
+            in {
+                ".git",
+                ".venv",
+                "__pycache__",
+                ".pytest_cache",
+                ".ruff_cache",
+                ".mypy_cache",
+            }
+            for part in rel.parts
+        ):
+            continue
+        files.append(path)
+    return files
+
+
 def _tracked_files(repo_root: Path) -> list[Path]:
     p = subprocess.run(
         ["git", "ls-files"], cwd=repo_root, capture_output=True, text=True, check=False
     )
     if p.returncode != 0:
-        raise RuntimeError(p.stderr.strip() or "git ls-files failed")
+        return _all_files_fallback(repo_root)
     return [repo_root / line for line in p.stdout.splitlines() if line.strip()]
 
 
