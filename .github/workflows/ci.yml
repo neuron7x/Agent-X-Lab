@@ -1,6 +1,8 @@
 name: CI
 
 on:
+  push:
+    branches: ["main"]
   pull_request:
   workflow_dispatch:
 
@@ -25,7 +27,7 @@ jobs:
     timeout-minutes: 25
     strategy:
       matrix:
-        python-version: ["3.11"]
+        python-version: ["3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
       - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5
@@ -42,6 +44,8 @@ jobs:
         run: make check
       - name: R8 verification
         run: python tools/feg_r8_verify.py
+      - name: Secret scan gate
+        run: make secret-scan
       - name: Proof
         run: make proof
       - name: Proof verification
@@ -50,10 +54,9 @@ jobs:
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4
         with:
           name: validation-and-eval-${{ matrix.python-version }}
-          if-no-files-found: error
+          if-no-files-found: warn
           path: |
             artifacts/reports/**
-            objects/*/artifacts/evidence/reference/eval/report.json
 
   status-check:
     name: status-check

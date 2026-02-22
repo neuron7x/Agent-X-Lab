@@ -1,5 +1,5 @@
 {
-  "repo_root": "..",
+  "repo_root": ".",
   "base_branch": "main",
   "allowlist_globs": [
     "README.md",

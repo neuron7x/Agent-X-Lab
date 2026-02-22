@@ -17,9 +17,10 @@ def test_catalog_ok():
     assert rep["ok"], rep
 
 
-def test_vr_and_release(tmp_path):
+def test_vr_and_release(tmp_path, monkeypatch):
     repo_root = Path(__file__).resolve().parents[1]
     cfg = load_config(repo_root / "configs" / "sg.config.json")
+    monkeypatch.setenv("BUILD_ID", "test-ci-stub")
     vr = run_vr(cfg, write_back=False)
     assert vr["status"] in ("RUN", "CALIBRATION_REQUIRED")
     rel = build_release(cfg)

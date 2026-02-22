@@ -31,12 +31,19 @@ def load_config(path: Path) -> Config:
     # - repo_root is resolved relative to the config file's directory
     # - other relative paths are resolved relative to repo_root
     base_dir = path.parent.resolve()
-    rr = Path(str(raw["repo_root"]))
-    repo_root = (base_dir / rr).resolve() if not rr.is_absolute() else rr.resolve()
+    rr_raw = str(raw["repo_root"])
+    rr = Path(rr_raw)
+    if rr_raw == ".":
+        repo_root = Path.cwd().resolve()
+    else:
+        repo_root = (base_dir / rr).resolve() if not rr.is_absolute() else rr.resolve()
 
     def _rel_to_repo(p: str) -> Path:
         q = Path(str(p))
         return (repo_root / q).resolve() if not q.is_absolute() else q.resolve()
+
+    if not (repo_root / "pyproject.toml").exists():
+        raise ValueError(f"E_BAD_REPO_ROOT: {repo_root} does not contain pyproject.toml")
 
     return Config(
         repo_root=repo_root,

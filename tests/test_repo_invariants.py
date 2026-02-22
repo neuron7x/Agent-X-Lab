@@ -3,8 +3,16 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
+import pytest
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+pytestmark = pytest.mark.skipif(
+    subprocess.run(["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, capture_output=True).returncode != 0,
+    reason="not a git repo",
+)
 
 
 def run(cmd: list[str]) -> subprocess.CompletedProcess[str]:

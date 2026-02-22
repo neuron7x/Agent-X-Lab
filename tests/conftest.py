@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import subprocess
 import sys
 from collections.abc import Iterator
 
@@ -41,3 +42,11 @@ def isolate_runtime_state() -> Iterator[None]:
         os.environ[key] = value
 
     assert _canonical_env_hash(dict(os.environ)) == environ_before_hash
+
+
+@pytest.fixture(autouse=True, scope="session")
+def ensure_build_id() -> None:
+    if os.environ.get("BUILD_ID"):
+        return
+    if subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True).returncode != 0:
+        os.environ["BUILD_ID"] = "test-ci-stub-session"

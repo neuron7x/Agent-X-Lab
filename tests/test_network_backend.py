@@ -3,10 +3,11 @@ from __future__ import annotations
 from unittest.mock import patch
 
 from exoneural_governor import network
+from exoneural_governor import backend
 
 
 def test_accelerated_backend_requires_torch_with_stable_error_message() -> None:
-    with patch.object(network, "HAS_TORCH", False):
+    with patch.object(backend, "_torch_available", return_value=False):
         msgs = []
         for _ in range(3):
             try:
@@ -21,5 +22,5 @@ def test_accelerated_backend_requires_torch_with_stable_error_message() -> None:
 
 
 def test_reference_backend_does_not_require_torch() -> None:
-    with patch.object(network, "HAS_TORCH", False):
+    with patch.object(backend, "_torch_available", return_value=False):
         network.validate_backend("reference")
