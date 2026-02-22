@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "api_base_url",
+    "governance_mode",
+    "name",
+    "required_env_vars",
+    "secret_bindings"
+  ],
+  "properties": {
+    "name": {
+      "enum": ["dev", "stage", "prod"],
+      "type": "string"
+    },
+    "governance_mode": {
+      "enum": ["advisory", "enforced", "strict"],
+      "type": "string"
+    },
+    "api_base_url": {
+      "format": "uri",
+      "type": "string"
+    },
+    "required_env_vars": {
+      "items": {
+        "pattern": "^[A-Z][A-Z0-9_]*$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "secret_bindings": {
+      "minProperties": 1,
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[A-Z][A-Z0-9_]*$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^(\\$\\{[A-Z][A-Z0-9_]*\\}|sm://[a-zA-Z0-9._/-]+)$"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "name": { "const": "prod" } },
+        "required": ["name"]
+      },
+      "then": {
+        "properties": {
+          "governance_mode": { "const": "strict" },
+          "required_env_vars": {
+            "contains": { "const": "SG_PROD_SIGNING_KEY" },
+            "minContains": 1
+          },
+          "secret_bindings": {
+            "required": ["SG_PROD_SIGNING_KEY", "SG_PROD_API_TOKEN"]
+          }
+        }
+      }
+    }
+  ]
+}

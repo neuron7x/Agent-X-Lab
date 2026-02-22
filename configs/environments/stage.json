@@ -1,0 +1,13 @@
+{
+  "name": "stage",
+  "governance_mode": "enforced",
+  "api_base_url": "https://stage.api.agentx.local",
+  "required_env_vars": [
+    "SG_STAGE_API_TOKEN",
+    "SG_STAGE_SIGNING_KEY"
+  ],
+  "secret_bindings": {
+    "SG_STAGE_API_TOKEN": "${SG_STAGE_API_TOKEN}",
+    "SG_STAGE_SIGNING_KEY": "sm://agentx/stage/signing-key"
+  }
+}

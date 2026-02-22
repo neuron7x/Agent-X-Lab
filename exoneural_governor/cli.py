@@ -28,7 +28,7 @@ def _normalize_global_flags(argv: list[str]) -> list[str]:
         return argv
 
     out = list(argv)
-    for flag in ("--config",):
+    for flag in ("--config", "--env"):
         if flag in out:
             i = out.index(flag)
             if i + 1 < len(out):
@@ -38,8 +38,8 @@ def _normalize_global_flags(argv: list[str]) -> list[str]:
     return out
 
 
-def cmd_inventory(cfg_path: Path) -> int:
-    cfg = load_config(cfg_path)
+def cmd_inventory(cfg_path: Path, env_name: str) -> int:
+    cfg = load_config(cfg_path, env=env_name)
     out_dir = cfg.repo_root / "artifacts" / "reports" / "inventory"
     ensure_dir(out_dir)
     inv = inventory(cfg.repo_root, out_dir)
@@ -47,15 +47,15 @@ def cmd_inventory(cfg_path: Path) -> int:
     return 0
 
 
-def cmd_validate(cfg_path: Path) -> int:
-    cfg = load_config(cfg_path)
+def cmd_validate(cfg_path: Path, env_name: str) -> int:
+    cfg = load_config(cfg_path, env=env_name)
     rep = validate_catalog(cfg.repo_root)
     print(json.dumps(rep, indent=2, sort_keys=True))
     return 0 if rep.get("ok") else 2
 
 
-def cmd_vr(cfg_path: Path, out_path: Path, write_back: bool) -> int:
-    cfg = load_config(cfg_path)
+def cmd_vr(cfg_path: Path, env_name: str, out_path: Path, write_back: bool) -> int:
+    cfg = load_config(cfg_path, env=env_name)
     vr = run_vr(cfg, write_back=False)
     if write_back:
         target = out_path if out_path.is_absolute() else (cfg.repo_root / out_path)
@@ -67,15 +67,15 @@ def cmd_vr(cfg_path: Path, out_path: Path, write_back: bool) -> int:
     return 0 if vr.get("status") == "RUN" else 3
 
 
-def cmd_release(cfg_path: Path, vr_path: Path, output_dir: Path) -> int:
-    cfg = load_config(cfg_path)
+def cmd_release(cfg_path: Path, env_name: str, vr_path: Path, output_dir: Path) -> int:
+    cfg = load_config(cfg_path, env=env_name)
     rep = build_release(cfg, vr_path=vr_path, output_dir=output_dir)
     print(json.dumps(rep, indent=2, sort_keys=True))
     return 0
 
 
-def cmd_selftest(cfg_path: Path) -> int:
-    cfg = load_config(cfg_path)
+def cmd_selftest(cfg_path: Path, env_name: str) -> int:
+    cfg = load_config(cfg_path, env=env_name)
     rep = validate_catalog(cfg.repo_root)
     if not rep.get("ok"):
         print(json.dumps(rep, indent=2, sort_keys=True))
@@ -90,6 +90,12 @@ def main(argv: list[str] | None = None) -> None:
     )
     p.add_argument(
         "--config", default=str(_default_config_path()), help="Path to sg.config.json"
+    )
+    p.add_argument(
+        "--env",
+        required=True,
+        choices=("dev", "stage", "prod"),
+        help="Explicit execution environment profile.",
     )
 
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -122,19 +128,25 @@ def main(argv: list[str] | None = None) -> None:
     cfg_path = Path(args.config)
 
     if args.cmd == "inventory":
-        rc = cmd_inventory(cfg_path)
+        rc = cmd_inventory(cfg_path, env_name=args.env)
     elif args.cmd == "validate-catalog":
-        rc = cmd_validate(cfg_path)
+        rc = cmd_validate(cfg_path, env_name=args.env)
     elif args.cmd == "vr":
-        rc = cmd_vr(cfg_path, out_path=Path(args.out), write_back=(not args.no_write))
+        rc = cmd_vr(
+            cfg_path,
+            env_name=args.env,
+            out_path=Path(args.out),
+            write_back=(not args.no_write),
+        )
     elif args.cmd == "release":
         rc = cmd_release(
             cfg_path,
+            env_name=args.env,
             vr_path=Path(args.vr),
             output_dir=Path(args.output),
         )
     elif args.cmd == "selftest":
-        rc = cmd_selftest(cfg_path)
+        rc = cmd_selftest(cfg_path, env_name=args.env)
     else:
         raise RuntimeError("unreachable")
 

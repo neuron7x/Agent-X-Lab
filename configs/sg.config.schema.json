@@ -8,7 +8,8 @@
     "allowlist_globs",
     "baseline_commands",
     "artifact_name",
-    "budgets"
+    "budgets",
+    "environment_profiles"
   ],
   "properties": {
     "repo_root": { "type": "string" },
@@ -21,6 +22,16 @@
     "artifact_name": { "type": "string" },
     "budgets": { "type": "object", "additionalProperties": { "type": "integer" } },
     "redaction_policy_path": { "type": "string" },
-    "evidence_root_base": { "type": "string" }
+    "evidence_root_base": { "type": "string" },
+    "environment_profiles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dev", "stage", "prod"],
+      "properties": {
+        "dev": { "type": "string", "pattern": "^configs/environments/dev\\.json$" },
+        "stage": { "type": "string", "pattern": "^configs/environments/stage\\.json$" },
+        "prod": { "type": "string", "pattern": "^configs/environments/prod\\.json$" }
+      }
+    }
   }
 }

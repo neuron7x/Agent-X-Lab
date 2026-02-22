@@ -2,11 +2,14 @@
 from __future__ import annotations
 
 import argparse
+import json
+import os
 import platform
 import shutil
 import subprocess
 import sys
 from dataclasses import dataclass
+from pathlib import Path
 
 EXIT_OK = 0
 EXIT_PYTHON = 10
@@ -14,8 +17,10 @@ EXIT_GIT = 11
 EXIT_INSTALLER = 12
 EXIT_OS = 13
 EXIT_MAKE = 14
+EXIT_ENV = 15
 
-SUPPORTED_SYSTEMS = {"Linux", "Darwin"}
+SUPPORTED_SYSTEMS = {"Darwin", "Linux"}
+ENV_CONFIG_DIR = Path(__file__).resolve().parents[1] / "configs" / "environments"
 
 
 @dataclass(frozen=True)
@@ -122,9 +127,34 @@ def _os_check() -> CheckResult:
     return CheckResult(ok=True, message=f"os=PASS {system}")
 
 
+def _environment_gate(env: str) -> CheckResult:
+    if env != "prod":
+        return CheckResult(ok=True, message=f"production.params=SKIP env={env}")
+
+    profile_path = ENV_CONFIG_DIR / "prod.json"
+    profile = json.loads(profile_path.read_text(encoding="utf-8"))
+    required = sorted(profile.get("required_env_vars", []))
+    missing = [name for name in required if not os.environ.get(name)]
+    if missing:
+        return CheckResult(
+            ok=False,
+            message=(
+                "production.params=FAIL missing_env_vars=" + ",".join(missing)
+            ),
+            exit_code=EXIT_ENV,
+        )
+    return CheckResult(ok=True, message="production.params=PASS")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--quiet", action="store_true")
+    parser.add_argument(
+        "--env",
+        required=True,
+        choices=("dev", "stage", "prod"),
+        help="Execution environment for environment-specific gates.",
+    )
     args = parser.parse_args()
 
     checks = [
@@ -133,6 +163,7 @@ def main() -> int:
         _installer_check(),
         _make_check(),
         _os_check(),
+        _environment_gate(args.env),
     ]
     for check in checks:
         if not args.quiet:

@@ -69,6 +69,8 @@ def test_sg_config_selftest_passes() -> None:
             "exoneural_governor.cli",
             "--config",
             "configs/sg.config.json",
+            "--env",
+            "dev",
             "selftest",
         ]
     )
@@ -84,6 +86,8 @@ def test_sg_vr_accepts_config_after_subcommand() -> None:
             "vr",
             "--config",
             "configs/sg.config.json",
+            "--env",
+            "dev",
             "--out",
             "VR.json",
             "--no-write",
@@ -102,6 +106,8 @@ def test_sg_release_accepts_config_after_subcommand() -> None:
             "release",
             "--config",
             "configs/sg.config.json",
+            "--env",
+            "dev",
             "--vr",
             "VR.json",
             "--output",

@@ -19,7 +19,7 @@ def test_catalog_ok():
 
 def test_vr_and_release(tmp_path):
     repo_root = Path(__file__).resolve().parents[1]
-    cfg = load_config(repo_root / "configs" / "sg.config.json")
+    cfg = load_config(repo_root / "configs" / "sg.config.json", env="dev")
     vr = run_vr(cfg, write_back=False)
     assert vr["status"] in ("RUN", "CALIBRATION_REQUIRED")
     rel = build_release(cfg)

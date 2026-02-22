@@ -1,0 +1,11 @@
+{
+  "name": "dev",
+  "governance_mode": "advisory",
+  "api_base_url": "https://dev.api.agentx.local",
+  "required_env_vars": [
+    "SG_DEV_API_TOKEN"
+  ],
+  "secret_bindings": {
+    "SG_DEV_API_TOKEN": "${SG_DEV_API_TOKEN}"
+  }
+}

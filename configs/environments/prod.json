@@ -1,0 +1,13 @@
+{
+  "name": "prod",
+  "governance_mode": "strict",
+  "api_base_url": "https://api.agentx.local",
+  "required_env_vars": [
+    "SG_PROD_API_TOKEN",
+    "SG_PROD_SIGNING_KEY"
+  ],
+  "secret_bindings": {
+    "SG_PROD_API_TOKEN": "${SG_PROD_API_TOKEN}",
+    "SG_PROD_SIGNING_KEY": "sm://agentx/prod/signing-key"
+  }
+}
