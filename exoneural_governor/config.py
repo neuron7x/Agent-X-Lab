@@ -34,6 +34,11 @@ def load_config(path: Path) -> Config:
     rr = Path(str(raw["repo_root"]))
     repo_root = (base_dir / rr).resolve() if not rr.is_absolute() else rr.resolve()
 
+    if not (repo_root / "pyproject.toml").exists():
+        raise ValueError(
+            f"Invalid repo_root '{repo_root}': expected pyproject.toml at repo root."
+        )
+
     def _rel_to_repo(p: str) -> Path:
         q = Path(str(p))
         return (repo_root / q).resolve() if not q.is_absolute() else q.resolve()
