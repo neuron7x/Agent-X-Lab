@@ -64,4 +64,7 @@ jobs:
     steps:
       - name: Enforce required job success
         run: |
-          test "${{ needs.quality.result }}" = "success"
+          if [ "${{ needs.quality.result }}" != "success" ]; then
+            echo "quality job result was '${{ needs.quality.result }}'" >&2
+            exit 1
+          fi
