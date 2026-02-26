@@ -1,0 +1,18 @@
+{
+  "goal": "All required CI checks pass with minimal, audited diff",
+  "commands": ["make lint", "make test", "make build"],
+  "required_checks": "auto-detect from PR",
+  "done_when": [
+    "All required CI checks report success status",
+    "Audit verdict is OK (no constraint violations)",
+    "Diff budget not exceeded"
+  ],
+  "touch_allowlist": ["src/**", "tests/**", "docs/**", ".github/**"],
+  "touch_denylist": ["secrets/**", ".env*", "*.pem", "*.key"],
+  "max_files": 15,
+  "max_loc": 300,
+  "refactor_policy": "no-refactor",
+  "no_disable_security_checks": true,
+  "actions_must_be_pinned": true,
+  "dependencies_must_be_pinned": true
+}

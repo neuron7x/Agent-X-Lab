@@ -1,0 +1,7 @@
+{
+  "quickstart_commands": [
+    "make setup",
+    "make check",
+    "make proof"
+  ]
+}

@@ -1,0 +1,71 @@
+name: Scorecard
+
+on:
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+concurrency:
+  group: scorecard-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  analysis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+        with:
+          persist-credentials: false
+      - name: Prepare Scorecard artifact path
+        run: mkdir -p artifacts/security
+      - name: Run Scorecard
+        id: scorecard
+        continue-on-error: true
+        uses: ossf/scorecard-action@62b7fcb92755d80d6e46e3f6d2f13213dcd89f05 # v2.3.1
+        with:
+          results_file: artifacts/security/scorecard-results.sarif
+          results_format: sarif
+          publish_results: false
+      - name: Write deterministic Scorecard failure envelope
+        if: steps.scorecard.outcome != 'success' && !hashFiles('artifacts/security/scorecard-results.sarif')
+        env:
+          PYTHONHASHSEED: "0"
+        run: |
+          python tools/scorecard_failure_envelope.py
+      - name: Validate Scorecard SARIF JSON
+        if: always()
+        env:
+          PYTHONHASHSEED: "0"
+        run: python -c "import json;json.load(open('artifacts/security/scorecard-results.sarif','rb'))"
+      - name: Upload Scorecard SARIF to code scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@b8f6507f3f5d3b9332f3d3e6585f6f8eecc65c0a # v3
+        with:
+          sarif_file: artifacts/security/scorecard-results.sarif
+      - name: Upload Scorecard SARIF artifact
+        if: always()
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4
+        with:
+          name: scorecard-sarif
+          if-no-files-found: error
+          path: |
+            artifacts/security/scorecard-results.sarif
+            artifacts/security/scorecard-failure.sarif
+      - name: Enforce Scorecard success
+        if: always()
+        run: test "${{ steps.scorecard.outcome }}" = "success"

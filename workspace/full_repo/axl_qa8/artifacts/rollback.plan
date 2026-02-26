@@ -1,0 +1,33 @@
+# AXL — Rollback Plan (Fail-Closed)
+
+## Rollback triggers (any => rollback)
+
+- Any HARD gate fails post-deploy (G0/G1/G2/G3/G4/G5/G6/G7/G11).
+- Any evidence-chain integrity anomaly.
+- Unauthorized access suspicion.
+- Sustained 5xx > 2 minutes.
+
+## Rollback steps
+
+### 1) UI (Vercel)
+
+1. Roll back to previous Vercel deployment (last known good).
+2. Verify UI loads and can query `/healthz` and `/vr` via BFF.
+
+### 2) Worker (Cloudflare)
+
+1. Deploy the last known good Worker version (pinned tag or previous deploy).
+2. Confirm:
+   - `/healthz` is OK
+   - `/vr` returns expected
+   - Protected endpoints reject requests without key
+
+### 3) GitHub workflows / dispatch
+
+1. Disable `repository_dispatch` triggers if they amplify incident.
+2. Confirm no automation continues to write PB/VR during incident.
+
+## Evidence retention
+
+- Save logs + artifacts before rollback when possible.
+- Record UTC times + version identifiers.

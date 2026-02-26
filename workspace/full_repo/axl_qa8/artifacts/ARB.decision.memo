@@ -1,0 +1,29 @@
+{
+  "schema": "ARB_DECISION_MEMO_V1",
+  "created_at": "2026-02-26T00:00:00Z",
+  "decision": "PENDING",
+  "scope": "AXL QA8 → PROD_SPEC_V2.1",
+  "work_id": "release-qa8-snapshot",
+  "author": "ROLE:BUILD_ENGINEER",
+  "approver": "ROLE:ARB_APPROVER",
+  "auditor": "ROLE:SECURITY_AUDITOR",
+  "separation_of_duties": {
+    "author_ne_approver": true,
+    "author_ne_auditor": true,
+    "approver_ne_auditor": true
+  },
+  "approval": {
+    "approved": false,
+    "approved_at": null,
+    "approval_evidence": []
+  },
+  "artifacts": {
+    "ac_version_sha256": "5b06f3f574cd1c01c7712eb4e732ab6c223d57ebf18838a431dc7c91432e4a8e",
+    "ac_signature_jws_sha256": "2a4430f6bfc6e7fc7861d3b0b5072b6ba11912d1b077357d7ead3d26ccf6a393",
+    "gate_report_sha256": "15ca4fb18740748230c0ae5b1fe88d480586107627e20f7e9ccb878849da1b68"
+  },
+  "notes": [
+    "This memo is a template. Set decision=APPROVED only after ARB review, and populate artifact hashes from the exact release candidate.",
+    "Approval must reference immutable evidence: AC.package sha256 + signature + gate report."
+  ]
+}

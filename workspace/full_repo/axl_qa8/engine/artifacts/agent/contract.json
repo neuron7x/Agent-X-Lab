@@ -1,0 +1,139 @@
+{
+  "artifact_uploads": [
+    {
+      "missing_behavior": "error",
+      "must_exist": true,
+      "path": "artifacts/reports/**",
+      "producer_step": "make proof",
+      "workflow": "ci.yml"
+    },
+    {
+      "missing_behavior": "error",
+      "must_exist": true,
+      "path": "objects/*/artifacts/evidence/reference/eval/report.json",
+      "producer_step": "make check (evals)",
+      "workflow": "ci.yml"
+    },
+    {
+      "missing_behavior": "error",
+      "must_exist": true,
+      "path": "artifacts/security/pip-audit.json",
+      "producer_step": "Initialize pip-audit report artifact + make vuln-scan",
+      "workflow": "security.yml"
+    },
+    {
+      "missing_behavior": "error",
+      "must_exist": true,
+      "path": "artifacts/security/scorecard-results.sarif",
+      "producer_step": "ossf/scorecard-action@v2.3.1 with fallback envelope only when action fails before writing SARIF",
+      "workflow": "scorecard.yml"
+    },
+    {
+      "missing_behavior": "ignore",
+      "must_exist": false,
+      "path": "artifacts/security/scorecard-failure.sarif",
+      "producer_step": "deterministic fallback envelope for scorecard pre-output failure",
+      "workflow": "scorecard.yml"
+    }
+  ],
+  "default_branch": "main (inferred from .github/workflows/security.yml push.branches when origin/HEAD is unavailable)",
+  "required_checks": [
+    {
+      "command": "make check && python tools/feg_r8_verify.py && make proof",
+      "name": "CI/quality",
+      "required_artifacts": [
+        "artifacts/reports/**",
+        "objects/*/artifacts/evidence/reference/eval/report.json"
+      ],
+      "source": "workflow"
+    },
+    {
+      "command": "test \"$QUALITY_RESULT\" = success",
+      "name": "CI/status-check",
+      "required_artifacts": [],
+      "source": "workflow"
+    },
+    {
+      "command": "reviewdog/action-actionlint@v1",
+      "name": "Lint GitHub Actions/actionlint",
+      "required_artifacts": [],
+      "source": "workflow"
+    },
+    {
+      "command": "gitleaks/gitleaks-action@v2",
+      "name": "Security/gitleaks",
+      "required_artifacts": [],
+      "source": "workflow"
+    },
+    {
+      "command": "actions/dependency-review-action@v4",
+      "name": "Security/dependency-review",
+      "required_artifacts": [],
+      "source": "workflow"
+    },
+    {
+      "command": "make vuln-scan",
+      "name": "Security/pip-audit",
+      "required_artifacts": [
+        "artifacts/security/pip-audit.json"
+      ],
+      "source": "workflow"
+    },
+    {
+      "command": "ossf/scorecard-action@v2.3.1 + github/codeql-action/upload-sarif@v3 + Enforce Scorecard success",
+      "name": "Scorecard/analysis",
+      "required_artifacts": [
+        "artifacts/security/scorecard-results.sarif"
+      ],
+      "source": "workflow"
+    }
+  ],
+  "validators": [
+    {
+      "classification": "stable",
+      "enforced_by": "scripts/validate_arsenal.py:321",
+      "id": "validate_arsenal.strict",
+      "rationale": "strict checksum validation enforces git-tracked stable files and rejects transient artifacts",
+      "requires_paths": [
+        "MANIFEST.json"
+      ]
+    },
+    {
+      "classification": "stable",
+      "enforced_by": "scripts/rebuild_checksums.py:85",
+      "id": "rebuild_checksums.git_tracked_only",
+      "rationale": "checksum generator iterates git-tracked files only",
+      "requires_paths": [
+        "MANIFEST.json"
+      ]
+    },
+    {
+      "classification": "stable",
+      "enforced_by": "tools/pip_audit_gate.py:146",
+      "id": "pip_audit_allowlist_expiry",
+      "rationale": "allowlist entries require expires and gate fails when expired",
+      "requires_paths": [
+        "policies/pip_audit_allowlist.json"
+      ]
+    },
+    {
+      "classification": "transient",
+      "enforced_by": ".github/workflows/ci.yml:51",
+      "id": "upload_artifact_guard",
+      "rationale": "artifact upload is fail-closed with if-no-files-found:error",
+      "requires_paths": [
+        "artifacts/reports/**",
+        "objects/*/artifacts/evidence/reference/eval/report.json"
+      ]
+    },
+    {
+      "classification": "transient",
+      "enforced_by": ".github/workflows/scorecard.yml:28",
+      "id": "scorecard_sarif_fail_closed",
+      "rationale": "Scorecard action produces real SARIF, upload-sarif publishes to code scanning, and deterministic fallback is emitted only if action fails before output while upload-artifact remains fail-closed.",
+      "requires_paths": [
+        "artifacts/security/scorecard-results.sarif"
+      ]
+    }
+  ]
+}

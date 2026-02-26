@@ -1,0 +1,257 @@
+scpe_release: v1.0
+schema_version: IM-2026.3
+purpose: "interpreted mechanized model: signals -> decoded facts -> ordered decisions -> bounded actions"
+determinism:
+  rule_order: "listed"
+  tie_break:
+    - "higher priority wins"
+    - "then higher severity wins"
+    - "then lexicographic(category)"
+    - "then lexicographic(metric)"
+  numeric:
+    nan_policy: "FAIL"
+    rounding: "none"
+    comparisons: "strict"
+  randomness: "forbidden"
+
+modalities:
+  - id: "M.CODE"
+    required_reports: ["REPORTS/quality/lint.json", "REPORTS/quality/maintainability.json"]
+  - id: "M.TEST"
+    required_reports: ["REPORTS/quality/tests.json"]
+  - id: "M.SEC"
+    required_reports: ["REPORTS/quality/security.json"]
+  - id: "M.DOC"
+    required_reports: ["REPORTS/quality/docs.json"]
+  - id: "M.PERF"
+    required_reports: ["REPORTS/quality/perf.json"]
+  - id: "M.CI"
+    required_reports: ["REPORTS/ci-baseline.json"]
+  - id: "M.META"
+    required_reports: ["REPORTS/meta-state.json", "REPORTS/deadlock.json"]
+
+signals:
+  - id: "S.REPO.HEAD"
+    type: "command"
+    cmd: "git rev-parse HEAD"
+    output: "REPORTS/signals/git-head.txt"
+  - id: "S.REPO.STATUS"
+    type: "command"
+    cmd: "git status --porcelain"
+    output: "REPORTS/signals/git-status.txt"
+  - id: "S.QM.BASELINE"
+    type: "report"
+    input: "REPORTS/quality-baseline.json"
+  - id: "S.QM.SCORECARD"
+    type: "report"
+    input: "REPORTS/scorecard.json"
+  - id: "S.META.STATE"
+    type: "report"
+    input: "REPORTS/meta-state.json"
+  - id: "S.META.DEADLOCK"
+    type: "report"
+    input: "REPORTS/deadlock.json"
+
+decoders:
+  - id: "D.LINT"
+    input: "REPORTS/quality/lint.json"
+    outputs:
+      - fact: "lint.error_count"
+        path: "$.lint.error_count"
+        type: "int"
+  - id: "D_TEST"
+    input: "REPORTS/quality/tests.json"
+    outputs:
+      - fact: "tests.fail_count"
+        path: "$.tests.fail_count"
+        type: "int"
+  - id: "D_SEC"
+    input: "REPORTS/quality/security.json"
+    outputs:
+      - fact: "security.high_count"
+        path: "$.security.high_count"
+        type: "int"
+  - id: "D_MAINT"
+    input: "REPORTS/quality/maintainability.json"
+    outputs:
+      - fact: "complexity.p95"
+        path: "$.complexity.p95"
+        type: "number"
+      - fact: "duplication.lines"
+        path: "$.duplication.lines"
+        type: "int"
+  - id: "D_DOC"
+    input: "REPORTS/quality/docs.json"
+    outputs:
+      - fact: "docs.broken_links"
+        path: "$.docs.broken_links"
+        type: "int"
+  - id: "D_PERF"
+    input: "REPORTS/quality/perf.json"
+    outputs:
+      - fact: "perf.regression_detected"
+        path: "$.perf.regression_detected"
+        type: "bool"
+  - id: "D_META"
+    input: "REPORTS/meta-state.json"
+    outputs:
+      - fact: "meta.consecutive_fails"
+        path: "$.consecutive_fails"
+        type: "int"
+      - fact: "meta.erm_trigger_true"
+        path: "$.erm_trigger_true"
+        type: "bool"
+
+interpreted_rules:
+  - id: "R.IM.000"
+    priority: 1000
+    if: "missing_any_reports(modalities)"
+    then:
+      interpretation_item:
+        status: "UNKNOWN"
+        category: "instrumentation"
+        severity: "S0"
+        metric: "missing_reports"
+        value: "list_missing_reports(modalities)"
+        threshold: "all_required_present"
+        gate_ids: ["G.IM.010"]
+        recommended_actions: ["A.INSTRUMENT.EMIT_REPORTS"]
+      instrumentation_required: ["emit_quality_reports", "emit_trace", "emit_meta_state"]
+
+  - id: "R.IM.010"
+    priority: 900
+    if: "fact('tests.fail_count') > 0"
+    then:
+      interpretation_item:
+        status: "FAIL"
+        category: "tests"
+        severity: "S0"
+        metric: "tests.fail_count"
+        value: "fact('tests.fail_count')"
+        threshold: 0
+        gate_ids: ["G.QM.010"]
+        recommended_actions: ["A.FIX.TESTS.MINIMAL", "A.INSTRUMENT.CI"]
+
+  - id: "R.IM.020"
+    priority: 850
+    if: "fact('security.high_count') > 0"
+    then:
+      interpretation_item:
+        status: "FAIL"
+        category: "security"
+        severity: "S0"
+        metric: "security.high_count"
+        value: "fact('security.high_count')"
+        threshold: 0
+        gate_ids: ["G.QM.010"]
+        recommended_actions: ["A.FIX.SEC.MINIMAL", "A.INSTRUMENT.SEC.REPORTS"]
+
+  - id: "R.IM.030"
+    priority: 800
+    if: "fact('lint.error_count') > 0"
+    then:
+      interpretation_item:
+        status: "FAIL"
+        category: "lint"
+        severity: "S1"
+        metric: "lint.error_count"
+        value: "fact('lint.error_count')"
+        threshold: 0
+        gate_ids: ["G.QM.010"]
+        recommended_actions: ["A.FIX.LINT.MINIMAL", "A.INSTRUMENT.LINT.REPORTS"]
+
+  - id: "R.IM.040"
+    priority: 650
+    if: "fact('complexity.p95') > threshold('complexity.p95_max')"
+    then:
+      interpretation_item:
+        status: "FAIL"
+        category: "complexity"
+        severity: "S2"
+        metric: "complexity.p95"
+        value: "fact('complexity.p95')"
+        threshold: "threshold('complexity.p95_max')"
+        gate_ids: ["G.QM.020"]
+        recommended_actions: ["A.REDUCE.COMPLEXITY.TARGETED"]
+
+  - id: "R.IM.050"
+    priority: 600
+    if: "fact('duplication.lines') > threshold('duplication.max_lines')"
+    then:
+      interpretation_item:
+        status: "FAIL"
+        category: "duplication"
+        severity: "S3"
+        metric: "duplication.lines"
+        value: "fact('duplication.lines')"
+        threshold: "threshold('duplication.max_lines')"
+        gate_ids: ["G.QM.020"]
+        recommended_actions: ["A.REFACTOR.DEDUP.TARGETED"]
+
+  - id: "R.IM.060"
+    priority: 550
+    if: "fact('docs.broken_links') > 0"
+    then:
+      interpretation_item:
+        status: "FAIL"
+        category: "docs"
+        severity: "S2"
+        metric: "docs.broken_links"
+        value: "fact('docs.broken_links')"
+        threshold: 0
+        gate_ids: ["G.QM.030"]
+        recommended_actions: ["A.FIX.DOCS.LINKS"]
+
+  - id: "R.IM.070"
+    priority: 520
+    if: "fact('perf.regression_detected') == true"
+    then:
+      interpretation_item:
+        status: "FAIL"
+        category: "perf"
+        severity: "S1"
+        metric: "perf.regression_detected"
+        value: true
+        threshold: false
+        gate_ids: ["G.QM.040"]
+        recommended_actions: ["A.FIX.PERF.REGRESSION", "A.INSTRUMENT.PERF.REPORTS"]
+
+contradiction_model:
+  definition: "two rules recommend actions that mutate overlapping files with conflicting predicates"
+  resolution:
+    - "prioritize higher priority"
+    - "if equal priority -> FAIL with contradiction record"
+  record_path: "REPORTS/contradictions.json"
+
+divergence_model:
+  definition: "bounded alternative action candidates for same deficit"
+  bounds:
+    max_candidates_per_item: 2
+  record_path: "REPORTS/alternatives.json"
+
+trace:
+  path: "REPORTS/trace.jsonl"
+  record_fields: ["step","rule_id","decision","facts_snapshot_sha256","outputs"]
+
+output_contract:
+  path: "REPORTS/interpretation.json"
+  schema:
+    required_fields:
+      - "status"
+      - "items"
+      - "instrumentation_required"
+      - "modalities_present"
+      - "modalities_missing"
+      - "contradictions"
+      - "alternatives"
+      - "trace_path"
+    item_fields:
+      - "status"
+      - "category"
+      - "severity"
+      - "metric"
+      - "value"
+      - "threshold"
+      - "gate_ids"
+      - "recommended_actions"
+      - "priority"

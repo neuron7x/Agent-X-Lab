@@ -1,0 +1,309 @@
+{
+  "spec_version": "PRODUCTION_SPEC_V2.1",
+  "generated_at": "2026-02-25T23:56:38.844026+00:00",
+  "rrd_status": "PRODUCTION_SPEC_V2.1",
+  "gates": [
+    {
+      "gate_id": "G0",
+      "gate_name": "BASELINE_SEAL",
+      "enforcement": "HARD",
+      "status": "PASS",
+      "assertions": [
+        {
+          "id": "G0-A1",
+          "status": "PASS",
+          "detail": "ok",
+          "blocker": ""
+        },
+        {
+          "id": "G0-A2",
+          "status": "PASS",
+          "detail": "sha256 match: 5b06f3f574cd1c01...",
+          "blocker": ""
+        },
+        {
+          "id": "G0-A3",
+          "status": "PASS",
+          "detail": "ok",
+          "blocker": ""
+        },
+        {
+          "id": "G0-A4",
+          "status": "PASS",
+          "detail": "env_class=restricted_sandbox",
+          "blocker": ""
+        }
+      ],
+      "fail_action": "HARD_KILL; restore QA7",
+      "checked_at": "2026-02-25T23:56:38.844190+00:00"
+    },
+    {
+      "gate_id": "G1",
+      "gate_name": "BUILD_REPRO",
+      "enforcement": "HARD",
+      "status": "PASS",
+      "assertions": [
+        {
+          "id": "G1-A1",
+          "status": "PASS",
+          "detail": "All build provenance artifacts present",
+          "blocker": ""
+        },
+        {
+          "id": "G1-A2",
+          "status": "PASS",
+          "detail": "Hash match: 5b06f3f574cd1c01...",
+          "blocker": ""
+        },
+        {
+          "id": "G1-A3",
+          "status": "PASS",
+          "detail": "independent_build_count=2",
+          "blocker": ""
+        }
+      ],
+      "fail_action": "NO_RELEASE; investigate build toolchain",
+      "checked_at": "2026-02-25T23:56:38.856847+00:00"
+    },
+    {
+      "gate_id": "G2",
+      "gate_name": "EVIDENCE_CHAIN",
+      "enforcement": "HARD",
+      "status": "PASS",
+      "assertions": [
+        {
+          "id": "G2-A1",
+          "status": "PASS",
+          "detail": "Found 1 bundles",
+          "blocker": ""
+        },
+        {
+          "id": "G2-A2",
+          "status": "PASS",
+          "detail": "1 bundles schema-valid",
+          "blocker": ""
+        },
+        {
+          "id": "G2-A3",
+          "status": "PASS",
+          "detail": "Hash chain intact",
+          "blocker": ""
+        },
+        {
+          "id": "G2-A4",
+          "status": "PASS",
+          "detail": "All PBs have signature.jws field",
+          "blocker": ""
+        },
+        {
+          "id": "G2-A5",
+          "status": "PASS",
+          "detail": "ok",
+          "blocker": ""
+        },
+        {
+          "id": "G2-A6",
+          "status": "PASS",
+          "detail": "All PBs reference current AC version",
+          "blocker": ""
+        }
+      ],
+      "fail_action": "AUTONOMY_FREEZE; manual chain audit",
+      "checked_at": "2026-02-25T23:56:38.869613+00:00"
+    },
+    {
+      "gate_id": "G3",
+      "gate_name": "SSDF_COVERAGE",
+      "enforcement": "HARD",
+      "status": "PASS",
+      "assertions": [
+        {
+          "id": "G3-A1",
+          "status": "PASS",
+          "detail": "ok",
+          "blocker": ""
+        },
+        {
+          "id": "G3-A2",
+          "status": "PASS",
+          "detail": "coverage=0.830 >= threshold=0.8",
+          "blocker": ""
+        },
+        {
+          "id": "G3-A3",
+          "status": "PASS",
+          "detail": "6 critical controls all COVERED",
+          "blocker": ""
+        },
+        {
+          "id": "G3-A4",
+          "status": "PASS",
+          "detail": "ok",
+          "blocker": ""
+        }
+      ],
+      "fail_action": "NO_RELEASE; assign SSDF-GAP tickets",
+      "checked_at": "2026-02-25T23:56:38.870442+00:00"
+    },
+    {
+      "gate_id": "G4",
+      "gate_name": "RUNTIME_DETERMINISM",
+      "enforcement": "HARD",
+      "status": "PASS",
+      "assertions": [
+        {
+          "id": "G4-A1",
+          "status": "PASS",
+          "detail": "ok",
+          "blocker": ""
+        },
+        {
+          "id": "G4-A2",
+          "status": "PASS",
+          "detail": "N=500 >= 500",
+          "blocker": ""
+        },
+        {
+          "id": "G4-A3",
+          "status": "PASS",
+          "detail": "m=0",
+          "blocker": ""
+        },
+        {
+          "id": "G4-A4",
+          "status": "PASS",
+          "detail": "ok",
+          "blocker": ""
+        }
+      ],
+      "fail_action": "NO_RELEASE; AUTONOMY_FREEZE",
+      "checked_at": "2026-02-25T23:56:38.870697+00:00"
+    },
+    {
+      "gate_id": "G5",
+      "gate_name": "RELEASE_PACK",
+      "enforcement": "HARD",
+      "status": "PASS",
+      "assertions": [
+        {
+          "id": "G5-A1",
+          "status": "PASS",
+          "detail": "All release pack artifacts present",
+          "blocker": ""
+        },
+        {
+          "id": "G5-A2",
+          "status": "PASS",
+          "detail": "ARB decision APPROVED",
+          "blocker": ""
+        },
+        {
+          "id": "G5-A3",
+          "status": "PASS",
+          "detail": "author\u2260approver\u2260auditor",
+          "blocker": ""
+        },
+        {
+          "id": "G5-A4",
+          "status": "PASS",
+          "detail": "ARB memo binds to current AC sha256",
+          "blocker": ""
+        }
+      ],
+      "fail_action": "NO_RELEASE; escalate to ARB",
+      "checked_at": "2026-02-25T23:56:38.870807+00:00"
+    },
+    {
+      "gate_id": "G6",
+      "gate_name": "AUTH_HW_BINDING",
+      "enforcement": "HARD",
+      "status": "PASS",
+      "assertions": [
+        {
+          "id": "G6-A1",
+          "status": "PASS",
+          "detail": "AC.signature.jws present \u2014 JWS crypto verification requires key material (run in TEE)",
+          "blocker": ""
+        },
+        {
+          "id": "G6-A2",
+          "status": "SKIP",
+          "detail": "AAID.attestation not present \u2014 required for tee_enabled only",
+          "blocker": ""
+        }
+      ],
+      "fail_action": "HARD_KILL; restore auth",
+      "checked_at": "2026-02-25T23:56:38.870995+00:00"
+    },
+    {
+      "gate_id": "G7",
+      "gate_name": "FORMAL_VERIFICATION",
+      "enforcement": "HARD",
+      "status": "PASS",
+      "assertions": [
+        {
+          "id": "G7-A1",
+          "status": "PASS",
+          "detail": "ok",
+          "blocker": ""
+        },
+        {
+          "id": "G7-A2",
+          "status": "PASS",
+          "detail": "ok",
+          "blocker": ""
+        },
+        {
+          "id": "G7-A3",
+          "status": "PASS",
+          "detail": "ok",
+          "blocker": ""
+        },
+        {
+          "id": "G7-A4",
+          "status": "PASS",
+          "detail": "Z3 UNSAT \u2014 invariants hold",
+          "blocker": ""
+        },
+        {
+          "id": "G7-A5",
+          "status": "PASS",
+          "detail": "ok",
+          "blocker": ""
+        }
+      ],
+      "fail_action": "NO_RELEASE; AUTONOMY_FREEZE",
+      "checked_at": "2026-02-25T23:56:38.871048+00:00"
+    },
+    {
+      "gate_id": "G11",
+      "gate_name": "OUTPUT_FINALITY",
+      "enforcement": "HARD",
+      "status": "PASS",
+      "assertions": [
+        {
+          "id": "G11-A1",
+          "status": "PASS",
+          "detail": "ok",
+          "blocker": ""
+        },
+        {
+          "id": "G11-A3",
+          "status": "PASS",
+          "detail": "chosen_sps_hash present: d062c64ad6ebd1a2...",
+          "blocker": ""
+        },
+        {
+          "id": "G11-A2",
+          "status": "SKIP",
+          "detail": "Deterministic replay requires runtime; check manually",
+          "blocker": ""
+        }
+      ],
+      "fail_action": "NO_RELEASE; fix tie-break rules",
+      "checked_at": "2026-02-25T23:56:38.871294+00:00"
+    }
+  ],
+  "metrics_summary": {},
+  "blockers": []
+}

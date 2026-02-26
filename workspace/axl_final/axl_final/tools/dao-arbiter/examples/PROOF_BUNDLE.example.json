@@ -1,0 +1,15 @@
+{
+  "commit_sha": "5f7991da4a67555b232aa81e30ee79c3920ffdb8",
+  "required_checks_status": "success",
+  "artifact_hashes": {
+    "README.md": "ac29f89ca00ab3ecc39c53e767e9ad1105145db99e475615b7d8c30e2d93cfa9",
+    "DAO-LIFEBOOK.md": "de58223b49f92e90467beb1e96e6e9a6042e7c8116aadcd620e9eed96ab5bc50",
+    "FAIL_PACKET.json": "2cfa64bec22869cc2fcac24b8b434bb6526137b1d201867020355d137195c001",
+    "PROOF_BUNDLE.json": "044ec29e738a48b4c568d43c5956a9cb2cb02b4f8ffea8b72a8665a966c1c224",
+    "Vasylenko_DAO_Arbiter_2026.pdf": "98fb740498325a3385228e2aba241551f463e2204aec02bf7a6ac5d9f840f014",
+    "spec/PASS_CONTRACT_template.md": "e766bf50453ef7e37aaf26356aac61716b3f7265eb67c991fcaf71dd41617137",
+    "examples/loop_closure_example.md": "4a9c6cf839cb5152367bc2cb79a582c725ce0276a6b5d1acb492114f05de983a",
+    "preprint/dopaminergic_arbiter_2026.pdf": "98fb740498325a3385228e2aba241551f463e2204aec02bf7a6ac5d9f840f014"
+  },
+  "t_green": "2026-02-23T13:15:37Z"
+}

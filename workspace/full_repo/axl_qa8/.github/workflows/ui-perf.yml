@@ -1,0 +1,111 @@
+name: UI Performance + Bundle Budgets
+
+on:
+  push:
+    branches: [main]
+    paths: ['src/**', 'package*.json', 'vite.config.ts', '.lighthouserc.json']
+  pull_request:
+    paths: ['src/**', 'vite.config.ts', '.lighthouserc.json']
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  bundle-budget:
+    name: Bundle Size Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build + analyze bundle
+        run: |
+          ANALYZE=true npm run build
+          # Generate EVD-UI-BUNDLE.json from dist stats
+          node - << 'NODEEOF'
+          const fs = require('fs');
+          const path = require('path');
+          const distDir = 'dist/assets';
+          if (!fs.existsSync(distDir)) { console.log('No dist/assets'); process.exit(0); }
+          const files = fs.readdirSync(distDir).filter(f => f.endsWith('.js'));
+          const stats = files.map(f => {
+            const size = fs.statSync(path.join(distDir, f)).size;
+            return { file: f, size_bytes: size, size_kb: Math.round(size / 1024) };
+          });
+          const total = stats.reduce((s, f) => s + f.size_bytes, 0);
+          const result = { total_kb: Math.round(total / 1024), files: stats, budgets: { initial_kb_gzip_limit: 220, chunk_kb_gzip_limit: 180 }, generated: new Date().toISOString() };
+          fs.writeFileSync('dist/EVD-UI-BUNDLE.json', JSON.stringify(result, null, 2));
+          console.log('Bundle total (raw):', Math.round(total/1024), 'KB across', files.length, 'chunks');
+          NODEEOF
+
+      - name: Enforce budget (initial chunk raw < 800KB = ~220KB gzip estimate)
+        run: |
+          node - << 'NODEEOF'
+          const fs = require('fs');
+          const data = JSON.parse(fs.readFileSync('dist/EVD-UI-BUNDLE.json'));
+          const initial = data.files.filter(f => f.file.includes('index-') || f.file.includes('main-'));
+          const MAX_RAW_KB = 800; // ~220KB gzip
+          let failed = false;
+          for (const f of initial) {
+            if (f.size_kb > MAX_RAW_KB) {
+              console.error('BUDGET EXCEEDED:', f.file, f.size_kb + 'KB > ' + MAX_RAW_KB + 'KB raw');
+              failed = true;
+            }
+          }
+          if (failed) process.exit(1);
+          console.log('Bundle budgets: PASS');
+          NODEEOF
+
+      - name: Upload bundle evidence
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+        if: always()
+        with:
+          name: bundle-evidence-${{ github.run_id }}
+          retention-days: 30
+          path: |
+            dist/EVD-UI-BUNDLE.json
+            dist/EVD-UI-BUNDLE.html
+
+  lighthouse:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: bundle-budget
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install deps
+        run: |
+          npm ci
+          npm install -g @lhci/cli@0.14.x
+
+      - name: Build for preview
+        run: npm run build
+        env:
+          VITE_AXL_API_BASE: 'http://localhost:8787'
+          VITE_COMMIT_SHA: ${{ github.sha }}
+
+      - name: Run Lighthouse CI
+        run: lhci autorun --config=.lighthouserc.json
+        continue-on-error: true  # warn-only for initial rollout
+
+      - name: Upload LHCI evidence
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+        if: always()
+        with:
+          name: lhci-results-${{ github.run_id }}
+          retention-days: 30
+          path: .lighthouseci/

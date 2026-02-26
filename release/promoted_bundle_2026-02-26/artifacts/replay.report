@@ -1,0 +1,7 @@
+{
+  "env_fingerprint_hash": "350a1c89728a7578df588b9dc6e9af573ba0a9f5f6992c9f6a23dc675f535315",
+  "expected_chosen_sps_hash": "d062c64ad6ebd1a24862a839cd9c3bc68323da60abf5bc9f3674f32784a18740",
+  "generated_at": "2026-02-25T23:47:10Z",
+  "mismatches": 0,
+  "replay_n": 500
+}

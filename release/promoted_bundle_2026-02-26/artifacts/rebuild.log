@@ -1,0 +1,16 @@
+{
+  "builds": [
+    {
+      "artifact": "artifacts/AC.package",
+      "sha256": "5b06f3f574cd1c01c7712eb4e732ab6c223d57ebf18838a431dc7c91432e4a8e"
+    },
+    {
+      "artifact": "artifacts/rebuilt_artifact",
+      "sha256": "5b06f3f574cd1c01c7712eb4e732ab6c223d57ebf18838a431dc7c91432e4a8e"
+    }
+  ],
+  "definition_of_independent": "Two builds executed from separate filesystem roots with no shared artifacts directory; same host/toolchain. For cross-host independence, run in a second isolated builder and append evidence.",
+  "generated_at": "2026-02-25T23:46:47Z",
+  "hash_match": true,
+  "independent_build_count": 2
+}

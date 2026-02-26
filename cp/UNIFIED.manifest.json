@@ -1,0 +1,27 @@
+{
+  "schema_id": "AXL_UNIFIED_MANIFEST.V1",
+  "generated_at": "2026-02-26T00:18:56.108708+00:00",
+  "pack_root": "AXL_ONE_INTEGRATED_SYSTEM_2026-02-26",
+  "source_snapshots": [
+    {
+      "file": "AXL_PROD_SPEC_V2_FULL_PATCHED_2026-02-26.zip",
+      "sha256": "ad4ae110a88d75fce12ddcd466dbf712d5e7bb2226d9a7887daf33211773f008",
+      "bytes": 20456360
+    },
+    {
+      "file": "AXL_QA8_PROD_SPEC_V2_1_PROMOTED_BUNDLE_2026-02-26.zip",
+      "sha256": "c257e8f1b3f43f8d950ebfc09d23d36b9df65c648c1fcf4b6f7ea561cd1d326d",
+      "bytes": 13219750
+    },
+    {
+      "file": "axl_final_PROD_SPEC_V2_1_2026-02-26.zip",
+      "sha256": "c21a47fc4df1393fea18daf73863385205372befe95b9031aabfada143f9150b",
+      "bytes": 1305996
+    },
+    {
+      "file": "AXL_QA8_PROD_SPEC_V2_1_PROMOTED_ARTIFACTS_2026-02-26.zip",
+      "sha256": "0ca23976b552b00d73ecfd2f0f5a2e49d599f2cee11c2a8a815b10433e07e559",
+      "bytes": 7351
+    }
+  ]
+}

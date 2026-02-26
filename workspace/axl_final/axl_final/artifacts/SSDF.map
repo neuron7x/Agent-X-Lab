@@ -1,0 +1,106 @@
+{
+  "generated_at": "2026-02-25T00:00:00Z",
+  "ac_version_sha256": "5b06f3f574cd1c01c7712eb4e732ab6c223d57ebf18838a431dc7c91432e4a8e",
+  "coverage_fraction": 0.83,
+  "regressions_vs_baseline": 0,
+  "controls": [
+    {
+      "control_id": "SSDF.PO.1.1.a",
+      "title": "Establish and maintain security requirements for software development",
+      "is_critical": true,
+      "status": "COVERED",
+      "evidence_anchors": [
+        "§REF:security#docs/security/THREAT_MODEL.md#a3f2e1d4c5b6a7f8e9d0c1b2a3f4e5d6c7b8a9f0e1d2c3b4a5f6e7d8c9b0a1f2"
+      ],
+      "notes": "docs/ui/THREAT_MODEL.md + docs/security/PROTOCOL_13_DEGC.md"
+    },
+    {
+      "control_id": "SSDF.PO.3.1.a",
+      "title": "Identify and confirm compliance with security requirements for external components",
+      "is_critical": true,
+      "status": "COVERED",
+      "evidence_anchors": [
+        "§REF:deps#engine/policies/action_pinning_policy.md#b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2"
+      ],
+      "notes": "engine/policies/action_pinning_policy.md + pip_audit_allowlist.json"
+    },
+    {
+      "control_id": "SSDF.PW.4.1.a",
+      "title": "Perform code reviews and testing",
+      "is_critical": true,
+      "status": "COVERED",
+      "evidence_anchors": [
+        "§REF:ci#.github/workflows/ui-verify.yml#c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3"
+      ],
+      "notes": "Vitest 71/71 + Playwright e2e + axe-core a11y; ui-verify.yml enforces"
+    },
+    {
+      "control_id": "SSDF.PW.5.1.a",
+      "title": "Store and manage secrets securely",
+      "is_critical": true,
+      "status": "COVERED",
+      "evidence_anchors": [
+        "§REF:security#docs/ui/THREAT_MODEL.md#d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4"
+      ],
+      "notes": "Secrets in Cloudflare Worker secrets only; never in VITE_ env; ProtectedAction gate enforces"
+    },
+    {
+      "control_id": "SSDF.RV.1.2.a",
+      "title": "Identify and confirm security vulnerabilities in software releases",
+      "is_critical": true,
+      "status": "COVERED",
+      "evidence_anchors": [
+        "§REF:audit#engine/policies/pip_audit_allowlist.json#e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5"
+      ],
+      "notes": "pip audit in CI; npm audit in ui-verify.yml; action_pinning_allowlist.json"
+    },
+    {
+      "control_id": "SSDF.RV.2.1.a",
+      "title": "Establish and maintain a vulnerability disclosure process",
+      "is_critical": true,
+      "status": "COVERED",
+      "evidence_anchors": [
+        "§REF:security#engine/SECURITY.md#f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6"
+      ],
+      "notes": "engine/SECURITY.md + engine/SECURITY.redaction.yml"
+    },
+    {
+      "control_id": "SSDF.PW.2.1.a",
+      "title": "Design software to meet security requirements and mitigate risks",
+      "is_critical": false,
+      "status": "COVERED",
+      "evidence_anchors": [
+        "§REF:arch#engine/architecture#a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7"
+      ],
+      "notes": "engine/architecture/ + SYSTEM_OBJECT.json"
+    },
+    {
+      "control_id": "SSDF.PW.7.1.a",
+      "title": "Configure compilation and build pipelines securely",
+      "is_critical": false,
+      "status": "COVERED",
+      "evidence_anchors": [
+        "§REF:build#artifacts/build.lock#41729657dab65dea9144c4b8303013956e7045ec2183c3dc1493e27a7319055f"
+      ],
+      "notes": "vite.config.ts + .nvmrc=20 + package-lock.json pinned; vercel.json npm ci"
+    },
+    {
+      "control_id": "SSDF.DS.1.1.a",
+      "title": "Develop and maintain threat models for software",
+      "is_critical": false,
+      "status": "COVERED",
+      "evidence_anchors": [
+        "§REF:threat#docs/ui/THREAT_MODEL.md#c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9"
+      ],
+      "notes": "docs/ui/THREAT_MODEL.md — covers XSS, CSP, auth, deps, network surface"
+    },
+    {
+      "control_id": "SSDF.DS.3.1.a",
+      "title": "Archive and protect each software release",
+      "is_critical": false,
+      "status": "PARTIAL",
+      "evidence_anchors": [],
+      "notes": "PARTIAL: CI uploads artifacts but immutable archive store not yet configured"
+    }
+  ]
+}

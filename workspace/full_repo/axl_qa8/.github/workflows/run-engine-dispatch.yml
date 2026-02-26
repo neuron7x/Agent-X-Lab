@@ -1,0 +1,198 @@
+name: Run Engine (Dispatch)
+
+# Triggered by:
+#   1) POST /dispatch/run-engine → BFF Worker → repository_dispatch event_type=run-engine
+#   2) Manual: Actions tab → Run workflow
+#   3) Schedule: every 5 min (optional, comment out if not needed)
+
+on:
+  repository_dispatch:
+    types: [run-engine]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry-run: generate VR.json but do NOT commit to vr-state branch"
+        required: false
+        default: "false"
+        type: choice
+        options: ["false", "true"]
+      ref:
+        description: "Git ref to check out (default: main)"
+        required: false
+        default: "main"
+
+# Minimal required permissions
+permissions:
+  contents: write    # needed to push VR.json to vr-state branch (S1)
+  actions: read      # needed by udgs_core to read workflow status
+
+concurrency:
+  group: run-engine-${{ github.ref }}
+  cancel-in-progress: false   # do NOT cancel — each run is a complete audit record
+
+env:
+  PYTHONHASHSEED: "0"         # deterministic hash across runs
+  PYTHON_VERSION: "3.13"
+  VR_BRANCH: "vr-state"
+  VR_PATH: "ad2026_state/vr/latest.json"
+
+jobs:
+  run-engine:
+    name: Engine Run + VR Publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      # ── Checkout ───────────────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          ref: ${{ github.event.inputs.ref || github.event.client_payload.ref || 'main' }}
+          fetch-depth: 0   # full history for deterministic anchor computation
+
+      # ── Python setup ───────────────────────────────────────────────────
+      - name: Set up Python
+        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: |
+            engine/requirements.lock
+            engine/requirements-dev.txt
+
+      # ── Install dependencies deterministically ─────────────────────────
+      - name: Install engine deps
+        run: |
+          python -m pip install --upgrade pip==26.0
+          # Install from lock file for determinism
+          if [ -f engine/requirements.lock ]; then
+            python -m pip install -r engine/requirements.lock
+          fi
+          # Install engine as editable package
+          if [ -f engine/pyproject.toml ]; then
+            python -m pip install -e ./engine
+          fi
+          # udgs_core as editable package (lives in udgs_core/)
+          if [ -f udgs_core/pyproject.toml ]; then
+            python -m pip install -e ./udgs_core
+          fi
+
+      # ── Run UDGS Core to produce VR.json ──────────────────────────────
+      - name: Generate VR.json via engine CLI
+        id: generate_vr
+        run: |
+          mkdir -p ad2026_state/vr
+
+          python -m exoneural_governor.cli \
+            --config engine/configs/sg.config.json \
+            vr \
+            --out ad2026_state/vr/latest.json \
+            2>&1 | tee engine_run.log
+
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+          # Verify output exists and is valid JSON
+          if [ ! -f ad2026_state/vr/latest.json ]; then
+            echo "::error::VR.json was not generated"
+            exit 1
+          fi
+          python3 -c "import json,sys; json.load(open('ad2026_state/vr/latest.json')); print('VR.json is valid JSON')"
+
+      # ── Validate against schema (if present) ──────────────────────────
+      - name: Validate VR.json schema
+        run: |
+          if [ -f udgs_core/schemas/STRICT_JSON_PACKET.schema.json ]; then
+            python -m pip install jsonschema==4.23.0 --quiet
+            python3 -c "
+          import json, jsonschema
+          schema = json.load(open('udgs_core/schemas/STRICT_JSON_PACKET.schema.json'))
+          data   = json.load(open('ad2026_state/vr/latest.json'))
+          jsonschema.validate(data, schema)
+          print('Schema validation: PASS')
+          " 2>&1 || echo "::warning::Schema validation warning (non-blocking)"
+          else
+            echo "No schema file found — skipping schema validation"
+          fi
+
+      # ── Compute SHA-256 of VR.json ─────────────────────────────────────
+      - name: Compute VR.json hash
+        id: vr_hash
+        run: |
+          HASH=$(sha256sum ad2026_state/vr/latest.json | cut -d' ' -f1)
+          echo "sha256=$HASH" >> "$GITHUB_OUTPUT"
+          echo "VR.json SHA-256: $HASH"
+
+      # ── Publish VR.json to vr-state branch (S1 strategy) ──────────────
+      - name: Publish VR.json to vr-state branch
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        env:
+          GIT_AUTHOR_NAME: "axl-engine[bot]"
+          GIT_AUTHOR_EMAIL: "axl-engine[bot]@users.noreply.github.com"
+          GIT_COMMITTER_NAME: "axl-engine[bot]"
+          GIT_COMMITTER_EMAIL: "axl-engine[bot]@users.noreply.github.com"
+        run: |
+          # Save generated VR.json to a temp path BEFORE switching branches
+          VR_TEMP=$(mktemp)
+          cp ad2026_state/vr/latest.json "$VR_TEMP"
+
+          # Configure git
+          git config user.name  "$GIT_AUTHOR_NAME"
+          git config user.email "$GIT_AUTHOR_EMAIL"
+
+          # Fetch vr-state branch if it exists, otherwise create orphan
+          git fetch origin ${{ env.VR_BRANCH }} 2>/dev/null || true
+          if git ls-remote --exit-code origin ${{ env.VR_BRANCH }} > /dev/null 2>&1; then
+            git checkout ${{ env.VR_BRANCH }}
+          else
+            git checkout --orphan ${{ env.VR_BRANCH }}
+            git rm -rf . 2>/dev/null || true
+            # Create minimal .gitignore so branch is valid
+            echo "*.log" > .gitignore
+            git add .gitignore
+          fi
+
+          # Restore generated VR.json from temp file (NOT from git checkout)
+          mkdir -p ad2026_state/vr
+          cp "$VR_TEMP" ad2026_state/vr/latest.json
+          rm -f "$VR_TEMP"
+
+          # Stage and commit only if content changed
+          git add ad2026_state/vr/latest.json
+          if git diff --cached --quiet; then
+            echo "VR.json unchanged — no commit needed"
+          else
+            git commit -m "vr: update VR.json [sha=${{ steps.vr_hash.outputs.sha256 }}] [run=${{ github.run_id }}]"
+            git push origin ${{ env.VR_BRANCH }}
+            echo "VR.json published to ${{ env.VR_BRANCH }}"
+          fi
+
+      # ── Upload artifacts for audit ─────────────────────────────────────
+      - name: Upload proof artifacts
+        if: always()
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        with:
+          name: engine-proof-${{ github.run_id }}
+          retention-days: 90
+          if-no-files-found: warn
+          path: |
+            ad2026_state/vr/latest.json
+            engine_run.log
+            ad2026_state/AD2026_EXECUTION_LOG.jsonl
+            ad2026_state/AD2026_TELEMETRY.json
+            ad2026_state/AD2026_STATUS.json
+            qa8_state/
+
+      # ── Summary ───────────────────────────────────────────────────────
+      - name: Job summary
+        if: always()
+        run: |
+          echo "## Engine Run Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Run ID | \`${{ github.run_id }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Trigger | \`${{ github.event_name }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Ref | \`${{ github.sha }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| VR SHA-256 | \`${{ steps.vr_hash.outputs.sha256 }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Dry-run | \`${{ github.event.inputs.dry_run || 'false' }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Published branch | \`${{ env.VR_BRANCH }}\` |" >> "$GITHUB_STEP_SUMMARY"

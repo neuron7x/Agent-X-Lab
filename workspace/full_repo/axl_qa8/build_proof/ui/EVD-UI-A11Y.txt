@@ -1,0 +1,32 @@
+EVD-UI-A11Y.txt — AFL-2026.02 GATE-4 Evidence (I5: WCAG 2.2 AA)
+Generated: 2026-02-25
+
+Framework: axe-core (via @axe-core/react in tests)
+Rules: WCAG 2.1/2.2 AA (color-contrast disabled in jsdom — CSS vars not resolved)
+
+=== SkeletonPanel ===
+Critical violations: 0 ✅
+Serious violations: 0 ✅
+
+=== ForgeScreen ===
+Critical violations: 0 ✅
+Serious violations: 0 ✅
+Structure checks:
+  - All buttons have accessible names ✅
+  - Textbox for user input present ✅
+
+=== CommandPalette ===
+Critical violations: 0 ✅
+Serious violations: 0 ✅
+Structure checks:
+  - dialog role present ✅
+  - aria-label="Command palette" ✅
+  - Keyboard accessible (Escape closes) ✅
+
+=== AppShell ===
+- Skip to content link (sr-only + focus:not-sr-only) ✅
+- nav role with aria-label="Main navigation" ✅
+- main#main-content with tabIndex=-1 ✅
+- Reduced motion: supports prefers-reduced-motion ✅
+
+Overall GATE-4 status: PASS

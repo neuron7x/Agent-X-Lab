@@ -1,0 +1,53 @@
+{
+  "ac_version_sha256": "5b06f3f574cd1c01c7712eb4e732ab6c223d57ebf18838a431dc7c91432e4a8e",
+  "candidates": [
+    {
+      "actions": [
+        {
+          "action_id": "A-BOOT",
+          "action_type": "CHECKPOINT",
+          "evidence_refs": [
+            "§REF:anchor#system_anchor#01c314002cb6da16d517b88f8fe617dec940c2445127068dca1204db6732db1b"
+          ],
+          "invariants_touched": [
+            "INV-DETERMINISTICSELECTION"
+          ],
+          "metadata": {},
+          "postconditions": [
+            "CHECKPOINT_OK"
+          ],
+          "preconditions": [
+            "BOOT"
+          ],
+          "rollback_action_id": "NOOP"
+        },
+        {
+          "action_id": "A-EMITPB",
+          "action_type": "EMIT_PB",
+          "evidence_refs": [
+            "§REF:anchor#ac_sha256#5b06f3f574cd1c01c7712eb4e732ab6c223d57ebf18838a431dc7c91432e4a8e"
+          ],
+          "invariants_touched": [
+            "INV-CHAININTEGRITY"
+          ],
+          "metadata": {},
+          "postconditions": [
+            "PB_EMITTED"
+          ],
+          "preconditions": [
+            "CHECKPOINT_OK"
+          ],
+          "rollback_action_id": "NOOP"
+        }
+      ],
+      "agent_id": "AXL-AGENT-01",
+      "metadata": {},
+      "sps_hash": "d062c64ad6ebd1a24862a839cd9c3bc68323da60abf5bc9f3674f32784a18740",
+      "sps_id": "SPS-01c31400-5b06f3f5",
+      "utc": "1970-01-01T00:00:00Z"
+    }
+  ],
+  "generated_at": "2026-02-25T23:47:05Z",
+  "system_anchor": "01c314002cb6da16d517b88f8fe617dec940c2445127068dca1204db6732db1b",
+  "system_anchor_ref": "SYSTEM_OBJECT.json#system_anchor"
+}

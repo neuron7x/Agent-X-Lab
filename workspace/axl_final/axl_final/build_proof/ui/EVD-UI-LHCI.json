@@ -1,0 +1,27 @@
+{
+  "protocol": "AFL-2026.02",
+  "gate": "GATE-6",
+  "generated": "2026-02-25T00:00:00Z",
+  "config_file": ".lighthouserc.json",
+  "workflow": ".github/workflows/ui-perf.yml",
+  "thresholds": {
+    "performance": {"min": 0.80, "enforcement": "warn"},
+    "accessibility": {"min": 0.90, "enforcement": "error"},
+    "best-practices": {"min": 0.80, "enforcement": "warn"}
+  },
+  "metrics_budgets": {
+    "FCP_ms": {"max": 2000, "enforcement": "warn"},
+    "TBT_ms": {"max": 300, "enforcement": "warn"},
+    "TTI_ms": {"max": 3500, "enforcement": "warn"},
+    "CLS": {"max": 0.10, "enforcement": "warn"},
+    "LCP_ms": {"max": 2500, "enforcement": "warn"}
+  },
+  "expected_scores_estimate": {
+    "note": "Based on bundle analysis: initial JS 11.86kB gzip, route-split, no heavy blocking resources",
+    "performance": "~0.90-0.95",
+    "accessibility": "~0.92-0.97",
+    "best-practices": "~0.90+"
+  },
+  "run_command": "npx lhci autorun",
+  "status": "CONFIG_COMPLETE — run in CI via ui-perf.yml to collect real scores"
+}

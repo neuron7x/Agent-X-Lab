@@ -1,0 +1,51 @@
+{
+  "FAIL_PACKET": {
+    "summary": "STRICT_JSON validator accepted packets with placeholder/mismatched SHA256_ANCHOR and did not enforce nested packet minimums",
+    "signals": [
+      "sha256_anchor_not_verified",
+      "schema_allows_placeholder_anchor",
+      "negative_paths_not_covered_in_pre_verification"
+    ],
+    "repro": "python -m udgs_core.cli validate-packet system/examples/packet.example.json  # passed before even with placeholder anchor"
+  },
+  "MUTATION_PLAN": {
+    "diff_scope": [
+      "udgs_core/strict_json.py",
+      "udgs_core/cli.py",
+      "udgs_core/schemas/STRICT_JSON_PACKET.schema.json",
+      "udgs_core/adapters/dao_lifebook_adapter.py",
+      "system/examples/*.json",
+      "system/PRE_VERIFICATION_SCRIPT.sh",
+      "system/PROTOCOL_13_DEGC.md",
+      "README.md"
+    ],
+    "constraints": [
+      "no-new-deps",
+      "fail-closed",
+      "stdlib-only",
+      "minimal-diff",
+      "no-type-weakening",
+      "preserve-AXL-UI-runtime-behavior"
+    ]
+  },
+  "PRE_VERIFICATION_SCRIPT": "bash system/PRE_VERIFICATION_SCRIPT.sh",
+  "REGRESSION_TEST_PAYLOAD": {
+    "suite": [
+      "python -m py_compile udgs_core/*.py udgs_core/adapters/*.py",
+      "python -m udgs_core.cli validate-packet system/examples/packet.example.json",
+      "python -m udgs_core.cli packet-anchor system/examples/packet.example.json",
+      "python -m udgs_core.cli validate-packet system/examples/packet.invalid.anchor_mismatch.json  # expect FAIL",
+      "python -m udgs_core.cli validate-packet system/examples/packet.invalid.extra_key.json  # expect FAIL",
+      "python -m udgs_core.cli validate-packet system/examples/packet.invalid.missing_signals.json  # expect FAIL",
+      "bash system/PRE_VERIFICATION_SCRIPT.sh"
+    ],
+    "expected": {
+      "status": "PASS",
+      "strict_json_positive": "OK",
+      "strict_json_negative_paths": "FAIL_CLOSED",
+      "ui_contract_static": "PASS",
+      "engine_smoke": "PASS"
+    }
+  },
+  "SHA256_ANCHOR": "397249ce818cf2d777c309fa237c82abae9cc0f3fdac8748d26564709d46c6e5"
+}

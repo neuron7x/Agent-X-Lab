@@ -1,0 +1,7 @@
+{
+  "delta_loc": 423,
+  "max_delta_loc_per_required_gate": 80,
+  "pass": true,
+  "ratio": 70.5,
+  "required_gates": 6
+}

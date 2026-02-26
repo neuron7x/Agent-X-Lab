@@ -1,0 +1,907 @@
+diff --git a/.gitignore b/.gitignore
+index e9e46b1..64e7134 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -33,3 +33,6 @@ configs/artifacts/
+ # Local CSI proof bundles
+ proof/*
+ !proof/.gitkeep
++
++# FEG runtime evidence
++artifacts/feg/
+diff --git a/MANIFEST.json b/MANIFEST.json
+index 28147f5..8137e68 100644
+--- a/MANIFEST.json
++++ b/MANIFEST.json
+@@ -154,7 +154,7 @@
+       "sha256": "dfd7fdac8c7583cb0148374425a20d7c07b4a8c7ccb96be0c263125436e93537"
+     },
+     ".gitignore": {
+-      "sha256": "bfd94521c896d7a03e7cfbdc599770a2c78723fc0e6dc2019ada246c770f3851"
++      "sha256": "02a337334993bb19d52b8b5d50931c84cb19a4cd38fc1c12bf6554aaed1f0d09"
+     },
+     ".pre-commit-config.yaml": {
+       "sha256": "ddbee8173e272f2c1386593b8cde2b42acbba8428642fdbe4f641ee256d35e5d"
+diff --git a/artifacts/feg/baseline/01/cmd.txt b/artifacts/feg/baseline/01/cmd.txt
+deleted file mode 100644
+index b3ed6c4..0000000
+--- a/artifacts/feg/baseline/01/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-export PYTHONHASHSEED=0
+diff --git a/artifacts/feg/baseline/01/exit_code.txt b/artifacts/feg/baseline/01/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/baseline/01/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/baseline/01/stderr.txt b/artifacts/feg/baseline/01/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/baseline/01/stdout.txt b/artifacts/feg/baseline/01/stdout.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/baseline/02/cmd.txt b/artifacts/feg/baseline/02/cmd.txt
+deleted file mode 100644
+index 5a74a74..0000000
+--- a/artifacts/feg/baseline/02/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-python -m pip install -r requirements.lock
+diff --git a/artifacts/feg/baseline/02/exit_code.txt b/artifacts/feg/baseline/02/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/baseline/02/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/baseline/02/stderr.txt b/artifacts/feg/baseline/02/stderr.txt
+deleted file mode 100644
+index cdd6d1a..0000000
+--- a/artifacts/feg/baseline/02/stderr.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+diff --git a/artifacts/feg/baseline/02/stdout.txt b/artifacts/feg/baseline/02/stdout.txt
+deleted file mode 100644
+index 685d423..0000000
+--- a/artifacts/feg/baseline/02/stdout.txt
++++ /dev/null
+@@ -1,7 +0,0 @@
+-Requirement already satisfied: PyYAML==6.0.2 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements.lock (line 1)) (6.0.2)
+-Requirement already satisfied: jsonschema==4.23.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements.lock (line 2)) (4.23.0)
+-Requirement already satisfied: attrs>=22.2.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements.lock (line 2)) (25.4.0)
+-Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements.lock (line 2)) (2025.9.1)
+-Requirement already satisfied: referencing>=0.28.4 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements.lock (line 2)) (0.37.0)
+-Requirement already satisfied: rpds-py>=0.7.1 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements.lock (line 2)) (0.30.0)
+-Requirement already satisfied: typing-extensions>=4.4.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from referencing>=0.28.4->jsonschema==4.23.0->-r requirements.lock (line 2)) (4.15.0)
+diff --git a/artifacts/feg/baseline/03/cmd.txt b/artifacts/feg/baseline/03/cmd.txt
+deleted file mode 100644
+index 3470a7a..0000000
+--- a/artifacts/feg/baseline/03/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-python -m pip install -r requirements-dev.txt
+diff --git a/artifacts/feg/baseline/03/exit_code.txt b/artifacts/feg/baseline/03/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/baseline/03/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/baseline/03/stderr.txt b/artifacts/feg/baseline/03/stderr.txt
+deleted file mode 100644
+index cdd6d1a..0000000
+--- a/artifacts/feg/baseline/03/stderr.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+diff --git a/artifacts/feg/baseline/03/stdout.txt b/artifacts/feg/baseline/03/stdout.txt
+deleted file mode 100644
+index 93bd263..0000000
+--- a/artifacts/feg/baseline/03/stdout.txt
++++ /dev/null
+@@ -1,18 +0,0 @@
+-Requirement already satisfied: ruff==0.14.11 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements-dev.txt (line 2)) (0.14.11)
+-Requirement already satisfied: mypy==1.19.1 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements-dev.txt (line 3)) (1.19.1)
+-Requirement already satisfied: pytest==9.0.2 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements-dev.txt (line 4)) (9.0.2)
+-Requirement already satisfied: jsonschema==4.23.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements-dev.txt (line 5)) (4.23.0)
+-Requirement already satisfied: typing_extensions>=4.6.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from mypy==1.19.1->-r requirements-dev.txt (line 3)) (4.15.0)
+-Requirement already satisfied: mypy_extensions>=1.0.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from mypy==1.19.1->-r requirements-dev.txt (line 3)) (1.1.0)
+-Requirement already satisfied: pathspec>=0.9.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from mypy==1.19.1->-r requirements-dev.txt (line 3)) (1.0.3)
+-Requirement already satisfied: tomli>=1.1.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from mypy==1.19.1->-r requirements-dev.txt (line 3)) (2.4.0)
+-Requirement already satisfied: librt>=0.6.2 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from mypy==1.19.1->-r requirements-dev.txt (line 3)) (0.7.7)
+-Requirement already satisfied: exceptiongroup>=1 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from pytest==9.0.2->-r requirements-dev.txt (line 4)) (1.3.1)
+-Requirement already satisfied: iniconfig>=1.0.1 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from pytest==9.0.2->-r requirements-dev.txt (line 4)) (2.3.0)
+-Requirement already satisfied: packaging>=22 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from pytest==9.0.2->-r requirements-dev.txt (line 4)) (25.0)
+-Requirement already satisfied: pluggy<2,>=1.5 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from pytest==9.0.2->-r requirements-dev.txt (line 4)) (1.6.0)
+-Requirement already satisfied: pygments>=2.7.2 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from pytest==9.0.2->-r requirements-dev.txt (line 4)) (2.19.2)
+-Requirement already satisfied: attrs>=22.2.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements-dev.txt (line 5)) (25.4.0)
+-Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements-dev.txt (line 5)) (2025.9.1)
+-Requirement already satisfied: referencing>=0.28.4 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements-dev.txt (line 5)) (0.37.0)
+-Requirement already satisfied: rpds-py>=0.7.1 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements-dev.txt (line 5)) (0.30.0)
+diff --git a/artifacts/feg/baseline/04/cmd.txt b/artifacts/feg/baseline/04/cmd.txt
+deleted file mode 100644
+index 6bc3da5..0000000
+--- a/artifacts/feg/baseline/04/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-ruff check .
+diff --git a/artifacts/feg/baseline/04/exit_code.txt b/artifacts/feg/baseline/04/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/baseline/04/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/baseline/04/stderr.txt b/artifacts/feg/baseline/04/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/baseline/04/stdout.txt b/artifacts/feg/baseline/04/stdout.txt
+deleted file mode 100644
+index 1f5f344..0000000
+--- a/artifacts/feg/baseline/04/stdout.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-All checks passed!
+diff --git a/artifacts/feg/baseline/05/cmd.txt b/artifacts/feg/baseline/05/cmd.txt
+deleted file mode 100644
+index a4b4acd..0000000
+--- a/artifacts/feg/baseline/05/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-ruff format --check .
+diff --git a/artifacts/feg/baseline/05/exit_code.txt b/artifacts/feg/baseline/05/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/baseline/05/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/baseline/05/stderr.txt b/artifacts/feg/baseline/05/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/baseline/05/stdout.txt b/artifacts/feg/baseline/05/stdout.txt
+deleted file mode 100644
+index 069f058..0000000
+--- a/artifacts/feg/baseline/05/stdout.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-40 files already formatted
+diff --git a/artifacts/feg/baseline/06/cmd.txt b/artifacts/feg/baseline/06/cmd.txt
+deleted file mode 100644
+index a99b4e3..0000000
+--- a/artifacts/feg/baseline/06/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-mypy .
+diff --git a/artifacts/feg/baseline/06/exit_code.txt b/artifacts/feg/baseline/06/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/baseline/06/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/baseline/06/stderr.txt b/artifacts/feg/baseline/06/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/baseline/06/stdout.txt b/artifacts/feg/baseline/06/stdout.txt
+deleted file mode 100644
+index 72edfc0..0000000
+--- a/artifacts/feg/baseline/06/stdout.txt
++++ /dev/null
+@@ -1,2 +0,0 @@
+-tests/test_backend.py:41: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+-Success: no issues found in 36 source files
+diff --git a/artifacts/feg/baseline/07/cmd.txt b/artifacts/feg/baseline/07/cmd.txt
+deleted file mode 100644
+index 2f30f61..0000000
+--- a/artifacts/feg/baseline/07/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-python -m pytest -q -W error
+diff --git a/artifacts/feg/baseline/07/exit_code.txt b/artifacts/feg/baseline/07/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/baseline/07/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/baseline/07/stderr.txt b/artifacts/feg/baseline/07/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/baseline/07/stdout.txt b/artifacts/feg/baseline/07/stdout.txt
+deleted file mode 100644
+index 5b35b12..0000000
+--- a/artifacts/feg/baseline/07/stdout.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-.................................                                        [100%]
+diff --git a/artifacts/feg/baseline/08/cmd.txt b/artifacts/feg/baseline/08/cmd.txt
+deleted file mode 100644
+index 40a94dd..0000000
+--- a/artifacts/feg/baseline/08/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-python scripts/validate_arsenal.py --repo-root . --strict
+diff --git a/artifacts/feg/baseline/08/exit_code.txt b/artifacts/feg/baseline/08/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/baseline/08/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/baseline/08/stderr.txt b/artifacts/feg/baseline/08/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/baseline/08/stdout.txt b/artifacts/feg/baseline/08/stdout.txt
+deleted file mode 100644
+index 84e640c..0000000
+--- a/artifacts/feg/baseline/08/stdout.txt
++++ /dev/null
+@@ -1,8 +0,0 @@
+-{
+-  "passed": true,
+-  "strict": true,
+-  "checks_total": 236,
+-  "checks_passed": 236,
+-  "checks_failed": 0,
+-  "failed_checks": []
+-}
+diff --git a/artifacts/feg/baseline/09/cmd.txt b/artifacts/feg/baseline/09/cmd.txt
+deleted file mode 100644
+index 819d4f1..0000000
+--- a/artifacts/feg/baseline/09/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-python scripts/run_object_evals.py --repo-root .
+diff --git a/artifacts/feg/baseline/09/exit_code.txt b/artifacts/feg/baseline/09/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/baseline/09/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/baseline/09/stderr.txt b/artifacts/feg/baseline/09/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/baseline/09/stdout.txt b/artifacts/feg/baseline/09/stdout.txt
+deleted file mode 100644
+index 4ced095..0000000
+--- a/artifacts/feg/baseline/09/stdout.txt
++++ /dev/null
+@@ -1,17 +0,0 @@
+-{
+-  "passed": true,
+-  "objects_total": 2,
+-  "objects_passed": 2,
+-  "results": [
+-    {
+-      "passed": true,
+-      "score": 100,
+-      "object": "dse-fix-opt"
+-    },
+-    {
+-      "passed": true,
+-      "score": 100,
+-      "object": "pr-orchestrator"
+-    }
+-  ]
+-}
+diff --git a/artifacts/feg/baseline/10/cmd.txt b/artifacts/feg/baseline/10/cmd.txt
+deleted file mode 100644
+index 9adf994..0000000
+--- a/artifacts/feg/baseline/10/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-python tools/verify_protocol_consistency.py --protocol protocol.yaml
+diff --git a/artifacts/feg/baseline/10/exit_code.txt b/artifacts/feg/baseline/10/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/baseline/10/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/baseline/10/stderr.txt b/artifacts/feg/baseline/10/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/baseline/10/stdout.txt b/artifacts/feg/baseline/10/stdout.txt
+deleted file mode 100644
+index e347f22..0000000
+--- a/artifacts/feg/baseline/10/stdout.txt
++++ /dev/null
+@@ -1,6 +0,0 @@
+-{
+-  "duplicate_deficits": [],
+-  "missing_deficits": [],
+-  "orphan_steps": [],
+-  "pass": true
+-}
+diff --git a/artifacts/feg/baseline/11/cmd.txt b/artifacts/feg/baseline/11/cmd.txt
+deleted file mode 100644
+index d43ba27..0000000
+--- a/artifacts/feg/baseline/11/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json
+diff --git a/artifacts/feg/baseline/11/exit_code.txt b/artifacts/feg/baseline/11/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/baseline/11/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/baseline/11/stderr.txt b/artifacts/feg/baseline/11/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/baseline/11/stdout.txt b/artifacts/feg/baseline/11/stdout.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/baseline/12/cmd.txt b/artifacts/feg/baseline/12/cmd.txt
+deleted file mode 100644
+index d91b9e0..0000000
+--- a/artifacts/feg/baseline/12/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json
+diff --git a/artifacts/feg/baseline/12/exit_code.txt b/artifacts/feg/baseline/12/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/baseline/12/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/baseline/12/stderr.txt b/artifacts/feg/baseline/12/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/baseline/12/stdout.txt b/artifacts/feg/baseline/12/stdout.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/baseline/13/cmd.txt b/artifacts/feg/baseline/13/cmd.txt
+deleted file mode 100644
+index 0126c20..0000000
+--- a/artifacts/feg/baseline/13/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-python tools/generate_titan9_proof.py --repo-root .
+diff --git a/artifacts/feg/baseline/13/exit_code.txt b/artifacts/feg/baseline/13/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/baseline/13/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/baseline/13/stderr.txt b/artifacts/feg/baseline/13/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/baseline/13/stdout.txt b/artifacts/feg/baseline/13/stdout.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/declared_inputs.json b/artifacts/feg/declared_inputs.json
+deleted file mode 100644
+index ed489d4..0000000
+--- a/artifacts/feg/declared_inputs.json
++++ /dev/null
+@@ -1,9 +0,0 @@
+-{
+-  "base_branch": "main",
+-  "build_id": "NO_BUILD_ID",
+-  "contract": "FEG-CORE v2026.02",
+-  "git_commit": "1d4fa7c71ef701d4c1cdce20f4601cf5f9bdea0d",
+-  "mode": "DEGRADED_API_ACCESS",
+-  "pr_branch": "work",
+-  "repo_root": "/workspace/Agent-X-Lab"
+-}
+diff --git a/artifacts/feg/gates/G00/cmd.txt b/artifacts/feg/gates/G00/cmd.txt
+deleted file mode 100644
+index 79108bd..0000000
+--- a/artifacts/feg/gates/G00/cmd.txt
++++ /dev/null
+@@ -1,15 +0,0 @@
+-python - <<'PY2'
+-from pathlib import Path
+-import yaml,re
+-readme=Path('README.md').read_text()
+-m=re.search(r'## Quickstart\n\n```bash\n(.*?)\n```',readme,re.S)
+-assert m, 'missing quickstart'
+-qs=[l.strip() for l in m.group(1).splitlines() if l.strip()]
+-expected=['export PYTHONHASHSEED=0','make setup','make verify']
+-assert qs==expected, f'readme quickstart mismatch: {qs}'
+-wf=yaml.safe_load(Path('.github/workflows/ci.yml').read_text())
+-steps=wf['jobs']['quality']['steps']
+-runs=[s.get('run','').strip() for s in steps if isinstance(s,dict) and 'run' in s]
+-assert 'make setup' in runs and 'make verify' in runs, f'ci missing setup/verify: {runs}'
+-print('SSOT aligned')
+-PY2
+diff --git a/artifacts/feg/gates/G00/exit_code.txt b/artifacts/feg/gates/G00/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/gates/G00/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/gates/G00/stderr.txt b/artifacts/feg/gates/G00/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/gates/G00/stdout.txt b/artifacts/feg/gates/G00/stdout.txt
+deleted file mode 100644
+index 87d3d78..0000000
+--- a/artifacts/feg/gates/G00/stdout.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-SSOT aligned
+diff --git a/artifacts/feg/gates/G01/cmd.txt b/artifacts/feg/gates/G01/cmd.txt
+deleted file mode 100644
+index 4fc3d06..0000000
+--- a/artifacts/feg/gates/G01/cmd.txt
++++ /dev/null
+@@ -1,16 +0,0 @@
+-python - <<'PY2'
+-from pathlib import Path
+-import re,yaml
+-readme=Path('README.md').read_text()
+-assert 'export PYTHONHASHSEED=0' in readme
+-for wf in Path('.github/workflows').glob('*.yml'):
+- data=yaml.safe_load(wf.read_text()) or {}
+- env=data.get('env',{}) if isinstance(data,dict) else {}
+- assert str(env.get('PYTHONHASHSEED',''))=='0', f'{wf} missing PYTHONHASHSEED=0'
+-# scan added feg artifacts for nondeterministic markers
+-for p in Path('artifacts/feg').rglob('*'):
+- if p.is_file():
+-  t=p.read_text(errors='ignore')
+-  assert not re.search(r'\b[0-9]{4}-[0-9]{2}-[0-9]{2}T',t), f'timestamp marker in {p}'
+-print('determinism checks passed')
+-PY2
+diff --git a/artifacts/feg/gates/G01/exit_code.txt b/artifacts/feg/gates/G01/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/gates/G01/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/gates/G01/stderr.txt b/artifacts/feg/gates/G01/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/gates/G01/stdout.txt b/artifacts/feg/gates/G01/stdout.txt
+deleted file mode 100644
+index 72e03e2..0000000
+--- a/artifacts/feg/gates/G01/stdout.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-determinism checks passed
+diff --git a/artifacts/feg/gates/G02/cmd.txt b/artifacts/feg/gates/G02/cmd.txt
+deleted file mode 100644
+index 2f30f61..0000000
+--- a/artifacts/feg/gates/G02/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-python -m pytest -q -W error
+diff --git a/artifacts/feg/gates/G02/exit_code.txt b/artifacts/feg/gates/G02/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/gates/G02/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/gates/G02/stderr.txt b/artifacts/feg/gates/G02/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/gates/G02/stdout.txt b/artifacts/feg/gates/G02/stdout.txt
+deleted file mode 100644
+index 5b35b12..0000000
+--- a/artifacts/feg/gates/G02/stdout.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-.................................                                        [100%]
+diff --git a/artifacts/feg/gates/G03/cmd.txt b/artifacts/feg/gates/G03/cmd.txt
+deleted file mode 100644
+index 45ad20f..0000000
+--- a/artifacts/feg/gates/G03/cmd.txt
++++ /dev/null
+@@ -1,12 +0,0 @@
+-python - <<'PY2'
+-from pathlib import Path
+-import yaml
+-for wf in Path('.github/workflows').glob('*.yml'):
+- data=yaml.safe_load(wf.read_text()) or {}
+- assert 'permissions' in data, f'{wf} missing top permissions'
+- assert 'concurrency' in data, f'{wf} missing concurrency'
+- jobs=data.get('jobs',{})
+- for jn,j in jobs.items():
+-  assert isinstance(j,dict) and 'timeout-minutes' in j, f'{wf}:{jn} missing timeout-minutes'
+-print('workflow quality gates present')
+-PY2
+diff --git a/artifacts/feg/gates/G03/exit_code.txt b/artifacts/feg/gates/G03/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/gates/G03/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/gates/G03/stderr.txt b/artifacts/feg/gates/G03/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/gates/G03/stdout.txt b/artifacts/feg/gates/G03/stdout.txt
+deleted file mode 100644
+index 47c8ab8..0000000
+--- a/artifacts/feg/gates/G03/stdout.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-workflow quality gates present
+diff --git a/artifacts/feg/gates/G04/cmd.txt b/artifacts/feg/gates/G04/cmd.txt
+deleted file mode 100644
+index 0e4e054..0000000
+--- a/artifacts/feg/gates/G04/cmd.txt
++++ /dev/null
+@@ -1,17 +0,0 @@
+-python - <<'PY2'
+-from pathlib import Path
+-import re,sys
+-viol=[]
+-for wf in Path('.github/workflows').glob('*.yml'):
+- for i,l in enumerate(wf.read_text().splitlines(),1):
+-  m=re.search(r'uses:\s*([^@\s]+)@([^\s]+)',l)
+-  if not m: continue
+-  ref=m.group(2)
+-  if not re.fullmatch(r'[0-9a-f]{40}', ref):
+-   viol.append(f'{wf}:{i}:{ref}')
+-if viol:
+- print('Unpinned actions:')
+- print('\n'.join(viol))
+- sys.exit(1)
+-print('all actions pinned')
+-PY2
+diff --git a/artifacts/feg/gates/G04/exit_code.txt b/artifacts/feg/gates/G04/exit_code.txt
+deleted file mode 100644
+index d00491f..0000000
+--- a/artifacts/feg/gates/G04/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-1
+diff --git a/artifacts/feg/gates/G04/stderr.txt b/artifacts/feg/gates/G04/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/gates/G04/stdout.txt b/artifacts/feg/gates/G04/stdout.txt
+deleted file mode 100644
+index b61d4fe..0000000
+--- a/artifacts/feg/gates/G04/stdout.txt
++++ /dev/null
+@@ -1,14 +0,0 @@
+-Unpinned actions:
+-.github/workflows/security.yml:29:v4
+-.github/workflows/security.yml:32:v3
+-.github/workflows/security.yml:35:v3
+-.github/workflows/security.yml:43:v4
+-.github/workflows/security.yml:55:v2
+-.github/workflows/security.yml:67:v4
+-.github/workflows/security.yml:69:v7
+-.github/workflows/security.yml:81:v4
+-.github/workflows/lint-actions.yml:22:v4
+-.github/workflows/lint-actions.yml:23:v1
+-.github/workflows/ci.yml:26:v4
+-.github/workflows/ci.yml:27:v5
+-.github/workflows/ci.yml:40:v4
+diff --git a/artifacts/feg/gates/G05/cmd.txt b/artifacts/feg/gates/G05/cmd.txt
+deleted file mode 100644
+index f6ca696..0000000
+--- a/artifacts/feg/gates/G05/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-make setup && make verify
+diff --git a/artifacts/feg/gates/G05/exit_code.txt b/artifacts/feg/gates/G05/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/gates/G05/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/gates/G05/stderr.txt b/artifacts/feg/gates/G05/stderr.txt
+deleted file mode 100644
+index 72960e8..0000000
+--- a/artifacts/feg/gates/G05/stderr.txt
++++ /dev/null
+@@ -1,2 +0,0 @@
+-WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+-WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+diff --git a/artifacts/feg/gates/G05/stdout.txt b/artifacts/feg/gates/G05/stdout.txt
+deleted file mode 100644
+index 7ae05a5..0000000
+--- a/artifacts/feg/gates/G05/stdout.txt
++++ /dev/null
+@@ -1,70 +0,0 @@
+-python scripts/bootstrap_env.py
+-Requirement already satisfied: PyYAML==6.0.2 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements.lock (line 1)) (6.0.2)
+-Requirement already satisfied: jsonschema==4.23.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements.lock (line 2)) (4.23.0)
+-Requirement already satisfied: attrs>=22.2.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements.lock (line 2)) (25.4.0)
+-Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements.lock (line 2)) (2025.9.1)
+-Requirement already satisfied: referencing>=0.28.4 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements.lock (line 2)) (0.37.0)
+-Requirement already satisfied: rpds-py>=0.7.1 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements.lock (line 2)) (0.30.0)
+-Requirement already satisfied: typing-extensions>=4.4.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from referencing>=0.28.4->jsonschema==4.23.0->-r requirements.lock (line 2)) (4.15.0)
+-Requirement already satisfied: ruff==0.14.11 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements-dev.txt (line 2)) (0.14.11)
+-Requirement already satisfied: mypy==1.19.1 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements-dev.txt (line 3)) (1.19.1)
+-Requirement already satisfied: pytest==9.0.2 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements-dev.txt (line 4)) (9.0.2)
+-Requirement already satisfied: jsonschema==4.23.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements-dev.txt (line 5)) (4.23.0)
+-Requirement already satisfied: typing_extensions>=4.6.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from mypy==1.19.1->-r requirements-dev.txt (line 3)) (4.15.0)
+-Requirement already satisfied: mypy_extensions>=1.0.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from mypy==1.19.1->-r requirements-dev.txt (line 3)) (1.1.0)
+-Requirement already satisfied: pathspec>=0.9.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from mypy==1.19.1->-r requirements-dev.txt (line 3)) (1.0.3)
+-Requirement already satisfied: tomli>=1.1.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from mypy==1.19.1->-r requirements-dev.txt (line 3)) (2.4.0)
+-Requirement already satisfied: librt>=0.6.2 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from mypy==1.19.1->-r requirements-dev.txt (line 3)) (0.7.7)
+-Requirement already satisfied: exceptiongroup>=1 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from pytest==9.0.2->-r requirements-dev.txt (line 4)) (1.3.1)
+-Requirement already satisfied: iniconfig>=1.0.1 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from pytest==9.0.2->-r requirements-dev.txt (line 4)) (2.3.0)
+-Requirement already satisfied: packaging>=22 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from pytest==9.0.2->-r requirements-dev.txt (line 4)) (25.0)
+-Requirement already satisfied: pluggy<2,>=1.5 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from pytest==9.0.2->-r requirements-dev.txt (line 4)) (1.6.0)
+-Requirement already satisfied: pygments>=2.7.2 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from pytest==9.0.2->-r requirements-dev.txt (line 4)) (2.19.2)
+-Requirement already satisfied: attrs>=22.2.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements-dev.txt (line 5)) (25.4.0)
+-Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements-dev.txt (line 5)) (2025.9.1)
+-Requirement already satisfied: referencing>=0.28.4 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements-dev.txt (line 5)) (0.37.0)
+-Requirement already satisfied: rpds-py>=0.7.1 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements-dev.txt (line 5)) (0.30.0)
+-ruff check .
+-All checks passed!
+-mypy .
+-tests/test_backend.py:41: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+-Success: no issues found in 36 source files
+-python -m pytest -q -W error
+-.................................                                        [100%]
+-python scripts/validate_arsenal.py --repo-root . --strict
+-{
+-  "passed": true,
+-  "strict": true,
+-  "checks_total": 238,
+-  "checks_passed": 238,
+-  "checks_failed": 0,
+-  "failed_checks": []
+-}
+-python tools/verify_protocol_consistency.py --protocol protocol.yaml
+-{
+-  "duplicate_deficits": [],
+-  "missing_deficits": [],
+-  "orphan_steps": [],
+-  "pass": true
+-}
+-python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json
+-python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json
+-python tools/generate_titan9_proof.py --repo-root .
+-python scripts/run_object_evals.py --repo-root . --write-evidence
+-{
+-  "passed": true,
+-  "objects_total": 2,
+-  "objects_passed": 2,
+-  "results": [
+-    {
+-      "passed": true,
+-      "score": 100,
+-      "object": "dse-fix-opt"
+-    },
+-    {
+-      "passed": true,
+-      "score": 100,
+-      "object": "pr-orchestrator"
+-    }
+-  ]
+-}
+diff --git a/artifacts/feg/gates/G06/cmd.txt b/artifacts/feg/gates/G06/cmd.txt
+deleted file mode 100644
+index a9a7c03..0000000
+--- a/artifacts/feg/gates/G06/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-python scripts/rebuild_checksums.py --repo-root . && python scripts/validate_arsenal.py --repo-root . --strict
+diff --git a/artifacts/feg/gates/G06/exit_code.txt b/artifacts/feg/gates/G06/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/gates/G06/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/gates/G06/stderr.txt b/artifacts/feg/gates/G06/stderr.txt
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/artifacts/feg/gates/G06/stdout.txt b/artifacts/feg/gates/G06/stdout.txt
+deleted file mode 100644
+index a402d82..0000000
+--- a/artifacts/feg/gates/G06/stdout.txt
++++ /dev/null
+@@ -1,9 +0,0 @@
+-OK: checksums rebuilt (250 files)
+-{
+-  "passed": true,
+-  "strict": true,
+-  "checks_total": 323,
+-  "checks_passed": 323,
+-  "checks_failed": 0,
+-  "failed_checks": []
+-}
+diff --git a/artifacts/feg/gates/G07/cmd.txt b/artifacts/feg/gates/G07/cmd.txt
+deleted file mode 100644
+index 7626c49..0000000
+--- a/artifacts/feg/gates/G07/cmd.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-export PYTHONHASHSEED=0 && make setup && make verify
+diff --git a/artifacts/feg/gates/G07/exit_code.txt b/artifacts/feg/gates/G07/exit_code.txt
+deleted file mode 100644
+index 573541a..0000000
+--- a/artifacts/feg/gates/G07/exit_code.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-0
+diff --git a/artifacts/feg/gates/G07/stderr.txt b/artifacts/feg/gates/G07/stderr.txt
+deleted file mode 100644
+index 72960e8..0000000
+--- a/artifacts/feg/gates/G07/stderr.txt
++++ /dev/null
+@@ -1,2 +0,0 @@
+-WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+-WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+diff --git a/artifacts/feg/gates/G07/stdout.txt b/artifacts/feg/gates/G07/stdout.txt
+deleted file mode 100644
+index 7ae05a5..0000000
+--- a/artifacts/feg/gates/G07/stdout.txt
++++ /dev/null
+@@ -1,70 +0,0 @@
+-python scripts/bootstrap_env.py
+-Requirement already satisfied: PyYAML==6.0.2 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements.lock (line 1)) (6.0.2)
+-Requirement already satisfied: jsonschema==4.23.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements.lock (line 2)) (4.23.0)
+-Requirement already satisfied: attrs>=22.2.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements.lock (line 2)) (25.4.0)
+-Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements.lock (line 2)) (2025.9.1)
+-Requirement already satisfied: referencing>=0.28.4 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements.lock (line 2)) (0.37.0)
+-Requirement already satisfied: rpds-py>=0.7.1 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements.lock (line 2)) (0.30.0)
+-Requirement already satisfied: typing-extensions>=4.4.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from referencing>=0.28.4->jsonschema==4.23.0->-r requirements.lock (line 2)) (4.15.0)
+-Requirement already satisfied: ruff==0.14.11 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements-dev.txt (line 2)) (0.14.11)
+-Requirement already satisfied: mypy==1.19.1 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements-dev.txt (line 3)) (1.19.1)
+-Requirement already satisfied: pytest==9.0.2 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements-dev.txt (line 4)) (9.0.2)
+-Requirement already satisfied: jsonschema==4.23.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from -r requirements-dev.txt (line 5)) (4.23.0)
+-Requirement already satisfied: typing_extensions>=4.6.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from mypy==1.19.1->-r requirements-dev.txt (line 3)) (4.15.0)
+-Requirement already satisfied: mypy_extensions>=1.0.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from mypy==1.19.1->-r requirements-dev.txt (line 3)) (1.1.0)
+-Requirement already satisfied: pathspec>=0.9.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from mypy==1.19.1->-r requirements-dev.txt (line 3)) (1.0.3)
+-Requirement already satisfied: tomli>=1.1.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from mypy==1.19.1->-r requirements-dev.txt (line 3)) (2.4.0)
+-Requirement already satisfied: librt>=0.6.2 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from mypy==1.19.1->-r requirements-dev.txt (line 3)) (0.7.7)
+-Requirement already satisfied: exceptiongroup>=1 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from pytest==9.0.2->-r requirements-dev.txt (line 4)) (1.3.1)
+-Requirement already satisfied: iniconfig>=1.0.1 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from pytest==9.0.2->-r requirements-dev.txt (line 4)) (2.3.0)
+-Requirement already satisfied: packaging>=22 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from pytest==9.0.2->-r requirements-dev.txt (line 4)) (25.0)
+-Requirement already satisfied: pluggy<2,>=1.5 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from pytest==9.0.2->-r requirements-dev.txt (line 4)) (1.6.0)
+-Requirement already satisfied: pygments>=2.7.2 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from pytest==9.0.2->-r requirements-dev.txt (line 4)) (2.19.2)
+-Requirement already satisfied: attrs>=22.2.0 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements-dev.txt (line 5)) (25.4.0)
+-Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements-dev.txt (line 5)) (2025.9.1)
+-Requirement already satisfied: referencing>=0.28.4 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements-dev.txt (line 5)) (0.37.0)
+-Requirement already satisfied: rpds-py>=0.7.1 in /root/.pyenv/versions/3.10.19/lib/python3.10/site-packages (from jsonschema==4.23.0->-r requirements-dev.txt (line 5)) (0.30.0)
+-ruff check .
+-All checks passed!
+-mypy .
+-tests/test_backend.py:41: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]
+-Success: no issues found in 36 source files
+-python -m pytest -q -W error
+-.................................                                        [100%]
+-python scripts/validate_arsenal.py --repo-root . --strict
+-{
+-  "passed": true,
+-  "strict": true,
+-  "checks_total": 238,
+-  "checks_passed": 238,
+-  "checks_failed": 0,
+-  "failed_checks": []
+-}
+-python tools/verify_protocol_consistency.py --protocol protocol.yaml
+-{
+-  "duplicate_deficits": [],
+-  "missing_deficits": [],
+-  "orphan_steps": [],
+-  "pass": true
+-}
+-python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json
+-python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json
+-python tools/generate_titan9_proof.py --repo-root .
+-python scripts/run_object_evals.py --repo-root . --write-evidence
+-{
+-  "passed": true,
+-  "objects_total": 2,
+-  "objects_passed": 2,
+-  "results": [
+-    {
+-      "passed": true,
+-      "score": 100,
+-      "object": "dse-fix-opt"
+-    },
+-    {
+-      "passed": true,
+-      "score": 100,
+-      "object": "pr-orchestrator"
+-    }
+-  ]
+-}
+diff --git a/artifacts/feg/proof/decision.json b/artifacts/feg/proof/decision.json
+deleted file mode 100644
+index b34181e..0000000
+--- a/artifacts/feg/proof/decision.json
++++ /dev/null
+@@ -1,51 +0,0 @@
+-{
+-  "gates": [
+-    {
+-      "evidence_dir": "artifacts/feg/gates/G00",
+-      "id": "G00",
+-      "pass": true
+-    },
+-    {
+-      "evidence_dir": "artifacts/feg/gates/G01",
+-      "id": "G01",
+-      "pass": true
+-    },
+-    {
+-      "evidence_dir": "artifacts/feg/gates/G02",
+-      "id": "G02",
+-      "pass": true
+-    },
+-    {
+-      "evidence_dir": "artifacts/feg/gates/G03",
+-      "id": "G03",
+-      "pass": true
+-    },
+-    {
+-      "evidence_dir": "artifacts/feg/gates/G04",
+-      "id": "G04",
+-      "pass": false
+-    },
+-    {
+-      "evidence_dir": "artifacts/feg/gates/G05",
+-      "id": "G05",
+-      "pass": true
+-    },
+-    {
+-      "evidence_dir": "artifacts/feg/gates/G06",
+-      "id": "G06",
+-      "pass": true
+-    },
+-    {
+-      "evidence_dir": "artifacts/feg/gates/G07",
+-      "id": "G07",
+-      "pass": true
+-    }
+-  ],
+-  "mode": "DEGRADED_API_ACCESS",
+-  "ssot": {
+-    "ci": "make setup && make verify",
+-    "local": "make setup && make verify",
+-    "readme": "make setup && make verify"
+-  },
+-  "verdict": "STOP:E_NEED_NETWORK_FOR_PINNING"
+-}
+diff --git a/artifacts/feg/proof/manifest.json b/artifacts/feg/proof/manifest.json
+deleted file mode 100644
+index f850e55..0000000
+--- a/artifacts/feg/proof/manifest.json
++++ /dev/null
+@@ -1,16 +0,0 @@
+-{
+-  "files": [
+-    {
+-      "path": "artifacts/feg/proof/decision.json",
+-      "sha256": "77229ecbb1e96121342e04e3e03e164bcebc9d17f53465988fa75431a5b3bed9"
+-    },
+-    {
+-      "path": "artifacts/feg/proof/manifest.json",
+-      "sha256": "52a30ce96f6352ea954b2cf04d61332a1a9db67754e2d22a48ba27600d95ee82"
+-    },
+-    {
+-      "path": "artifacts/feg/proof/summary.md",
+-      "sha256": "384378ee0a1a96d450fef4313e612158fb8ff08a54d331fc383bbe336c33e94c"
+-    }
+-  ]
+-}
+diff --git a/artifacts/feg/proof/summary.md b/artifacts/feg/proof/summary.md
+deleted file mode 100644
+index e558246..0000000
+--- a/artifacts/feg/proof/summary.md
++++ /dev/null
+@@ -1,10 +0,0 @@
+-| Gate | Result |
+-|---|---|
+-| G00 | PASS |
+-| G01 | PASS |
+-| G02 | PASS |
+-| G03 | PASS |
+-| G04 | FAIL |
+-| G05 | PASS |
+-| G06 | PASS |
+-| G07 | PASS |

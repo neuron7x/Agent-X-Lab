@@ -1,0 +1,49 @@
+{
+  "artifacts": {
+    "catalog_validation": "artifacts/reports/catalog.validate.json",
+    "inventory": "artifacts/evidence/run-15229d970d12/bbafcfb816a47231c80443c03e49771b1364aab5/REPORTS/inventory/inventory.json",
+    "manifest": "artifacts/evidence/run-15229d970d12/bbafcfb816a47231c80443c03e49771b1364aab5/REPORTS/MANIFEST.json"
+  },
+  "blockers": [
+    "baseline_commands_failed"
+  ],
+  "commands": [
+    {
+      "argv": [
+        "python",
+        "scripts/validate_arsenal.py",
+        "--repo-root",
+        ".",
+        "--strict"
+      ],
+      "cwd": "/workspace/Agent-X-Lab",
+      "exit_code": 1,
+      "stderr_path": "/workspace/Agent-X-Lab/artifacts/evidence/run-15229d970d12/bbafcfb816a47231c80443c03e49771b1364aab5/COMMANDS/000.stderr.txt",
+      "stdout_path": "/workspace/Agent-X-Lab/artifacts/evidence/run-15229d970d12/bbafcfb816a47231c80443c03e49771b1364aab5/COMMANDS/000.stdout.txt"
+    },
+    {
+      "argv": [
+        "python",
+        "scripts/schema_validate.py",
+        "--repo-root",
+        "."
+      ],
+      "cwd": "/workspace/Agent-X-Lab",
+      "exit_code": 0,
+      "stderr_path": "/workspace/Agent-X-Lab/artifacts/evidence/run-15229d970d12/bbafcfb816a47231c80443c03e49771b1364aab5/COMMANDS/001.stderr.txt",
+      "stdout_path": "/workspace/Agent-X-Lab/artifacts/evidence/run-15229d970d12/bbafcfb816a47231c80443c03e49771b1364aab5/COMMANDS/001.stdout.txt"
+    }
+  ],
+  "evidence_root": "/workspace/Agent-X-Lab/artifacts/evidence/run-15229d970d12/bbafcfb816a47231c80443c03e49771b1364aab5",
+  "metrics": {
+    "baseline_pass": false,
+    "catalog_ok": true,
+    "determinism": "ASSUMED_SINGLE_RUN",
+    "evidence_manifest_entries": 15,
+    "pass_rate": 0.0
+  },
+  "schema": "VR-2026.1",
+  "status": "CALIBRATION_REQUIRED",
+  "utc": "2026-02-22T08:47:35Z",
+  "work_id": "bbafcfb816a47231c80443c03e49771b1364aab5"
+}

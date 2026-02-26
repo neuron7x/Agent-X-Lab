@@ -1,0 +1,71 @@
+{
+  "canonical_commands": {
+    "install": [
+      "python -m pip install -r requirements.lock",
+      "python -m pip install -r requirements-dev.txt"
+    ],
+    "lint_format": [
+      "ruff check .",
+      "ruff format --check ."
+    ],
+    "tests": [
+      "python -m pytest -q -W error"
+    ],
+    "typecheck": [
+      "mypy ."
+    ],
+    "validate": [
+      "python scripts/validate_arsenal.py --repo-root . --strict",
+      "python scripts/run_object_evals.py --repo-root .",
+      "python tools/verify_protocol_consistency.py --protocol protocol.yaml",
+      "python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json",
+      "python tools/verify_readme_contract.py --readme README.md --workflows .github/workflows --inventory artifacts/titan9/inventory.json",
+      "python tools/generate_titan9_proof.py --repo-root ."
+    ]
+  },
+  "demo_artifacts": [
+    "VR.json",
+    "artifacts/release/*.zip"
+  ],
+  "entrypoints": [
+    "agentx-lab",
+    "sg"
+  ],
+  "python_requires": ">=3.10",
+  "tooling": [
+    "ruff",
+    "mypy",
+    "pytest"
+  ],
+  "workflows": {
+    "commands": [
+      "BASE_SHA='${{ github.event.pull_request.base.sha }}'",
+      "HEAD_SHA='${{ github.event.pull_request.head.sha }}'",
+      "cat > artifacts/security/pip-audit.json <<'JSON'",
+      "echo \"quality job result was '${{ needs.quality.result }}'\" >&2",
+      "exit 1",
+      "fi",
+      "git rev-parse --verify \"$BASE_SHA\"",
+      "git rev-parse --verify \"$HEAD_SHA\"",
+      "heredoc-body sha256:<normalized:JSON>",
+      "if [ \"${{ needs.quality.result }}\" != \"success\" ]; then",
+      "inline-script sha256:43e83f317b5d32d914b40beb1ba9a1f61db3341e40982f472ff1b44073844be6",
+      "make check",
+      "make proof",
+      "make proof-verify",
+      "make secret-scan",
+      "make setup",
+      "make vuln-scan",
+      "mkdir -p artifacts/security",
+      "python -m pip install pip-audit==2.9.0",
+      "python tools/dependency_review_gate.py             --requirements requirements.lock             --requirements requirements-dev.txt             --out artifacts/security/dependency-review.json",
+      "python tools/feg_r8_verify.py",
+      "python tools/scorecard_failure_envelope.py",
+      "python tools/secret_scan_gate.py --repo-root . --out artifacts/security/secret-scan.json",
+      "python tools/verify_action_pinning.py",
+      "python tools/verify_workflow_hygiene.py",
+      "set -euo pipefail",
+      "test \"${{ steps.scorecard.outcome }}\" = \"success\""
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "generated": "2026-02-25T00:00:00Z",
+  "protocol": "AFL-2026.02",
+  "phase": "PHASE-1-COMPLETE",
+  "node_version": "20.x",
+  "package_manager": "npm",
+  "lockfile": "package-lock.json",
+  "routes": ["/", "/pipeline", "/evidence", "/arsenal", "/forge", "/settings"],
+  "modules": ["status", "pipeline", "evidence", "arsenal", "forge", "settings"],
+  "key_lib_files": ["src/lib/api.ts", "src/lib/schemas/index.ts", "src/lib/queryKeys.ts", "src/lib/observability.ts", "src/lib/useEvidenceFilter.ts", "src/lib/useArsenalSearch.ts"],
+  "components_shell": ["AppShell.tsx", "CommandPalette.tsx"],
+  "security": {"auth_component": "src/components/axl/ProtectedAction.tsx", "no_secrets_in_browser": true, "csp_in_vercel_json": true, "zod_validation_all_responses": true},
+  "ci_workflows": ["ui-verify.yml", "ui-e2e.yml", "ui-perf.yml"],
+  "tests": {"framework": "Vitest+RTL", "e2e": "Playwright", "a11y": "axe-core"},
+  "docs": ["docs/ui/README.md", "docs/ui/THREAT_MODEL.md", "docs/ui/PERF_BUDGETS.md"]
+}

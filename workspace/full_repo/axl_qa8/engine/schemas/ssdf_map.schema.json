@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axl://schemas/ssdf-map/v2.1",
+  "title": "SSFDMap",
+  "description": "SSDF control coverage map — G3-SSDF gate. Maps NIST SP 800-218 controls to evidence anchors.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generated_at", "ac_version_sha256", "coverage_fraction", "controls"],
+  "properties": {
+    "generated_at":       { "type": "string", "format": "date-time" },
+    "ac_version_sha256":  { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "coverage_fraction":  {
+      "type": "number", "minimum": 0, "maximum": 1.0,
+      "description": "Fraction of mapped controls with ≥1 evidence anchor. Must be ≥ AC.ssdf_coverage_threshold"
+    },
+    "regressions_vs_baseline": {
+      "type": "integer", "minimum": 0,
+      "description": "Controls that lost coverage vs previous baseline. Must be 0 for PASS."
+    },
+    "controls": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["control_id", "title", "is_critical", "status", "evidence_anchors"],
+        "additionalProperties": false,
+        "properties": {
+          "control_id": {
+            "type": "string",
+            "pattern": "^SSDF\\.[A-Z]+\\.[A-Z0-9]+\\.[a-z0-9]+$",
+            "description": "NIST SP 800-218 control ID. E.g. SSDF.PW.4.1.a"
+          },
+          "title":      { "type": "string" },
+          "is_critical": {
+            "type": "boolean",
+            "description": "Critical controls (from AC.critical_controls) must have status=COVERED"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["COVERED", "PARTIAL", "NOT_COVERED"],
+            "description": "COVERED = ≥1 verified anchor; PARTIAL = declared but not verified; NOT_COVERED = gap"
+          },
+          "evidence_anchors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^§REF:[A-Za-z0-9_-]+#[A-Za-z0-9_./:-]+#[a-f0-9]{64}$"
+            },
+            "description": "Empty array allowed for NOT_COVERED controls only"
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,4 @@
+# file: /tmp/axl_qa8/tools/dao-arbiter/dao_lifebook/constraints.py
+# hypothesis_version: 6.151.9
+
+['*', '_c', 'constraints', 'halt']

@@ -1,0 +1,455 @@
+# PRODUCTION_SPEC_V2.1 — Machine-Checkable Gate Assertions
+# Protocol: DoD PARTIAL_DEPLOY → PRODUCTION_SPEC_V2.1 (AD-2026)
+# Normative: FAIL_CLOSED • EVIDENCE_FIRST • REPRODUCIBLE • SEPARATION_OF_DUTIES
+#
+# Format: each gate declares:
+#   id, name, phase, enforcement (HARD|SOFT),
+#   assertions[] — machine-evaluable checks with input paths,
+#   fail_action — what happens on FAIL
+#
+# Evaluation order: gates must be checked in id order.
+# Any HARD gate FAIL → RRD = NO_RELEASE immediately.
+
+meta:
+  schema_version: "2.1"
+  spec_id:         "PRODUCTION_SPEC_V2.1"
+  normative_doc:   "DoD_PARTIAL_DEPLOY_PRODUCTION_SPEC_V2.1.md"
+  evaluation_mode: "SEQUENTIAL_FAIL_CLOSED"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# G0 — BASELINE SEAL
+# ─────────────────────────────────────────────────────────────────────────────
+gates:
+  - id: G0
+    name: "BASELINE_SEAL"
+    phase: "identity"
+    enforcement: HARD
+    description: "AC.package hash must match AC_VERSION.ac_version_sha256 bit-exactly."
+    inputs:
+      ac_package_path:    "artifacts/AC.package"
+      ac_version_path:    "artifacts/AC_VERSION.json"
+      ac_schema_path:     "engine/schemas/ac.schema.json"
+    assertions:
+      - id: G0-A1
+        check: "json_schema_valid"
+        target: "{ac_version_path}"
+        schema: "{ac_schema_path}"
+        fail_msg: "AC_VERSION.json does not validate against ac.schema.json"
+
+      - id: G0-A2
+        check: "hash_match"
+        algorithm: "sha256"
+        compute_from: "{ac_package_path}"
+        expected_field: "{ac_version_path}#/ac_version_sha256"
+        fail_msg: "sha256(AC.package) != AC_VERSION.ac_version_sha256 — HARD_KILL, restore QA7"
+
+      - id: G0-A3
+        check: "field_not_null"
+        target: "{ac_version_path}"
+        field: "/issuer"
+        fail_msg: "AC.issuer is missing"
+
+      - id: G0-A4
+        check: "enum_match"
+        target: "{ac_version_path}"
+        field: "/env_class"
+        allowed: ["restricted_sandbox", "tee_enabled"]
+        fail_msg: "env_class=NO_TEE is forbidden for PROD_SPEC"
+
+    metrics_required:
+      I_i: { eq: 1.0 }
+
+    fail_action: "HARD_KILL; restore QA7 baseline"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# G1 — BUILD REPRODUCIBILITY
+# ─────────────────────────────────────────────────────────────────────────────
+  - id: G1
+    name: "BUILD_REPRO"
+    phase: "determinism"
+    enforcement: HARD
+    description: "Independent rebuild in clean env must produce bit-identical artifact."
+    inputs:
+      build_lock_path:       "artifacts/build.lock"
+      provenance_path:       "artifacts/build.provenance"
+      artifact_sha_path:     "artifacts/artifact.sha256"
+      rebuild_log_path:      "artifacts/rebuild.log"
+    assertions:
+      - id: G1-A1
+        check: "file_exists"
+        targets: ["{build_lock_path}", "{provenance_path}", "{artifact_sha_path}", "{rebuild_log_path}"]
+        fail_msg: "Missing build artifact — all 4 required: build.lock, build.provenance, artifact.sha256, rebuild.log"
+
+      - id: G1-A2
+        check: "hash_match"
+        algorithm: "sha256"
+        compute_from: "artifacts/rebuilt_artifact"
+        expected_from: "{artifact_sha_path}"
+        fail_msg: "Rebuild hash mismatch — non-deterministic build"
+
+      - id: G1-A3
+        check: "field_gte"
+        target: "{rebuild_log_path}"
+        field: "/independent_build_count"
+        threshold: 2
+        fail_msg: "Minimum 2 independent clean builds required"
+
+    metrics_required:
+      ReproRate: { eq: 1.0 }
+
+    fail_action: "NO_RELEASE; file D-REPRO defect; investigate toolchain"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# G2 — PROOF BUNDLE CHAIN INTEGRITY
+# ─────────────────────────────────────────────────────────────────────────────
+  - id: G2
+    name: "EVIDENCE_CHAIN"
+    phase: "audit"
+    enforcement: HARD
+    description: "Every PB is complete, signed, and hash-chained. No gaps, no tamper."
+    inputs:
+      pb_dir:        "ad2026_state/pb/"
+      pb_schema:     "engine/schemas/pb.schema.json"
+      chain_report:  "artifacts/pb_chain.report"
+    assertions:
+      - id: G2-A1
+        check: "dir_not_empty"
+        target: "{pb_dir}"
+        fail_msg: "No proof bundles found in pb_dir"
+
+      - id: G2-A2
+        check: "all_files_json_schema_valid"
+        target_dir: "{pb_dir}"
+        pattern: "PB-*.json"
+        schema: "{pb_schema}"
+        fail_msg: "One or more PBs fail schema validation → FAIL_CLOSED"
+
+      - id: G2-A3
+        check: "hash_chain_valid"
+        chain_dir: "{pb_dir}"
+        id_field: "pb_id"
+        prev_field: "prev_pb_hash"
+        genesis_prev: null
+        fail_msg: "PB chain broken — tamper detected or missing bundle"
+
+      - id: G2-A4
+        check: "all_signatures_valid"
+        target_dir: "{pb_dir}"
+        sig_field: "signature.jws"
+        fail_msg: "One or more PB signatures invalid"
+
+      - id: G2-A5
+        check: "all_have_evidence_anchors"
+        target_dir: "{pb_dir}"
+        field: "evidence_anchors"
+        min_count: 1
+        fail_msg: "PB with empty evidence_anchors[] found — §REF required"
+
+      - id: G2-A6
+        check: "all_ac_hashes_match"
+        target_dir: "{pb_dir}"
+        field: "ac_version_sha256"
+        expected_from: "artifacts/AC_VERSION.json#/ac_version_sha256"
+        fail_msg: "PB ac_version_sha256 mismatch — stale bundle from different AC version"
+
+    metrics_required:
+      CT:              { eq: 1.0 }
+      PB_Completeness: { eq: 1.0 }
+
+    fail_action: "AUTONOMY_FREEZE; manual audit required before any further execution"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# G3 — SSDF COVERAGE
+# ─────────────────────────────────────────────────────────────────────────────
+  - id: G3
+    name: "SSDF_COVERAGE"
+    phase: "security"
+    enforcement: HARD
+    description: "SSDF coverage >= AC.ssdf_coverage_threshold; critical controls = 100%; zero regressions."
+    inputs:
+      ssdf_map_path:    "artifacts/SSDF.map"
+      ssdf_schema:      "engine/schemas/ssdf_map.schema.json"
+      ac_version_path:  "artifacts/AC_VERSION.json"
+    assertions:
+      - id: G3-A1
+        check: "json_schema_valid"
+        target: "{ssdf_map_path}"
+        schema: "{ssdf_schema}"
+        fail_msg: "SSDF.map schema invalid"
+
+      - id: G3-A2
+        check: "field_gte_field"
+        source: "{ssdf_map_path}"
+        source_field: "/coverage_fraction"
+        threshold_from: "{ac_version_path}"
+        threshold_field: "/ssdf_coverage_threshold"
+        fail_msg: "SSDF coverage below AC threshold"
+
+      - id: G3-A3
+        check: "all_critical_controls_covered"
+        ssdf_map: "{ssdf_map_path}"
+        critical_list_from: "{ac_version_path}"
+        critical_list_field: "/critical_controls"
+        fail_msg: "One or more critical controls not COVERED"
+
+      - id: G3-A4
+        check: "field_eq"
+        target: "{ssdf_map_path}"
+        field: "/regressions_vs_baseline"
+        expected: 0
+        fail_msg: "SSDF regressions > 0 — coverage decreased vs baseline"
+
+    metrics_required:
+      SSDF_coverage:    { gte: 0.80 }
+      SSDF_regressions: { eq: 0 }
+
+    fail_action: "NO_RELEASE; assign SSDF-GAP defect tickets"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# G4 — RUNTIME DETERMINISM
+# ─────────────────────────────────────────────────────────────────────────────
+  - id: G4
+    name: "RUNTIME_DETERMINISM"
+    phase: "determinism"
+    enforcement: HARD
+    description: "Runtime replay: m==0 mismatches for N >= AC.min_replay_n."
+    inputs:
+      replay_report_path: "artifacts/replay.report"
+      ac_version_path:    "artifacts/AC_VERSION.json"
+      env_fingerprint:    "artifacts/env.fingerprint"
+    assertions:
+      - id: G4-A1
+        check: "file_exists"
+        targets: ["{replay_report_path}", "{env_fingerprint}"]
+        fail_msg: "Replay report or env fingerprint missing"
+
+      - id: G4-A2
+        check: "field_gte_field"
+        source: "{replay_report_path}"
+        source_field: "/replay_n"
+        threshold_from: "{ac_version_path}"
+        threshold_field: "/min_replay_n"
+        fail_msg: "Replay N < AC.min_replay_n — insufficient replay coverage"
+
+      - id: G4-A3
+        check: "field_eq"
+        target: "{replay_report_path}"
+        field: "/mismatches"
+        expected: 0
+        fail_msg: "Runtime mismatches > 0 — non-deterministic agent output"
+
+      - id: G4-A4
+        check: "field_exists"
+        target: "{replay_report_path}"
+        field: "/env_fingerprint_hash"
+        fail_msg: "Replay report missing env fingerprint reference"
+
+    metrics_required:
+      replay_mismatches:        { eq: 0 }
+      DeterminismHashStability: { eq: 1.0 }
+
+    fail_action: "NO_RELEASE; AUTONOMY_FREEZE; investigate non-determinism source"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# G5 — RELEASE PACK + ARB
+# ─────────────────────────────────────────────────────────────────────────────
+  - id: G5
+    name: "RELEASE_PACK"
+    phase: "governance"
+    enforcement: HARD
+    description: "Release pack complete; ARB signoff present; author != approver != auditor."
+    inputs:
+      phase_g_contract:   "artifacts/PhaseG.contract"
+      arb_memo_path:      "artifacts/ARB.decision.memo"
+      runbook_path:       "artifacts/runbook.md"
+      incident_playbook:  "artifacts/incident_playbook.md"
+      rollback_plan:      "artifacts/rollback.plan"
+    assertions:
+      - id: G5-A1
+        check: "file_exists"
+        targets: [
+          "{phase_g_contract}", "{arb_memo_path}",
+          "{runbook_path}", "{incident_playbook}", "{rollback_plan}"
+        ]
+        fail_msg: "Release pack incomplete — all 5 artifacts required"
+
+      - id: G5-A2
+        check: "separation_of_duties"
+        arb_memo: "{arb_memo_path}"
+        roles_required: ["author", "approver", "auditor"]
+        distinct: true
+        fail_msg: "Separation of duties violated — author, approver, auditor must be distinct identities"
+
+      - id: G5-A3
+        check: "field_exists"
+        target: "{arb_memo_path}"
+        field: "/signoff_timestamp"
+        fail_msg: "ARB memo missing signoff_timestamp"
+
+      - id: G5-A4
+        check: "field_exists"
+        target: "{rollback_plan}"
+        field: "/verified_by"
+        fail_msg: "Rollback plan not verified — tested restoration required"
+
+    metrics_required:
+      CFR: { eq: 0.0, condition: "env_class == tee_enabled AND action_level == CI-L10" }
+
+    fail_action: "NO_RELEASE; escalate to ARB; do not merge"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# G6 — AUTH + HW BINDING
+# ─────────────────────────────────────────────────────────────────────────────
+  - id: G6
+    name: "AUTH_HW_BINDING"
+    phase: "identity"
+    enforcement: HARD
+    description: "JWS signature verifies against AC_ROOT_KEY; AAID hardware-bound (tee_enabled only)."
+    inputs:
+      ac_signature_path: "artifacts/AC.signature.jws"
+      ac_root_cert:      "artifacts/AC_ROOT_CERT"
+      aaid_path:         "artifacts/AAID.attestation"
+      aaid_schema:       "engine/schemas/aaid.schema.json"
+      ac_version_path:   "artifacts/AC_VERSION.json"
+    assertions:
+      - id: G6-A1
+        check: "jws_verify"
+        jws_path: "{ac_signature_path}"
+        payload_hash_from: "artifacts/AC_VERSION.json#/ac_version_sha256"
+        trust_anchor: "{ac_root_cert}"
+        fail_msg: "JWS signature invalid — chain does not end at AC_ROOT_KEY"
+
+      - id: G6-A2
+        check: "conditional"
+        condition: "env_class == tee_enabled"
+        then:
+          - check: "json_schema_valid"
+            target: "{aaid_path}"
+            schema: "{aaid_schema}"
+            fail_msg: "AAID attestation schema invalid"
+          - check: "tee_quote_valid"
+            aaid: "{aaid_path}"
+            fail_msg: "TEE/TPM quote verification failed"
+          - check: "field_not_expired"
+            target: "{aaid_path}"
+            expires_field: "/expires_at"
+            fail_msg: "AAID key expired — rotate before proceeding"
+        else_msg: "env_class=restricted_sandbox: G6-AUTH-HW skipped (TEE not required)"
+
+    fail_action: "HARD_KILL; no execution until auth restored"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# G7 — FORMAL VERIFICATION
+# ─────────────────────────────────────────────────────────────────────────────
+  - id: G7
+    name: "FORMAL_VERIFICATION"
+    phase: "formal"
+    enforcement: HARD
+    description: "Z3 proves AC_invariants for all actions; model check PASS; canonical SPS selection."
+    inputs:
+      formal_spec_path:  "engine/specs/MAO.tla"
+      model_check_report: "artifacts/model_check.report"
+      z3_bridge_path:    "artifacts/SMT.bridge"
+      selection_proof:   "artifacts/selection.proof"
+      sps_candidates:    "artifacts/SPS.candidates"
+    assertions:
+      - id: G7-A1
+        check: "file_exists"
+        targets: [
+          "{formal_spec_path}", "{model_check_report}",
+          "{z3_bridge_path}", "{selection_proof}"
+        ]
+        fail_msg: "Formal verification artifacts missing"
+
+      - id: G7-A2
+        check: "field_eq"
+        target: "{model_check_report}"
+        field: "/deadlocks"
+        expected: 0
+        fail_msg: "TLA+ model check: deadlocks detected"
+
+      - id: G7-A3
+        check: "field_eq"
+        target: "{model_check_report}"
+        field: "/orphaned_effects"
+        expected: 0
+        fail_msg: "TLA+ model check: orphaned effects detected"
+
+      - id: G7-A4
+        check: "z3_unsat"
+        bridge: "{z3_bridge_path}"
+        query: "negation_of_invariants"
+        fail_msg: "Z3 SAT — invariants can be violated; execution blocked"
+
+      - id: G7-A5
+        check: "field_eq"
+        target: "{selection_proof}"
+        field: "/candidate_count_yielding_single_sps"
+        expected: 1
+        fail_msg: "G11-FINALITY: SPS selection non-deterministic — multiple candidates remain"
+
+    metrics_required:
+      FVR: { eq: 1.0 }
+
+    fail_action: "NO_RELEASE; AUTONOMY_FREEZE; spec fix required"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# G11 — OUTPUT FINALITY
+# ─────────────────────────────────────────────────────────────────────────────
+  - id: G11
+    name: "OUTPUT_FINALITY"
+    phase: "formal"
+    enforcement: HARD
+    description: "Canonical tie-break yields single deterministic SPS hash for identical inputs."
+    inputs:
+      selection_proof:   "artifacts/selection.proof"
+      sps_candidates:    "artifacts/SPS.candidates"
+      verifier_rules:    "artifacts/verifier.rules"
+    assertions:
+      - id: G11-A1
+        check: "file_exists"
+        targets: ["{selection_proof}", "{sps_candidates}", "{verifier_rules}"]
+        fail_msg: "Finality artifacts missing"
+
+      - id: G11-A2
+        check: "deterministic_selection"
+        candidates: "{sps_candidates}"
+        rules: "{verifier_rules}"
+        proof: "{selection_proof}"
+        fail_msg: "SPS selection varies across runs — canonical tie-break not deterministic"
+
+      - id: G11-A3
+        check: "hash_stable"
+        proof: "{selection_proof}"
+        field: "/chosen_sps_hash"
+        fail_msg: "chosen_sps_hash not present in selection proof"
+
+    fail_action: "NO_RELEASE; investigate tie-break rule conflicts"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RRD — RELEASE READINESS DECISION
+# ─────────────────────────────────────────────────────────────────────────────
+rrd:
+  pass_condition: "ALL gates G0,G1,G2,G3,G4,G5,G6,G7,G11 == PASS"
+  fail_actions:
+    any_hard_fail:   "NO_RELEASE; AUTONOMY_FREEZE"
+    G0_fail:         "HARD_KILL; restore QA7 snapshot immediately"
+    G4_fail:         "QA8_HEAL attempt; if not resolved → QA7_ROLLBACK"
+    G2_fail:         "AUTONOMY_FREEZE; manual chain audit required"
+  status_values:
+    - "PRODUCTION_SPEC_V2.1"  # all gates PASS
+    - "NO_RELEASE"             # any HARD gate FAIL
+    - "PARTIAL_DEPLOY"         # soft gates only; not applicable here (all are HARD)
+
+metrics_thresholds:
+  # Aggregated thresholds for RRD computation
+  I_i:                        { eq: 1.0,  gate: G0 }
+  CT:                         { eq: 1.0,  gate: G2 }
+  PB_Completeness:            { eq: 1.0,  gate: G2 }
+  ReproRate:                  { eq: 1.0,  gate: G1 }
+  replay_mismatches:          { eq: 0,    gate: G4 }
+  DeterminismHashStability:   { eq: 1.0,  gate: G4 }
+  FVR:                        { eq: 1.0,  gate: G7 }
+  SSDF_coverage:              { gte: 0.80, gate: G3 }
+  SSDF_regressions:           { eq: 0,    gate: G3 }
+  CFR:                        { eq: 0.0,  gate: G5, condition: "CI-L10 only" }

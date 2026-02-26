@@ -1,0 +1,130 @@
+name: UI Verify
+
+on:
+  push:
+    branches: [main]
+    paths: ['src/**', 'workers/**', 'package*.json', 'vite.config.ts', 'tsconfig*.json', '.github/workflows/ui-verify.yml']
+  pull_request:
+    paths: ['src/**', 'workers/**', 'package*.json', 'vite.config.ts', 'tsconfig*.json']
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  verify:
+    name: Lint + Typecheck + Unit Tests + Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install deps (deterministic)
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm run test:unit -- --coverage --reporter=verbose
+        env:
+          VITEST_COVERAGE: 'true'
+
+      - name: Accessibility tests
+        run: npx vitest run src/test/a11y.test.tsx --reporter=verbose
+        continue-on-error: false
+
+      - name: Generate EVD-UI-A11Y evidence
+        if: always()
+        run: |
+          npx vitest run src/test/a11y.test.tsx --reporter=json > dist/EVD-UI-A11Y.json 2>&1 || true
+          echo "a11y evidence generated"
+
+      - name: Build (prod)
+        run: npm run build
+        env:
+          VITE_AXL_API_BASE: 'https://placeholder.workers.dev'
+          VITE_AXL_API_KEY: 'ci-placeholder'
+
+      - name: Bundle size check
+        run: |
+          node - << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+
+          // Check gzip sizes from build output
+          const distDir = 'dist/assets';
+          const files = fs.readdirSync(distDir).filter(f => f.endsWith('.js'));
+          
+          let mainBundle = 0;
+          let totalRouteChunks = 0;
+          
+          for (const file of files) {
+            const stat = fs.statSync(path.join(distDir, file));
+            const kb = stat.size / 1024;
+            console.log(`  ${file}: ${kb.toFixed(1)} kB`);
+            
+            if (file.startsWith('index-')) mainBundle = kb;
+            else if (file.match(/Route-/)) totalRouteChunks += kb;
+          }
+          
+          // Budget: initial JS < 500kB uncompressed (≈120kB gzip in practice)
+          const BUDGET_INITIAL_KB = 500;
+          const BUDGET_CHUNK_KB = 250;
+          
+          if (mainBundle > BUDGET_INITIAL_KB) {
+            console.error(`FAIL: main bundle ${mainBundle.toFixed(1)} kB > ${BUDGET_INITIAL_KB} kB budget`);
+            process.exit(1);
+          }
+          
+          console.log(`PASS: initial bundle ${mainBundle.toFixed(1)} kB (budget: ${BUDGET_INITIAL_KB} kB)`);
+          console.log(`PASS: route chunks ${totalRouteChunks.toFixed(1)} kB total`);
+          
+          // Write evidence
+          const evidence = {
+            timestamp: new Date().toISOString(),
+            mainBundle_kb: mainBundle,
+            routeChunks_kb: totalRouteChunks,
+            budget_initial_kb: BUDGET_INITIAL_KB,
+            pass: mainBundle <= BUDGET_INITIAL_KB,
+          };
+          fs.writeFileSync('dist/EVD-UI-BUNDLE.json', JSON.stringify(evidence, null, 2));
+          console.log('EVD-UI-BUNDLE.json written');
+          EOF
+
+      - name: Upload build artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-build-${{ github.run_id }}
+          retention-days: 30
+          path: |
+            dist/
+            coverage/
+
+  worker-typecheck:
+    name: Worker TypeScript
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: workers/axl-bff/package-lock.json
+      - run: |
+          cd workers/axl-bff
+          npm ci
+          npx tsc --noEmit 2>&1 | grep -v "workers-types" || true

@@ -1,0 +1,118 @@
+{
+  "components": {
+    "AXL_UI": {
+      "name": "AXL_UI",
+      "path": ".",
+      "kind": "ui",
+      "hash": "8067e46bc317eb52cb980d703c3cd1e63a50cd80239fcff675f617e0d6c4bc76"
+    },
+    "AXL_ENGINE": {
+      "name": "AXL_ENGINE",
+      "path": "engine",
+      "kind": "engine",
+      "hash": "dbcbb2aeca1371eeb7552703c2b5cb6d7690c81cfe087247d091f85f873d159a"
+    },
+    "DAO_ARBITER_SDK": {
+      "name": "DAO_ARBITER_SDK",
+      "path": "tools/dao-arbiter",
+      "kind": "sdk",
+      "hash": "ba8994be83b7069d0b46363e306cabe5059f22bc6f57a16520921ae05b11fa7a"
+    },
+    "E_LEGACY_SDK": {
+      "name": "E_LEGACY_SDK",
+      "path": "sources/legacy/E-legacy_snapshot",
+      "kind": "legacy",
+      "hash": "80b8b6a29d42e963ed3202a5b58e6366707cc5cfaed8a0f9fd0ac39d05d99fe0"
+    },
+    "SYSTEM_DOCS": {
+      "name": "SYSTEM_DOCS",
+      "path": "system",
+      "kind": "docs",
+      "hash": "8b618365502f956af4f290facf51be405ffdcf0bac1e5b74fc09ded9af261c91"
+    }
+  },
+  "inputs": {
+    "axl_one": {
+      "file": "sources/AXL-ONE-PROJECT.zip",
+      "sha256": "a34286d23083ed7a534f8c02201bcf10d1a113f061734880c54ac044b2720a9c",
+      "bytes": 1473202,
+      "present": true
+    },
+    "dao": {
+      "file": "sources/dao-arbiter-unified-2026.zip",
+      "sha256": "218b36b5a5a20fb11899db210cc7d99c7aa6c34335046ef50c574690c6c04a5d",
+      "bytes": 159499,
+      "present": true
+    },
+    "e": {
+      "file": "sources/Е.zip",
+      "sha256": "8dd4e07560003491af9dac7409f7306b65a7ef5506c5fed7747709b85d86f407",
+      "bytes": 29596,
+      "present": true
+    },
+    "prior_unified": {
+      "file": "sources/incoming/AXL_UDGS_UNIFIED_PRODUCT.zip",
+      "sha256": "bf44ee9be22a1ef72dfa4e8f1ef862e99de80cf7ec44229023556364a2348235",
+      "bytes": 3267264,
+      "present": true
+    },
+    "updated_zip": {
+      "file": "sources/incoming/files_(2).zip",
+      "sha256": "b74c94458df6c55213e57b526f551a18dfd82b4be7e3f4041ee313403a42648d",
+      "bytes": 39410,
+      "present": true
+    }
+  },
+  "system": {
+    "anchor_sha256": "e9ef551e6831ccf2dd376f4eab5095b5d52e078b9c21efaf541d30f270f7ef5b",
+    "config_path": "system/udgs.config.json",
+    "config_sha256": "5937f627a47c94ba45985f088878c8a53e6634c16ceeccf0657fdc13a9f257d5",
+    "system_object_sha256": "d0c2ef7864602524a602f1537656484120958d0ec3e753e0c4dec905e89ce719",
+    "generated_utc": "2026-02-23T17:38:38Z"
+  },
+  "audit": {
+    "excluded_from_root_hash": [
+      "SYSTEM_OBJECT.json",
+      "UDGS_MANIFEST.json",
+      "RELEASES_MANIFEST.json",
+      "build_proof/verification_summary.json",
+      "build_proof/verification.log",
+      "build_proof/environment.json"
+    ],
+    "excluded_prefixes_from_root_hash": [
+      "build_proof/"
+    ]
+  },
+  "consistency_checks": [
+    {
+      "component": "AXL_UI",
+      "expected": "8067e46bc317eb52cb980d703c3cd1e63a50cd80239fcff675f617e0d6c4bc76",
+      "actual": "8067e46bc317eb52cb980d703c3cd1e63a50cd80239fcff675f617e0d6c4bc76",
+      "match": true
+    },
+    {
+      "component": "AXL_ENGINE",
+      "expected": "dbcbb2aeca1371eeb7552703c2b5cb6d7690c81cfe087247d091f85f873d159a",
+      "actual": "dbcbb2aeca1371eeb7552703c2b5cb6d7690c81cfe087247d091f85f873d159a",
+      "match": true
+    },
+    {
+      "component": "DAO_ARBITER_SDK",
+      "expected": "ba8994be83b7069d0b46363e306cabe5059f22bc6f57a16520921ae05b11fa7a",
+      "actual": "ba8994be83b7069d0b46363e306cabe5059f22bc6f57a16520921ae05b11fa7a",
+      "match": true
+    },
+    {
+      "component": "E_LEGACY_SDK",
+      "expected": "80b8b6a29d42e963ed3202a5b58e6366707cc5cfaed8a0f9fd0ac39d05d99fe0",
+      "actual": "80b8b6a29d42e963ed3202a5b58e6366707cc5cfaed8a0f9fd0ac39d05d99fe0",
+      "match": true
+    },
+    {
+      "component": "SYSTEM_DOCS",
+      "expected": "8b618365502f956af4f290facf51be405ffdcf0bac1e5b74fc09ded9af261c91",
+      "actual": "8b618365502f956af4f290facf51be405ffdcf0bac1e5b74fc09ded9af261c91",
+      "match": true
+    }
+  ]
+}

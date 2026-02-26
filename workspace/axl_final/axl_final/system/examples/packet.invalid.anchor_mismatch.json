@@ -1,0 +1,28 @@
+{
+  "FAIL_PACKET": {
+    "summary": "CI failing",
+    "signals": [
+      "unit_test_fail"
+    ],
+    "repro": "npm test"
+  },
+  "MUTATION_PLAN": {
+    "diff_scope": [
+      "src/..."
+    ],
+    "constraints": [
+      "no-new-deps",
+      "no-type-weakening"
+    ]
+  },
+  "PRE_VERIFICATION_SCRIPT": "npm ci --no-audit --no-fund && npm test && npm run build",
+  "REGRESSION_TEST_PAYLOAD": {
+    "suite": [
+      "npm test"
+    ],
+    "expected": {
+      "status": "PASS"
+    }
+  },
+  "SHA256_ANCHOR": "0000000000000000000000000000000000000000000000000000000000000000"
+}

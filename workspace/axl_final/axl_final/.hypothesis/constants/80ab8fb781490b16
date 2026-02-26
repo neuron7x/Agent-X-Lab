@@ -1,0 +1,4 @@
+# file: /tmp/axl_qa8/udgs_core/anchors.py
+# hypothesis_version: 6.151.9
+
+[1024, ',', '/', ':', '\\', 'rb', 'utf-8']

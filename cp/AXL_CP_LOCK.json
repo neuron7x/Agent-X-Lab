@@ -1,0 +1,18 @@
+{
+  "schema_id": "AXL_CP_LOCK.V1",
+  "generated_at": "2026-02-26T00:18:56.107540+00:00",
+  "inputs": {
+    "AC_VERSION.json": {
+      "path": "release/promoted_bundle_2026-02-26/artifacts/AC_VERSION.json",
+      "sha256": "e1e85aee920e4f647944eb3e0af6289500e3f26cc2b459b11cf07f22fbd3f3d4"
+    },
+    "gate_assertions.yaml": {
+      "path": "release/promoted_bundle_2026-02-26/engine/policies/prod_spec_v2/gate_assertions.yaml",
+      "sha256": "a8baf2ff835202bbc3d3615c98c8ee692cad8532e00668b739cd0b8179968573"
+    },
+    "check_prod_spec_gates.py": {
+      "path": "release/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+      "sha256": "96be6061383bdd0e9d0e44005a3f1b1ae57a4cb3ea165507ba8296a371365934"
+    }
+  }
+}

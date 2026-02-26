@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-02-25T23:46:47Z",
+  "lockfiles": {
+    "engine/pyproject.toml_sha256": "258e5a0836391f2f949dc7f794da0644b9ba3e28bae96491dd6c0c3c122211f6",
+    "engine/requirements-dev.txt_sha256": "690e7f010bbe295cfccec8c1db276ea92ce2b2f57ec4e16fe10c18c38925f773",
+    "package-lock.json_sha256": "e34268078443027de6f7820baec4f321115f71908aceda86628614be0e640f98"
+  },
+  "notes": [
+    "build.lock captures toolchain + lockfile anchors; it is not a substitute for SBOM."
+  ],
+  "platform": {
+    "machine": "x86_64",
+    "release": "4.4.0",
+    "system": "Linux"
+  },
+  "python": {
+    "implementation": "CPython",
+    "version": "3.11.2"
+  }
+}

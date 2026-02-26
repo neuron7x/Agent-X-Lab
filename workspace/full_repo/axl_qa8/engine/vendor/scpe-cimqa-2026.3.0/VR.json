@@ -1,0 +1,31 @@
+{
+  "scpe_release": "v1.0",
+  "schema_version": "VR-2026.3",
+  "prompt_name": "codex-interpreted-mechanized-quality-agent",
+  "prompt_version": "2026.3.0",
+  "target_assurance_level": "AL-1",
+  "status": "NOT_RUN",
+  "trials_required": { "normal": 5, "adversarial": 2, "total": 7 },
+  "metrics": {
+    "M1_determinism": null,
+    "M2_evidence_completeness": null,
+    "M3_action_yield": null,
+    "M4_scope_containment": null,
+    "M5_regression_rate": null,
+    "M6_efficiency": null,
+    "M7_repairability": null,
+    "M8_robustness": null,
+    "M9_instruction_stability": null
+  },
+  "score": null,
+  "acceptance": {
+    "top_tier_claim_allowed": false,
+    "audit_grade_claim_allowed": false,
+    "safety_critical_claim_allowed": false
+  },
+  "evidence": {
+    "trials_dir": "TRIALS/",
+    "ebs_roots": [],
+    "meta_ebs_roots": []
+  }
+}

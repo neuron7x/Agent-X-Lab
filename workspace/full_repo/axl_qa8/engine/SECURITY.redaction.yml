@@ -1,0 +1,18 @@
+# SECURITY.redaction.yml
+# Deterministic redaction rules for evidence bundles.
+# NOTE: This file is intentionally conservative. Add patterns only if you can justify them.
+
+version: 1
+patterns:
+  # Common token/key formats
+  - '(?i)(api[_-]?key\s*[:=]\s*)[A-Za-z0-9_\-]{16,}'
+  - '(?i)(secret\s*[:=]\s*)[A-Za-z0-9_\-]{16,}'
+  - '(?i)(token\s*[:=]\s*)[A-Za-z0-9_\-]{16,}'
+  - '(?i)(password\s*[:=]\s*).+'
+  # GitHub tokens
+  - 'ghp_[A-Za-z0-9]{36,}'
+  - 'github_pat_[A-Za-z0-9_]{20,}'
+  # AWS access keys (heuristic)
+  - 'AKIA[0-9A-Z]{16}'
+  # Private keys
+  - '-----BEGIN (?:RSA|EC|OPENSSH|PGP) PRIVATE KEY-----[\s\S]+?-----END (?:RSA|EC|OPENSSH|PGP) PRIVATE KEY-----'

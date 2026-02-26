@@ -1,0 +1,4 @@
+# file: /tmp/axl_qa8/tools/dao-arbiter/dao_lifebook/truth_plane.py
+# hypothesis_version: 6.151.9
+
+[30.0, 300.0, -2000, 100, 124, 127, 2000, '2022-11-28', 'Accept', 'Authorization', 'No run URL available', 'X-GitHub-Api-Version', '_breaker', '_client', '_pr', '_pr_cache', '_retry_cfg', 'action_required', 'additions', 'cancelled', 'changed_files', 'check_runs', 'conclusion', 'context', 'dao.truth_plane', 'deletions', 'error', 'failure', 'filename', 'head', 'html_url', 'in_progress', 'name', 'neutral', 'pending', 'queued', 'sha', 'skipped', 'stale', 'state', 'status', 'statuses', 'success', 'target_url', 'timed_out', 'total_count', '|&;><$`']

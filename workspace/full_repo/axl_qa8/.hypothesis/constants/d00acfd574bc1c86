@@ -1,0 +1,4 @@
+# file: /tmp/axl_qa8/udgs_core/adapters/dao_lifebook_adapter.py
+# hypothesis_version: 6.151.9
+
+['CI', 'FAIL_PACKET', 'MUTATION_PLAN', 'SHA256_ANCHOR', 'artifact_hashes', 'ci_oracle', 'commit_sha', 'constraints', 'diff_scope', 'expected', 'fail-closed', 'failure', 'oracle', 'pending', 'repro', 'signals', 'skipped', 'ssot-external-oracle', 'success', 'suite', 'summary']

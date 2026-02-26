@@ -1,0 +1,44 @@
+scpe_release: v1.0
+schema_version: QM-2026.3
+purpose: "default quality measurement contract (tool-agnostic; fail-closed; always emits reports)"
+
+min_score: 80
+thresholds:
+  complexity.p95_max: 25
+  duplication.max_lines: 200
+
+measurement_contract:
+  reports:
+    - id: lint
+      path: REPORTS/quality/lint.json
+    - id: tests
+      path: REPORTS/quality/tests.json
+    - id: security
+      path: REPORTS/quality/security.json
+    - id: maintainability
+      path: REPORTS/quality/maintainability.json
+    - id: docs
+      path: REPORTS/quality/docs.json
+    - id: perf
+      path: REPORTS/quality/perf.json
+
+runners:
+  lint:
+    prefer:
+      - { tool: "ruff", cmd: "ruff check . --output-format json" }
+      - { tool: "flake8", cmd: "flake8 ." }
+  tests:
+    prefer:
+      - { tool: "pytest", cmd: "pytest -q" }
+  security:
+    prefer:
+      - { tool: "bandit", cmd: "bandit -r . -f json" }
+  docs:
+    prefer:
+      - { tool: "linkchecker", cmd: "linkchecker --check-extern --no-warnings --file-output=csv/linkchecker.csv ." }
+  perf:
+    prefer:
+      - { tool: "pytest", cmd: "pytest -q" }
+
+notes:
+  - "If a preferred tool is missing, the suite records tool_missing and emits a deterministic FAIL/UNKNOWN surrogate." 

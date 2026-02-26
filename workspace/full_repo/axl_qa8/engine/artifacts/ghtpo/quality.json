@@ -1,0 +1,150 @@
+{
+  "protocol": "GHTPO-v1.0",
+  "verdict": "FAIL",
+  "contradictions": 0,
+  "ecosystem": {
+    "languages": [
+      "Python"
+    ],
+    "package_managers": [
+      "pip"
+    ]
+  },
+  "instruments": {
+    "present_before": 12,
+    "present_after": 15,
+    "implemented": 3
+  },
+  "gates": [
+    {
+      "id": "G00",
+      "pass": true,
+      "cmd": "python - <<'Y'\nimport yaml,glob\nfor p in glob.glob('.github/workflows/*.yml'): yaml.safe_load(open(p))\nprint('ok')\nY",
+      "exit_code": 0
+    },
+    {
+      "id": "G01",
+      "pass": true,
+      "cmd": "for f in .github/workflows/*.yml; do grep -q '^permissions:' \"$f\" || exit 1; done",
+      "exit_code": 0
+    },
+    {
+      "id": "G02",
+      "pass": false,
+      "cmd": "! rg -n 'uses:\\s*(gitleaks|reviewdog)/[^@]+@v?[0-9]+' .github/workflows",
+      "exit_code": 1
+    },
+    {
+      "id": "G03",
+      "pass": true,
+      "cmd": "for f in .github/workflows/*.yml; do grep -q '^concurrency:' \"$f\" || exit 1; done",
+      "exit_code": 0
+    },
+    {
+      "id": "G04",
+      "pass": true,
+      "cmd": "for f in .github/workflows/*.yml; do grep -q 'timeout-minutes:' \"$f\" || exit 1; done",
+      "exit_code": 0
+    },
+    {
+      "id": "G05",
+      "pass": true,
+      "cmd": "rg -n 'cache: pip|cache-dependency-path' .github/workflows/ci.yml",
+      "exit_code": 0
+    },
+    {
+      "id": "G06",
+      "pass": true,
+      "cmd": "rg -n 'status-check|needs:' .github/workflows/ci.yml",
+      "exit_code": 0
+    },
+    {
+      "id": "G07",
+      "pass": true,
+      "cmd": "ruff check .",
+      "exit_code": 0
+    },
+    {
+      "id": "G08",
+      "pass": true,
+      "cmd": "ruff format --check .",
+      "exit_code": 0
+    },
+    {
+      "id": "G09",
+      "pass": true,
+      "cmd": "mypy .",
+      "exit_code": 0
+    },
+    {
+      "id": "G11",
+      "pass": true,
+      "cmd": "python -m pip check",
+      "exit_code": 0
+    },
+    {
+      "id": "G13",
+      "pass": true,
+      "cmd": "test -f .github/dependabot.yml",
+      "exit_code": 0
+    },
+    {
+      "id": "G14",
+      "pass": true,
+      "cmd": "test -f SECURITY.md",
+      "exit_code": 0
+    },
+    {
+      "id": "G15",
+      "pass": true,
+      "cmd": "test -f .github/CODEOWNERS",
+      "exit_code": 0
+    },
+    {
+      "id": "G16",
+      "pass": true,
+      "cmd": "test -f .github/pull_request_template.md",
+      "exit_code": 0
+    },
+    {
+      "id": "G17",
+      "pass": true,
+      "cmd": "ls .github/ISSUE_TEMPLATE/*.yml >/dev/null",
+      "exit_code": 0
+    },
+    {
+      "id": "G18",
+      "pass": true,
+      "cmd": "rg -n badge README.md",
+      "exit_code": 0
+    },
+    {
+      "id": "G19",
+      "pass": true,
+      "cmd": "rg -n '^ci:' Makefile",
+      "exit_code": 0
+    },
+    {
+      "id": "G20",
+      "pass": false,
+      "cmd": "git status --short",
+      "exit_code": 1
+    }
+  ],
+  "files_created": [
+    ".github/CODEOWNERS",
+    ".github/ISSUE_TEMPLATE/",
+    "artifacts/ghtpo/"
+  ],
+  "files_modified": [
+    ".github/dependabot.yml",
+    ".github/workflows/ci.yml",
+    ".github/workflows/lint-actions.yml",
+    ".github/workflows/security.yml",
+    "MANIFEST.json",
+    "README.md",
+    "artifacts/titan9/hashes.json",
+    "artifacts/titan9/inventory.json",
+    "artifacts/titan9/proof.log"
+  ]
+}

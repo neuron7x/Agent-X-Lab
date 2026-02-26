@@ -1,0 +1,81 @@
+{
+  "_comment": "Example genesis Proof Bundle — replace all hashes and signature before production",
+  "pb_id": "PB-AD2026000000000001",
+  "timestamp": "2026-02-25T00:00:00Z",
+  "environment_class": "restricted_sandbox",
+  "ac_version_sha256": "5b06f3f574cd1c01c7712eb4e732ab6c223d57ebf18838a431dc7c91432e4a8e",
+  "prev_pb_hash": null,
+  "input_state_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "output_state_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "gate_results": {
+    "G0": {
+      "status": "PASS",
+      "checked_at": "2026-02-25T00:00:01Z",
+      "detail": "AC hash verified"
+    },
+    "G1": {
+      "status": "UNKNOWN",
+      "checked_at": "2026-02-25T00:00:01Z",
+      "detail": "Build provenance pending"
+    },
+    "G2": {
+      "status": "PASS",
+      "checked_at": "2026-02-25T00:00:01Z",
+      "detail": "Genesis bundle"
+    },
+    "G3": {
+      "status": "PASS",
+      "checked_at": "2026-02-25T00:00:01Z",
+      "detail": "SSDF coverage=0.83"
+    },
+    "G4": {
+      "status": "UNKNOWN",
+      "checked_at": "2026-02-25T00:00:01Z",
+      "detail": "Replay harness not run"
+    },
+    "G5": {
+      "status": "UNKNOWN",
+      "checked_at": "2026-02-25T00:00:01Z",
+      "detail": "Release pack pending"
+    },
+    "G6": {
+      "status": "UNKNOWN",
+      "checked_at": "2026-02-25T00:00:01Z",
+      "detail": "Signature pending"
+    },
+    "G7": {
+      "status": "UNKNOWN",
+      "checked_at": "2026-02-25T00:00:01Z",
+      "detail": "Formal spec pending"
+    },
+    "G11": {
+      "status": "UNKNOWN",
+      "checked_at": "2026-02-25T00:00:01Z",
+      "detail": "Finality pending"
+    }
+  },
+  "metrics": {
+    "P_p": 0.0,
+    "A_s": 0.0,
+    "ReproRate": 0.0,
+    "replay_n": 0,
+    "replay_mismatches": 0,
+    "FVR": 0.0,
+    "CT": 1.0,
+    "PB_Completeness": 1.0,
+    "SSDF_coverage": 0.83,
+    "SSDF_regressions": 0,
+    "CFR": 0.0
+  },
+  "actions": [],
+  "evidence_anchors": [
+    "§REF:genesis#artifacts/AC_VERSION.json#5b06f3f574cd1c01c7712eb4e732ab6c223d57ebf18838a431dc7c91432e4a8e"
+  ],
+  "signature": {
+    "_note": "Replace with real JWS before production",
+    "jws": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImFjLXJvb3Qta2V5LTIwMjYifQ.GENESIS_PLACEHOLDER.SIGNATURE",
+    "alg": "ES256",
+    "kid": "ac-root-key-2026",
+    "signed_at": "2026-02-25T00:00:01Z"
+  }
+}

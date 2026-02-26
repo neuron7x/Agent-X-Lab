@@ -1,0 +1,4 @@
+# file: /tmp/axl_qa8/udgs_core/state_machine.py
+# hypothesis_version: 6.151.9
+
+['CHECKPOINT', 'ERROR', 'FAIL', 'FIX', 'HALT', 'HALT: no transitions', 'HASH_ANCHOR_REQUIRED', 'ORACLE_FAILED', 'PROVE', 'Transition FAIL→FIX', 'Transition FIX→PROVE', 'hash_anchor_present', 'logs_present', 'oracle_pass']
