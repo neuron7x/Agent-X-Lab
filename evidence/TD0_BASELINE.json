@@ -1,0 +1,165 @@
+{
+  "blocked": [
+    {
+      "name": "npm_install",
+      "reason": "offline_only"
+    },
+    {
+      "name": "worker_npm_install",
+      "reason": "offline_only"
+    }
+  ],
+  "checks": [
+    {
+      "cmd": "git status --porcelain",
+      "exit": 0,
+      "name": "git_status"
+    },
+    {
+      "cmd": "node -v",
+      "exit": 0,
+      "name": "node_version"
+    },
+    {
+      "cmd": "npm -v",
+      "exit": 0,
+      "name": "npm_version"
+    },
+    {
+      "cmd": "python3 --version",
+      "exit": 0,
+      "name": "python_version"
+    },
+    {
+      "cmd": "npm run lint",
+      "exit": 0,
+      "name": "lint"
+    },
+    {
+      "cmd": "npm run typecheck",
+      "exit": 0,
+      "name": "typecheck"
+    },
+    {
+      "cmd": "npm run test:unit -- --coverage",
+      "exit": 1,
+      "name": "test_unit_coverage"
+    },
+    {
+      "cmd": "npm run build",
+      "exit": 0,
+      "name": "build"
+    },
+    {
+      "cmd": "cd workers/axl-bff && npm run typecheck",
+      "exit": 2,
+      "name": "worker_typecheck"
+    },
+    {
+      "cmd": "python3 scripts/td0/scan_large_files.py",
+      "exit": 0,
+      "name": "scan_large_files"
+    },
+    {
+      "cmd": "bash scripts/td0/scan_secrets.sh",
+      "exit": 2,
+      "name": "scan_secrets"
+    }
+  ],
+  "env": {
+    "node": "v22.21.1",
+    "npm": "11.4.2",
+    "python": "Python 3.13.8"
+  },
+  "git": {
+    "branch": "work",
+    "commit": "b6295f6bd04b7440239653bed42040ca503cf723",
+    "dirty": true
+  },
+  "large_files": [
+    {
+      "path": "archive/source_snapshots/AXL_PROD_SPEC_V2_FULL_PATCHED_2026-02-26.zip",
+      "size_bytes": 20456360
+    },
+    {
+      "path": "archive/source_snapshots/AXL_QA8_PROD_SPEC_V2_1_PROMOTED_BUNDLE_2026-02-26.zip",
+      "size_bytes": 13219750
+    },
+    {
+      "path": "artifacts/AC.package",
+      "size_bytes": 9017568
+    },
+    {
+      "path": "artifacts/rebuilt_artifact",
+      "size_bytes": 9017568
+    },
+    {
+      "path": "evidence/release_wrapper/promoted_bundle_2026-02-26/artifacts/AC.package",
+      "size_bytes": 9017568
+    },
+    {
+      "path": "evidence/release_wrapper/promoted_bundle_2026-02-26/artifacts/rebuilt_artifact",
+      "size_bytes": 9017568
+    }
+  ],
+  "secrets_findings": [
+    "PROOF_CHECKLIST.md:41:GITHUB_TOKEN=ghp_YOUR_PAT_HERE",
+    "archive/workspace_wrapper/axl_final/axl_final/DEPLOYMENT_GUIDE.md:32:wrangler secret put ANTHROPIC_API_KEY     # \u0434\u043b\u044f Forge",
+    "archive/workspace_wrapper/axl_final/axl_final/DEPLOYMENT_GUIDE.md:33:wrangler secret put OPENAI_API_KEY        # \u0434\u043b\u044f Forge (\u043e\u043f\u0446\u0456\u0439\u043d\u043e)",
+    "archive/workspace_wrapper/axl_final/axl_final/PROOF_CHECKLIST.md:41:GITHUB_TOKEN=ghp_YOUR_PAT_HERE",
+    "archive/workspace_wrapper/axl_final/axl_final/artifacts/incident_playbook.md:29:- Rotate secrets in this order: `GITHUB_TOKEN` \u2192 `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` \u2192 `AXL_API_KEY` \u2192 `WEBHOOK_SECRET`.",
+    "archive/workspace_wrapper/axl_final/axl_final/docs/ui/THREAT_MODEL.md:25:| OPENAI_API_KEY | Exposure in browser | Lives ONLY in Cloudflare Worker secrets \u2014 never in VITE_ env |",
+    "archive/workspace_wrapper/axl_final/axl_final/docs/ui/THREAT_MODEL.md:26:| ANTHROPIC_API_KEY | Exposure in browser | Same \u2014 Worker-side only |",
+    "archive/workspace_wrapper/axl_final/axl_final/engine/SECURITY.redaction.yml:13:  - 'ghp_[A-Za-z0-9]{36,}'",
+    "archive/workspace_wrapper/axl_final/axl_final/engine/SECURITY.redaction.yml:16:  - 'AKIA[0-9A-Z]{16}'",
+    "archive/workspace_wrapper/axl_final/axl_final/engine/catalog/agents/CA-ERG_v2026.4_SYSTEM_PROMPT.md:132:Outputs: REPORTS/tdd-summary.md, REPORTS/risk-register.json, REPORTS/recommendation.json",
+    "archive/workspace_wrapper/axl_final/axl_final/engine/catalog/agents/CA-ERG_v2026.4_SYSTEM_PROMPT.md:93:Outputs: REPORTS/risk-register.json, REPORTS/decision-log.json, REPORTS/runbook.patch",
+    "archive/workspace_wrapper/axl_final/axl_final/engine/tools/secret_scan_gate.py:11:    (\"aws_access_key\", re.compile(r\"\\bAKIA[0-9A-Z]{16}\\b\")),",
+    "archive/workspace_wrapper/axl_final/axl_final/engine/vendor/scpe-cimqa-2026.3.0/SECURITY.redaction.yml:11:      - \"(AKIA[0-9A-Z]{16})\"",
+    "archive/workspace_wrapper/axl_final/axl_final/engine/vendor/scpe-cimqa-2026.3.0/SECURITY.redaction.yml:8:      - \"(ghp_[A-Za-z0-9]{36,})\"",
+    "archive/workspace_wrapper/axl_final/axl_final/package-lock.json:7898:      \"resolved\": \"https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz\",",
+    "archive/workspace_wrapper/axl_final/axl_final/src/components/axl/ForgeScreen.tsx:10: * SECURITY: \u043d\u0443\u043b\u044c\u043e\u0432\u0438\u0445 \u0442\u043e\u043a\u0435\u043d\u0456\u0432 \u0432 \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0456. \u0412\u0441\u0456 \u043a\u043b\u044e\u0447\u0456 (ANTHROPIC_API_KEY,",
+    "archive/workspace_wrapper/axl_final/axl_final/src/components/axl/ForgeScreen.tsx:11: * OPENAI_API_KEY, N8N_SECRET) \u0436\u0438\u0432\u0443\u0442\u044c \u0432\u0438\u043a\u043b\u044e\u0447\u043d\u043e \u0432 Cloudflare Worker secrets.",
+    "archive/workspace_wrapper/axl_final/axl_final/tools/dao-arbiter/README.md:62:export GITHUB_TOKEN=ghp_...",
+    "archive/workspace_wrapper/axl_final/axl_final/tools/dao-arbiter/dao_lifebook/cli.py:61:        console.print(\"[dim]Export your GitHub token: export GITHUB_TOKEN=ghp_...[/dim]\")",
+    "archive/workspace_wrapper/axl_final/axl_final/tools/prod_spec/generate_formal_artifacts.py:177:        'openai_key': re.compile(r\"\\bsk-[A-Za-z0-9]{20,}\\b\"),",
+    "archive/workspace_wrapper/axl_final/axl_final/tools/prod_spec/generate_formal_artifacts.py:179:        'anthropic_key': re.compile(r\"\\bsk-ant-[A-Za-z0-9-]{20,}\\b\"),",
+    "archive/workspace_wrapper/axl_final/axl_final/workers/axl-bff/src/index.ts:29:  ANTHROPIC_API_KEY: string;",
+    "archive/workspace_wrapper/axl_final/axl_final/workers/axl-bff/src/index.ts:33:  OPENAI_API_KEY: string;",
+    "archive/workspace_wrapper/axl_final/axl_final/workers/axl-bff/src/index.ts:487:  if (!env.ANTHROPIC_API_KEY) {",
+    "archive/workspace_wrapper/axl_final/axl_final/workers/axl-bff/src/index.ts:488:    return corsResponse(request, env, JSON.stringify({ error: 'FORGE_NOT_CONFIGURED', hint: 'Set ANTHROPIC_API_KEY Worker secret' }), 503);",
+    "archive/workspace_wrapper/axl_final/axl_final/workers/axl-bff/src/index.ts:548:        'x-api-key': env.ANTHROPIC_API_KEY,",
+    "archive/workspace_wrapper/axl_final/axl_final/workers/axl-bff/src/index.ts:605:  if (!env.OPENAI_API_KEY) {",
+    "archive/workspace_wrapper/axl_final/axl_final/workers/axl-bff/src/index.ts:606:    return corsResponse(request, env, JSON.stringify({ error: 'GPT_NOT_CONFIGURED', hint: 'Set OPENAI_API_KEY Worker secret' }), 503);",
+    "archive/workspace_wrapper/axl_final/axl_final/workers/axl-bff/src/index.ts:651:        'Authorization': `Bearer ${env.OPENAI_API_KEY}`,",
+    "archive/workspace_wrapper/axl_final/axl_final/workers/axl-bff/wrangler.toml:28:# wrangler secret put OPENAI_API_KEY",
+    "artifacts/incident_playbook.md:29:- Rotate secrets in this order: `GITHUB_TOKEN` \u2192 `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` \u2192 `AXL_API_KEY` \u2192 `WEBHOOK_SECRET`.",
+    "docs/ui/THREAT_MODEL.md:25:| OPENAI_API_KEY | Exposure in browser | Lives ONLY in Cloudflare Worker secrets \u2014 never in VITE_ env |",
+    "docs/ui/THREAT_MODEL.md:26:| ANTHROPIC_API_KEY | Exposure in browser | Same \u2014 Worker-side only |",
+    "engine/SECURITY.redaction.yml:13:  - 'ghp_[A-Za-z0-9]{36,}'",
+    "engine/SECURITY.redaction.yml:16:  - 'AKIA[0-9A-Z]{16}'",
+    "engine/catalog/agents/CA-ERG_v2026.4_SYSTEM_PROMPT.md:132:Outputs: REPORTS/tdd-summary.md, REPORTS/risk-register.json, REPORTS/recommendation.json",
+    "engine/catalog/agents/CA-ERG_v2026.4_SYSTEM_PROMPT.md:93:Outputs: REPORTS/risk-register.json, REPORTS/decision-log.json, REPORTS/runbook.patch",
+    "engine/tools/secret_scan_gate.py:11:    (\"aws_access_key\", re.compile(r\"\\bAKIA[0-9A-Z]{16}\\b\")),",
+    "engine/vendor/scpe-cimqa-2026.3.0/SECURITY.redaction.yml:11:      - \"(AKIA[0-9A-Z]{16})\"",
+    "engine/vendor/scpe-cimqa-2026.3.0/SECURITY.redaction.yml:8:      - \"(ghp_[A-Za-z0-9]{36,})\"",
+    "evidence/release_wrapper/promoted_bundle_2026-02-26/artifacts/incident_playbook.md:29:- Rotate secrets in this order: `GITHUB_TOKEN` \u2192 `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` \u2192 `AXL_API_KEY` \u2192 `WEBHOOK_SECRET`.",
+    "package-lock.json:7898:      \"resolved\": \"https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz\",",
+    "src/components/axl/ForgeScreen.tsx:10: * SECURITY: \u043d\u0443\u043b\u044c\u043e\u0432\u0438\u0445 \u0442\u043e\u043a\u0435\u043d\u0456\u0432 \u0432 \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0456. \u0412\u0441\u0456 \u043a\u043b\u044e\u0447\u0456 (ANTHROPIC_API_KEY,",
+    "src/components/axl/ForgeScreen.tsx:11: * OPENAI_API_KEY, N8N_SECRET) \u0436\u0438\u0432\u0443\u0442\u044c \u0432\u0438\u043a\u043b\u044e\u0447\u043d\u043e \u0432 Cloudflare Worker secrets.",
+    "tools/dao-arbiter/README.md:62:export GITHUB_TOKEN=ghp_...",
+    "tools/dao-arbiter/dao_lifebook/cli.py:61:        console.print(\"[dim]Export your GitHub token: export GITHUB_TOKEN=ghp_...[/dim]\")",
+    "tools/prod_spec/generate_formal_artifacts.py:177:        'openai_key': re.compile(r\"\\bsk-[A-Za-z0-9]{20,}\\b\"),",
+    "tools/prod_spec/generate_formal_artifacts.py:179:        'anthropic_key': re.compile(r\"\\bsk-ant-[A-Za-z0-9-]{20,}\\b\"),",
+    "workers/axl-bff/src/index.ts:29:  ANTHROPIC_API_KEY: string;",
+    "workers/axl-bff/src/index.ts:33:  OPENAI_API_KEY: string;",
+    "workers/axl-bff/src/index.ts:487:  if (!env.ANTHROPIC_API_KEY) {",
+    "workers/axl-bff/src/index.ts:488:    return corsResponse(request, env, JSON.stringify({ error: 'FORGE_NOT_CONFIGURED', hint: 'Set ANTHROPIC_API_KEY Worker secret' }), 503);",
+    "workers/axl-bff/src/index.ts:548:        'x-api-key': env.ANTHROPIC_API_KEY,",
+    "workers/axl-bff/src/index.ts:605:  if (!env.OPENAI_API_KEY) {",
+    "workers/axl-bff/src/index.ts:606:    return corsResponse(request, env, JSON.stringify({ error: 'GPT_NOT_CONFIGURED', hint: 'Set OPENAI_API_KEY Worker secret' }), 503);",
+    "workers/axl-bff/src/index.ts:651:        'Authorization': `Bearer ${env.OPENAI_API_KEY}`,",
+    "workers/axl-bff/wrangler.toml:28:# wrangler secret put OPENAI_API_KEY"
+  ],
+  "timestamp": "2026-02-26T16:44:12.548955+00:00"
+}
