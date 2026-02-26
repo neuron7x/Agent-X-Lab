@@ -8,8 +8,12 @@ export default tseslint.config(
   {
     ignores: [
       "archive/**",
+      "**/archive/**",
       "dist/**",
+      "coverage/**",
+      "node_modules/**",
       "workers/**",
+      "**/workers/**",
       "*.config.*",
     ],
   },

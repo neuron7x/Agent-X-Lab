@@ -43,8 +43,19 @@ jobs:
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            workers/axl-bff/package.json
+            workers/axl-bff/package-lock.json
       - name: Run Worker CI
-        run: bash scripts/ci/worker.sh
+        run: |
+          cd workers/axl-bff
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install --no-audit --no-fund
+          fi
+          npm run typecheck
       - name: Upload Worker artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -145,6 +156,23 @@ jobs:
             workers/axl-bff/package.json
           if-no-files-found: error
 
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependency review (PR)
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+      - name: Skip on merge queue
+        if: github.event_name == 'merge_group'
+        run: echo "dependency-review skipped on merge_group"
+
   pr-gate:
     name: PR Gate
     if: always()
@@ -156,6 +184,7 @@ jobs:
       - gates
       - e2e
       - security
+      - dependency-review
     steps:
       - name: Enforce all required jobs passed
         run: |
@@ -165,9 +194,11 @@ jobs:
           echo "gates=${{ needs.gates.result }}"
           echo "e2e=${{ needs.e2e.result }}"
           echo "security=${{ needs.security.result }}"
+          echo "dependency-review=${{ needs.dependency-review.result }}"
           test "${{ needs.ui.result }}" = "success"
           test "${{ needs.worker.result }}" = "success"
           test "${{ needs.python.result }}" = "success"
           test "${{ needs.gates.result }}" = "success"
           test "${{ needs.e2e.result }}" = "success"
           test "${{ needs.security.result }}" = "success"
+          test "${{ needs.dependency-review.result }}" = "success"

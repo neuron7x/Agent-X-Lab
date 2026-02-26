@@ -65,6 +65,18 @@ jobs:
                   return value
 
               filtered = strip_private(data)
+
+              def assert_no_private(value, path="root"):
+                  if isinstance(value, dict):
+                      for key, nested in value.items():
+                          if key.startswith("_"):
+                              raise AssertionError(f"private key found after strip at {path}.{key}")
+                          assert_no_private(nested, f"{path}.{key}")
+                  elif isinstance(value, list):
+                      for idx, nested in enumerate(value):
+                          assert_no_private(nested, f"{path}[{idx}]")
+
+              assert_no_private(filtered)
               try:
                   jsonschema.validate(filtered, schema, format_checker=jsonschema.FormatChecker())
                   print("✅ AC_VERSION.json schema valid")
