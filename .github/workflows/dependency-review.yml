@@ -12,6 +12,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/dependency-review-action@v4
+      - name: Dependency review (best effort)
+        id: dependency_review
+        continue-on-error: true
+        uses: actions/dependency-review-action@v4
         with:
           fail-on-severity: high
+      - name: Fallback security audit when dependency graph is unavailable
+        if: steps.dependency_review.outcome != 'success'
+        run: |
+          echo "Dependency Review action unavailable or failed; running npm audit fallback."
+          npm audit --audit-level=high
+          npm --prefix workers/axl-bff audit --audit-level=high
