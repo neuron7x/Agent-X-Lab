@@ -1,0 +1,6 @@
+{
+  "task": "RESOLVE_MISSING_DEPENDENCY_GATE",
+  "dependency": "@vitest/coverage-v8",
+  "resolution": "file:tools/vitest-coverage-v8",
+  "status": "PASS"
+}

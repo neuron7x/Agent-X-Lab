@@ -1,0 +1,10 @@
+{
+  "gate": "test:unit-coverage",
+  "status": "PASS",
+  "command": "npm run test:unit -- --coverage --reporter=verbose",
+  "artifacts": [
+    "artifacts/scientific_product/EVD-UI-TESTS.json",
+    "artifacts/scientific_product/coverage-summary.json",
+    "artifacts/scientific_product/coverage-final.json"
+  ]
+}
