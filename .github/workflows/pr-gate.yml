@@ -50,11 +50,7 @@ jobs:
       - name: Run Worker CI
         run: |
           cd workers/axl-bff
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install --no-audit --no-fund
-          fi
+          npm install --no-audit --no-fund
           npm run typecheck
       - name: Upload Worker artifacts
         uses: actions/upload-artifact@v4
