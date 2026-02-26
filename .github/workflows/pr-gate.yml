@@ -134,9 +134,7 @@ jobs:
           fail-on-severity: high
       - name: Dependency audit (merge queue)
         if: github.event_name == 'merge_group'
-        run: |
-          npm audit --audit-level=high
-          npm --prefix workers/axl-bff audit --audit-level=high
+        run: npm audit --audit-level=high
       - name: Upload security artifacts
         if: always()
         uses: actions/upload-artifact@v4

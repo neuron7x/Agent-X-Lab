@@ -9,7 +9,7 @@ npm ci
 npm run lint
 npm run typecheck
 npm run test:coverage
-npm run build
+VITE_AXL_API_BASE='https://placeholder.workers.dev' VITE_AXL_API_KEY='ci-placeholder' npm run build
 bash scripts/ci/bundle.sh
 
 mkdir -p evidence
