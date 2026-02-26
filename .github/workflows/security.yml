@@ -1,0 +1,11 @@
+name: "Security Pipeline"
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  codeql:
+    uses: ./.github/workflows/codeql.yml
