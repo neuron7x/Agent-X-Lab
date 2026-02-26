@@ -1,0 +1,5 @@
+Wrapper preservation status:
+- cp -> control-plane
+- workspace -> archive/workspace_wrapper
+- source_snapshots -> archive/source_snapshots
+- release -> evidence/release_wrapper

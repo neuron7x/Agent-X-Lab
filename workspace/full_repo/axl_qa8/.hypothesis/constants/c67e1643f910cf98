@@ -1,4 +1,0 @@
-# file: /tmp/axl_qa8/tools/dao-arbiter/dao_lifebook/roles.py
-# hypothesis_version: 6.151.9
-
-['*', '-', '/', ':', '; ', 'AUDIT_COMPLETE', 'CONSTRAINT', 'EXECUTED', 'EXECUTE_FAIL', 'No run URL', 'PLAN_BUILT', 'R1_SCOUT', 'R2_PLANNER', 'R3_SPECIFIER', 'R4_EXECUTOR', 'R5_AUDITOR', 'SCOUT_HARVESTED', 'SPEC_COMPILED', 'check_name', 'dao.roles', 'edits_applied', 'errors', 'exit 0', 'gate_results', 'git stash pop', 'low', 'objective', 'packet_id', 'priority', 'risk', 'rollback', 'spec_objective']

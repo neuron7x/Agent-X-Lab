@@ -1,4 +1,0 @@
-# file: /tmp/axl_qa8/tools/dao-arbiter/dao_lifebook/_retry.py
-# hypothesis_version: 6.151.9
-
-[0.0, 0.25, 1.0, 30.0, 60.0, 100, 401, 403, 404, 408, 429, 500, 502, 503, 504, 'T', 'breaker_state', 'closed', 'dao.retry', 'half_open', 'http', 'open', 'retry', 'retry-after', 'status']

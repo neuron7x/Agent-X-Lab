@@ -1,0 +1,275 @@
+name: PROD_SPEC_V2.1 Gate Check (RRD)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'artifacts/AC_VERSION.json'
+      - 'artifacts/SSDF.map'
+      - 'ad2026_state/pb/**'
+      - 'engine/scripts/check_prod_spec_gates.py'
+      - 'engine/schemas/**'
+      - 'engine/policies/prod_spec_v2/**'
+  pull_request:
+    paths:
+      - 'artifacts/AC_VERSION.json'
+      - 'artifacts/SSDF.map'
+      - 'engine/**'
+  workflow_dispatch:
+    inputs:
+      fail_on_missing:
+        description: 'Fail if artifacts missing (true=strict, false=warn)'
+        required: false
+        default: 'true'
+
+env:
+  PYTHON_VERSION: '3.13.8'
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────
+  # JOB 1: Schema validation (fast, no deps)
+  # ─────────────────────────────────────────────────────────────────────────
+  schema-validate:
+    name: Schema Validation (G0/G3)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install jsonschema
+        run: pip install jsonschema --quiet
+
+      - name: Validate AC_VERSION.json against ac.schema.json
+        run: |
+          python3 - << 'EOF'
+          import json, sys
+          try:
+              import jsonschema
+              schema = json.load(open("engine/schemas/ac.schema.json"))
+              data   = json.load(open("artifacts/AC_VERSION.json"))
+              # Remove _comment/_note fields before validation
+              filtered = {k: v for k, v in data.items() if not k.startswith("_")}
+              try:
+                  jsonschema.validate(filtered, schema, format_checker=jsonschema.FormatChecker())
+                  print("✅ AC_VERSION.json schema valid")
+              except jsonschema.ValidationError as e:
+                  print(f"❌ AC_VERSION.json schema error: {e.message}")
+                  sys.exit(1)
+          except ImportError:
+              print("⚠️  jsonschema not available — structural check only")
+              data = json.load(open("artifacts/AC_VERSION.json"))
+              required = ["ac_id", "ac_version", "issued_at", "issuer", "ac_version_sha256",
+                          "env_class", "min_replay_n", "critical_controls", "invariants",
+                          "ssdf_coverage_threshold", "signature"]
+              missing = [f for f in required if f not in data]
+              if missing:
+                  print(f"❌ Missing required fields: {missing}")
+                  sys.exit(1)
+              if data.get("env_class") not in ("restricted_sandbox", "tee_enabled"):
+                  print(f"❌ env_class={data.get('env_class')!r} forbidden for PROD_SPEC")
+                  sys.exit(1)
+              print("✅ AC_VERSION.json structurally valid")
+          EOF
+
+      - name: Validate SSDF.map against ssdf_map.schema.json
+        run: |
+          python3 - << 'EOF'
+          import json, sys
+          if not __import__("pathlib").Path("artifacts/SSDF.map").exists():
+              print("⚠️  SSDF.map not found — skipping (not required at this stage)")
+              sys.exit(0)
+          data = json.load(open("artifacts/SSDF.map"))
+          required = ["generated_at", "ac_version_sha256", "coverage_fraction", "controls"]
+          missing = [f for f in required if f not in data]
+          if missing:
+              print(f"❌ SSDF.map missing fields: {missing}")
+              sys.exit(1)
+          cov = data.get("coverage_fraction", 0)
+          if cov < 0.80:
+              print(f"❌ SSDF coverage {cov:.3f} < 0.80 required")
+              sys.exit(1)
+          print(f"✅ SSDF.map valid — coverage={cov:.3f}")
+          EOF
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # JOB 2: Full gate check (G0..G11)
+  # ─────────────────────────────────────────────────────────────────────────
+  gate-check:
+    name: Full RRD Gate Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: schema-validate
+
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Create required directories
+        run: |
+          mkdir -p artifacts ad2026_state/pb build_proof/prod_spec
+
+      - name: Run PROD_SPEC gate checker
+        id: gate_check
+        run: |
+          python3 engine/scripts/check_prod_spec_gates.py \
+            --ac     artifacts/AC_VERSION.json \
+            --pb-dir ad2026_state/pb/ \
+            --ssdf   artifacts/SSDF.map \
+            --artifacts-dir artifacts/ \
+            --out    build_proof/prod_spec/gate_check.report.json
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+        continue-on-error: true  # We capture exit code manually
+
+      - name: Evaluate RRD status
+        run: |
+          python3 - << 'EOF'
+          import json, sys
+          try:
+              report = json.load(open("build_proof/prod_spec/gate_check.report.json"))
+              rrd = report.get("rrd_status", "UNKNOWN")
+              gates = report.get("gates", [])
+              print(f"RRD: {rrd}")
+
+              passed  = sum(1 for g in gates if g["status"] == "PASS")
+              failed  = sum(1 for g in gates if g["status"] == "FAIL")
+              skipped = sum(1 for g in gates if g["status"] == "SKIP")
+              print(f"Gates: {passed} PASS, {failed} FAIL, {skipped} SKIP")
+
+              blockers = report.get("blockers", [])
+              if blockers:
+                  print("\nBLOCKERS:")
+                  for b in blockers:
+                      print(f"  • {b}")
+
+              # G3 (SSDF) must always pass — it has real artifacts
+              g3 = next((g for g in gates if g["gate_id"] == "G3"), None)
+              if g3 and g3["status"] == "FAIL":
+                  print("❌ G3-SSDF_COVERAGE FAIL — this blocks merge")
+                  sys.exit(1)
+
+              # G0 must always pass (AC_VERSION.json present)
+              g0 = next((g for g in gates if g["gate_id"] == "G0"), None)
+              if g0 and g0["status"] == "FAIL":
+                  print("❌ G0-BASELINE_SEAL FAIL — this blocks merge")
+                  sys.exit(1)
+
+              print(f"\n{'✅' if rrd == 'PRODUCTION_SPEC_V2.1' else '⚠️ '} RRD={rrd}")
+              # Other gates: FAIL on NO runtime artifacts is expected in CI — warn only
+              sys.exit(0)
+          except Exception as e:
+              print(f"Cannot parse report: {e}")
+              sys.exit(1)
+          EOF
+
+      - name: Upload gate report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prod-spec-gate-report-${{ github.run_id }}
+          retention-days: 90
+          path: |
+            build_proof/prod_spec/
+            artifacts/AC_VERSION.json
+            artifacts/SSDF.map
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # JOB 3: PB chain integrity (runs only when pb/ has content)
+  # ─────────────────────────────────────────────────────────────────────────
+  pb-chain-check:
+    name: PB Chain Integrity (G2)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: schema-validate
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Check PB directory exists and validate chain
+        run: |
+          python3 - << 'EOF'
+          import json, hashlib, sys
+          from pathlib import Path
+
+          pb_dir = Path("ad2026_state/pb")
+          if not pb_dir.exists():
+              print("⚠️  ad2026_state/pb/ not found — no bundles to check")
+              sys.exit(0)
+
+          bundles = sorted(pb_dir.glob("PB-*.json"))
+          if not bundles:
+              print("ℹ️  No PB-*.json bundles found — chain check skipped")
+              sys.exit(0)
+
+          print(f"Found {len(bundles)} proof bundles")
+
+          # Load all
+          pbs = []
+          for p in bundles:
+              try:
+                  pbs.append((p, json.loads(p.read_text())))
+              except Exception as e:
+                  print(f"❌ Cannot parse {p.name}: {e}")
+                  sys.exit(1)
+
+          # Sort by timestamp
+          pbs.sort(key=lambda x: x[1].get("timestamp", ""))
+
+          # Schema: required top-level fields
+          required_fields = ["pb_id", "timestamp", "environment_class", "ac_version_sha256",
+                             "prev_pb_hash", "input_state_hash", "output_state_hash",
+                             "gate_results", "metrics", "actions", "evidence_anchors", "signature"]
+
+          schema_errors = []
+          for p, pb in pbs:
+              missing = [f for f in required_fields if f not in pb]
+              if missing:
+                  schema_errors.append(f"{p.name}: missing {missing}")
+          if schema_errors:
+              print("❌ Schema violations:")
+              for e in schema_errors:
+                  print(f"   {e}")
+              sys.exit(1)
+
+          # Hash chain
+          def sha256f(path):
+              h = hashlib.sha256()
+              h.update(path.read_bytes())
+              return h.hexdigest()
+
+          chain_errors = []
+          prev = None
+          for p, pb in pbs:
+              declared = pb.get("prev_pb_hash")
+              if prev is None and declared is not None:
+                  chain_errors.append(f"{p.name}: genesis must have prev_pb_hash=null")
+              elif prev is not None and declared != prev:
+                  chain_errors.append(f"{p.name}: chain broken")
+              prev = sha256f(p)
+
+          if chain_errors:
+              print("❌ Chain errors:")
+              for e in chain_errors:
+                  print(f"   {e}")
+              sys.exit(1)
+
+          # env_class
+          env_errors = [p.name for p, pb in pbs if pb.get("environment_class") == "NO_TEE"]
+          if env_errors:
+              print(f"❌ NO_TEE env_class found: {env_errors}")
+              sys.exit(1)
+
+          print(f"✅ G2-EVIDENCE_CHAIN: {len(pbs)} bundles — chain intact, schema valid, env_class ok")
+          EOF

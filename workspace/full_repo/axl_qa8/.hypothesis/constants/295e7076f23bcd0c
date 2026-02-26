@@ -1,4 +1,0 @@
-# file: /tmp/axl_qa8/tools/dao-arbiter/dao_lifebook/engine.py
-# hypothesis_version: 6.151.9
-
-['DECISION', 'OBSERVED', 'PROVE_RESULT', '_auditor', '_config', '_enforcer', '_executor', '_metrics', '_planner', '_prev_failing_names', '_scout', '_specifier', '_state', 'apply_fn', 'auto_checkpoint', 'checkpoint_store', 'dao.engine', 'errors', 'final', 'governor_fn', 'max_iterations', 'metrics', 'packet_id', 'proof_hash', 'reason', 'state_snapshot', 'stopped']

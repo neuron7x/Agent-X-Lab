@@ -1,0 +1,8 @@
+workspace/full_repo/axl_qa8 -> / (canonical active root)
+cp -> control-plane
+workspace -> archive/workspace_wrapper
+source_snapshots -> archive/source_snapshots
+release -> evidence/release_wrapper
+README.md (wrapper) -> archive/collisions/README.md__WRAPPER.md
+docs/IAS_AXL_Control_Plane_v1.md (wrapper) -> archive/collisions/docs/IAS_AXL_Control_Plane_v1.md__WRAPPER.md
+docs/ONE_SYSTEM_OVERVIEW.md (wrapper) -> archive/collisions/docs/ONE_SYSTEM_OVERVIEW.md__WRAPPER.md

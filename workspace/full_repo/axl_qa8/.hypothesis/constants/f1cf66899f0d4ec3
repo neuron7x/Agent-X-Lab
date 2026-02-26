@@ -1,4 +1,0 @@
-# file: /tmp/axl_qa8/tools/dao-arbiter/dao_lifebook/evidence.py
-# hypothesis_version: 6.151.9
-
-['*.json', '-_.', '.dao_lifebook', '.tmp', '0.0.0', 'Bundle saved: %s', 'Missing PR URL', 'Missing commit SHA', 'State snapshot: %s', '_', '_root', 'a', 'bundles', 'dao.evidence', 'evidence', 'hash', 'ledger.jsonl', 'pr', 'schema_version', 'sha', 'states', 'ts', 'utf-8']

@@ -1,0 +1,2 @@
+canonical source path `workspace/full_repo/axl_qa8/` is no longer present because extraction already occurred in previous normalization commit (174225c).
+Active code roots are at repository root; no remaining active code root under workspace/full_repo/axl_qa8.

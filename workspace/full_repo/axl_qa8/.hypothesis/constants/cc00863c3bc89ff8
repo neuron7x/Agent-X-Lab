@@ -1,4 +1,0 @@
-# file: /tmp/axl_qa8/udgs_core/system_object.py
-# hypothesis_version: 6.151.9
-
-[',', '.', ':', 'AXL_ENGINE', 'AXL_UI', 'DAO_ARBITER_SDK', 'E_LEGACY_SDK', 'SYSTEM_DOCS', 'audit', 'components', 'config', 'config_hash', 'docs', 'engine', 'hash', 'kind', 'legacy', 'name', 'path', 'r', 'sdk', 'system', 'system_anchor', 'tools/dao-arbiter', 'ui', 'utf-8', 'w']
