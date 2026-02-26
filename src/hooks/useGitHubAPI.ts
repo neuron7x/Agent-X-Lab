@@ -186,6 +186,7 @@ export function useGitHubAPI(settings: GitHubSettings, isConfigured: boolean, de
     runsQuery.error,
     prsQuery.error,
     gatesQuery.error,
+    errors,
   ]);
 
   let connectionStatus: AXLState['connectionStatus'] = 'DISCONNECTED';

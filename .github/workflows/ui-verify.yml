@@ -123,8 +123,7 @@ jobs:
         with:
           node-version: '20'
           cache: npm
-          cache-dependency-path: workers/axl-bff/package-lock.json
+          cache-dependency-path: package-lock.json
       - run: |
-          cd workers/axl-bff
-          npm ci
-          npx tsc --noEmit 2>&1 | grep -v "workers-types" || true
+          npm --prefix workers/axl-bff install --no-audit --no-fund
+          npm --prefix workers/axl-bff run typecheck
