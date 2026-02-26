@@ -141,16 +141,34 @@ jobs:
         uses: actions/dependency-review-action@v4
         with:
           fail-on-severity: high
+      - name: Setup Python for fallback audit (PR)
+        if: github.event_name == 'pull_request' && steps.security_dependency_review.outcome != 'success'
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
       - name: Dependency audit fallback (PR)
         if: github.event_name == 'pull_request' && steps.security_dependency_review.outcome != 'success'
         run: |
+          echo "Dependency Graph appears disabled or dependency-review action failed."
+          echo "Enable: Settings -> Security & analysis -> Dependency graph"
+          python -m pip install --upgrade pip
+          python -m pip install pip-audit
           npm audit --audit-level=high
           npm --prefix workers/axl-bff audit --audit-level=high
+          pip-audit -r engine/requirements-dev.txt
+      - name: Setup Python for merge queue audit
+        if: github.event_name == 'merge_group'
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
       - name: Dependency audit (merge queue)
         if: github.event_name == 'merge_group'
         run: |
+          python -m pip install --upgrade pip
+          python -m pip install pip-audit
           npm audit --audit-level=high
           npm --prefix workers/axl-bff audit --audit-level=high
+          pip-audit -r engine/requirements-dev.txt
       - name: Upload security artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -176,16 +194,34 @@ jobs:
         uses: actions/dependency-review-action@v4
         with:
           fail-on-severity: high
+      - name: Setup Python for fallback audit (PR)
+        if: github.event_name == 'pull_request' && steps.dependency_review.outcome != 'success'
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
       - name: Dependency audit fallback (PR)
         if: github.event_name == 'pull_request' && steps.dependency_review.outcome != 'success'
         run: |
+          echo "Dependency Graph appears disabled or dependency-review action failed."
+          echo "Enable: Settings -> Security & analysis -> Dependency graph"
+          python -m pip install --upgrade pip
+          python -m pip install pip-audit
           npm audit --audit-level=high
           npm --prefix workers/axl-bff audit --audit-level=high
+          pip-audit -r engine/requirements-dev.txt
+      - name: Setup Python for merge queue audit
+        if: github.event_name == 'merge_group'
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
       - name: Dependency audit (merge queue)
         if: github.event_name == 'merge_group'
         run: |
+          python -m pip install --upgrade pip
+          python -m pip install pip-audit
           npm audit --audit-level=high
           npm --prefix workers/axl-bff audit --audit-level=high
+          pip-audit -r engine/requirements-dev.txt
 
   pr-gate:
     name: PR Gate

@@ -18,9 +18,18 @@ jobs:
         uses: actions/dependency-review-action@v4
         with:
           fail-on-severity: high
+      - name: Setup Python for fallback audit
+        if: steps.dependency_review.outcome != 'success'
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
       - name: Fallback security audit when dependency graph is unavailable
         if: steps.dependency_review.outcome != 'success'
         run: |
-          echo "Dependency Review action unavailable or failed; running npm audit fallback."
+          echo "Dependency Graph appears disabled or dependency-review action failed."
+          echo "Enable: Settings -> Security & analysis -> Dependency graph"
+          python -m pip install --upgrade pip
+          python -m pip install pip-audit
           npm audit --audit-level=high
           npm --prefix workers/axl-bff audit --audit-level=high
+          pip-audit -r engine/requirements-dev.txt

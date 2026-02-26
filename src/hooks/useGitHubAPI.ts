@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { GitHubSettings, AXLState, Gate, EvidenceEntry, ContractJson } from '@/lib/types';

@@ -30,3 +30,7 @@ Use this exact check in Branch Protection:
 ## Important
 
 After merging this workflow to default branch, run one PR through CI once so GitHub records `PR Gate / PR Gate` in the selectable required checks list.
+
+## Security & analysis prerequisite
+
+Enable **Dependency Graph** in repository settings: **Settings → Security & analysis → Dependency graph**.

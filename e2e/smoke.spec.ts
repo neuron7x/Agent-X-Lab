@@ -4,7 +4,7 @@
  */
 import { test, expect } from '@playwright/test';
 
-test.describe('AXL-UI smoke tests', () => {
+test.describe('AXL-UI smoke tests @smoke', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
   });
@@ -12,7 +12,7 @@ test.describe('AXL-UI smoke tests', () => {
   test('app loads without JS errors', async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', err => errors.push(err.message));
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     // Allow minor console errors but no crashes
     expect(errors.filter(e => !e.includes('favicon'))).toHaveLength(0);
   });

@@ -1,6 +1,4 @@
 {
-  "_comment": "Example AC_VERSION.json \u2014 replace all placeholder values before production use",
-  "_note_sha256": "Replace with: sha256sum AC.package | awk '{print $1}'",
   "ac_id": "AC-AD2026AXLV21",
   "ac_version": "2.1.0",
   "ac_version_sha256": "5b06f3f574cd1c01c7712eb4e732ab6c223d57ebf18838a431dc7c91432e4a8e",
@@ -39,7 +37,6 @@
   "issuer": "did:key:zQ3shokFTS3brGcDRqg763x1ro3jjwbrHaB5gRKMpFyep83GV",
   "min_replay_n": 500,
   "signature": {
-    "_note": "Ed25519 JWS over sha256(AC.package) hex string payload. For production, keep private key in HSM/TEE and rotate kid via registry.",
     "alg": "EdDSA",
     "jws": "eyJhbGciOiJFZERTQSIsImtpZCI6ImFjLXJvb3Qta2V5LTIwMjYtZWQyNTUxOSIsInR5cCI6IkpXUyJ9.NWIwNmYzZjU3NGNkMWMwMWM3NzEyZWI0ZTczMmFiNmMyMjNkNTdlYmYxODgzOGE0MzFkYzdjOTE0MzJlNGE4ZQ.mDnFU6QmZ185Sanh95ukx2cLcOIQqLIrxPwF2mL-VmQwIruTkgHFeVcgfsFL30lRUt9DhCFmfjDyILzQJSLxBg",
     "kid": "ac-root-key-2026-ed25519",
