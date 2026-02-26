@@ -68,6 +68,23 @@ describe("apiFetch", () => {
     });
   });
 
+
+  it("maps invalid JSON to HttpError code SCHEMA_INVALID", async () => {
+    mockUuid("req-4b");
+    global.fetch = vi.fn(
+      async () =>
+        new Response("not-json", {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        }),
+    ) as typeof fetch;
+
+    await expect(apiFetch({ url: "/x" })).rejects.toMatchObject({
+      kind: "HttpError",
+      code: "SCHEMA_INVALID",
+    });
+  });
+
   it("ensures X-Request-Id always present", async () => {
     mockUuid("req-5");
     const fetchMock = vi.fn(
