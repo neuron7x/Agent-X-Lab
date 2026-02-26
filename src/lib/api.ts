@@ -7,6 +7,7 @@
  */
 
 import type { VRData, EvidenceEntry, PullRequest, Gate, ArsenalPrompt, ContractJson, GateStatus } from './types';
+import { apiFetchResponse } from '@/lib/apiFetch';
 
 // ── Config ─────────────────────────────────────────────────────────────────
 
@@ -51,33 +52,15 @@ export class AXLApiError extends Error {
 
 // ── Core fetch with retry ──────────────────────────────────────────────────
 
-const RETRY_STATUS = new Set([429, 500, 502, 503, 504]);
-const RETRY_DELAYS_MS = [1000, 2000, 4000];
-
-async function apiFetch(path: string, init?: RequestInit, attempt = 0): Promise<Response> {
-  const url = `${getApiBase()}${path}`;
-  let res: Response;
-  try {
-    res = await fetch(url, { ...init, credentials: 'omit' });
-  } catch (networkErr) {
-    if (attempt < RETRY_DELAYS_MS.length) {
-      await delay(RETRY_DELAYS_MS[attempt]);
-      return apiFetch(path, init, attempt + 1);
-    }
-    throw new AXLApiError({ code: 'NETWORK_ERROR', status: 0, message: String(networkErr) });
-  }
-
-  if (RETRY_STATUS.has(res.status) && attempt < RETRY_DELAYS_MS.length) {
-    const retryAfter = parseInt(res.headers.get('Retry-After') ?? '0', 10);
-    await delay(retryAfter > 0 ? retryAfter * 1000 : RETRY_DELAYS_MS[attempt]);
-    return apiFetch(path, init, attempt + 1);
-  }
-
-  return res;
-}
-
-function delay(ms: number): Promise<void> {
-  return new Promise((r) => setTimeout(r, ms));
+async function apiFetch(path: string, init?: RequestInit): Promise<Response> {
+  const { response } = await apiFetchResponse({
+    url: `${getApiBase()}${path}`,
+    method: (init?.method?.toUpperCase() as "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "HEAD" | "OPTIONS" | undefined) ?? 'GET',
+    headers: init?.headers,
+    body: init?.body,
+    signal: init?.signal ?? undefined,
+  });
+  return response;
 }
 
 async function parseOrThrow<T>(res: Response, context: string): Promise<T> {
@@ -478,13 +461,14 @@ export function forgeStream(
   (async () => {
     let res: Response;
     try {
-      res = await fetch(`${base}${endpoint}`, {
+      const out = await apiFetchResponse({
+        url: `${base}${endpoint}`,
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-AXL-Api-Key': getApiKey() },
         body: JSON.stringify({ messages, mode, model }),
         signal: abortCtrl.signal,
-        credentials: 'omit',
       });
+      res = out.response;
     } catch (e) {
       if ((e as Error).name === 'AbortError') return;
       callbacks.onError(`FETCH_FAILED: ${String(e)}`);
@@ -567,13 +551,14 @@ export function forgeStreamGPT(
   (async () => {
     let res: Response;
     try {
-      res = await fetch(`${base}/ai/forge/gpt`, {
+      const out = await apiFetchResponse({
+        url: `${base}/ai/forge/gpt`,
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-AXL-Api-Key': getApiKey() },
         body: JSON.stringify({ messages, mode }),
         signal: abortCtrl.signal,
-        credentials: 'omit',
       });
+      res = out.response;
     } catch (e) {
       if ((e as Error).name === 'AbortError') return;
       callbacks.onError(`FETCH_FAILED: ${String(e)}`);

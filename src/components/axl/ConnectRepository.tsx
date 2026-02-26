@@ -10,6 +10,7 @@ import { useState } from 'react';
 import type { GitHubSettings } from '@/lib/types';
 import { useLanguage } from '@/hooks/useLanguage';
 import type { BffStatus } from '@/hooks/useGitHubSettings';
+import { apiFetchResponse } from '@/lib/apiFetch';
 
 interface ConnectRepositoryProps {
   onConnect: (settings: Partial<Omit<GitHubSettings, 'token'>>, probe: () => Promise<boolean>) => void;
@@ -148,8 +149,11 @@ export function ConnectRepository({ onConnect, onPreviewDemo, bffStatus }: Conne
               // Use a temporary fetch to healthz to avoid coupling
               try {
                 const base = (import.meta.env?.VITE_AXL_API_BASE as string | undefined) ?? 'http://localhost:8787';
-                const res = await fetch(`${base.replace(/\/$/, '')}/healthz`, { credentials: 'omit' });
-                return res.ok;
+                const { response } = await apiFetchResponse({
+                  url: `${base.replace(/\/$/, '')}/healthz`,
+                  method: 'GET',
+                });
+                return response.ok;
               } catch { return false; }
             });
           }}

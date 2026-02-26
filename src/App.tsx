@@ -9,6 +9,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/hooks/useLanguage";
 import { AppShell } from "@/components/shell/AppShell";
+import { ToastHost } from "@/components/ToastHost";
+import { isAxlError } from "@/lib/error";
 import {
   StatusRoute,
   PipelineRoute,
@@ -24,10 +26,7 @@ const queryClient = new QueryClient({
     queries: {
       retry: (failureCount, error) => {
         // Don't retry auth/rate limit errors
-        if (error instanceof Error) {
-          const msg = error.message;
-          if (msg.includes('UNAUTHORIZED') || msg.includes('RATE_LIMITED')) return false;
-        }
+        if (isAxlError(error) && (error.kind === 'AuthError' || error.kind === 'RateLimitError')) return false;
         return failureCount < 2;
       },
       refetchOnWindowFocus: true,
@@ -41,6 +40,7 @@ const App = () => (
       <LanguageProvider>
         <Toaster />
         <Sonner />
+        <ToastHost />
         <BrowserRouter>
           <Routes>
             <Route element={<AppShell />}>

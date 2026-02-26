@@ -14,17 +14,13 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "json", "html"],
       reportsDirectory: "dist/coverage",
-      exclude: [
-        "src/components/ui/**",   // shadcn generated
-        "src/test/**",
-        "src/**/*.d.ts",
-        "src/vite-env.d.ts",
-        "src/main.tsx",
-      ],
+      include: ["src/lib/**"],
+      exclude: ["src/test/**", "src/**/*.d.ts", "src/vite-env.d.ts"],
       thresholds: {
-        lines: 50,
-        functions: 50,
-        branches: 40,
+        lines: 90,
+        functions: 90,
+        branches: 90,
+        statements: 90,
       },
     },
     reporters: ["verbose", ["json", { outputFile: "dist/EVD-UI-TESTS.json" }]],

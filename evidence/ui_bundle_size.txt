@@ -1,0 +1,4 @@
+Bundle size measurement could not be executed in this environment because frontend build tooling binaries are unavailable (node_modules/.bin/vite missing after install attempt).
+Before: N/A
+After: N/A
+Delta: N/A
