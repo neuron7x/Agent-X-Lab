@@ -1,0 +1,175 @@
+name: PR Gate
+
+on:
+  pull_request:
+  merge_group:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-gate-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  ui:
+    name: UI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Run UI CI
+        run: bash scripts/ci/ui.sh
+      - name: Upload UI artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-artifacts
+          path: |
+            dist
+            coverage
+            evidence/EVD-UI-TESTS.json
+            evidence/ui_bundle_size.txt
+          if-no-files-found: error
+
+  worker:
+    name: Worker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Run Worker CI
+        run: bash scripts/ci/worker.sh
+      - name: Upload Worker artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: worker-artifacts
+          path: |
+            workers/axl-bff/tsconfig.json
+            workers/axl-bff/package.json
+          if-no-files-found: error
+
+  python:
+    name: Python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+      - name: Run Python CI
+        run: bash scripts/ci/python.sh
+      - name: Upload Python artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-artifacts
+          path: |
+            .pytest_cache
+          if-no-files-found: ignore
+
+  gates:
+    name: Gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+      - name: Run production gates
+        run: bash scripts/ci/gates.sh
+      - name: Upload gates artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gates-artifacts
+          path: |
+            build_proof/prod_spec/gate_check.report.json
+          if-no-files-found: error
+
+  e2e:
+    name: E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Run E2E smoke
+        run: bash scripts/ci/e2e.sh
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: ignore
+      - name: Upload E2E artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-artifacts
+          path: |
+            e2e
+          if-no-files-found: error
+
+  security:
+    name: Security
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependency review (PR)
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+      - name: Dependency audit (merge queue)
+        if: github.event_name == 'merge_group'
+        run: |
+          npm audit --audit-level=high
+          npm --prefix workers/axl-bff audit --audit-level=high
+      - name: Upload security artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-artifacts
+          path: |
+            package.json
+            workers/axl-bff/package.json
+          if-no-files-found: error
+
+  pr-gate:
+    name: PR Gate
+    if: always()
+    runs-on: ubuntu-latest
+    needs:
+      - ui
+      - worker
+      - python
+      - gates
+      - e2e
+      - security
+    steps:
+      - name: Enforce all required jobs passed
+        run: |
+          echo "ui=${{ needs.ui.result }}"
+          echo "worker=${{ needs.worker.result }}"
+          echo "python=${{ needs.python.result }}"
+          echo "gates=${{ needs.gates.result }}"
+          echo "e2e=${{ needs.e2e.result }}"
+          echo "security=${{ needs.security.result }}"
+          test "${{ needs.ui.result }}" = "success"
+          test "${{ needs.worker.result }}" = "success"
+          test "${{ needs.python.result }}" = "success"
+          test "${{ needs.gates.result }}" = "success"
+          test "${{ needs.e2e.result }}" = "success"
+          test "${{ needs.security.result }}" = "success"
