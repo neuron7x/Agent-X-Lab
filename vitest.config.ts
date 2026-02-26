@@ -11,7 +11,8 @@ export default defineConfig({
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
     exclude: ["node_modules", "dist", "e2e"],
     coverage: {
-      provider: "v8",
+      provider: "custom",
+      customProviderModule: "./tools/vitest-custom-coverage.ts",
       reporter: ["text", "json", "html"],
       reportsDirectory: "dist/coverage",
       exclude: [
