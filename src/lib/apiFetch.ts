@@ -1,5 +1,7 @@
 import { z, type ZodType } from "zod";
 import type { AxlError } from "@/lib/error";
+import { emitAuthFailure } from "@/lib/authEvents";
+import { getApiBase } from "@/lib/apiBase";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "HEAD" | "OPTIONS";
 
@@ -82,6 +84,8 @@ const toAxlError = (
 
 const resolveMethod = (method?: string): HttpMethod => (method?.toUpperCase() as HttpMethod) ?? "GET";
 
+const resolveUrl = (url: string): string => (url.startsWith("/") ? `${getApiBase()}${url}` : url);
+
 const createTimeoutController = (
   timeoutMs: number,
   signal?: AbortSignal,
@@ -158,7 +162,7 @@ export async function apiFetch<T extends ZodType>(
     let response: Response;
     for (let attempt = 0; ; attempt += 1) {
       try {
-        response = await fetch(opts.url, {
+        response = await fetch(resolveUrl(opts.url), {
           method,
           headers,
           body: opts.body,
@@ -170,7 +174,7 @@ export async function apiFetch<T extends ZodType>(
           kind: "NetworkError",
           message: "Network request failed",
           requestId,
-          url: opts.url,
+          url: resolveUrl(opts.url),
           method,
           cause: error instanceof Error ? error.message : String(error),
         };
@@ -190,7 +194,11 @@ export async function apiFetch<T extends ZodType>(
 
     if (!response.ok) {
       const bodyText = truncBodyText(await response.text());
-      throw toAxlError(response, requestId, opts.url, method, bodyText);
+      const mapped = toAxlError(response, requestId, resolveUrl(opts.url), method, bodyText);
+      if (mapped.kind === "AuthError") {
+        emitAuthFailure({ reason: mapped.message, status: mapped.status, requestId: mapped.requestId });
+      }
+      throw mapped;
     }
 
     if (!isJson) {
@@ -198,7 +206,7 @@ export async function apiFetch<T extends ZodType>(
       return { data: text, requestId };
     }
 
-    const parsed = await parseJsonStrict(response, requestId, opts.url, method);
+    const parsed = await parseJsonStrict(response, requestId, resolveUrl(opts.url), method);
 
     if (opts.schema) {
       const validated = opts.schema.safeParse(parsed);
@@ -207,7 +215,7 @@ export async function apiFetch<T extends ZodType>(
           kind: "HttpError",
           message: "Schema validation failed",
           requestId,
-          url: opts.url,
+          url: resolveUrl(opts.url),
           method,
           status: response.status,
           code: "SCHEMA_INVALID",
@@ -235,7 +243,7 @@ export async function apiFetchResponse(opts: ApiFetchBaseOptions): Promise<{ res
     let response: Response;
     for (let attempt = 0; ; attempt += 1) {
       try {
-        response = await fetch(opts.url, {
+        response = await fetch(resolveUrl(opts.url), {
           method,
           headers,
           body: opts.body,
@@ -247,7 +255,7 @@ export async function apiFetchResponse(opts: ApiFetchBaseOptions): Promise<{ res
           kind: "NetworkError",
           message: "Network request failed",
           requestId,
-          url: opts.url,
+          url: resolveUrl(opts.url),
           method,
           cause: error instanceof Error ? error.message : String(error),
         };

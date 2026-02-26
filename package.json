@@ -19,7 +19,8 @@
     "lint:strict": "eslint src --max-warnings 0",
     "build:perf": "npm run build && npx lhci collect --config=.lighthouserc.json || true",
     "test:coverage": "vitest run --coverage",
-    "bundle:report": "ANALYZE=true npm run build"
+    "bundle:report": "ANALYZE=true npm run build",
+    "bundle:measure": "node scripts/measureBundle.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

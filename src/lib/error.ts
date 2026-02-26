@@ -35,13 +35,17 @@ export type AxlError =
       retryAfterSec?: number;
     };
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null;
+type LegacyErrorLike = {
+  code?: string;
+  message?: string;
+  retryAfter?: number;
+  status?: number;
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
 
 export const isAxlError = (value: unknown): value is AxlError => {
-  if (!isRecord(value) || typeof value.kind !== "string") {
-    return false;
-  }
+  if (!isRecord(value) || typeof value.kind !== "string") return false;
   if (
     typeof value.message !== "string" ||
     typeof value.requestId !== "string" ||
@@ -50,11 +54,7 @@ export const isAxlError = (value: unknown): value is AxlError => {
   ) {
     return false;
   }
-
-  if (value.kind === "NetworkError") {
-    return value.cause === undefined || typeof value.cause === "string";
-  }
-
+  if (value.kind === "NetworkError") return value.cause === undefined || typeof value.cause === "string";
   if (value.kind === "HttpError") {
     return (
       typeof value.status === "number" &&
@@ -62,15 +62,10 @@ export const isAxlError = (value: unknown): value is AxlError => {
       (value.bodyText === undefined || typeof value.bodyText === "string")
     );
   }
-
-  if (value.kind === "AuthError") {
-    return value.status === 401 || value.status === 403;
-  }
-
+  if (value.kind === "AuthError") return value.status === 401 || value.status === 403;
   if (value.kind === "RateLimitError") {
     return value.status === 429 && (value.retryAfterSec === undefined || typeof value.retryAfterSec === "number");
   }
-
   return false;
 };
 
@@ -80,16 +75,30 @@ export const isAuthError = (value: unknown): value is Extract<AxlError, { kind: 
 export const isRateLimitError = (value: unknown): value is Extract<AxlError, { kind: "RateLimitError" }> =>
   isAxlError(value) && value.kind === "RateLimitError";
 
+export const isAuthLikeError = (value: unknown): boolean => {
+  if (isAuthError(value)) return true;
+  if (!isRecord(value)) return false;
+  const legacy = value as LegacyErrorLike;
+  return legacy.code === "UNAUTHORIZED" || legacy.status === 401 || legacy.status === 403;
+};
+
+export const isRateLimitLikeError = (value: unknown): boolean => {
+  if (isRateLimitError(value)) return true;
+  if (!isRecord(value)) return false;
+  const legacy = value as LegacyErrorLike;
+  return legacy.code === "RATE_LIMITED" || legacy.status === 429;
+};
+
 export const formatDiagnostic = (error: AxlError) => ({
+  bodyText: "bodyText" in error ? error.bodyText : undefined,
+  cause: "cause" in error ? error.cause : undefined,
+  code: "code" in error ? error.code : undefined,
   kind: error.kind,
   message: error.message,
-  requestId: error.requestId,
-  status: "status" in error ? error.status : undefined,
-  code: "code" in error ? error.code : undefined,
-  url: error.url,
   method: error.method,
-  timestamp: new Date().toISOString(),
-  bodyText: "bodyText" in error ? error.bodyText : undefined,
+  requestId: error.requestId,
   retryAfterSec: "retryAfterSec" in error ? error.retryAfterSec : undefined,
-  cause: "cause" in error ? error.cause : undefined,
+  status: "status" in error ? error.status : undefined,
+  timestamp: new Date().toISOString(),
+  url: error.url,
 });

@@ -1,8 +1,10 @@
 import React from "react";
 import { getLastRequestId } from "@/lib/apiFetch";
+import { formatDiagnostic, isAxlError } from "@/lib/error";
 
 type ErrorBoundaryState = {
   hasError: boolean;
+  capturedError?: unknown;
   errorMessage?: string;
   stack?: string;
   timestamp?: string;
@@ -13,6 +15,7 @@ export class ErrorBoundary extends React.Component<React.PropsWithChildren, Erro
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return {
+      capturedError: error,
       hasError: true,
       errorMessage: error.message,
       stack: error.stack,
@@ -21,19 +24,26 @@ export class ErrorBoundary extends React.Component<React.PropsWithChildren, Erro
   }
 
   componentDidCatch(error: Error): void {
-    this.setState({ stack: error.stack });
+    this.setState({ capturedError: error, stack: error.stack });
   }
 
+  private resetBoundary = (): void => {
+    this.setState({ hasError: false, capturedError: undefined, errorMessage: undefined, stack: undefined, timestamp: undefined });
+  };
+
   private copyDiagnostics = async (): Promise<void> => {
+    const captured = this.state.capturedError;
     const payload = {
-      timestamp: this.state.timestamp ?? new Date().toISOString(),
-      location: window.location.href,
-      userAgent: navigator.userAgent,
+      error: isAxlError(captured)
+        ? formatDiagnostic(captured)
+        : {
+            message: this.state.errorMessage,
+            stack: this.state.stack,
+          },
       lastRequestId: getLastRequestId(),
-      error: {
-        message: this.state.errorMessage,
-        stack: this.state.stack,
-      },
+      location: window.location.href,
+      timestamp: this.state.timestamp ?? new Date().toISOString(),
+      userAgent: navigator.userAgent,
     };
     await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
   };
@@ -48,7 +58,7 @@ export class ErrorBoundary extends React.Component<React.PropsWithChildren, Erro
         <h1 className="text-2xl font-semibold">Something went wrong</h1>
         <p className="max-w-lg text-sm text-muted-foreground">An unexpected UI error occurred.</p>
         <div className="flex flex-wrap justify-center gap-2">
-          <button className="rounded border px-3 py-2" onClick={() => window.location.reload()}>
+          <button className="rounded border px-3 py-2" onClick={this.resetBoundary}>
             Retry
           </button>
           <button className="rounded border px-3 py-2" onClick={() => window.location.reload()}>

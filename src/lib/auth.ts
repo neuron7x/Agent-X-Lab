@@ -2,6 +2,7 @@ import { useEffect, useSyncExternalStore } from "react";
 import { apiFetch } from "@/lib/apiFetch";
 import { whoamiSchema } from "@/lib/apiSchemas";
 import { isAxlError } from "@/lib/error";
+import { onAuthFailure } from "@/lib/authEvents";
 
 export type AuthState = {
   status: "PENDING" | "AUTHORIZED" | "UNAUTHORIZED";
@@ -11,6 +12,7 @@ export type AuthState = {
 
 let authState: AuthState = { status: "PENDING" };
 let initialized = false;
+let authFailureSubscriptionInitialized = false;
 const subscribers = new Set<() => void>();
 
 const emit = (): void => subscribers.forEach((fn) => fn());
@@ -18,6 +20,16 @@ const emit = (): void => subscribers.forEach((fn) => fn());
 const setAuthState = (next: AuthState): void => {
   authState = next;
   emit();
+};
+
+const setupAuthFailureSubscription = (): void => {
+  if (authFailureSubscriptionInitialized) {
+    return;
+  }
+  authFailureSubscriptionInitialized = true;
+  onAuthFailure((event) => {
+    setAuthState({ status: "UNAUTHORIZED", reason: event.reason });
+  });
 };
 
 const fetchWhoAmI = async (): Promise<void> => {
@@ -39,6 +51,7 @@ const fetchWhoAmI = async (): Promise<void> => {
 };
 
 export const initializeAuth = async (): Promise<void> => {
+  setupAuthFailureSubscription();
   if (initialized) return;
   initialized = true;
   await fetchWhoAmI();
@@ -62,5 +75,6 @@ export function useAuth(): AuthState {
 export const __resetAuthForTests = (): void => {
   authState = { status: "PENDING" };
   initialized = false;
+  authFailureSubscriptionInitialized = false;
   subscribers.clear();
 };
