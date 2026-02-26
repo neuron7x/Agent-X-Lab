@@ -127,4 +127,4 @@ jobs:
       - run: |
           cd workers/axl-bff
           npm ci
-          npx tsc --noEmit 2>&1 | grep -v "workers-types" || true
+          npm run typecheck

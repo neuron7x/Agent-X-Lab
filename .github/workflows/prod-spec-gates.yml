@@ -51,9 +51,20 @@ jobs:
           try:
               import jsonschema
               schema = json.load(open("engine/schemas/ac.schema.json"))
-              data   = json.load(open("artifacts/AC_VERSION.json"))
-              # Remove _comment/_note fields before validation
-              filtered = {k: v for k, v in data.items() if not k.startswith("_")}
+              data = json.load(open("artifacts/AC_VERSION.json"))
+
+              def strip_private(value):
+                  if isinstance(value, dict):
+                      return {
+                          k: strip_private(v)
+                          for k, v in sorted(value.items())
+                          if not k.startswith("_")
+                      }
+                  if isinstance(value, list):
+                      return [strip_private(v) for v in value]
+                  return value
+
+              filtered = strip_private(data)
               try:
                   jsonschema.validate(filtered, schema, format_checker=jsonschema.FormatChecker())
                   print("✅ AC_VERSION.json schema valid")
