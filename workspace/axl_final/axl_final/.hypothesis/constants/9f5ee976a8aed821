@@ -1,4 +1,0 @@
-# file: /tmp/axl_qa8/udgs_core/strict_json.py
-# hypothesis_version: 6.151.9
-
-['$', '$.FAIL_PACKET', '$.FAIL_PACKET.repro', '$.MUTATION_PLAN', '$.SHA256_ANCHOR', 'FAIL_PACKET', 'MUTATION_PLAN', 'Missing required key', 'Must be a string', 'Must be an object', 'Must not be empty', 'SHA256_ANCHOR', '^[a-f0-9]{64}$', 'constraints', 'diff_scope', 'expected', 'r', 'repro', 'signals', 'suite', 'summary', 'utf-8']

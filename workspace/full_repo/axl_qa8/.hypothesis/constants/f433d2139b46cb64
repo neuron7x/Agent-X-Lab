@@ -1,4 +1,0 @@
-# file: /tmp/axl_qa8/tools/dao-arbiter/dao_lifebook/models.py
-# hypothesis_version: 6.151.9
-
-[300.0, 500, 2000, '*', ',', '0123456789abcdef', '2026.2.0', ':', 'HALT', 'after', 'allowed', 'audit', 'auto-detect from PR', 'before', 'decide', 'done_when', 'error_extract', 'execute', 'exit 0', 'failure', 'halt', 'halted', 'hold', 'json', 'limited', 'merge', 'merged', 'needs_change', 'next_loop', 'no-refactor', 'observe', 'ok', 'packetize', 'pending', 'plan', 'prove', 'risk', 'schema_version', 'sha256', 'skipped', 'specify', 'success', 't_green', 't_start', 'unknown', 'utf-8']

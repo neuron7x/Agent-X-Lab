@@ -1,4 +1,0 @@
-# file: /tmp/axl_qa8/tools/dao-arbiter/dao_lifebook/__init__.py
-# hypothesis_version: 6.151.9
-
-['2026.2.0', 'ArtifactRef', 'AuditVerdict', 'Auditor', 'CIOracle', 'CanonicalLoop', 'CheckResult', 'CheckStatus', 'CheckpointStore', 'ConstraintEnforcer', 'Constraints', 'DAOError', 'DiffBudget', 'DiffSummary', 'EC', 'EditInstruction', 'EngineConfig', 'Err', 'ErrorSeverity', 'EvidencePointer', 'Executor', 'FailPacket', 'GovernorAction', 'GovernorDecision', 'HistoryEvent', 'Ledger', 'LocalGate', 'LocalGateResult', 'LoopMetrics', 'LoopState', 'Ok', 'PRRef', 'Phase', 'Planner', 'ProofAssembler', 'ProofBundle', 'RefactorPolicy', 'Result', 'SCHEMA_VERSION', 'Scout', 'SecurityPolicy', 'Spec', 'Specifier', 'TargetState', 'TimeSpan', 'Violation', '__version__']

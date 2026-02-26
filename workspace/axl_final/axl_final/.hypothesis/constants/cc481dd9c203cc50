@@ -1,4 +1,0 @@
-# file: /tmp/axl_qa8/tools/dao-arbiter/dao_lifebook/metrics.py
-# hypothesis_version: 6.151.9
-
-[0.0, 0.001, 1.0, 3600.0, 500, 'closures', 'files_changed', 'kpd', 'loc_delta', 'metrics', 'n_iter', 'proof_hash', 'r_rework', 'rework_iterations', 't_green_s', 'total_iterations', 'ts']

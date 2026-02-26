@@ -1,4 +1,0 @@
-# file: /tmp/axl_qa8/tools/dao-arbiter/dao_lifebook/_types.py
-# hypothesis_version: 6.151.9
-
-['API_AUTH_FAILED', 'API_NOT_FOUND', 'API_RATE_LIMITED', 'API_SERVER_ERROR', 'API_TIMEOUT', 'APPLY_FN_FAILED', 'BUNDLE_INCOMPLETE', 'CHECKPOINT_IO_ERROR', 'CONSTRAINT_REFACTOR', 'CONSTRAINT_SECURITY', 'E', 'GATE_FAILED', 'GATE_TIMEOUT', 'GOVERNOR_HALT', 'INTEGRITY_MISMATCH', 'PR_PARSE_FAILED', 'STALE_DATA', 'T', 'degraded', 'halt', 'info', 'retry']

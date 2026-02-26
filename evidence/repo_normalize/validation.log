@@ -1,0 +1,400 @@
++ timeout 120 npm ci
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+(node:5243) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 socket listeners added to [ClientRequest]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+EXIT_CODE=124
++ npm run typecheck
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> axl-ui@1.3.0-qa8 typecheck
+> tsc --noEmit
+
+EXIT_CODE=0
++ npm run lint
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> axl-ui@1.3.0-qa8 lint
+> eslint .
+
+(node:5451) ESLintIgnoreWarning: The ".eslintignore" file is no longer supported. Switch to using the "ignores" property in "eslint.config.js": https://eslint.org/docs/latest/use/configure/migration-guide#ignoring-files
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+Oops! Something went wrong! :(
+
+ESLint: 9.39.2
+
+Error: Cannot find package '/workspace/Agent-X-Lab/node_modules/@eslint/js/index.js' imported from /workspace/Agent-X-Lab/eslint.config.js
+    at legacyMainResolve (node:internal/modules/esm/resolve:204:26)
+    at packageResolve (node:internal/modules/esm/resolve:777:12)
+    at moduleResolve (node:internal/modules/esm/resolve:853:18)
+    at defaultResolve (node:internal/modules/esm/resolve:983:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+EXIT_CODE=2
++ npm test
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> axl-ui@1.3.0-qa8 test
+> vitest run
+
+sh: 1: vitest: not found
+EXIT_CODE=127
++ timeout 120 npm --prefix workers/axl-bff ci
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+npm error code EUSAGE
+npm error
+npm error The `npm ci` command can only install with an existing package-lock.json or
+npm error npm-shrinkwrap.json with lockfileVersion >= 1. Run an install with npm@5 or
+npm error later to generate a package-lock.json file, then try again.
+npm error
+npm error Clean install a project
+npm error
+npm error Usage:
+npm error npm ci
+npm error
+npm error Options:
+npm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]
+npm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]
+npm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]
+npm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]
+npm error [--no-bin-links] [--no-fund] [--dry-run]
+npm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]
+npm error [--workspaces] [--include-workspace-root] [--install-links]
+npm error
+npm error aliases: clean-install, ic, install-clean, isntall-clean
+npm error
+npm error Run "npm help ci" for more info
+npm error A complete log of this run can be found in: /root/.npm/_logs/2026-02-26T12_54_45_794Z-debug-0.log
+EXIT_CODE=1
++ npm --prefix workers/axl-bff run typecheck
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> axl-bff@1.0.0 typecheck
+> tsc --noEmit
+
+error TS2688: Cannot find type definition file for '@cloudflare/workers-types'.
+  The file is in the program because:
+    Entry point of type library '@cloudflare/workers-types' specified in compilerOptions
+EXIT_CODE=2
++ pip install -U pip
+Requirement already satisfied: pip in ./.venv/lib/python3.13/site-packages (25.2)
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/pip/
+WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/pip/
+WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/pip/
+WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/pip/
+WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/pip/
+EXIT_CODE=0
++ pip install -e engine
++ npm --prefix workers/axl-bff run typecheck
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> axl-bff@1.0.0 typecheck
+> tsc --noEmit
+
+Obtaining file:///workspace/Agent-X-Lab/engine
+  Installing build dependencies: started
+error TS2688: Cannot find type definition file for '@cloudflare/workers-types'.
+  The file is in the program because:
+    Entry point of type library '@cloudflare/workers-types' specified in compilerOptions
+EXIT_CODE=2
++ pip install -U pip
+Requirement already satisfied: pip in ./.venv/lib/python3.13/site-packages (25.2)
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/pip/
+WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/pip/
+WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/pip/
+WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/pip/
+  Installing build dependencies: finished with status 'error'
+  error: subprocess-exited-with-error
+  
+  × pip subprocess to install build dependencies did not run successfully.
+  │ exit code: 1
+  ╰─> [7 lines of output]
+      WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/setuptools/
+      WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/setuptools/
+      WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/setuptools/
+      WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/setuptools/
+      WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/setuptools/
+      ERROR: Could not find a version that satisfies the requirement setuptools==75.6.0 (from versions: none)
+      ERROR: No matching distribution found for setuptools==75.6.0
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: subprocess-exited-with-error
+
+× pip subprocess to install build dependencies did not run successfully.
+│ exit code: 1
+╰─> See above for output.
+
+note: This error originates from a subprocess, and is likely not a problem with pip.
+EXIT_CODE=1
++ pytest engine udgs_core
+
+==================================== ERRORS ====================================
+____________________ ERROR collecting tests/test_config.py _____________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_config.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_config.py:8: in <module>
+    from exoneural_governor.config import load_config
+engine/exoneural_governor/config.py:6: in <module>
+    import jsonschema
+E   ModuleNotFoundError: No module named 'jsonschema'
+______________ ERROR collecting tests/test_protocol_step_paths.py ______________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_protocol_step_paths.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_protocol_step_paths.py:5: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+________________ ERROR collecting tests/test_readme_contract.py ________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_readme_contract.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_readme_contract.py:9: in <module>
+    from tools.verify_readme_contract import E_README_QUICKSTART_MAKE_ONLY
+engine/tools/verify_readme_contract.py:8: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+___________________ ERROR collecting tests/test_redaction.py ___________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_redaction.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_redaction.py:8: in <module>
+    from exoneural_governor.redaction import redact_tree
+engine/exoneural_governor/redaction.py:6: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_____________________ ERROR collecting tests/test_stack.py _____________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_stack.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_stack.py:11: in <module>
+    from exoneural_governor.config import Config, load_config
+engine/exoneural_governor/config.py:6: in <module>
+    import jsonschema
+E   ModuleNotFoundError: No module named 'jsonschema'
+_______________ ERROR collecting tests/test_titan9_inventory.py ________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_titan9_inventory.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_titan9_inventory.py:5: in <module>
+    from tools.titan9_inventory import _parse_workflow_commands
+engine/tools/titan9_inventory.py:9: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+__________ ERROR collecting tests/test_verify_protocol_consistency.py __________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_verify_protocol_consistency.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_verify_protocol_consistency.py:5: in <module>
+    from tools.verify_protocol_consistency import verify
+engine/tools/verify_protocol_consistency.py:7: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_______________ ERROR collecting tests/test_vr_provenance_id.py ________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_vr_provenance_id.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_vr_provenance_id.py:13: in <module>
+    from exoneural_governor.config import Config
+engine/exoneural_governor/config.py:6: in <module>
+    import jsonschema
+E   ModuleNotFoundError: No module named 'jsonschema'
+________________ ERROR collecting tests/test_workflow_guards.py ________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_workflow_guards.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_workflow_guards.py:6: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+=========================== short test summary info ============================
+ERROR engine/tests/test_config.py
+ERROR engine/tests/test_protocol_step_paths.py
+ERROR engine/tests/test_readme_contract.py
+ERROR engine/tests/test_redaction.py
+ERROR engine/tests/test_stack.py
+ERROR engine/tests/test_titan9_inventory.py
+ERROR engine/tests/test_verify_protocol_consistency.py
+ERROR engine/tests/test_vr_provenance_id.py
+ERROR engine/tests/test_workflow_guards.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 9 errors during collection !!!!!!!!!!!!!!!!!!!!
+9 errors in 0.68s
+EXIT_CODE=2
+WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/pip/
+EXIT_CODE=0
++ pip install -e engine
+Obtaining file:///workspace/Agent-X-Lab/engine
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'error'
+  error: subprocess-exited-with-error
+  
+  × pip subprocess to install build dependencies did not run successfully.
+  │ exit code: 1
+  ╰─> [7 lines of output]
+      WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/setuptools/
+      WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/setuptools/
+      WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/setuptools/
+      WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/setuptools/
+      WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 403 Forbidden'))': /simple/setuptools/
+      ERROR: Could not find a version that satisfies the requirement setuptools==75.6.0 (from versions: none)
+      ERROR: No matching distribution found for setuptools==75.6.0
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: subprocess-exited-with-error
+
+× pip subprocess to install build dependencies did not run successfully.
+│ exit code: 1
+╰─> See above for output.
+
+note: This error originates from a subprocess, and is likely not a problem with pip.
+EXIT_CODE=1
++ pytest engine udgs_core
+
+==================================== ERRORS ====================================
+____________________ ERROR collecting tests/test_config.py _____________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_config.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_config.py:8: in <module>
+    from exoneural_governor.config import load_config
+engine/exoneural_governor/config.py:6: in <module>
+    import jsonschema
+E   ModuleNotFoundError: No module named 'jsonschema'
+______________ ERROR collecting tests/test_protocol_step_paths.py ______________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_protocol_step_paths.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_protocol_step_paths.py:5: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+________________ ERROR collecting tests/test_readme_contract.py ________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_readme_contract.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_readme_contract.py:9: in <module>
+    from tools.verify_readme_contract import E_README_QUICKSTART_MAKE_ONLY
+engine/tools/verify_readme_contract.py:8: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+___________________ ERROR collecting tests/test_redaction.py ___________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_redaction.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_redaction.py:8: in <module>
+    from exoneural_governor.redaction import redact_tree
+engine/exoneural_governor/redaction.py:6: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_____________________ ERROR collecting tests/test_stack.py _____________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_stack.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_stack.py:11: in <module>
+    from exoneural_governor.config import Config, load_config
+engine/exoneural_governor/config.py:6: in <module>
+    import jsonschema
+E   ModuleNotFoundError: No module named 'jsonschema'
+_______________ ERROR collecting tests/test_titan9_inventory.py ________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_titan9_inventory.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_titan9_inventory.py:5: in <module>
+    from tools.titan9_inventory import _parse_workflow_commands
+engine/tools/titan9_inventory.py:9: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+__________ ERROR collecting tests/test_verify_protocol_consistency.py __________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_verify_protocol_consistency.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_verify_protocol_consistency.py:5: in <module>
+    from tools.verify_protocol_consistency import verify
+engine/tools/verify_protocol_consistency.py:7: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+_______________ ERROR collecting tests/test_vr_provenance_id.py ________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_vr_provenance_id.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_vr_provenance_id.py:13: in <module>
+    from exoneural_governor.config import Config
+engine/exoneural_governor/config.py:6: in <module>
+    import jsonschema
+E   ModuleNotFoundError: No module named 'jsonschema'
+________________ ERROR collecting tests/test_workflow_guards.py ________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_workflow_guards.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_workflow_guards.py:6: in <module>
+    import yaml
+E   ModuleNotFoundError: No module named 'yaml'
+=========================== short test summary info ============================
+ERROR engine/tests/test_config.py
+ERROR engine/tests/test_protocol_step_paths.py
+ERROR engine/tests/test_readme_contract.py
+ERROR engine/tests/test_redaction.py
+ERROR engine/tests/test_stack.py
+ERROR engine/tests/test_titan9_inventory.py
+ERROR engine/tests/test_verify_protocol_consistency.py
+ERROR engine/tests/test_vr_provenance_id.py
+ERROR engine/tests/test_workflow_guards.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 9 errors during collection !!!!!!!!!!!!!!!!!!!!
+9 errors in 0.67s
+EXIT_CODE=2

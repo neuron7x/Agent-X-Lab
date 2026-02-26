@@ -1,19 +1,34 @@
-# AXL — One Integrated System Pack
+# Agent-X-Lab Monorepo
 
-Це **єдина інтегрована, конфігурована** збірка, яка **нічого не ламає** і **не втрачає дані**.
-Вона зберігає всі джерела як snapshots та додає Control Plane шар, який описує «як це все зшито».
+Production monorepo for AXL UI, Cloudflare Worker BFF, Python engine, and deterministic governance/gate tooling.
 
-## Структура
-- `workspace/full_repo/axl_qa8/` — повний репозиторій (dev + engine + udgs_core + workers)
-- `workspace/axl_final/axl_final/` — мінімальний “final” пакет (dist + lockfiles)
-- `release/promoted_bundle_2026-02-26/` — promotion bundle (artifacts + gate checker)
-- `release/promoted_artifacts_2026-02-26/` — маленький пакет артефактів (якщо використовується)
-- `docs/` — IAS та дизайн-документи
-- `cp/` — Control Plane manifest/locks (джерело істини для інтеграції)
-- `source_snapshots/` — оригінальні ZIP як immutable input
+## Architecture
 
-## Як читати цю систему
-1) **Control Plane**: `cp/AXL_CP_LOCK.json` + `cp/AXL_INTEGRATION_MAP.yaml`
-2) **Evidence / реліз**: `release/promoted_bundle_2026-02-26/artifacts/`
-3) **Код**: `workspace/full_repo/axl_qa8/`
+- `src/`, `public/`: Vite + React + TypeScript SPA.
+- `workers/axl-bff/`: Cloudflare Worker BFF (GitHub/dispatch/forge proxy layer).
+- `engine/`: Python engine package and protocol artifacts.
+- `udgs_core/`: deterministic governance and validation core.
+- `tools/`: supporting developer and prod-spec tooling.
+- `docs/`: operational, security, UI, and deployment docs.
+- `.github/workflows/`: CI workflows.
+- `archive/`: preserved wrapper/snapshot material moved out of active code paths.
+- `evidence/`: release/promoted proof artifacts and migration evidence.
 
+## Quickstart
+
+```bash
+make bootstrap
+make dev-ui
+make dev-worker
+make test
+```
+
+## Environment
+
+- UI requires `VITE_AXL_API_BASE`.
+- Protected endpoints also require `VITE_AXL_API_KEY` in UI env and `AXL_API_KEY` in Worker secrets.
+- See `.env.example` and `workers/axl-bff/wrangler.toml` comments for setup.
+
+## Documentation
+
+All product and operations documentation lives under `docs/`.
