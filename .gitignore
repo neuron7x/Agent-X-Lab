@@ -43,3 +43,11 @@ __pycache__/
 # QA8 live state (runtime-generated, not committed)
 qa8_state/QA8_STATUS.json
 qa8_state/HEAL_LOG.jsonl
+
+# TD1 hygiene large artifacts
+archive/source_snapshots/*.zip
+artifacts/*.package
+artifacts/rebuilt_artifact
+evidence/release_wrapper/**/artifacts/*.package
+evidence/release_wrapper/**/artifacts/rebuilt_artifact
+sources/**/*.zip

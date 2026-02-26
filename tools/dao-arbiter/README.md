@@ -59,7 +59,7 @@ Requires Python ≥ 3.11.
 
 ```bash
 # Observe PR checks (read-only)
-export GITHUB_TOKEN=ghp_...
+export GITHUB_TOKEN=YOUR_GITHUB_TOKEN
 dao observe owner/repo#123
 
 # Extract FAIL_PACKETs

@@ -1,0 +1,82 @@
+{
+  "blocked": [
+    {
+      "name": "npm_install",
+      "reason": "offline_only"
+    },
+    {
+      "name": "worker_npm_install",
+      "reason": "offline_only"
+    }
+  ],
+  "checks": [
+    {
+      "cmd": "git status --porcelain",
+      "exit": 0,
+      "name": "git_status"
+    },
+    {
+      "cmd": "node -v",
+      "exit": 0,
+      "name": "node_version"
+    },
+    {
+      "cmd": "npm -v",
+      "exit": 0,
+      "name": "npm_version"
+    },
+    {
+      "cmd": "python3 --version",
+      "exit": 0,
+      "name": "python_version"
+    },
+    {
+      "cmd": "npm run lint",
+      "exit": 0,
+      "name": "lint"
+    },
+    {
+      "cmd": "npm run typecheck",
+      "exit": 0,
+      "name": "typecheck"
+    },
+    {
+      "cmd": "npm run test:unit -- --coverage",
+      "exit": 1,
+      "name": "test_unit_coverage"
+    },
+    {
+      "cmd": "npm run build",
+      "exit": 0,
+      "name": "build"
+    },
+    {
+      "cmd": "cd workers/axl-bff && npm run typecheck",
+      "exit": 2,
+      "name": "worker_typecheck"
+    },
+    {
+      "cmd": "python3 scripts/td0/scan_large_files.py",
+      "exit": 0,
+      "name": "scan_large_files"
+    },
+    {
+      "cmd": "bash scripts/td0/scan_secrets.sh",
+      "exit": 0,
+      "name": "scan_secrets"
+    }
+  ],
+  "env": {
+    "node": "v22.21.1",
+    "npm": "11.4.2",
+    "python": "Python 3.13.8"
+  },
+  "git": {
+    "branch": "work",
+    "commit": "bb391a00833c291b6fc48bad9f08ec889f2dbfe2",
+    "dirty": true
+  },
+  "large_files": [],
+  "secrets_findings": [],
+  "timestamp": "2026-02-26T16:56:13.305316+00:00"
+}

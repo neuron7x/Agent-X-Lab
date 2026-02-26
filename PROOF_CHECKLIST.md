@@ -38,7 +38,7 @@ npm run typecheck
 ```bash
 # Set .dev.vars for local secrets
 cat > .dev.vars << 'EOF'
-GITHUB_TOKEN=ghp_YOUR_PAT_HERE
+GITHUB_TOKEN=YOUR_GITHUB_TOKEN
 WEBHOOK_SECRET=test-webhook-secret-32chars
 ALLOWED_ORIGINS=http://localhost:8080
 GITHUB_OWNER=YOUR_USERNAME

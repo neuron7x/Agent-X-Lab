@@ -8,32 +8,64 @@ if [ "${1:-}" = "--json-out" ]; then
   JSON_OUT="${2:-}"
 fi
 
-patterns=(
-  "AKIA"
-  "-----BEGIN"
-  "xoxb-"
-  "ghp_"
-  "sk-"
-  "OPENAI_API_KEY"
-  "ANTHROPIC_API_KEY"
-  "PRIVATE_KEY"
-  "BEGIN RSA"
-)
+TEXT_EXTENSIONS=(".md" ".txt" ".yml" ".yaml" ".json" ".toml" ".ts" ".tsx" ".js" ".py" ".sh" ".env.example")
+BINARY_SKIP_EXTENSIONS=(".zip" ".package" ".tgz" ".gz" ".png" ".jpg" ".jpeg" ".pdf" ".ico" ".woff" ".woff2" ".mp4" ".bin")
+MAX_SIZE_BYTES=$((1024 * 1024))
 
-mapfile -t files < <(git ls-files | sort)
+should_skip_path() {
+  local path="$1"
+  [[ "$path" == archive/* ]] && return 0
+  [[ "$path" == evidence/* ]] && return 0
+  [[ "$path" == engine/tests/* ]] && return 0
+  [[ "$path" == scripts/td0/scan_secrets.sh ]] && return 0
+  return 1
+}
+
+is_text_candidate() {
+  local path_lc="$1"
+  for ext in "${TEXT_EXTENSIONS[@]}"; do
+    [[ "$path_lc" == *"$ext" ]] && return 0
+  done
+  return 1
+}
+
+is_binary_skip_ext() {
+  local path_lc="$1"
+  for ext in "${BINARY_SKIP_EXTENSIONS[@]}"; do
+    [[ "$path_lc" == *"$ext" ]] && return 0
+  done
+  return 1
+}
+
 findings_file="$(mktemp)"
 > "$findings_file"
 
-for file in "${files[@]}"; do
+while IFS= read -r -d '' file; do
   [ -f "$file" ] || continue
-  for pat in "${patterns[@]}"; do
-    if grep -nF "$pat" "$file" >/dev/null 2>&1; then
-      while IFS= read -r line; do
-        printf '%s\n' "$line" >> "$findings_file"
-      done < <(grep -nF "$pat" "$file" | sed "s|^|$file:|")
-    fi
-  done
-done
+  should_skip_path "$file" && continue
+  file_lc="$(printf '%s' "$file" | tr '[:upper:]' '[:lower:]')"
+
+  is_binary_skip_ext "$file_lc" && continue
+
+  size_bytes=$(wc -c < "$file" 2>/dev/null || echo 0)
+  [ "$size_bytes" -gt "$MAX_SIZE_BYTES" ] && continue
+
+  is_text_candidate "$file_lc" || continue
+
+  while IFS= read -r line; do
+    printf '%s:%s\n' "$file" "$line" >> "$findings_file"
+  done < <(
+    grep -nIE \
+      -e 'ghp_[A-Za-z0-9]{36,}' \
+      -e 'sk-[A-Za-z0-9-]{20,}' \
+      -e 'AKIA[0-9A-Z]{16}' \
+      -e 'xoxb-[A-Za-z0-9-]{10,}' \
+      -e '-----BEGIN( [A-Z]+)? PRIVATE KEY-----' \
+      -e 'BEGIN RSA PRIVATE KEY' \
+      -e "(OPENAI_API_KEY|ANTHROPIC_API_KEY|PRIVATE_KEY)[[:space:]]*[:=][[:space:]]*[^[:space:]\"']{8,}" \
+      "$file" || true
+  )
+done < <(git ls-files -z)
 
 sort -u "$findings_file" -o "$findings_file"
 
