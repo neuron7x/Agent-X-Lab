@@ -10,7 +10,7 @@ test.describe('AXL-UI smoke tests', () => {
     const errors: string[] = [];
     page.on('pageerror', err => errors.push(err.message));
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('main')).toBeVisible();
     // Allow minor console errors but no crashes
     expect(errors.filter(e => !e.includes('favicon'))).toHaveLength(0);
   });
@@ -46,7 +46,7 @@ test.describe('AXL-UI smoke tests', () => {
   test('command palette opens with Ctrl+K', async ({ page }) => {
     await page.goto('/');
     await page.keyboard.press('Control+k');
-    const palette = page.getByRole('dialog', { name: 'Command palette' });
+    const palette = page.getByRole('dialog', { name: /command palette/i });
     await expect(palette).toBeVisible();
   });
 
