@@ -66,6 +66,11 @@ describe('jobElapsed', () => {
   it('formats exactly 60s', () => {
     expect(jobElapsed({ id: 1, name: 'test', status: 'completed', conclusion: 'success', started_at: '2026-01-01T00:00:00Z', completed_at: '2026-01-01T00:01:00Z' })).toBe('1m00s');
   });
+  it('returns "—" for invalid timestamps', () => {
+    expect(jobElapsed({ id: 1, name: 'test', status: 'completed', conclusion: 'success', started_at: 'invalid', completed_at: '2026-01-01T00:01:00Z' })).toBe('—');
+    expect(jobElapsed({ id: 1, name: 'test', status: 'completed', conclusion: 'success', started_at: '2026-01-01T00:00:00Z', completed_at: 'invalid' })).toBe('—');
+  });
+
 });
 
 // ── parseEvidenceLines ──
