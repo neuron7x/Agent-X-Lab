@@ -76,7 +76,7 @@ test.describe('AXL-UI smoke tests', () => {
     page.on('pageerror', err => errors.push(err.message));
     await page.goto('/forge');
     await expect(page.getByRole('main')).toBeVisible();
-    await page.waitForTimeout(100);
+    await expect(page.getByRole('button', { name: /CLAUDE|GPT-5\.2|N8N/i }).first()).toBeVisible();
     // No input = button disabled, no request
     await expect(errors).toHaveLength(0);
   });

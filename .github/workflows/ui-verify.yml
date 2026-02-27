@@ -43,6 +43,14 @@ jobs:
       - name: Accessibility tests
         run: npm run test:a11y:ci
 
+      - name: Upload a11y evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-a11y-${{ github.run_id }}
+          retention-days: 30
+          path: dist/EVD-UI-A11Y.json
+
       - name: Build (prod)
         run: npm run build
         env:
@@ -50,50 +58,7 @@ jobs:
           VITE_AXL_API_KEY: 'ci-placeholder'
 
       - name: Bundle size check
-        run: |
-          node - << 'EOF'
-          const fs = require('fs');
-          const path = require('path');
-
-          // Check gzip sizes from build output
-          const distDir = 'dist/assets';
-          const files = fs.readdirSync(distDir).filter(f => f.endsWith('.js'));
-          
-          let mainBundle = 0;
-          let totalRouteChunks = 0;
-          
-          for (const file of files) {
-            const stat = fs.statSync(path.join(distDir, file));
-            const kb = stat.size / 1024;
-            console.log(`  ${file}: ${kb.toFixed(1)} kB`);
-            
-            if (file.startsWith('index-')) mainBundle = kb;
-            else if (file.match(/Route-/)) totalRouteChunks += kb;
-          }
-          
-          // Budget: initial JS < 500kB uncompressed (≈120kB gzip in practice)
-          const BUDGET_INITIAL_KB = 500;
-          const BUDGET_CHUNK_KB = 250;
-          
-          if (mainBundle > BUDGET_INITIAL_KB) {
-            console.error(`FAIL: main bundle ${mainBundle.toFixed(1)} kB > ${BUDGET_INITIAL_KB} kB budget`);
-            process.exit(1);
-          }
-          
-          console.log(`PASS: initial bundle ${mainBundle.toFixed(1)} kB (budget: ${BUDGET_INITIAL_KB} kB)`);
-          console.log(`PASS: route chunks ${totalRouteChunks.toFixed(1)} kB total`);
-          
-          // Write evidence
-          const evidence = {
-            timestamp: new Date().toISOString(),
-            mainBundle_kb: mainBundle,
-            routeChunks_kb: totalRouteChunks,
-            budget_initial_kb: BUDGET_INITIAL_KB,
-            pass: mainBundle <= BUDGET_INITIAL_KB,
-          };
-          fs.writeFileSync('dist/EVD-UI-BUNDLE.json', JSON.stringify(evidence, null, 2));
-          console.log('EVD-UI-BUNDLE.json written');
-          EOF
+        run: npm run analyze:bundle -- --mode=bundle-evd
 
       - name: Upload build artifacts
         if: always()
