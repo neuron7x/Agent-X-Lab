@@ -23,7 +23,6 @@ export function NodeHex({ role, label, status, isActive, size = 104 }: OrbitalNo
   const r = size / 2;
   const svgSize = size + 4;
   const center = svgSize / 2;
-  const safeZone = r - 12; // 12px padding from stroke
 
   // Split role into lines at semantic boundaries
   const words = role.split(/[\s-]+/);

@@ -43,7 +43,6 @@ export function TopBar({
   demoMode = false,
   onSettingsClick,
   rateLimitReset,
-  onOpenCommandPalette,
 }: TopBarProps) {
   const { t } = useLanguage();
   const dotColor = demoMode ? STATUS_COLORS.DISCONNECTED : STATUS_COLORS[connectionStatus];

@@ -15,7 +15,6 @@ import { ConnectRepository } from '@/components/axl/ConnectRepository';
 import { ErrorBanner } from '@/components/axl/ErrorBanner';
 import { ErrorBoundary } from '@/components/axl/ErrorBoundary';
 import { SkeletonPanel } from '@/components/axl/SkeletonPanel';
-import { BottomBar } from '@/components/axl/BottomBar';
 
 const Index = () => {
   const [isDemoMode, setIsDemoMode] = useState<boolean>(

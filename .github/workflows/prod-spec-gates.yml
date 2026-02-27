@@ -126,7 +126,6 @@ jobs:
             --artifacts-dir artifacts/ \
             --out    build_proof/prod_spec/gate_check.report.json
           echo "exit_code=$?" >> "$GITHUB_OUTPUT"
-        continue-on-error: true  # We capture exit code manually
 
       - name: Evaluate RRD status
         run: |

@@ -20,7 +20,7 @@
     "test:a11y:ci": "npm run ensure:dist && vitest run src/test/a11y.test.tsx --reporter=verbose --reporter=json --outputFile dist/EVD-UI-A11Y.json",
     "build:analyze": "ANALYZE=true npm run build",
     "lint:strict": "eslint src --max-warnings 0",
-    "build:perf": "npm run build && npx lhci collect --config=.lighthouserc.json || true",
+    "build:perf": "npm run build && npx lhci collect --config=.lighthouserc.json",
     "test:coverage": "vitest run --coverage",
     "bundle:report": "ANALYZE=true npm run build",
     "analyze:bundle": "node scripts/analyze-bundle.mjs"

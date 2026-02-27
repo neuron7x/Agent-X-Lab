@@ -3,12 +3,11 @@
  * Replaces tab-state in Index.tsx with React Router routes.
  * Provides: nav, error boundary per outlet, skip-to-content (a11y).
  */
-import { Suspense, lazy, useEffect, useRef, useState } from 'react';
-import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Suspense, useEffect, useRef, useState } from 'react';
+import { NavLink, Outlet } from 'react-router-dom';
 import { ErrorBoundary } from '@/components/axl/ErrorBoundary';
 import { SkeletonPanel } from '@/components/axl/SkeletonPanel';
 import { TopBar } from '@/components/axl/TopBar';
-import { BottomBar } from '@/components/axl/BottomBar';
 import { CommandPalette } from '@/components/shell/CommandPalette';
 import { useLanguage } from '@/hooks/useLanguage';
 import { cn } from '@/lib/utils';
