@@ -7,10 +7,5 @@
     "deploy": "npx wrangler deploy",
     "typecheck": "../../node_modules/.bin/tsc --noEmit -p tsconfig.json",
     "test": "../../node_modules/.bin/vitest run"
-  },
-  "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250124.0",
-    "typescript": "^5.8.3",
-    "wrangler": "3.86.1"
   }
 }
