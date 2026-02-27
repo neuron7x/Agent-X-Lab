@@ -12,7 +12,7 @@
  * I7: No new XSS surface — children rendered as-is.
  */
 import { type ReactNode } from 'react';
-import { ActionGateStatus, getActionGateStatus } from '@/components/axl/actionGate';
+import { getActionGateStatus } from '@/components/axl/actionGate';
 
 interface ProtectedActionProps {
   children: ReactNode;
