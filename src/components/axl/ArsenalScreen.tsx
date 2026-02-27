@@ -453,9 +453,9 @@ export function ArsenalScreen({ prompts, isLoading }: ArsenalScreenProps) {
 
 // ── Reusable components ──
 
-function NavCard({ name, topic, goal, accent, count, onClick }: {
+function NavCard({ name, topic, goal, accent, count, protocolsLabel: _protocolsLabel, onClick }: {
   name: string; topic: string; goal: string; accent: string;
-  count: number; onClick: () => void;
+  count: number; protocolsLabel: string; onClick: () => void;
 }) {
   return (
     <button
