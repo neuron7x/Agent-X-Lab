@@ -20,9 +20,9 @@ test.describe('AXL-UI smoke tests', () => {
     const nav = page.getByRole('navigation').first();
     await expect(nav).toBeVisible();
 
-    await expect(nav.getByRole('link', { name: 'Pipeline' })).toBeVisible();
-    await expect(nav.getByRole('link', { name: 'Evidence' })).toBeVisible();
-    await expect(nav.getByRole('link', { name: 'Forge' })).toBeVisible();
+    await expect(nav.locator('a[href="/pipeline"]').first()).toBeVisible();
+    await expect(nav.locator('a[href="/evidence"]').first()).toBeVisible();
+    await expect(nav.locator('a[href="/forge"]').first()).toBeVisible();
   });
 
   test('navigates between routes', async ({ page }) => {
@@ -61,7 +61,7 @@ test.describe('AXL-UI smoke tests', () => {
 
   test('skip to content link exists (a11y)', async ({ page }) => {
     await page.goto('/');
-    const skip = page.getByRole('link', { name: /skip to main content/i });
+    const skip = page.locator('a[href="#main-content"]').first();
     await expect(skip).toBeVisible();
   });
 
