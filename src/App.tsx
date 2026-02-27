@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/hooks/useLanguage";
 import { AppShell } from "@/components/shell/AppShell";
+import { AppStateProvider } from "@/state/AppStateProvider";
 import {
   StatusRoute,
   PipelineRoute,
@@ -39,21 +40,23 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <LanguageProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route element={<AppShell />}>
-              <Route index element={<StatusRoute />} />
-              <Route path="pipeline" element={<PipelineRoute />} />
-              <Route path="evidence" element={<EvidenceRoute />} />
-              <Route path="arsenal" element={<ArsenalRoute />} />
-              <Route path="forge" element={<ForgeRoute />} />
-              <Route path="settings" element={<SettingsRoute />} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <AppStateProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route element={<AppShell />}>
+                <Route index element={<StatusRoute />} />
+                <Route path="pipeline" element={<PipelineRoute />} />
+                <Route path="evidence" element={<EvidenceRoute />} />
+                <Route path="arsenal" element={<ArsenalRoute />} />
+                <Route path="forge" element={<ForgeRoute />} />
+                <Route path="settings" element={<SettingsRoute />} />
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </AppStateProvider>
       </LanguageProvider>
     </TooltipProvider>
   </QueryClientProvider>

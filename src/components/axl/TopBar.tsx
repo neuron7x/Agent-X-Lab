@@ -80,7 +80,7 @@ export function TopBar({
       </div>
 
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2" aria-label={`Connection: ${statusLabel}`}>
+        <div className="flex items-center gap-2" aria-label={`${t('connectionLabel')}: ${statusLabel}`}>
           <span style={{ width: 6, height: 6, borderRadius: '50%', background: dotColor, animation: !demoMode && connectionStatus === 'POLLING' ? 'connection-pulse 2s ease-in-out infinite' : undefined }} />
           <span style={{ fontSize: 12, color: dotColor, fontWeight: 400 }}>
             {statusLabel}
@@ -89,10 +89,9 @@ export function TopBar({
         </div>
         <button
           onClick={onSettingsClick}
-          style={{ fontSize: 16, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, transition: 'color 200ms ease-out', minWidth: 48, minHeight: 48, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)'; }}
-          onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-tertiary)'; }}
-          aria-label="Settings"
+          className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, minWidth: 48, minHeight: 48, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          aria-label={t('settings')}
         >⚙</button>
       </div>
     </header>

@@ -137,6 +137,12 @@ export const translations = {
   connectionOk: { ua: '● З\'ЄДНАННЯ ОК', en: '● CONNECTION OK' },
   connectionFailed: { ua: '✕ З\'ЄДНАННЯ ЗБІЙ', en: '✕ CONNECTION FAILED' },
 
+
+  // App shell
+  skipToMain: { ua: 'Перейти до головного контенту', en: 'Skip to main content' },
+  mainNavigation: { ua: 'Головна навігація', en: 'Main navigation' },
+  connectionLabel: { ua: "З'єднання", en: 'Connection' },
+
   // BottomBar
   iter: { ua: 'ітер', en: 'iter' },
 } as const;
