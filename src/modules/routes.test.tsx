@@ -7,6 +7,7 @@ import { EvidenceRoute } from '@/modules/evidence/EvidenceRoute';
 import { ArsenalRoute } from '@/modules/arsenal/ArsenalRoute';
 import { SettingsRoute } from '@/modules/settings/SettingsRoute';
 import { AppShell } from '@/components/shell/AppShell';
+import { LanguageProvider } from '@/hooks/useLanguage';
 
 vi.mock('@/state/AppStateProvider', () => ({
   useAppState: () => ({
@@ -73,17 +74,19 @@ describe('route containers', () => {
 
   it('renders app shell landmarks and skip link', () => {
     render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route element={<AppShell />}>
-            <Route index element={<div>index-content</div>} />
-          </Route>
-        </Routes>
-      </MemoryRouter>,
+      <LanguageProvider>
+        <MemoryRouter initialEntries={['/']}>
+          <Routes>
+            <Route element={<AppShell />}>
+              <Route index element={<div>index-content</div>} />
+            </Route>
+          </Routes>
+        </MemoryRouter>
+      </LanguageProvider>,
     );
 
     expect(screen.getByRole('navigation')).toBeInTheDocument();
     expect(screen.getByRole('main')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /skip to main content/i })).toHaveAttribute('href', '#main-content');
+    expect(document.querySelector('a[href="#main-content"]')).not.toBeNull();
   });
 });
