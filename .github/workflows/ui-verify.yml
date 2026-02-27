@@ -3,9 +3,9 @@ name: UI Verify
 on:
   push:
     branches: [main]
-    paths: ['src/**', 'workers/**', 'package*.json', 'vite.config.ts', 'tsconfig*.json', '.github/workflows/ui-verify.yml']
+    paths: ['src/**', 'workers/**', 'package*.json', 'vite.config.ts', 'tsconfig*.json', 'eslint.config.js', 'vitest.config.ts', 'playwright.config.ts', 'scripts/**', '.github/workflows/ui-verify.yml']
   pull_request:
-    paths: ['src/**', 'workers/**', 'package*.json', 'vite.config.ts', 'tsconfig*.json']
+    paths: ['src/**', 'workers/**', 'package*.json', 'vite.config.ts', 'tsconfig*.json', 'eslint.config.js', 'vitest.config.ts', 'playwright.config.ts', 'scripts/**', '.github/workflows/ui-verify.yml']
 
 env:
   NODE_VERSION: '20'
@@ -30,7 +30,7 @@ jobs:
         run: npm ci
 
       - name: Lint
-        run: npm run lint
+        run: npm run lint:strict
 
       - name: Typecheck
         run: npm run typecheck
@@ -41,14 +41,7 @@ jobs:
           VITEST_COVERAGE: 'true'
 
       - name: Accessibility tests
-        run: npx vitest run src/test/a11y.test.tsx --reporter=verbose
-        continue-on-error: false
-
-      - name: Generate EVD-UI-A11Y evidence
-        if: always()
-        run: |
-          npx vitest run src/test/a11y.test.tsx --reporter=json > dist/EVD-UI-A11Y.json 2>&1 || true
-          echo "a11y evidence generated"
+        run: npm run test:a11y:ci
 
       - name: Build (prod)
         run: npm run build

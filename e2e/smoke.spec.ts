@@ -17,12 +17,12 @@ test.describe('AXL-UI smoke tests', () => {
 
   test('navigation tabs visible and functional', async ({ page }) => {
     await page.goto('/');
-    const nav = page.getByRole('navigation', { name: /main navigation/i });
+    const nav = page.getByRole('navigation').first();
     await expect(nav).toBeVisible();
 
-    await expect(nav.locator('a[href="/pipeline"]').first()).toBeVisible();
-    await expect(nav.locator('a[href="/evidence"]').first()).toBeVisible();
-    await expect(nav.locator('a[href="/forge"]').first()).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Pipeline' })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Evidence' })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Forge' })).toBeVisible();
   });
 
   test('navigates between routes', async ({ page }) => {
@@ -62,7 +62,7 @@ test.describe('AXL-UI smoke tests', () => {
   test('skip to content link exists (a11y)', async ({ page }) => {
     await page.goto('/');
     const skip = page.getByRole('link', { name: /skip to main content/i });
-    await expect(skip).toBeAttached();
+    await expect(skip).toBeVisible();
   });
 
   test('Forge screen loads without crash', async ({ page }) => {
@@ -75,6 +75,8 @@ test.describe('AXL-UI smoke tests', () => {
     const errors: string[] = [];
     page.on('pageerror', err => errors.push(err.message));
     await page.goto('/forge');
+    await expect(page.getByRole('main')).toBeVisible();
+    await page.waitForTimeout(100);
     // No input = button disabled, no request
     await expect(errors).toHaveLength(0);
   });

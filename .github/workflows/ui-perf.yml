@@ -3,9 +3,9 @@ name: UI Performance + Bundle Budgets
 on:
   push:
     branches: [main]
-    paths: ['src/**', 'package*.json', 'vite.config.ts', '.lighthouserc.json']
+    paths: ['src/**', 'package*.json', 'vite.config.ts', '.lighthouserc.json', 'eslint.config.js', 'vitest.config.ts', 'tsconfig*.json', '.github/workflows/ui-perf.yml']
   pull_request:
-    paths: ['src/**', 'vite.config.ts', '.lighthouserc.json']
+    paths: ['src/**', 'vite.config.ts', '.lighthouserc.json', 'eslint.config.js', 'vitest.config.ts', 'tsconfig*.json', 'package*.json', '.github/workflows/ui-perf.yml']
 
 env:
   NODE_VERSION: '20'
@@ -99,8 +99,13 @@ jobs:
           VITE_COMMIT_SHA: ${{ github.sha }}
 
       - name: Run Lighthouse CI
+        id: lighthouse
         run: lhci autorun --config=.lighthouserc.json
         continue-on-error: true  # warn-only for initial rollout
+
+      - name: Warn-only lighthouse status
+        if: always()
+        run: echo "WARN-ONLY: lighthouse results uploaded"
 
       - name: Upload LHCI evidence
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
