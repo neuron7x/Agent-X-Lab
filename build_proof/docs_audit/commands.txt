@@ -1,0 +1,32 @@
++ node --version
+EXIT_CODE=0
++ npm --version
+EXIT_CODE=0
++ npm ci
+EXIT_CODE=0
++ npm run lint
+EXIT_CODE=0
++ npm run typecheck
+EXIT_CODE=0
++ npm test
+EXIT_CODE=0
++ npm run build
+EXIT_CODE=0
++ npm run test:e2e
+EXIT_CODE=1
++ node --version
+EXIT_CODE=0
++ npm --version
+EXIT_CODE=0
++ npm ci
+EXIT_CODE=0
++ npm run lint
+EXIT_CODE=0
++ npm run typecheck
+EXIT_CODE=0
++ npm test
+EXIT_CODE=0
++ npm run build
+EXIT_CODE=0
++ npm run test:e2e
+EXIT_CODE=1

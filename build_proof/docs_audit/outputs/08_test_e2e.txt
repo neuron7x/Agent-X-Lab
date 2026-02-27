@@ -1,0 +1,4 @@
++ npm run test:e2e
+Playwright Chromium browser is not installed.
+Install options: npm run e2e:install or npm run e2e:install:ci
+EXIT_CODE=1
