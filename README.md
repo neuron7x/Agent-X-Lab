@@ -31,4 +31,7 @@ make test
 
 ## Documentation
 
-All product and operations documentation lives under `docs/`.
+Start at:
+- `docs/00_SYSTEM_OVERVIEW.md`
+- `docs/98_CONTRACT_INDEX.md`
+- `docs/99_CHECKLIST.md`
