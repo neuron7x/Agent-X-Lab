@@ -1,8 +1,12 @@
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import { describe, expect, it } from 'vitest';
 import { analyzeBundle, writeBundleEvidence } from '../../scripts/analyze-bundle.mjs';
+
+const execFileAsync = promisify(execFile);
 
 function makeTempDist() {
   const root = mkdtempSync(path.join(os.tmpdir(), 'axl-bundle-test-'));
@@ -76,6 +80,41 @@ describe('analyzeBundle', () => {
       expect(evidence.pass).toBe(false);
       expect(evidence.violations.length).toBeGreaterThan(0);
       expect(evidence.violations.some((msg) => msg.includes('huge-chunk.js'))).toBe(true);
+    } finally {
+      rmSync(root, { force: true, recursive: true });
+    }
+  });
+
+  it('executes CLI entrypoint and writes bundle evidence', async () => {
+    const { root, distRoot } = makeTempDist();
+
+    try {
+      writeFileSync(path.join(distRoot, 'assets', 'entry.js'), 'console.log("entry");');
+      writeFileSync(path.join(distRoot, 'assets', 'chunk-a.js'), 'console.log("chunk-a");');
+      writeFileSync(
+        path.join(distRoot, '.vite', 'manifest.json'),
+        JSON.stringify({
+          'src/main.tsx': { file: 'assets/entry.js', isEntry: true },
+          'src/chunk-a.ts': { file: 'assets/chunk-a.js' },
+        }),
+      );
+
+      const { stdout, stderr } = await execFileAsync(
+        process.execPath,
+        [path.resolve('scripts/analyze-bundle.mjs'), '--mode=verify-bundle-budget'],
+        { cwd: root },
+      );
+
+      expect(stderr).toBe('');
+      expect(stdout).toContain('Wrote dist/EVD-UI-BUNDLE.json');
+      expect(stdout).toContain('Bundle budgets: PASS');
+
+      const evidence = JSON.parse(
+        readFileSync(path.join(distRoot, 'EVD-UI-BUNDLE.json'), 'utf8'),
+      ) as { mode: string; pass: boolean; files: Array<{ file: string }> };
+      expect(evidence.mode).toBe('verify-bundle-budget');
+      expect(evidence.pass).toBe(true);
+      expect(evidence.files.map((item) => item.file)).toEqual(['chunk-a.js', 'entry.js']);
     } finally {
       rmSync(root, { force: true, recursive: true });
     }

@@ -18,7 +18,7 @@
     "e2e:install:ci": "npx playwright install --with-deps chromium",
     "test:e2e": "node scripts/e2e-preflight.mjs && playwright test",
     "test:a11y": "vitest run --reporter=verbose src/**/*.a11y.{ts,tsx}",
-    "test:a11y:ci": "npm run ensure:dist && vitest run src/test/a11y.test.tsx --reporter=verbose --reporter=json --outputFile dist/EVD-UI-A11Y.json",
+    "test:a11y:ci": "npm run ensure:dist && node scripts/run-a11y-ci.mjs",
     "build:analyze": "ANALYZE=true npm run build",
     "lint:strict": "eslint src --max-warnings 0",
     "build:perf": "npm run build && npx lhci collect --config=.lighthouserc.json",
