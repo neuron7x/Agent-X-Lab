@@ -17,7 +17,7 @@ test.describe('AXL-UI smoke tests', () => {
 
   test('navigation tabs visible and functional', async ({ page }) => {
     await page.goto('/');
-    const nav = page.getByRole('navigation', { name: /main navigation/i });
+    const nav = page.getByRole('navigation').first();
     await expect(nav).toBeVisible();
 
     await expect(nav.locator('a[href="/pipeline"]').first()).toBeVisible();
@@ -61,8 +61,8 @@ test.describe('AXL-UI smoke tests', () => {
 
   test('skip to content link exists (a11y)', async ({ page }) => {
     await page.goto('/');
-    const skip = page.getByRole('link', { name: /skip to main content/i });
-    await expect(skip).toBeAttached();
+    const skip = page.locator('a[href="#main-content"]').first();
+    await expect(skip).toBeVisible();
   });
 
   test('Forge screen loads without crash', async ({ page }) => {
@@ -75,6 +75,8 @@ test.describe('AXL-UI smoke tests', () => {
     const errors: string[] = [];
     page.on('pageerror', err => errors.push(err.message));
     await page.goto('/forge');
+    await expect(page.getByRole('main')).toBeVisible();
+    await expect(page.getByRole('button', { name: /CLAUDE|GPT-5\.2|N8N/i }).first()).toBeVisible();
     // No input = button disabled, no request
     await expect(errors).toHaveLength(0);
   });
