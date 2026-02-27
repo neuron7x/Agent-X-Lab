@@ -287,7 +287,10 @@ export function mapJobToGateStatus(job: GitHubJob | null): GateStatus {
 
 export function jobElapsed(job: GitHubJob | null): string {
   if (!job || !job.completed_at || !job.started_at) return '—';
-  const s = Math.round((new Date(job.completed_at).getTime() - new Date(job.started_at).getTime()) / 1000);
+  const completedAt = new Date(job.completed_at).getTime();
+  const startedAt = new Date(job.started_at).getTime();
+  if (!Number.isFinite(completedAt) || !Number.isFinite(startedAt)) return '—';
+  const s = Math.max(0, Math.round((completedAt - startedAt) / 1000));
   return s >= 60 ? `${Math.floor(s / 60)}m${String(s % 60).padStart(2, '0')}s` : `${s}s`;
 }
 
