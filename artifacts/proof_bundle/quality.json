@@ -1,0 +1,63 @@
+{
+  "contradictions": {
+    "count": 1,
+    "ids": [
+      "C-TEST-BASELINE-FAIL"
+    ]
+  },
+  "gates": {
+    "G0": {
+      "evidence": "artifacts/proof_bundle/logs/make_setup.log",
+      "status": "UNKNOWN"
+    },
+    "G1": {
+      "evidence": "Makefile",
+      "status": "PASS"
+    },
+    "G10": {
+      "evidence": "artifacts/proof_bundle",
+      "status": "PASS"
+    },
+    "G2": {
+      "evidence": "artifacts/proof_bundle/logs/make_test_postfix.log",
+      "status": "FAIL"
+    },
+    "G3": {
+      "evidence": "not evaluated",
+      "status": "UNKNOWN"
+    },
+    "G4": {
+      "evidence": "not evaluated",
+      "status": "UNKNOWN"
+    },
+    "G5": {
+      "evidence": "artifacts/proof_bundle/MANIFEST.json",
+      "status": "PASS"
+    },
+    "G6": {
+      "evidence": "not evaluated",
+      "status": "UNKNOWN"
+    },
+    "G7": {
+      "evidence": "not evaluated",
+      "status": "UNKNOWN"
+    },
+    "G8": {
+      "evidence": "not evaluated",
+      "status": "UNKNOWN"
+    },
+    "G9": {
+      "evidence": "not evaluated",
+      "status": "UNKNOWN"
+    }
+  },
+  "timestamp_utc": "2026-02-27T18:10:41.737565+00:00",
+  "tool_versions": {
+    "node": "v22.21.1",
+    "npm": "11.4.2",
+    "pip": "pip 25.3",
+    "pytest": "pytest 9.0.2",
+    "python": "Python 3.13.8"
+  },
+  "verdict": "FAIL"
+}

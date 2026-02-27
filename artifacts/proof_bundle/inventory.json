@@ -1,0 +1,48 @@
+{
+  "toolchain": {
+    "python": ".python-version",
+    "node": ".node-version",
+    "lock_files": [
+      "package-lock.json",
+      "engine/requirements-dev.txt"
+    ],
+    "make_targets": [
+      "setup",
+      "bootstrap",
+      "lint",
+      "test",
+      "test-all",
+      "test-integration",
+      "test-e2e",
+      "test-property",
+      "gates",
+      "reproduce"
+    ]
+  },
+  "tests": {
+    "entrypoints": [
+      "npm test",
+      "python -m pytest engine udgs_core",
+      "npm run test:e2e"
+    ],
+    "markers": ["unit", "integration", "e2e", "property", "chaos"]
+  },
+  "ci_workflows": {
+    "prod-spec-gates": ".github/workflows/prod-spec-gates.yml",
+    "run-engine-dispatch": ".github/workflows/run-engine-dispatch.yml",
+    "ui-e2e": ".github/workflows/ui-e2e.yml",
+    "ui-perf": ".github/workflows/ui-perf.yml",
+    "ui-verify": ".github/workflows/ui-verify.yml"
+  },
+  "docs_entrypoints": [
+    "README.md",
+    "docs/ui/README.md",
+    "docs/deploy/vercel.md",
+    "docs/deploy/cloudflare-worker.md"
+  ],
+  "reproduce_hooks": [
+    "make reproduce",
+    "scripts/generate_manifest.py"
+  ],
+  "unknown": []
+}
