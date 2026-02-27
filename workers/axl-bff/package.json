@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "npx wrangler dev",
     "deploy": "npx wrangler deploy",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "../../node_modules/.bin/vitest run"
   },
   "devDependencies": {
