@@ -60,6 +60,13 @@ describe('useEvidenceFilter', () => {
     expect(result.current.filtered[0].id).toBe('4');
   });
 
+  it('UNKNOWN filter also includes ASSUMED evidence status', () => {
+    const mixed = [...EVIDENCE, { id: '5', type: 'determinism', status: 'ASSUMED' as never, timestamp: NOW_ISO }];
+    const { result } = renderHook(() => useEvidenceFilter(mixed));
+    act(() => result.current.setFilters({ ...DEFAULT_FILTERS, status: 'UNKNOWN' }));
+    expect(result.current.filtered.map(e => e.id)).toEqual(['4', '5']);
+  });
+
   it('searches by type', () => {
     const { result } = renderHook(() => useEvidenceFilter(EVIDENCE));
     act(() => result.current.setFilters({ ...DEFAULT_FILTERS, search: 'lint' }));
