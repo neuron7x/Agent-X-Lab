@@ -29,7 +29,7 @@ jobs:
       - name: Build + analyze bundle
         run: |
           ANALYZE=true npm run build
-          npm run analyze:bundle -- --mode=bundle-budget
+          npm run analyze:bundle -- --mode=perf-bundle-evd
 
       - name: Upload bundle evidence
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
