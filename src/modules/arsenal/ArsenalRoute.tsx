@@ -1,2 +1,8 @@
 import { ArsenalScreen } from '@/components/axl/ArsenalScreen';
-export function ArsenalRoute() { return <ArsenalScreen />; }
+import { useAppState } from '@/state/AppStateProvider';
+
+export function ArsenalRoute() {
+  const { arsenalState } = useAppState();
+
+  return <ArsenalScreen prompts={arsenalState.prompts} isLoading={arsenalState.isLoading} />;
+}
