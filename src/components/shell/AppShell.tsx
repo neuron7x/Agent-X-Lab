@@ -30,6 +30,7 @@ export function AppShell() {
   const { lang, t } = useLanguage();
   const [cmdOpen, setCmdOpen] = useState(false);
   const { isDemoMode, setDemoMode, settingsState, githubState } = useAppState();
+  const shouldShowConnect = !isDemoMode && !settingsState.isConfigured;
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -42,21 +43,11 @@ export function AppShell() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  if (!isDemoMode && !settingsState.isConfigured) {
-    return (
-      <ConnectRepository
-        onConnect={(patch) => settingsState.updateSettings(patch)}
-        onPreviewDemo={() => setDemoMode(true)}
-        bffStatus={settingsState.bffStatus}
-      />
-    );
-  }
-
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-3 focus:py-2 focus:bg-background focus:border focus:border-border focus:rounded focus:text-foreground"
+        className="fixed left-2 top-2 z-50 rounded border border-border bg-background px-3 py-2 text-xs text-foreground underline"
       >
         {t('skipToMain')}
       </a>
@@ -79,7 +70,11 @@ export function AppShell() {
         contractError={githubState.contractError}
       />
 
-      <nav aria-label={t('mainNavigation')} className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 relative">
+      <nav
+        role="navigation"
+        aria-label={t('mainNavigation')}
+        className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 relative"
+      >
         <ul className="flex h-12">
           {ROUTES.map(route => (
             <li key={route.path} className="flex-1">
@@ -105,12 +100,22 @@ export function AppShell() {
         </div>
       </nav>
 
-      <main id="main-content" className="flex-1 pb-12 overflow-y-auto" tabIndex={-1}>
-        <ErrorBoundary panelName="AppShell">
-          <Suspense fallback={<SkeletonPanel />}>
-            <Outlet />
-          </Suspense>
-        </ErrorBoundary>
+      <main role="main" className="flex-1 pb-12 overflow-y-auto" tabIndex={-1}>
+        <div id="main-content">
+          {shouldShowConnect ? (
+            <ConnectRepository
+              onConnect={(patch) => settingsState.updateSettings(patch)}
+              onPreviewDemo={() => setDemoMode(true)}
+              bffStatus={settingsState.bffStatus}
+            />
+          ) : (
+            <ErrorBoundary panelName="AppShell">
+              <Suspense fallback={<SkeletonPanel />}>
+                <Outlet />
+              </Suspense>
+            </ErrorBoundary>
+          )}
+        </div>
       </main>
 
       {cmdOpen && <CommandPalette onClose={() => setCmdOpen(false)} />}

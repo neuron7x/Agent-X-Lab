@@ -52,8 +52,8 @@ const App = () => (
                 <Route path="arsenal" element={<ArsenalRoute />} />
                 <Route path="forge" element={<ForgeRoute />} />
                 <Route path="settings" element={<SettingsRoute />} />
+                <Route path="*" element={<NotFound />} />
               </Route>
-              <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </AppStateProvider>

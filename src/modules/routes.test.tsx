@@ -1,15 +1,16 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { StatusRoute } from '@/modules/status/StatusRoute';
 import { PipelineRoute } from '@/modules/pipeline/PipelineRoute';
 import { EvidenceRoute } from '@/modules/evidence/EvidenceRoute';
 import { ArsenalRoute } from '@/modules/arsenal/ArsenalRoute';
 import { SettingsRoute } from '@/modules/settings/SettingsRoute';
+import { AppShell } from '@/components/shell/AppShell';
 
 vi.mock('@/state/AppStateProvider', () => ({
   useAppState: () => ({
-    isDemoMode: false,
+    isDemoMode: true,
     setDemoMode: vi.fn(),
     settingsState: {
       settings: { token: '', owner: 'o', repo: 'r', pollInterval: 30 },
@@ -68,5 +69,21 @@ describe('route containers', () => {
   it('renders settings route container', () => {
     render(<SettingsRoute />);
     expect(screen.getByText('settings-screen')).toBeInTheDocument();
+  });
+
+  it('renders app shell landmarks and skip link', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route element={<AppShell />}>
+            <Route index element={<div>index-content</div>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('navigation')).toBeInTheDocument();
+    expect(screen.getByRole('main')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /skip to main content/i })).toHaveAttribute('href', '#main-content');
   });
 });
