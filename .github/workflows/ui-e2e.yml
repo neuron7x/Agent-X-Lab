@@ -55,4 +55,4 @@ jobs:
         with:
           name: ui-e2e-${{ github.run_id }}
           retention-days: 30
-          path: dist/EVD-UI-TESTS.json
+          path: dist/EVD-UI-E2E.json
