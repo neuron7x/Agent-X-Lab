@@ -91,7 +91,6 @@ export function ProtectedAction({ children, fallback }: ProtectedActionProps) {
   if (status === 'DEV_BYPASS') {
     // Dev warn — don't block, just surface in console
     if (typeof console !== 'undefined') {
-      // eslint-disable-next-line no-console
       console.warn('[AXL ProtectedAction] DEV bypass active —', gateError);
     }
   }
