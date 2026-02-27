@@ -54,7 +54,12 @@ export function AppShell() {
       </a>
 
       {/* Top bar */}
-      <TopBar onOpenCommandPalette={() => setCmdOpen(true)} />
+      <TopBar
+        repoName="Agent-X-Lab"
+        connectionStatus="DISCONNECTED"
+        demoMode={false}
+        onOpenCommandPalette={() => setCmdOpen(true)}
+      />
 
       {/* Bottom nav */}
       <nav aria-label="Main navigation" className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 relative">
