@@ -7,7 +7,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useEvidenceFilter, DEFAULT_FILTERS } from '@/lib/useEvidenceFilter';
 import { useArsenalSearch } from '@/lib/useArsenalSearch';
-import { getActionGateStatus } from '@/components/axl/ProtectedAction';
+import { getActionGateStatus } from '@/components/axl/actionGate';
 import type { EvidenceEntry } from '@/lib/schemas';
 import type { ArsenalItem } from '@/lib/schemas';
 
