@@ -4,9 +4,9 @@ import { useLanguage } from '@/hooks/useLanguage';
 import type { TranslationKey } from '@/lib/i18n';
 
 interface TopBarProps {
-  repoName: string;
-  connectionStatus: ConnectionStatus;
-  demoMode: boolean;
+  repoName?: string;
+  connectionStatus?: ConnectionStatus;
+  demoMode?: boolean;
   onSettingsClick?: () => void;
   onOpenCommandPalette?: () => void;
   rateLimitReset?: number | null;
@@ -37,7 +37,14 @@ function formatCountdown(seconds: number): string {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-export function TopBar({ repoName, connectionStatus, demoMode, onSettingsClick, rateLimitReset, onOpenCommandPalette }: TopBarProps) {
+export function TopBar({
+  repoName = '—',
+  connectionStatus = 'DISCONNECTED',
+  demoMode = false,
+  onSettingsClick,
+  rateLimitReset,
+  onOpenCommandPalette,
+}: TopBarProps) {
   const { t } = useLanguage();
   const dotColor = demoMode ? STATUS_COLORS.DISCONNECTED : STATUS_COLORS[connectionStatus];
   const statusLabel = demoMode ? t('demo') : t(STATUS_KEYS[connectionStatus]);

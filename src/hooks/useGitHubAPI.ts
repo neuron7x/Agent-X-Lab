@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { GitHubSettings, AXLState, Gate, EvidenceEntry, ContractJson } from '@/lib/types';
@@ -131,30 +130,20 @@ export function useGitHubAPI(settings: GitHubSettings, isConfigured: boolean, de
     onError: recordRateLimit,
   });
 
-  if (demoMode) {
-    return {
-      vrData: MOCK_VR,
-      gates: MOCK_GATES,
-      evidence: MOCK_EVIDENCE,
-      prs: MOCK_PRS,
-      connectionStatus: 'DISCONNECTED' as const,
-      error: null,
-      rateLimitReset: null,
-      isLoading: false,
-      contractError: null,
-      parseFailures: 0,
-      refetch: () => {},
-    };
-  }
 
-  const errors = [
-    vrQuery.error,
-    contractQuery.error,
-    evidenceQuery.error,
-    runsQuery.error,
-    prsQuery.error,
-    gatesQuery.error,
-  ];
+  const demoPayload = {
+    vrData: MOCK_VR,
+    gates: MOCK_GATES,
+    evidence: MOCK_EVIDENCE,
+    prs: MOCK_PRS,
+    connectionStatus: 'DISCONNECTED' as const,
+    error: null,
+    rateLimitReset: null,
+    isLoading: false,
+    contractError: null,
+    parseFailures: 0,
+    refetch: () => {},
+  };
 
   // Clear rate limit state after reset.
   useEffect(() => {
@@ -173,20 +162,23 @@ export function useGitHubAPI(settings: GitHubSettings, isConfigured: boolean, de
   }, [isRateLimitedActive]);
 
   const anyNonRateError = useMemo(() => {
-    for (const e of errors) {
+    const queryErrors = [
+      vrQuery.error,
+      contractQuery.error,
+      evidenceQuery.error,
+      runsQuery.error,
+      prsQuery.error,
+      gatesQuery.error,
+    ];
+
+    for (const e of queryErrors) {
       if (!e) continue;
       if (isRateLimitError(e)) continue;
       return e as Error;
     }
+
     return null;
-  }, [
-    vrQuery.error,
-    contractQuery.error,
-    evidenceQuery.error,
-    runsQuery.error,
-    prsQuery.error,
-    gatesQuery.error,
-  ]);
+  }, [vrQuery.error, contractQuery.error, evidenceQuery.error, runsQuery.error, prsQuery.error, gatesQuery.error]);
 
   let connectionStatus: AXLState['connectionStatus'] = 'DISCONNECTED';
 
@@ -229,6 +221,10 @@ export function useGitHubAPI(settings: GitHubSettings, isConfigured: boolean, de
   const parseFailures = evidenceQuery.data?.parseFailures || 0;
 
   const errorMessage = anyNonRateError ? anyNonRateError.message : null;
+
+  if (demoMode) {
+    return demoPayload;
+  }
 
   return {
     vrData: vrQuery.data || null,

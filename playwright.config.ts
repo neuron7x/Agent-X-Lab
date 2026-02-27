@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: [
     ['list'],
-    ['json', { outputFile: 'dist/EVD-UI-TESTS.json' }],
+    ['json', { outputFile: 'dist/EVD-UI-E2E.json' }],
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
   ],
   use: {

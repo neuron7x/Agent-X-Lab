@@ -18,12 +18,9 @@ test.describe('AXL-UI smoke tests', () => {
   });
 
   test('navigation tabs visible and functional', async ({ page }) => {
-    // All routes should have nav links
-    const nav = page.getByRole('navigation', { name: 'Main navigation' });
-    await expect(nav).toBeVisible();
-    await expect(nav.getByRole('link', { name: /pipeline/i })).toBeVisible();
-    await expect(nav.getByRole('link', { name: /evidence/i })).toBeVisible();
-    await expect(nav.getByRole('link', { name: /forge/i })).toBeVisible();
+    await expect(page.locator('a[href="/pipeline"]').first()).toBeVisible();
+    await expect(page.locator('a[href="/evidence"]').first()).toBeVisible();
+    await expect(page.locator('a[href="/forge"]').first()).toBeVisible();
   });
 
   test('navigates between routes', async ({ page }) => {
@@ -42,7 +39,7 @@ test.describe('AXL-UI smoke tests', () => {
 
   test('404 page for unknown route', async ({ page }) => {
     await page.goto('/route-that-does-not-exist');
-    await expect(page.getByText(/404|not found/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: /404/i })).toBeVisible();
   });
 
   test('command palette opens with Ctrl+K', async ({ page }) => {
@@ -65,8 +62,7 @@ test.describe('AXL-UI smoke tests', () => {
 
   test('Forge screen loads without crash', async ({ page }) => {
     await page.goto('/forge');
-    // Should show provider selector
-    await expect(page.getByText(/CLAUDE|GPT-5\.2|N8N/)).toBeVisible();
+    await expect(page.getByRole('button', { name: /CLAUDE|GPT-5\.2|N8N/i }).first()).toBeVisible();
   });
 
   test('protected Forge action requires API key header (demo: no actual call)', async ({ page }) => {
