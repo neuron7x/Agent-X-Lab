@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import type { GitHubSettings, ArsenalPrompt } from '@/lib/types';
+import type { GitHubSettings } from '@/lib/types';
 import { fetchArsenalIndex } from '@/lib/github';
 import { MOCK_ARSENAL } from '@/lib/mockData';
 

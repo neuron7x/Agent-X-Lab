@@ -119,20 +119,32 @@ jobs:
       - name: Run PROD_SPEC gate checker
         id: gate_check
         run: |
+          set +e
           python3 engine/scripts/check_prod_spec_gates.py \
             --ac     artifacts/AC_VERSION.json \
             --pb-dir ad2026_state/pb/ \
             --ssdf   artifacts/SSDF.map \
             --artifacts-dir artifacts/ \
             --out    build_proof/prod_spec/gate_check.report.json
-          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
-        continue-on-error: true  # We capture exit code manually
+          ec=$?
+          if [ ! -f build_proof/prod_spec/gate_check.report.json ]; then
+            cat > build_proof/prod_spec/gate_check.report.json << 'JSON'
+            {"rrd_status":"UNKNOWN","error":"checker_failed_before_report"}
+            JSON
+          fi
+          echo "exit_code=$ec" >> "$GITHUB_OUTPUT"
+          exit 0
 
       - name: Evaluate RRD status
+        env:
+          CHECKER_EXIT_CODE: ${{ steps.gate_check.outputs.exit_code }}
         run: |
           python3 - << 'EOF'
-          import json, sys
+          import json, os, sys
           try:
+              checker_exit_code = int(os.environ.get("CHECKER_EXIT_CODE", "1"))
+              if checker_exit_code != 0:
+                  print(f"❌ Gate checker failed with exit code {checker_exit_code}")
               report = json.load(open("build_proof/prod_spec/gate_check.report.json"))
               rrd = report.get("rrd_status", "UNKNOWN")
               gates = report.get("gates", [])
@@ -162,6 +174,8 @@ jobs:
                   sys.exit(1)
 
               print(f"\n{'✅' if rrd == 'PRODUCTION_SPEC_V2.1' else '⚠️ '} RRD={rrd}")
+              if checker_exit_code != 0:
+                  sys.exit(1)
               # Other gates: FAIL on NO runtime artifacts is expected in CI — warn only
               sys.exit(0)
           except Exception as e:
@@ -173,10 +187,10 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: prod-spec-gate-report-${{ github.run_id }}
+          name: prod-spec-gates-${{ github.run_id }}
           retention-days: 90
           path: |
-            build_proof/prod_spec/
+            build_proof/prod_spec/gate_check.report.json
             artifacts/AC_VERSION.json
             artifacts/SSDF.map
 

@@ -8,7 +8,6 @@ import { Command } from 'cmdk';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLanguage } from '@/hooks/useLanguage';
-import { QK } from '@/lib/queryKeys';
 import { dispatchRunEngine } from '@/lib/api';
 import { useActionGate } from '@/components/axl/ProtectedAction';
 import { log } from '@/lib/observability';

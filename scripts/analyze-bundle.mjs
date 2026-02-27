@@ -1,108 +1,141 @@
-import { readFileSync, readdirSync, existsSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
+import { gzipSync } from 'node:zlib';
 
-const modeArg = process.argv.find((arg) => arg.startsWith('--mode='));
-const mode = modeArg ? modeArg.split('=')[1] : '';
+export const BUDGETS = {
+  entry_gzip_kb: 220,
+  chunk_gzip_kb: 180,
+};
 
-function getJsFiles(distDir) {
-  return readdirSync(distDir)
-    .filter((file) => file.endsWith('.js'))
-    .sort((a, b) => a.localeCompare(b));
+function toKb(bytes) {
+  return Number((bytes / 1024).toFixed(2));
 }
 
-function runPerfBundleEvd() {
-  const distDir = 'dist/assets';
-  const files = getJsFiles(distDir);
+function classifyFiles(files, distRoot) {
+  const manifestPath = path.join(distRoot, '.vite', 'manifest.json');
+  const fallbackEntry = files.filter((file) => file.startsWith('index-') || file.startsWith('main-')).sort((a, b) => a.localeCompare(b));
 
-  let mainBundle = 0;
-  let totalRouteChunks = 0;
+  if (!existsSync(manifestPath)) {
+    const entrySet = new Set(fallbackEntry);
+    return {
+      source: 'fallback',
+      entryFiles: fallbackEntry,
+      nonEntryFiles: files.filter((file) => !entrySet.has(file)).sort((a, b) => a.localeCompare(b)),
+    };
+  }
 
-  for (const file of files) {
-    const stats = statSync(path.join(distDir, file));
-    const kb = stats.size / 1024;
-    console.log(`  ${file}: ${kb.toFixed(1)} kB`);
+  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+  const entryFiles = Object.values(manifest)
+    .filter((item) => item && item.isEntry === true && typeof item.file === 'string' && item.file.endsWith('.js'))
+    .map((item) => path.basename(item.file))
+    .filter((file) => files.includes(file))
+    .sort((a, b) => a.localeCompare(b));
 
-    if (file.startsWith('index-')) {
-      mainBundle = kb;
-    } else if (/Route-/.test(file)) {
-      totalRouteChunks += kb;
+  if (entryFiles.length === 0) {
+    const entrySet = new Set(fallbackEntry);
+    return {
+      source: 'fallback-no-entry-in-manifest',
+      entryFiles: fallbackEntry,
+      nonEntryFiles: files.filter((file) => !entrySet.has(file)).sort((a, b) => a.localeCompare(b)),
+    };
+  }
+
+  const entrySet = new Set(entryFiles);
+  return {
+    source: 'manifest',
+    entryFiles,
+    nonEntryFiles: files.filter((file) => !entrySet.has(file)).sort((a, b) => a.localeCompare(b)),
+  };
+}
+
+export function analyzeBundle({ mode, distRoot = 'dist' }) {
+  const assetsDir = path.join(distRoot, 'assets');
+  if (!existsSync(assetsDir)) {
+    throw new Error(`Missing required ${assetsDir}`);
+  }
+
+  const files = readdirSync(assetsDir)
+    .filter((file) => file.endsWith('.js'))
+    .sort((a, b) => a.localeCompare(b));
+
+  const perFile = files.map((file) => {
+    const filePath = path.join(assetsDir, file);
+    const rawBytes = statSync(filePath).size;
+    const gzipBytes = gzipSync(readFileSync(filePath)).length;
+    return {
+      file,
+      raw_bytes: rawBytes,
+      gzip_bytes: gzipBytes,
+      raw_kb: toKb(rawBytes),
+      gzip_kb: toKb(gzipBytes),
+    };
+  });
+
+  const classification = classifyFiles(files, distRoot);
+  const entrySet = new Set(classification.entryFiles);
+  const violations = [];
+
+  for (const item of perFile) {
+    if (entrySet.has(item.file) && item.gzip_kb > BUDGETS.entry_gzip_kb) {
+      violations.push(`${item.file}: ${item.gzip_kb}kB gzip > ${BUDGETS.entry_gzip_kb}kB entry budget`);
+    }
+    if (!entrySet.has(item.file) && item.gzip_kb > BUDGETS.chunk_gzip_kb) {
+      violations.push(`${item.file}: ${item.gzip_kb}kB gzip > ${BUDGETS.chunk_gzip_kb}kB chunk budget`);
     }
   }
 
-  const BUDGET_INITIAL_KB = 500;
-  const BUDGET_CHUNK_KB = 250;
+  const entryTotalGzipKb = toKb(perFile.filter((item) => entrySet.has(item.file)).reduce((sum, item) => sum + item.gzip_bytes, 0));
+  if (entryTotalGzipKb > BUDGETS.entry_gzip_kb) {
+    violations.push(`entry_total: ${entryTotalGzipKb}kB gzip > ${BUDGETS.entry_gzip_kb}kB entry budget`);
+  }
 
-  if (mainBundle > BUDGET_INITIAL_KB) {
-    console.error(`FAIL: main bundle ${mainBundle.toFixed(1)} kB > ${BUDGET_INITIAL_KB} kB budget`);
+  return {
+    mode,
+    generated_utc: new Date().toISOString(),
+    dist_assets: assetsDir,
+    classification_source: classification.source,
+    budgets: BUDGETS,
+    files: perFile,
+    entry_files: classification.entryFiles,
+    non_entry_files: classification.nonEntryFiles,
+    violations,
+    pass: violations.length === 0,
+  };
+}
+
+export function writeBundleEvidence(evidence, { distRoot = 'dist' } = {}) {
+  const outPath = path.join(distRoot, 'EVD-UI-BUNDLE.json');
+  mkdirSync(distRoot, { recursive: true });
+  writeFileSync(outPath, `${JSON.stringify(evidence, null, 2)}\n`);
+  return outPath;
+}
+
+function runCli() {
+  const modeArg = process.argv.find((arg) => arg.startsWith('--mode='));
+  const mode = modeArg ? modeArg.split('=')[1] : '';
+  if (mode !== 'perf-bundle-evd' && mode !== 'verify-bundle-budget') {
+    console.error('Usage: node scripts/analyze-bundle.mjs --mode=perf-bundle-evd|verify-bundle-budget');
     process.exit(1);
   }
 
-  console.log(`PASS: initial bundle ${mainBundle.toFixed(1)} kB (budget: ${BUDGET_INITIAL_KB} kB)`);
-  console.log(`PASS: route chunks ${totalRouteChunks.toFixed(1)} kB total`);
-
-  const evidence = {
-    timestamp: new Date().toISOString(),
-    mainBundle_kb: mainBundle,
-    routeChunks_kb: totalRouteChunks,
-    budget_initial_kb: BUDGET_INITIAL_KB,
-    pass: mainBundle <= BUDGET_INITIAL_KB,
-  };
-
-  writeFileSync('dist/EVD-UI-BUNDLE.json', JSON.stringify(evidence, null, 2));
-  console.log('EVD-UI-BUNDLE.json written');
-
-  void BUDGET_CHUNK_KB;
-}
-
-function runVerifyBundleBudget() {
-  const distDir = 'dist/assets';
-
-  if (!existsSync(distDir)) {
-    console.log('No dist/assets');
-    return;
+  const evidence = analyzeBundle({ mode });
+  for (const item of evidence.files) {
+    console.log(`  ${item.file}: raw ${item.raw_kb} kB | gzip ${item.gzip_kb} kB`);
   }
 
-  const files = getJsFiles(distDir);
-  const stats = files.map((file) => {
-    const size = statSync(path.join(distDir, file)).size;
-    return { file, size_bytes: size, size_kb: Math.round(size / 1024) };
-  });
+  const outPath = writeBundleEvidence(evidence);
+  console.log(`Wrote ${outPath}`);
 
-  const total = stats.reduce((sum, file) => sum + file.size_bytes, 0);
-  const result = {
-    total_kb: Math.round(total / 1024),
-    files: stats,
-    budgets: { initial_kb_gzip_limit: 220, chunk_kb_gzip_limit: 180 },
-    generated: new Date().toISOString(),
-  };
-
-  writeFileSync('dist/EVD-UI-BUNDLE.json', JSON.stringify(result, null, 2));
-  console.log('Bundle total (raw):', Math.round(total / 1024), 'KB across', files.length, 'chunks');
-
-  const data = JSON.parse(readFileSync('dist/EVD-UI-BUNDLE.json', 'utf8'));
-  const initial = data.files.filter((file) => file.file.includes('index-') || file.file.includes('main-'));
-  const MAX_RAW_KB = 800;
-  let failed = false;
-
-  for (const file of initial) {
-    if (file.size_kb > MAX_RAW_KB) {
-      console.error('BUDGET EXCEEDED:', file.file, `${file.size_kb}KB > ${MAX_RAW_KB}KB raw`);
-      failed = true;
+  if (!evidence.pass) {
+    for (const violation of evidence.violations) {
+      console.error(`BUDGET EXCEEDED: ${violation}`);
     }
-  }
-
-  if (failed) {
     process.exit(1);
   }
 
   console.log('Bundle budgets: PASS');
 }
 
-if (mode === 'perf-bundle-evd') {
-  runPerfBundleEvd();
-} else if (mode === 'verify-bundle-budget') {
-  runVerifyBundleBudget();
-} else {
-  console.error('Usage: node scripts/analyze-bundle.mjs --mode=perf-bundle-evd|verify-bundle-budget');
-  process.exit(1);
+if (import.meta.url === `file://${process.argv[1]}`) {
+  runCli();
 }

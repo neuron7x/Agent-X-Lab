@@ -3,7 +3,7 @@
  * Phase 7.1: Unit tests for evidence filter, arsenal search, ProtectedAction gate.
  * GATE-3/4/5 evidence.
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useEvidenceFilter, DEFAULT_FILTERS } from '@/lib/useEvidenceFilter';
 import { useArsenalSearch } from '@/lib/useArsenalSearch';
@@ -176,8 +176,6 @@ describe('useArsenalSearch', () => {
 // ── ProtectedAction gate ──────────────────────────────────────────────────
 
 describe('getActionGateStatus', () => {
-  const originalEnv = { ...import.meta.env };
-
   afterEach(() => {
     // Reset env (Vitest env vars are read at call time via import.meta.env)
     vi.unstubAllEnvs();
