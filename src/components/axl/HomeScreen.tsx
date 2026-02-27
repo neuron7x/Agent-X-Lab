@@ -3,14 +3,20 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useState, useCallback, useRef } from 'react';
 
 interface HomeScreenProps {
-  vrData: VRData | null;
-  gates: Gate[];
-  onViewPipeline: () => void;
-  onNavigateToArsenal: () => void;
+  vrData?: VRData | null;
+  gates?: Gate[];
+  onViewPipeline?: () => void;
+  onNavigateToArsenal?: () => void;
   contractError?: string | null;
 }
 
-export function HomeScreen({ vrData, gates, onViewPipeline, onNavigateToArsenal, contractError }: HomeScreenProps) {
+export function HomeScreen({
+  vrData = null,
+  gates = [],
+  onViewPipeline = () => {},
+  onNavigateToArsenal = () => {},
+  contractError,
+}: HomeScreenProps) {
   const { t } = useLanguage();
   const rawStatus = vrData?.status || '—';
   const isRun = rawStatus === 'RUN';
