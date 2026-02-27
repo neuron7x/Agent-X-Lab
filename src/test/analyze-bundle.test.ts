@@ -99,9 +99,11 @@ describe('analyzeBundle', () => {
         }),
       );
 
+      const scriptPath = path.resolve('scripts/analyze-bundle.mjs');
+      const relativeScriptPath = path.relative(root, scriptPath);
       const { stdout, stderr } = await execFileAsync(
         process.execPath,
-        [path.resolve('scripts/analyze-bundle.mjs'), '--mode=verify-bundle-budget'],
+        [relativeScriptPath, '--mode=verify-bundle-budget'],
         { cwd: root },
       );
 
