@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "npx wrangler dev",
     "deploy": "npx wrangler deploy",
-    "typecheck": "../../node_modules/.bin/tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsc --noEmit",
     "test": "../../node_modules/.bin/vitest run"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
   }
 }
