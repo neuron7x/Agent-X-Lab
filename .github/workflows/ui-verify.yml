@@ -58,7 +58,7 @@ jobs:
           VITE_AXL_API_KEY: 'ci-placeholder'
 
       - name: Bundle size check
-        run: npm run analyze:bundle -- --mode=bundle-evd
+        run: npm run analyze:bundle -- --mode=verify-bundle-budget
 
       - name: Upload build artifacts
         if: always()

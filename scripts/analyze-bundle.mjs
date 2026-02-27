@@ -10,7 +10,7 @@ function getJsFiles(distDir) {
     .sort((a, b) => a.localeCompare(b));
 }
 
-function runBundleEvd() {
+function runPerfBundleEvd() {
   const distDir = 'dist/assets';
   const files = getJsFiles(distDir);
 
@@ -54,7 +54,7 @@ function runBundleEvd() {
   void BUDGET_CHUNK_KB;
 }
 
-function runBundleBudget() {
+function runVerifyBundleBudget() {
   const distDir = 'dist/assets';
 
   if (!existsSync(distDir)) {
@@ -98,11 +98,11 @@ function runBundleBudget() {
   console.log('Bundle budgets: PASS');
 }
 
-if (mode === 'bundle-evd') {
-  runBundleEvd();
-} else if (mode === 'bundle-budget') {
-  runBundleBudget();
+if (mode === 'perf-bundle-evd') {
+  runPerfBundleEvd();
+} else if (mode === 'verify-bundle-budget') {
+  runVerifyBundleBudget();
 } else {
-  console.error('Usage: node scripts/analyze-bundle.mjs --mode=bundle-evd|bundle-budget');
+  console.error('Usage: node scripts/analyze-bundle.mjs --mode=perf-bundle-evd|verify-bundle-budget');
   process.exit(1);
 }
