@@ -123,8 +123,8 @@ jobs:
         with:
           node-version: '20'
           cache: npm
-          cache-dependency-path: workers/axl-bff/package.json
+          cache-dependency-path: workers/axl-bff/package-lock.json
       - run: |
           cd workers/axl-bff
           npm ci
-          npx tsc --noEmit 2>&1 | grep -v "workers-types" || true
+          npm run typecheck
