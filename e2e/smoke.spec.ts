@@ -17,14 +17,12 @@ test.describe('AXL-UI smoke tests', () => {
 
   test('navigation tabs visible and functional', async ({ page }) => {
     await page.goto('/');
-    // Hardening: use direct role locators to avoid DOM nesting drift in dynamic nav renderers.
-    const pipelineLink = page.getByRole('link', { name: /pipeline/i });
-    const evidenceLink = page.getByRole('link', { name: /evidence/i });
-    const forgeLink = page.getByRole('link', { name: /forge/i });
+    const nav = page.getByRole('navigation', { name: /main navigation/i });
+    await expect(nav).toBeVisible();
 
-    await expect(pipelineLink.first()).toBeVisible();
-    await expect(evidenceLink.first()).toBeVisible();
-    await expect(forgeLink.first()).toBeVisible();
+    await expect(nav.locator('a[href="/pipeline"]').first()).toBeVisible();
+    await expect(nav.locator('a[href="/evidence"]').first()).toBeVisible();
+    await expect(nav.locator('a[href="/forge"]').first()).toBeVisible();
   });
 
   test('navigates between routes', async ({ page }) => {
