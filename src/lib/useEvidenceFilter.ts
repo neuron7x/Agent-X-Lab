@@ -28,7 +28,10 @@ export function useEvidenceFilter(entries: EvidenceEntry[]) {
 
     // Status filter
     if (filters.status !== 'ALL') {
-      result = result.filter(e => e.status === filters.status);
+      result = result.filter(e => {
+        if (filters.status === 'UNKNOWN') return e.status === 'UNKNOWN' || e.status === 'ASSUMED';
+        return e.status === filters.status;
+      });
     }
 
     // Time window
