@@ -12,12 +12,33 @@
  * I7: No new XSS surface — children rendered as-is.
  */
 import { type ReactNode } from 'react';
-import { getActionGateStatus } from '@/components/axl/actionGate';
 
 interface ProtectedActionProps {
   children: ReactNode;
   /** Render when the action is blocked (no key in prod) */
   fallback?: ReactNode;
+}
+
+function isDevEnv(): boolean {
+  return import.meta.env.DEV === true || window.location.hostname === 'localhost';
+}
+
+function hasApiKey(): boolean {
+  return Boolean(import.meta.env.VITE_AXL_API_KEY);
+}
+
+/**
+ * Gate status for consumer hooks.
+ */
+export type ActionGateStatus =
+  | 'ALLOWED'           // key present
+  | 'DEV_BYPASS'        // dev env, key missing — warn but allow
+  | 'BLOCKED';          // prod env, key missing
+
+export function getActionGateStatus(): ActionGateStatus {
+  if (hasApiKey()) return 'ALLOWED';
+  if (isDevEnv()) return 'DEV_BYPASS';
+  return 'BLOCKED';
 }
 
 /**
@@ -70,6 +91,7 @@ export function ProtectedAction({ children, fallback }: ProtectedActionProps) {
   if (status === 'DEV_BYPASS') {
     // Dev warn — don't block, just surface in console
     if (typeof console !== 'undefined') {
+      // eslint-disable-next-line no-console
       console.warn('[AXL ProtectedAction] DEV bypass active —', gateError);
     }
   }

@@ -147,6 +147,15 @@ export function useGitHubAPI(settings: GitHubSettings, isConfigured: boolean, de
     };
   }
 
+  const errors = [
+    vrQuery.error,
+    contractQuery.error,
+    evidenceQuery.error,
+    runsQuery.error,
+    prsQuery.error,
+    gatesQuery.error,
+  ];
+
   // Clear rate limit state after reset.
   useEffect(() => {
     if (!rateLimitResetState) return;
@@ -164,21 +173,11 @@ export function useGitHubAPI(settings: GitHubSettings, isConfigured: boolean, de
   }, [isRateLimitedActive]);
 
   const anyNonRateError = useMemo(() => {
-    const queryErrors = [
-      vrQuery.error,
-      contractQuery.error,
-      evidenceQuery.error,
-      runsQuery.error,
-      prsQuery.error,
-      gatesQuery.error,
-    ];
-
-    for (const error of queryErrors) {
-      if (!error) continue;
-      if (isRateLimitError(error)) continue;
-      return error as Error;
+    for (const e of errors) {
+      if (!e) continue;
+      if (isRateLimitError(e)) continue;
+      return e as Error;
     }
-
     return null;
   }, [
     vrQuery.error,
