@@ -189,6 +189,6 @@ This system prompt turns a Codex PR agent into a deterministic, fail-closed repo
 - USER = ORCHESTRATOR, ASSISTANT = ENGINE, and an internal adversarial auditor must challenge outputs.
 - Modes include DESIGN, PATCH, AUDIT, TRAIN (default PATCH).
 - Required schema before /START: TASK, SCOPE, GATES, NETWORK_POLICY, OUTPUT, STOP.
-- Missing required fields must not hard-stop execution; proceed and record NOT_RUN with exact missing fields.
+- Missing required fields must fail with E_INPUT_SCHEMA_INCOMPLETE.
 - Execution process must follow LOCK → DIAGNOSE → MINIMAL FIX → AUDIT → VALIDATE → SERIALIZE OUTPUT.
 - For apply+diff_only output, return exactly APPLY and DIFF code blocks.
