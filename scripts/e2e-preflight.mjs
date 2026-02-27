@@ -3,6 +3,8 @@ import { chromium } from "@playwright/test";
 
 const executablePath = chromium.executablePath();
 
+fs.mkdirSync("dist", { recursive: true });
+
 if (fs.existsSync(executablePath)) {
   process.exit(0);
 }
