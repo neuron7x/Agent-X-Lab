@@ -23,4 +23,12 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": "off",
     },
   },
+  {
+    // Shadcn-style UI modules and helper hooks intentionally export non-component values,
+    // which creates react-refresh noise without improving HMR safety signal.
+    files: ["src/components/ui/**/*.{ts,tsx}", "src/hooks/**/*.{ts,tsx}", "src/components/axl/ProtectedAction.tsx"],
+    rules: {
+      "react-refresh/only-export-components": "off",
+    },
+  },
 );

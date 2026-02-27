@@ -5,22 +5,23 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('AXL-UI smoke tests', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-  });
 
   test('app loads without JS errors', async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', err => errors.push(err.message));
+    await page.goto('/');
     await page.waitForLoadState('networkidle');
     // Allow minor console errors but no crashes
     expect(errors.filter(e => !e.includes('favicon'))).toHaveLength(0);
   });
 
   test('navigation tabs visible and functional', async ({ page }) => {
-    await expect(page.locator('a[href="/pipeline"]').first()).toBeVisible();
-    await expect(page.locator('a[href="/evidence"]').first()).toBeVisible();
-    await expect(page.locator('a[href="/forge"]').first()).toBeVisible();
+    await page.goto('/');
+    const nav = page.getByRole('navigation').first();
+    await expect(nav).toBeVisible();
+    await expect(nav.getByRole('link', { name: /pipeline/i }).first()).toBeVisible();
+    await expect(nav.getByRole('link', { name: /evidence/i }).first()).toBeVisible();
+    await expect(nav.getByRole('link', { name: /forge/i }).first()).toBeVisible();
   });
 
   test('navigates between routes', async ({ page }) => {
@@ -43,12 +44,14 @@ test.describe('AXL-UI smoke tests', () => {
   });
 
   test('command palette opens with Ctrl+K', async ({ page }) => {
+    await page.goto('/');
     await page.keyboard.press('Control+k');
     const palette = page.getByRole('dialog', { name: 'Command palette' });
     await expect(palette).toBeVisible();
   });
 
   test('command palette closes on Escape', async ({ page }) => {
+    await page.goto('/');
     await page.keyboard.press('Control+k');
     await expect(page.getByRole('dialog', { name: 'Command palette' })).toBeVisible();
     await page.keyboard.press('Escape');
@@ -56,6 +59,7 @@ test.describe('AXL-UI smoke tests', () => {
   });
 
   test('skip to content link exists (a11y)', async ({ page }) => {
+    await page.goto('/');
     const skip = page.getByRole('link', { name: /skip to main content/i });
     await expect(skip).toBeAttached();
   });
@@ -66,10 +70,10 @@ test.describe('AXL-UI smoke tests', () => {
   });
 
   test('protected Forge action requires API key header (demo: no actual call)', async ({ page }) => {
-    await page.goto('/forge');
     // In demo mode, forge submit should not throw uncaught errors
     const errors: string[] = [];
     page.on('pageerror', err => errors.push(err.message));
+    await page.goto('/forge');
     // No input = button disabled, no request
     await expect(errors).toHaveLength(0);
   });
