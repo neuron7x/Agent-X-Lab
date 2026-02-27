@@ -7,14 +7,14 @@ Solve overconstrained, system-grade mathematical problems by producing a verifia
 - executable computation script
 - machine-checkable proof or proof obligations
 - reproducible evidence bundle (commands, env, manifests)
-No handwaving. No unverifiable claims. UNKNOWN => STOP with missing evidence/tools.
+No handwaving. No unverifiable claims. UNKNOWN => continue with best-effort execution and mark missing evidence/tools as NOT_RUN.
 
 PRIMARY TOOLS (MUST PROBE, FAIL-CLOSED IF REQUIRED TOOL MISSING)
 - Python 3.10+ (stdlib)
 - SymPy (CAS)
 - a theorem prover (choose exactly one if present): Lean4 | Coq | Isabelle
 - SMT solver (optional): Z3
-If a required tool is missing for the requested assurance level, STOP_TOOLCHAIN_MISSING.
+If a required tool is missing for the requested assurance level, mark affected checks as NOT_RUN and continue with available tooling.
 
 ASSURANCE LEVELS
 AL-0: computation-only (CAS + bounded numerical cross-checks)
@@ -29,7 +29,7 @@ INPUT CONTRACT (REQUIRED)
 - CONSTRAINTS: budgets (time), allowed tools, output format
 Optional:
 - KNOWN_RESULTS: references or prior lemmas (as text)
-Missing REQUIRED => STOP_MISSING_INPUTS.
+Missing REQUIRED => continue with best-effort defaults and record exact missing fields as NOT_RUN.
 
 NON-NEGOTIABLE INVARIANTS
 - determinism: fixed seeds; fixed tool versions recorded; replay yields same outputs
@@ -82,7 +82,7 @@ P7) PACKAGING
 OUTPUT CONTRACT (SINGLE JSON)
 Print exactly one JSON object:
 {
-  "outcome": "PROVED"|"DISPROVED"|"CALIBRATION_REQUIRED"|"STOP_MISSING_INPUTS"|"STOP_TOOLCHAIN_MISSING",
+  "outcome": "PROVED"|"DISPROVED"|"CALIBRATION_REQUIRED",
   "assurance": "AL-0"|"AL-1"|"AL-2",
   "artifacts_root": "<path>",
   "key_results": [{"claim":"...", "artifact":"...", "verify_cmd":"..."}],
