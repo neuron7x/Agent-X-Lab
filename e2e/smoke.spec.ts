@@ -18,9 +18,9 @@ test.describe('AXL-UI smoke tests', () => {
   });
 
   test('navigation tabs visible and functional', async ({ page }) => {
-    await expect(page.getByRole('link', { name: /pipeline/i }).first()).toBeVisible();
-    await expect(page.getByRole('link', { name: /evidence/i }).first()).toBeVisible();
-    await expect(page.getByRole('link', { name: /forge/i }).first()).toBeVisible();
+    await expect(page.locator('a[href="/pipeline"]').first()).toBeVisible();
+    await expect(page.locator('a[href="/evidence"]').first()).toBeVisible();
+    await expect(page.locator('a[href="/forge"]').first()).toBeVisible();
   });
 
   test('navigates between routes', async ({ page }) => {
