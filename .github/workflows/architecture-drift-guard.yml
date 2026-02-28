@@ -1,0 +1,68 @@
+name: Architecture Drift Guard
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  topology-gate:
+    name: Empirical Graph Verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout Base State
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: _state_base
+
+      - name: Checkout Head State
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: _state_head
+
+      - name: Provision Exoneural Runtime
+        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Platform Dependencies
+        run: pip install PyYAML
+
+      - name: Synthesize Base Contract
+        working-directory: _state_base
+        run: |
+          make repo-model
+          cp engine/artifacts/repo_model/repo_model.json ../base_contract.json
+
+      - name: Synthesize Head Contract
+        working-directory: _state_head
+        run: |
+          make repo-model
+          cp engine/artifacts/repo_model/repo_model.json ../head_contract.json
+
+      - name: Execute Epistemic Comparator
+        id: comparator
+        env:
+          HAS_OVERRIDE: ${{ contains(github.event.pull_request.labels.*.name, 'architecture-override') }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_API_URL: ${{ github.api_url }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          python _state_head/engine/scripts/check_architecture_drift.py \
+            --base base_contract.json \
+            --head head_contract.json \
+            --override "${HAS_OVERRIDE}" \
+            --summary "$GITHUB_STEP_SUMMARY" \
+            --report architecture_drift_report.md
