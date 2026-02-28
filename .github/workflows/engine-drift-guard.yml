@@ -22,25 +22,20 @@ jobs:
           set -euo pipefail
           python -m pip --version
 
-          # Prefer repo canonical dev requirements if present.
+          # Install engine runtime deps (PyYAML/jsonschema) plus dev test deps.
           if [[ -f requirements-dev.txt ]]; then
             python -m pip install -r requirements-dev.txt
+            if [[ -f engine/pyproject.toml ]]; then
+              python -m pip install -e './engine[dev]'
+            fi
           elif [[ -f engine/requirements-dev.txt ]]; then
+            python -m pip install -e './engine[dev]'
             python -m pip install -r engine/requirements-dev.txt
           elif [[ -f engine/pyproject.toml ]]; then
-            python -m pip install -e ./engine
+            python -m pip install -e './engine[dev]'
           else
             echo "No dependency manifest found (requirements-dev.txt | engine/requirements-dev.txt | engine/pyproject.toml)" >&2
             exit 1
-          fi
-
-          # Ensure pytest exists; install only if missing (keeps noise minimal).
-          python - <<'PY'
-          import importlib.util, sys
-          sys.exit(0 if importlib.util.find_spec("pytest") else 1)
-          PY
-          if [[ $? -ne 0 ]]; then
-            python -m pip install pytest
           fi
 
       - name: Run engine gates
