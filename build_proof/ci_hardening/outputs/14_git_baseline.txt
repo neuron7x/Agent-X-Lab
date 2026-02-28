@@ -1,0 +1,8 @@
++ git rev-parse HEAD
+da78483fbab7380f3a86a45a27b6e4bcff80ceb8
+EXIT_CODE=0
++ git rev-parse --abbrev-ref HEAD
+work
+EXIT_CODE=0
++ git remote -v
+EXIT_CODE=0

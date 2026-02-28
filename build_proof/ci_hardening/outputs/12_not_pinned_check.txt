@@ -1,4 +1,3 @@
 + rg -n NOT_PINNED build_proof/ci_hardening/outputs/01_action_pin_audit.txt
-28:NOT_PINNED | .github/workflows/ui-perf.yml:21:      - uses: actions/setup-node@v4
-31:NOT_PINNED | .github/workflows/ui-perf.yml:52:      - uses: actions/setup-node@v4
-EXIT_CODE=0
+EXIT_CODE=1
+NO_NOT_PINNED_FOUND
