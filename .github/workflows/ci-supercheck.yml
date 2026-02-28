@@ -32,170 +32,180 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import fnmatch
-          import json
-          import os
-          import subprocess
-          import sys
-          import time
-          import urllib.request
-          
-          
-          def api(url):
-              req = urllib.request.Request(
-                  url,
-                  headers={
-                      'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN'],
+          import fnmatch, json, os, subprocess, sys, time, traceback, urllib.error, urllib.request
+
+          class GitHubClient:
+              def __init__(self, token, repo):
+                  self.base_url = f"https://api.github.com/repos/{repo}"
+                  self.headers = {
+                      'Authorization': f'Bearer {token}',
                       'Accept': 'application/vnd.github+json',
-                      'User-Agent': 'ci-supercheck',
-                  },
-              )
-              with urllib.request.urlopen(req, timeout=30) as resp:
-                  return json.loads(resp.read().decode('utf-8'))
-          
-          
-          def changed_files(event_name, repo, event_path):
-              event = json.loads(open(event_path, encoding='utf-8').read())
-              if event_name == 'pull_request':
-                  pr = event['pull_request']['number']
-                  files = []
-                  page = 1
+                      'User-Agent': 'ci-supercheck-orchestrator'
+                  }
+
+              def get_paginated(self, endpoint, head_sha=None):
+                  results, page = [], 1
                   while True:
-                      data = api(f'https://api.github.com/repos/{repo}/pulls/{pr}/files?per_page=100&page={page}')
-                      if not data:
-                          break
-                      files.extend(item['filename'] for item in data)
+                      url = f"{self.base_url}/{endpoint}?per_page=100&page={page}"
+                      data = self._request(url)
+                      items = data.get('check_runs', []) if 'check_runs' in data else data
+                      if not items: break
+
+                      if head_sha:
+                          items = [i for i in items if i.get('head_sha') == head_sha]
+
+                      results.extend(items)
+                      if type(data) is list or len(items) < 100: break
                       page += 1
-                  return sorted(set(files))
-          
-              data = subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', 'HEAD'], text=True)
-              return sorted(line for line in data.splitlines() if line)
-          
-          
-          def is_docs_only(paths):
-              allowed = (
-                  lambda p: p.startswith('docs/')
-                  or p.startswith('build_proof/')
-                  or p.endswith('.md')
-              )
-              return all(allowed(p) for p in paths)
-          
-          
-          def any_match(paths, predicates):
-              for p in paths:
-                  for pred in predicates:
-                      if pred(p):
-                          return True
-              return False
-          
-          
-          def required_patterns(paths):
-              req = []
-          
-              ui_preds = [
-                  lambda p: p.startswith('src/'),
-                  lambda p: p.startswith('workers/'),
-                  lambda p: p.startswith('e2e/'),
-                  lambda p: p == 'playwright.config.ts',
-                  lambda p: p == 'vite.config.ts',
-                  lambda p: p == 'vitest.config.ts',
-                  lambda p: p == 'eslint.config.js',
-                  lambda p: fnmatch.fnmatch(p, 'tsconfig*.json'),
-                  lambda p: fnmatch.fnmatch(p, 'package*.json'),
-                  lambda p: p.startswith('scripts/'),
-              ]
-              if any_match(paths, ui_preds):
-                  req.extend([
-                      'Lint + Typecheck + Unit Tests + Build',
-                      'Worker TypeScript',
-                      'Playwright E2E Smoke',
-                      'Bundle Size Check',
-                      'Lighthouse CI',
-                  ])
-          
-              prod_preds = [
-                  lambda p: p.startswith('engine/'),
-                  lambda p: p.startswith('udgs_core/'),
-                  lambda p: p.startswith('tools/prod_spec/'),
-                  lambda p: p.startswith('artifacts/'),
-                  lambda p: p == '.github/workflows/prod-spec-gates.yml',
-              ]
-              if any_match(paths, prod_preds):
-                  req.extend([
-                      'Schema Validation (G0/G3)',
-                      'Full RRD Gate Check',
-                  ])
-          
-              wf_preds = [
-                  lambda p: p.startswith('.github/workflows/'),
-                  lambda p: p.startswith('.github/actions/'),
-              ]
-              if any_match(paths, wf_preds):
-                  req.extend([
-                      'Workflow Static Hygiene',
-                      'Action Pin Verify',
-                      'Workflow Tools + Actionlint',
-                  ])
-          
-              if not is_docs_only(paths):
-                  req.extend([
-                      'analyze',
-                      'review',
-                      'scan',
-                  ])
-          
-              return sorted(set(req))
-          
-          
-          def normalize_check_name(name):
-              if ' / ' in name:
-                  return name.split(' / ', 1)[1]
-              return name
-          
-          
-          def poll(repo, sha, required):
-              deadline = time.time() + 900
-              while time.time() < deadline:
-                  data = api(f'https://api.github.com/repos/{repo}/commits/{sha}/check-runs?per_page=100')
-                  runs = data.get('check_runs', [])
-                  seen = {}
-                  for r in runs:
-                      base = normalize_check_name(r['name'])
-                      if base == 'CI Supercheck':
-                          continue
-                      seen[base] = (r['status'], r.get('conclusion'), r['name'])
-          
-                  missing = [n for n in required if n not in seen]
-                  failed = [
-                      (n, *seen[n])
-                      for n in required
-                      if n in seen and not (seen[n][0] == 'completed' and seen[n][1] == 'success')
-                  ]
-                  if not missing and not failed:
-                      print('CI Supercheck PASS')
-                      return 0
-          
-                  print('Waiting for required checks...')
-                  print('MISSING:', ', '.join(missing) if missing else 'none')
-                  if failed:
-                      for n, status, conclusion, raw in failed:
-                          print(f'FAILED {n} raw={raw} status={status} conclusion={conclusion}')
-                  time.sleep(20)
-          
-              print('CI Supercheck timeout')
-              print('Required:', ', '.join(required) if required else 'none')
-              return 1
-          
-          
-          repo = os.environ['GITHUB_REPOSITORY']
-          sha = os.environ['GITHUB_SHA']
-          files = changed_files(os.environ['GITHUB_EVENT_NAME'], repo, os.environ['GITHUB_EVENT_PATH'])
-          required = required_patterns(files)
-          print('Changed files count:', len(files))
-          print('Required checks:', ', '.join(required) if required else 'none')
-          if not required:
-              print('No required checks for this change-set; PASS')
-              sys.exit(0)
-          
-          sys.exit(poll(repo, sha, required))
+                  return results
+
+              def _request(self, url):
+                  req = urllib.request.Request(url, headers=self.headers)
+                  backoffs = [2, 4, 8]
+                  for idx, delay in enumerate(backoffs, 1):
+                      try:
+                          with urllib.request.urlopen(req, timeout=30) as r:
+                              return json.loads(r.read().decode('utf-8'))
+                      except urllib.error.HTTPError as e:
+                          if e.code in (403, 429):
+                              wait = max(0, int(e.headers.get('Retry-After', 0))) or max(0, int(e.headers.get('x-ratelimit-reset', time.time())) - int(time.time()))
+                              if wait:
+                                  print(f"RATE LIMIT: Sleeping {wait}s.")
+                                  time.sleep(wait)
+                                  continue
+                          if idx == len(backoffs): raise
+                          time.sleep(delay)
+                      except Exception as e:
+                          if idx == len(backoffs): raise
+                          print(f"NETWORK WARN: {e}. Retrying...")
+                          time.sleep(delay)
+
+          class Telemetry:
+              def __init__(self):
+                  self.path = os.environ.get('GITHUB_STEP_SUMMARY')
+                  self.start_tag, self.end_tag = '', ''
+
+              def publish(self, markdown, overwrite=False):
+                  if not self.path: return
+                  block = f"{self.start_tag}\n{markdown}\n{self.end_tag}\n"
+                  try:
+                      existing = open(self.path, 'r', encoding='utf-8').read() if os.path.exists(self.path) else ''
+                      s, e = existing.find(self.start_tag), existing.find(self.end_tag)
+                      if s != -1 and e != -1:
+                          e += len(self.end_tag)
+                          if e < len(existing) and existing[e] == '\n': e += 1
+                          existing = existing[:s] + existing[e:]
+
+                      mode = 'w' if overwrite else 'a'
+                      with open(self.path, mode, encoding='utf-8') as f:
+                          if overwrite and existing.strip():
+                              f.write(existing.rstrip('\n') + '\n\n')
+                          f.write(block)
+                  except Exception as e:
+                      print(f"TELEMETRY WARN: Failed to write summary: {e}")
+
+          class RulesEngine:
+              @staticmethod
+              def get_changed_files(client, event, pr_number):
+                  if event == 'pull_request':
+                      data = client.get_paginated(f"pulls/{pr_number}/files")
+                      return sorted(set(item['filename'] for item in data))
+                  return sorted(line for line in subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', 'HEAD'], text=True).splitlines() if line)
+
+              @staticmethod
+              def calculate_required(paths):
+                  if all(p.startswith('docs/') or p.startswith('build_proof/') or p.endswith('.md') for p in paths):
+                      return []
+
+                  req = set()
+                  any_match = lambda preds: any(pred(p) for p in paths for pred in preds)
+
+                  if any_match([lambda p: p.startswith(('src/', 'workers/', 'e2e/', 'scripts/')), lambda p: p.endswith(('config.ts', 'config.js', '.json'))]):
+                      req.update(['Lint + Typecheck + Unit Tests + Build', 'Worker TypeScript', 'Playwright E2E Smoke', 'Bundle Size Check', 'Lighthouse CI'])
+                  if any_match([lambda p: p.startswith(('engine/', 'udgs_core/', 'tools/prod_spec/', 'artifacts/')), lambda p: p == '.github/workflows/prod-spec-gates.yml']):
+                      req.update(['Schema Validation (G0/G3)', 'Full RRD Gate Check'])
+                  if any_match([lambda p: p.startswith('.github/')]):
+                      req.update(['Workflow Static Hygiene', 'Action Pin Verify', 'Workflow Tools + Actionlint'])
+
+                  req.update(['analyze', 'review', 'scan'])
+                  return sorted(req)
+
+          class Orchestrator:
+              def __init__(self, client, telemetry, sha, required):
+                  self.api = client
+                  self.telemetry = telemetry
+                  self.sha = sha
+                  self.required = set(required)
+                  self.deadline = time.time() + 900
+                  self.grace_period = time.time() + 60
+
+              def run(self):
+                  print(f"ORCHESTRATOR START: SHA {self.sha[:8]} | EXPECTING: {len(self.required)} gates")
+                  while time.time() < self.deadline:
+                      runs = self.api.get_paginated(f"commits/{self.sha}/check-runs", head_sha=self.sha)
+
+                      grouped = {}
+                      for r in runs:
+                          name = r['name'].split(' / ', 1)[1] if ' / ' in r['name'] else r['name']
+                          if name != 'CI Supercheck': grouped.setdefault(name, []).append(r)
+
+                      pending, blockers, failed_md = set(), [], []
+
+                      for req in list(self.required):
+                          if req not in grouped:
+                              if time.time() > self.grace_period:
+                                  print(f"PRUNING: '{req}' inactive. Removing from matrix.")
+                                  self.required.remove(req)
+                              else: pending.add(req)
+                              continue
+
+                          conclusions = [r.get('conclusion') for r in grouped[req]]
+                          if any(c in ('failure', 'cancelled', 'timed_out', 'action_required') for c in conclusions):
+                              bad = next(r for r in grouped[req] if r.get('conclusion') in ('failure', 'cancelled', 'timed_out', 'action_required'))
+                              blockers.append(req)
+                              failed_md.append(f"| ❌ **{req}** | {bad.get('conclusion').upper()} | [Logs]({bad.get('html_url')}) |")
+                              continue
+
+                          if not all(r.get('status') == 'completed' for r in grouped[req]) or any(c not in ('success', 'neutral', 'skipped') for c in conclusions):
+                              pending.add(req)
+
+                      if blockers:
+                          self.telemetry.publish(f"### ❌ CI Integrity Violation\n**SHA:** `{self.sha}`\n| Gate | State | Trace |\n|---|---|---|\n" + '\n'.join(failed_md), overwrite=True)
+                          print(f"BLOCKERS DETECTED: {blockers}")
+                          return 1
+
+                      if not pending and self.required.issubset(grouped.keys()):
+                          success_md = [f"| **{r}** | ✅ {grouped[r][0].get('conclusion', 'success').upper()} |" for r in sorted(self.required)]
+                          self.telemetry.publish(f"### 🛡️ CI Integrity Verified\n**SHA:** `{self.sha}`\n| Gate | Status |\n|---|---|\n" + '\n'.join(success_md), overwrite=True)
+                          print("SUCCESS: Matrix execution complete.")
+                          return 0
+
+                      print(f"HEARTBEAT: {len(self.required) - len(pending)}/{len(self.required)} verified. Waiting...")
+                      time.sleep(20)
+
+                  self.telemetry.publish(f"### ⚠️ CI Timeout\nGates failed to close: `{pending}`", overwrite=True)
+                  return 1
+
+          if __name__ == '__main__':
+              try:
+                  event_path = os.environ['GITHUB_EVENT_PATH']
+                  event_data = json.loads(open(event_path).read()) if os.path.exists(event_path) else {}
+
+                  client = GitHubClient(os.environ.get('GITHUB_TOKEN', ''), os.environ['GITHUB_REPOSITORY'])
+                  telemetry = Telemetry()
+
+                  files = RulesEngine.get_changed_files(client, os.environ['GITHUB_EVENT_NAME'], event_data.get('pull_request', {}).get('number'))
+                  required = RulesEngine.calculate_required(files)
+
+                  if not required:
+                      print("FAST-PATH: No functional changes.")
+                      telemetry.publish('### ⚡ Fast-Path: CI Skipped.', overwrite=True)
+                      sys.exit(0)
+
+                  sys.exit(Orchestrator(client, telemetry, os.environ['GITHUB_SHA'], required).run())
+
+              except Exception:
+                  crash = traceback.format_exc().replace(os.environ.get('GITHUB_TOKEN', 'missing_token'), '[REDACTED_TOKEN]')
+                  print(f"FATAL SYSTEM ERROR:\n{crash}")
+                  sys.exit(1)
           PY
