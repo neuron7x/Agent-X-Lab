@@ -1,0 +1,23 @@
+{
+  "blockers": [
+    {
+      "file": ".github/workflows/engine-drift-guard.yml",
+      "line_end": 97,
+      "line_start": 89,
+      "target": "$GITHUB_OUTPUT",
+      "type": "sc2129_append_risk"
+    },
+    {
+      "file": ".github/workflows/python-verify.yml",
+      "line_end": 46,
+      "line_start": 34,
+      "target": "$GITHUB_ENV",
+      "type": "sc2129_append_risk"
+    },
+    {
+      "file": ".github/actions/pin-pip/action.yml",
+      "line": 1,
+      "type": "action_missing_description"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+uname -a > outputs/env.txt
+python --version >> outputs/env.txt || true
+python -m pip --version >> outputs/env.txt || true
+git rev-parse HEAD 2>/dev/null || echo SNAPSHOT_MODE >> outputs/env.txt
+git status --porcelain 2>/dev/null || echo NO_GIT_STATUS >> outputs/env.txt
+ls -la .git 2>/dev/null || echo NO_GIT_DIR >> outputs/env.txt
+python tools/verify_action_pinning.py --workflows .github/workflows > outputs/policy_action_pinning.txt 2>&1
+python tools/verify_workflow_hygiene.py --workflows .github/workflows > outputs/policy_workflow_hygiene.txt 2>&1
+python - <<PY (repo_profile, dag, blockers, determinism, invariants, entropy)
+python -m pytest -q --durations=20 > outputs/profile/pytest_durations.txt 2>&1
+python - <<PY (memory/tensor trigger scan)
+echo NOT_PRESENT > outputs/security/bandit.txt
+ruff check --select S . > outputs/security/ruff_security.txt 2>&1
+python - <<PY (secrets grep fallback)
+ruff check --select C90 . > outputs/ruff_c90.txt 2>&1
+ruff check --select F . > outputs/ruff_f.txt 2>&1
+echo NOT_PRESENT > outputs/radon_cc.txt
+python - <<PY (generate reports: invariant/hotpath/security/tasks/self_audit)
+(cd "$EVD" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$EVD/sha256sum.txt"
+python - <<PY (finalize SELF_AUDIT_LOG with hashes)
+cat > TENSOR_KERNEL_SPEC.md
+python - <<PY (append memory/coalescing section to HOTPATH_REPORT)
+(cd "$EVD" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$EVD/sha256sum.txt"
+python - <<PY (refresh SELF_AUDIT_LOG hashes)
+python - <<PY (patch INVARIANT_MAP sha placeholder)
+(cd "$EVD" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$EVD/sha256sum.txt"
+python - <<PY (refresh SELF_AUDIT_LOG hashes)
+(cd "$EVD" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$EVD/sha256sum.txt"

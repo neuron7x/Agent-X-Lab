@@ -1,0 +1,154 @@
+C901 `validate_catalog` is too complex (12 > 10)
+  --> engine/exoneural_governor/catalog.py:9:5
+   |
+ 9 | def validate_catalog(repo_root: Path) -> dict:
+   |     ^^^^^^^^^^^^^^^^
+10 |     idx_path = repo_root / "catalog" / "index.json"
+11 |     if not idx_path.exists():
+   |
+
+C901 `build_release` is too complex (15 > 10)
+  --> engine/exoneural_governor/release.py:26:5
+   |
+26 | def build_release(
+   |     ^^^^^^^^^^^^^
+27 |     cfg: Config, *, vr_path: Path | None = None, output_dir: Path | None = None
+28 | ) -> dict:
+   |
+
+C901 `main` is too complex (15 > 10)
+  --> engine/scripts/arsenal.py:19:5
+   |
+19 | def main() -> int:
+   |     ^^^^
+20 |     ap = argparse.ArgumentParser(prog="arsenal")
+21 |     sub = ap.add_subparsers(dest="cmd", required=True)
+   |
+
+C901 `check_g2_evidence_chain` is too complex (17 > 10)
+   --> engine/scripts/check_prod_spec_gates.py:187:5
+    |
+187 | def check_g2_evidence_chain(
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+188 |     pb_dir: Path,
+189 |     pb_schema: Path,
+    |
+
+C901 `main` is too complex (14 > 10)
+  --> engine/scripts/schema_validate.py:56:5
+   |
+56 | def main() -> int:
+   |     ^^^^
+57 |     ap = argparse.ArgumentParser()
+58 |     ap.add_argument("--repo-root", default=".", help="Repo root (default: .)")
+   |
+
+C901 `main` is too complex (21 > 10)
+   --> engine/scripts/validate_arsenal.py:110:5
+    |
+110 | def main() -> int:
+    |     ^^^^
+111 |     ap = argparse.ArgumentParser()
+112 |     ap.add_argument("--repo-root", default=".", help="Repo root (default: .)")
+    |
+
+C901 `main` is too complex (13 > 10)
+   --> engine/tools/pip_audit_gate.py:133:5
+    |
+133 | def main() -> int:
+    |     ^^^^
+134 |     parser = argparse.ArgumentParser()
+135 |     parser.add_argument("--requirements", action="append", required=True)
+    |
+
+C901 `_parse_workflow_commands` is too complex (12 > 10)
+  --> engine/tools/titan9_inventory.py:30:5
+   |
+30 | def _parse_workflow_commands(workflows_dir: Path) -> list[str]:
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^
+31 |     commands: list[str] = []
+32 |     for workflow_file in sorted(workflows_dir.glob("*.yml")):
+   |
+
+C901 `main` is too complex (13 > 10)
+  --> engine/tools/verify_action_pinning.py:85:5
+   |
+85 | def main() -> int:
+   |     ^^^^
+86 |     parser = argparse.ArgumentParser()
+87 |     parser.add_argument("--workflows", type=Path)
+   |
+
+C901 `_extract_quickstart_commands` is too complex (11 > 10)
+  --> engine/tools/verify_readme_contract.py:19:5
+   |
+19 | def _extract_quickstart_commands(readme_text: str) -> list[str]:
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+20 |     count = readme_text.count(QUICKSTART_HEADER)
+21 |     if count != 1:
+   |
+
+C901 `_workflow_seed_violations` is too complex (11 > 10)
+  --> engine/tools/verify_readme_contract.py:85:5
+   |
+85 | def _workflow_seed_violations(workflows_dir: Path) -> list[str]:
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+86 |     violations: list[str] = []
+87 |     for workflow_file in sorted(workflows_dir.glob("*.yml")):
+   |
+
+C901 `main` is too complex (23 > 10)
+  --> engine/tools/verify_workflow_hygiene.py:19:5
+   |
+19 | def main() -> int:
+   |     ^^^^
+20 |     p = argparse.ArgumentParser()
+21 |     p.add_argument("--workflows", type=Path)
+   |
+
+C901 `check_g2_evidence_chain` is too complex (17 > 10)
+   --> evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py:187:5
+    |
+187 | def check_g2_evidence_chain(
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+188 |     pb_dir: Path,
+189 |     pb_schema: Path,
+    |
+
+C901 `check_g2_evidence_chain` is too complex (17 > 10)
+   --> evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py:187:5
+    |
+187 | def check_g2_evidence_chain(
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+188 |     pb_dir: Path,
+189 |     pb_schema: Path,
+    |
+
+C901 `observe` is too complex (14 > 10)
+   --> tools/dao-arbiter/dao_lifebook/truth_plane.py:182:9
+    |
+180 |     # ── Structured output ─────────────────────────────────────────────────
+181 |
+182 |     def observe(self) -> Result[tuple[str, list[CheckResult]], DAOError]:
+    |         ^^^^^^^
+183 |         """
+184 |         Phase A — OBSERVE.
+    |
+
+C901 `iter_files` is too complex (15 > 10)
+  --> tools/prod_spec/make_ac_package.py:89:5
+   |
+89 | def iter_files(root: Path, includes: list[str], excludes: list[str]) -> list[Path]:
+   |     ^^^^^^^^^^
+90 |     out: list[Path] = []
+   |
+
+C901 `validate_packet` is too complex (27 > 10)
+  --> udgs_core/strict_json.py:74:5
+   |
+74 | def validate_packet(obj: Dict[str, Any]) -> Tuple[bool, List[ValidationError]]:
+   |     ^^^^^^^^^^^^^^^
+75 |     errors: List[ValidationError] = []
+   |
+
+Found 17 errors.
