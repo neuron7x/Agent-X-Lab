@@ -35,3 +35,22 @@ Start at:
 - `docs/00_SYSTEM_OVERVIEW.md`
 - `docs/98_CONTRACT_INDEX.md`
 - `docs/99_CHECKLIST.md`
+
+## Pull Request Quality Gates (GitHub)
+
+To keep PRs deterministic and low-noise, the repository now includes these mandatory GitHub-integrated checks:
+
+- `UI Verify` (`.github/workflows/ui-verify.yml`) for lint, typecheck, unit/a11y tests, and production build.
+- `UI E2E (Playwright)` (`.github/workflows/ui-e2e.yml`) for browser smoke validation.
+- `UI Performance + Bundle Budgets` (`.github/workflows/ui-perf.yml`) for bundle budgets and Lighthouse CI.
+- `Dependency Review` (`.github/workflows/dependency-review.yml`) to block vulnerable dependency deltas in PRs.
+- `CodeQL Analysis` (`.github/workflows/codeql-analysis.yml`) to detect security/dataflow issues in TypeScript/JavaScript + Python.
+- `Secret Scan` (`.github/workflows/secret-scan.yml`) to prevent credential leaks from entering history.
+- `Workflow Hygiene` (`.github/workflows/workflow-hygiene.yml`) to lint GitHub Actions workflows before merge.
+
+Recommended branch protection for `main`:
+
+1. Require pull requests before merge.
+2. Require status checks to pass (mark the workflows above as required).
+3. Require branches to be up to date before merge.
+4. Restrict who can bypass protections.
