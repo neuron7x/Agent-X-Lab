@@ -38,6 +38,8 @@ jobs:
           import subprocess
           import sys
           import time
+          import traceback
+          import urllib.error
           import urllib.request
 
 
@@ -50,8 +52,45 @@ jobs:
                       'User-Agent': 'ci-supercheck',
                   },
               )
-              with urllib.request.urlopen(req, timeout=30) as resp:
-                  return json.loads(resp.read().decode('utf-8'))
+              backoffs = [2, 4, 8]
+              for idx, delay in enumerate(backoffs, start=1):
+                  try:
+                      with urllib.request.urlopen(req, timeout=30) as resp:
+                          return json.loads(resp.read().decode('utf-8'))
+                  except urllib.error.HTTPError as e:
+                      if e.code in (403, 429):
+                          retry_after = e.headers.get('Retry-After')
+                          reset_at = e.headers.get('x-ratelimit-reset')
+                          wait_seconds = None
+                          if retry_after:
+                              try:
+                                  wait_seconds = max(0, int(retry_after))
+                              except ValueError:
+                                  wait_seconds = None
+                          elif reset_at:
+                              try:
+                                  wait_seconds = max(0, int(reset_at) - int(time.time()))
+                              except ValueError:
+                                  wait_seconds = None
+                          if wait_seconds is not None:
+                              print(f"RATE LIMIT: HTTP {e.code}. Sleeping {wait_seconds}s before retry.")
+                              time.sleep(wait_seconds)
+                          elif idx < len(backoffs):
+                              print(f"HTTP {e.code}: retrying in {delay}s.")
+                              time.sleep(delay)
+                          else:
+                              raise
+                      elif idx < len(backoffs):
+                          print(f"HTTP {e.code}: retrying in {delay}s.")
+                          time.sleep(delay)
+                      else:
+                          raise
+                  except urllib.error.URLError as e:
+                      if idx < len(backoffs):
+                          print(f"NETWORK ERROR: {e.reason}. Retrying in {delay}s.")
+                          time.sleep(delay)
+                      else:
+                          raise
 
 
           def changed_files(event_name, repo, event_path):
@@ -153,6 +192,38 @@ jobs:
               return name
 
 
+          def write_summary(content, overwrite=False):
+              summary_path = os.environ.get('GITHUB_STEP_SUMMARY')
+              if not summary_path:
+                  return
+              start_marker = '<!-- CI_SUPERCHECK:START -->'
+              end_marker = '<!-- CI_SUPERCHECK:END -->'
+              block = f"{start_marker}\n{content}\n{end_marker}\n"
+              try:
+                  existing = ''
+                  if os.path.exists(summary_path):
+                      with open(summary_path, 'r', encoding='utf-8') as f:
+                          existing = f.read()
+                  start = existing.find(start_marker)
+                  end = existing.find(end_marker)
+                  if start != -1 and end != -1:
+                      end += len(end_marker)
+                      if end < len(existing) and existing[end:end + 1] == '\n':
+                          end += 1
+                      existing = existing[:start] + existing[end:]
+                  if overwrite:
+                      with open(summary_path, 'w', encoding='utf-8') as f:
+                          f.write(existing.rstrip('\n'))
+                          if existing.strip():
+                              f.write('\n\n')
+                          f.write(block)
+                  else:
+                      with open(summary_path, 'a', encoding='utf-8') as f:
+                          f.write(block)
+              except Exception as ex:
+                  print(f"WARN: Summary write failed: {ex}")
+
+
           def poll(repo, sha, required):
               if not required:
                   return 0
@@ -220,30 +291,39 @@ jobs:
                           for err in failed_blocks:
                               print(f"BLOCKER: {err}")
                           if summary_path:
-                              try:
-                                  with open(summary_path, 'a', encoding='utf-8') as f:
-                                      f.write("\n### ❌ CI Integrity Violation\n")
-                                      f.write(f"**Target SHA:** `{sha}`\n\n")
-                                      f.write("| Gate | Conclusion | Evidence |\n| :--- | :--- | :--- |\n")
-                                      for fm in failed_markdown: f.write(f"{fm}\n")
-                              except Exception:
-                                  pass
+                              rows = '\n'.join(failed_markdown)
+                              write_summary(
+                                  "\n".join([
+                                      "### ❌ CI Integrity Violation",
+                                      f"**Target SHA:** `{sha}`",
+                                      "",
+                                      "| Gate | Conclusion | Evidence |",
+                                      "| :--- | :--- | :--- |",
+                                      rows,
+                                  ]),
+                                  overwrite=True,
+                              )
                           return 1
 
                       missing = [r for r in required if r not in grouped]
                       if not pending and not missing:
                           print("SUCCESS: All active gates verified.")
                           if summary_path:
-                              try:
-                                  with open(summary_path, 'a', encoding='utf-8') as f:
-                                      f.write("\n### 🛡️ CI Integrity Report (AD-2026)\n")
-                                      f.write(f"**Target SHA:** `{sha}`\n\n")
-                                      f.write("| Gate | Status | Conclusion |\n| :--- | :--- | :--- |\n")
-                                      for r in required:
-                                          c = grouped[r][0].get('conclusion', 'success').upper()
-                                          f.write(f"| **{r}** | ✅ COMPLETED | {c} |\n")
-                              except Exception:
-                                  pass
+                              success_rows = []
+                              for r in required:
+                                  c = grouped[r][0].get('conclusion', 'success').upper()
+                                  success_rows.append(f"| **{r}** | ✅ COMPLETED | {c} |")
+                              write_summary(
+                                  "\n".join([
+                                      "### 🛡️ CI Integrity Report (AD-2026)",
+                                      f"**Target SHA:** `{sha}`",
+                                      "",
+                                      "| Gate | Status | Conclusion |",
+                                      "| :--- | :--- | :--- |",
+                                      "\n".join(success_rows),
+                                  ]),
+                                  overwrite=True,
+                              )
                           return 0
 
                       elapsed = int(time.time() - start_time)
@@ -256,12 +336,13 @@ jobs:
 
               print(f"TIMEOUT: Gates {pending} failed to close after 15m.")
               if summary_path:
-                  try:
-                      with open(summary_path, 'a', encoding='utf-8') as f:
-                          f.write("\n### ⚠️ CI Timeout\n")
-                          f.write(f"The following gates failed to close within 15 minutes: `{pending}`\n")
-                  except Exception:
-                      pass
+                  write_summary(
+                      "\n".join([
+                          "### ⚠️ CI Timeout",
+                          f"The following gates failed to close within 15 minutes: `{pending}`",
+                      ]),
+                      overwrite=True,
+                  )
               return 1
 
           repo = os.environ['GITHUB_REPOSITORY']
@@ -272,7 +353,17 @@ jobs:
           print('Required checks:', ', '.join(required) if required else 'none')
           if not required:
               print('No required checks for this change-set; PASS')
+              write_summary('### ⚡ Fast-Path Bypass: No functional changes detected. CI Skipped.', overwrite=True)
               sys.exit(0)
 
-          sys.exit(poll(repo, sha, required))
+          try:
+              sys.exit(poll(repo, sha, required))
+          except Exception:
+              token = os.environ.get('GITHUB_TOKEN', '')
+              crash = traceback.format_exc()
+              if token:
+                  crash = crash.replace(token, '[REDACTED_TOKEN]')
+              print('FATAL: Unhandled exception in CI Supercheck poll.')
+              print(crash)
+              sys.exit(1)
           PY
