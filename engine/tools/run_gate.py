@@ -57,6 +57,14 @@ def _resolve_repo_root(cwd: Path) -> Path:
     return root
 
 
+
+
+def _resolve_evidence_root(repo_root: Path) -> Path:
+    env_root = __import__("os").environ.get("AXL_EVIDENCE_ROOT", "").strip()
+    if env_root:
+        return Path(env_root).expanduser().resolve()
+    return repo_root
+
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--gate-id", required=True)
@@ -109,11 +117,12 @@ def main() -> int:
         "artifacts": artifacts,
     }
 
+    evidence_root = _resolve_evidence_root(repo_root)
     ev = args.evidence_file
     if ev is None:
-        ev = repo_root / "artifacts" / "agent" / "evidence.jsonl"
+        ev = evidence_root / "artifacts" / "agent" / "evidence.jsonl"
     elif not ev.is_absolute():
-        ev = repo_root / ev
+        ev = evidence_root / ev
     ev.parent.mkdir(parents=True, exist_ok=True)
     with ev.open("a", encoding="utf-8") as f:
         f.write(json.dumps(record, sort_keys=True) + "\n")

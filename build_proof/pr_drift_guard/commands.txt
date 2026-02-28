@@ -1,0 +1,31 @@
+mkdir -p build_proof/pr_drift_guard/outputs
+: > build_proof/pr_drift_guard/commands.txt
+git rev-parse --abbrev-ref HEAD
+git rev-parse HEAD
+cat > build_proof/pr_drift_guard/INVENTORY.json <<'JSON' ... JSON
+python - <<'PY' ... PY
+{ echo '$ git rev-parse --abbrev-ref HEAD'; git rev-parse --abbrev-ref HEAD; echo '$ git rev-parse HEAD'; git rev-parse HEAD; echo '$ git status --porcelain'; git status --porcelain; ec=$?; echo "EXIT_CODE=$ec"; } > build_proof/pr_drift_guard/outputs/00_baseline.txt
+python --version > build_proof/pr_drift_guard/outputs/01_python_version.txt 2>&1; echo "EXIT_CODE=$?" >> build_proof/pr_drift_guard/outputs/01_python_version.txt
+python -m compileall -q engine > build_proof/pr_drift_guard/outputs/10_compile_repro.txt 2>&1; echo "EXIT_CODE=$?" >> build_proof/pr_drift_guard/outputs/10_compile_repro.txt
+python -m pytest -q engine/tests > build_proof/pr_drift_guard/outputs/11_pytest_repro.txt 2>&1; echo "EXIT_CODE=$?" >> build_proof/pr_drift_guard/outputs/11_pytest_repro.txt
+git status --porcelain > build_proof/pr_drift_guard/outputs/12_git_status_repro.txt; echo "EXIT_CODE=$?" >> build_proof/pr_drift_guard/outputs/12_git_status_repro.txt
+git diff --name-only > build_proof/pr_drift_guard/outputs/13_git_diff_names_repro.txt; echo "EXIT_CODE=$?" >> build_proof/pr_drift_guard/outputs/13_git_diff_names_repro.txt
+git show HEAD:engine/catalog/index.json > engine/catalog/index.json
+git show HEAD:engine/artifacts/titan9/inventory.json > engine/artifacts/titan9/inventory.json
+git diff -- engine/artifacts/titan9/inventory.json engine/catalog/index.json > build_proof/pr_drift_guard/outputs/20_canonical_revert_diff.txt; echo "EXIT_CODE=$?" >> build_proof/pr_drift_guard/outputs/20_canonical_revert_diff.txt
+git log --oneline -- engine/catalog/index.json engine/artifacts/titan9/inventory.json | head -n 20
+git diff -- engine/artifacts/titan9/inventory.json engine/catalog/index.json | sed -n '1,200p'
+rg -n "inventory.json|catalog/index.json|engine/catalog|engine/artifacts|AXL_TEST_OUTPUT_DIR|catalog" engine/tests engine -g '*.py'
+# Edited allowlisted test/vendor/workflow files for hermetic behavior and CI drift guard.
+python -m compileall -q engine > build_proof/pr_drift_guard/outputs/40_compile_final.txt 2>&1; echo "EXIT_CODE=$?" >> build_proof/pr_drift_guard/outputs/40_compile_final.txt
+python -m pytest -q engine/tests > build_proof/pr_drift_guard/outputs/41_pytest_final.txt 2>&1; echo "EXIT_CODE=$?" >> build_proof/pr_drift_guard/outputs/41_pytest_final.txt
+git status --porcelain > build_proof/pr_drift_guard/outputs/42_git_status_final.txt; echo "EXIT_CODE=$?" >> build_proof/pr_drift_guard/outputs/42_git_status_final.txt
+git diff --name-only > build_proof/pr_drift_guard/outputs/43_git_diff_names_final.txt; echo "EXIT_CODE=$?" >> build_proof/pr_drift_guard/outputs/43_git_diff_names_final.txt
+python scripts/rebuild_catalog_index.py --repo-root .
+python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json
+python scripts/rebuild_catalog_index.py --repo-root . > ../build_proof/pr_drift_guard/outputs/21_rebuild_catalog.txt 2>&1; echo "EXIT_CODE=$?" >> ../build_proof/pr_drift_guard/outputs/21_rebuild_catalog.txt
+python tools/titan9_inventory.py --repo-root . --out artifacts/titan9/inventory.json > ../build_proof/pr_drift_guard/outputs/22_rebuild_inventory.txt 2>&1; echo "EXIT_CODE=$?" >> ../build_proof/pr_drift_guard/outputs/22_rebuild_inventory.txt
+python -m compileall -q engine > build_proof/pr_drift_guard/outputs/40_compile_final.txt 2>&1; echo "EXIT_CODE=$?" >> build_proof/pr_drift_guard/outputs/40_compile_final.txt
+python -m pytest -q engine/tests > build_proof/pr_drift_guard/outputs/41_pytest_final.txt 2>&1; echo "EXIT_CODE=$?" >> build_proof/pr_drift_guard/outputs/41_pytest_final.txt
+git status --porcelain > build_proof/pr_drift_guard/outputs/42_git_status_final.txt; echo "EXIT_CODE=$?" >> build_proof/pr_drift_guard/outputs/42_git_status_final.txt
+git diff --name-only > build_proof/pr_drift_guard/outputs/43_git_diff_names_final.txt; echo "EXIT_CODE=$?" >> build_proof/pr_drift_guard/outputs/43_git_diff_names_final.txt

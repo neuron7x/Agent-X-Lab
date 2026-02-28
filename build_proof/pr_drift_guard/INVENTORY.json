@@ -1,0 +1,57 @@
+{
+  "timestamp_utc": "2026-02-28T07:59:05Z",
+  "branch": "work",
+  "base_sha": "b60bcba76fd3a13e53aeeb259e668d5ba115b002",
+  "allowlist_files": [
+    "engine/artifacts/titan9/inventory.json",
+    "engine/catalog/index.json",
+    "engine/vendor/scpe-cimqa-2026.3.0/tools/run_interpreter.py",
+    "engine/tests/test_vendor_scpe_syntax.py",
+    "engine/tests/**",
+    "engine/tests/conftest.py",
+    "engine/pytest.ini",
+    "engine/pyproject.toml",
+    ".github/workflows/**",
+    "build_proof/pr_drift_guard/**"
+  ],
+  "forbid": [
+    "Any edits outside allowlist_files.",
+    "Any dependency upgrades / lockfile changes (pip/poetry/npm), unless REQUIRED to make tests run and proven with before/after evidence.",
+    "Any skip/xfail used to hide failures.",
+    "Any broad deletes/moves of directories (no repo cleanup PR).",
+    "Any change that alters runtime behavior of shipped UI/Worker/Engine (allowed: test harness + deterministic path redirection under explicit TEST env vars only).",
+    "Any commits if post_fix_gates are not all PASS."
+  ],
+  "drift_paths_before": [
+    "engine/artifacts/titan9/inventory.json",
+    "engine/catalog/index.json"
+  ],
+  "drift_paths_after": [
+    "engine/artifacts/titan9/inventory.json",
+    "engine/catalog/index.json",
+    "engine/tests/test_config.py",
+    "engine/tests/test_doctor.py",
+    "engine/tests/test_readme_contract.py",
+    "engine/tests/test_rebuild_catalog_index.py",
+    "engine/tests/test_rebuild_checksums.py",
+    "engine/tests/test_repo_invariants.py",
+    "engine/tests/test_run_gate.py",
+    "engine/tests/test_workflow_guards.py",
+    "engine/vendor/scpe-cimqa-2026.3.0/tools/run_interpreter.py"
+  ],
+  "files_changed": [
+    "engine/artifacts/titan9/inventory.json",
+    "engine/catalog/index.json",
+    "engine/tests/test_config.py",
+    "engine/tests/test_doctor.py",
+    "engine/tests/test_readme_contract.py",
+    "engine/tests/test_rebuild_catalog_index.py",
+    "engine/tests/test_rebuild_checksums.py",
+    "engine/tests/test_repo_invariants.py",
+    "engine/tests/test_run_gate.py",
+    "engine/tests/test_workflow_guards.py",
+    "engine/vendor/scpe-cimqa-2026.3.0/tools/run_interpreter.py"
+  ],
+  "head_sha": "488aa7e0e46e2c30251be20a8dafe238da652e92",
+  "canon_ref": "HEAD"
+}

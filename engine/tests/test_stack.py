@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -9,8 +10,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from exoneural_governor.catalog import validate_catalog
 from exoneural_governor.config import Config, load_config
-from exoneural_governor.vr import run_vr
 from exoneural_governor.release import build_release
+from exoneural_governor.vr import run_vr
 
 
 def _git_head_available(repo_root: Path) -> bool:
@@ -24,6 +25,13 @@ def _git_head_available(repo_root: Path) -> bool:
     return probe.returncode == 0
 
 
+def _cleanup_path(path: Path) -> None:
+    if path.is_dir():
+        shutil.rmtree(path, ignore_errors=True)
+    elif path.exists():
+        path.unlink()
+
+
 def test_catalog_ok():
     repo_root = Path(__file__).resolve().parents[1]
     rep = validate_catalog(repo_root)
@@ -32,6 +40,8 @@ def test_catalog_ok():
 
 def test_vr_and_release(tmp_path, monkeypatch):
     repo_root = Path(__file__).resolve().parents[1]
+    out_dir = repo_root / ".pytest-release"
+    _cleanup_path(out_dir)
     if (
         not _git_head_available(repo_root)
         and not os.environ.get("BUILD_ID", "").strip()
@@ -40,21 +50,24 @@ def test_vr_and_release(tmp_path, monkeypatch):
     cfg = load_config(repo_root / "configs" / "sg.config.json")
     vr = run_vr(cfg, write_back=False)
     assert vr["status"] in ("RUN", "CALIBRATION_REQUIRED")
-    rel = build_release(cfg)
+    rel = build_release(cfg, output_dir=out_dir)
     assert (repo_root / rel["zip_path"]).exists()
+    _cleanup_path(out_dir)
 
 
 def test_release_includes_in_repo_evidence_root(tmp_path: Path) -> None:
     repo_root = Path(__file__).resolve().parents[1]
-    evidence_dir = repo_root / "artifacts" / "tmp-evidence-test"
+    evidence_dir = repo_root / ".pytest-tmp-evidence-test"
+    out_dir = repo_root / ".pytest-release-test"
+    _cleanup_path(evidence_dir)
+    _cleanup_path(out_dir)
+
     evidence_dir.mkdir(parents=True, exist_ok=True)
     evidence_file = evidence_dir / "proof.txt"
     evidence_file.write_text("ok\n", encoding="utf-8")
 
     vr_path = tmp_path / "VR.json"
-    vr_path.write_text(
-        '{"evidence_root": "artifacts/tmp-evidence-test"}\n', encoding="utf-8"
-    )
+    vr_path.write_text('{"evidence_root": ".pytest-tmp-evidence-test"}\n', encoding="utf-8")
 
     cfg = Config(
         repo_root=repo_root,
@@ -67,7 +80,6 @@ def test_release_includes_in_repo_evidence_root(tmp_path: Path) -> None:
         evidence_root_base=repo_root / "artifacts" / "evidence",
     )
 
-    out_dir = repo_root / "artifacts" / "release-test"
     rep = build_release(cfg, vr_path=vr_path, output_dir=out_dir)
     import zipfile
 
@@ -75,10 +87,14 @@ def test_release_includes_in_repo_evidence_root(tmp_path: Path) -> None:
     with zipfile.ZipFile(zip_path) as z:
         assert "evidence/proof.txt" in set(z.namelist())
     assert rep["evidence_included"] is True
+    _cleanup_path(evidence_dir)
+    _cleanup_path(out_dir)
 
 
 def test_release_rejects_out_of_repo_evidence_root(tmp_path: Path) -> None:
     repo_root = Path(__file__).resolve().parents[1]
+    out_dir = repo_root / ".pytest-release-test"
+    _cleanup_path(out_dir)
     outside = tmp_path / "outside-evidence"
     outside.mkdir()
     (outside / "secret.txt").write_text("nope\n", encoding="utf-8")
@@ -102,13 +118,14 @@ def test_release_rejects_out_of_repo_evidence_root(tmp_path: Path) -> None:
     import pytest
 
     with pytest.raises(ValueError, match="E_EVIDENCE_ROOT_OUTSIDE_REPO"):
-        build_release(
-            cfg, vr_path=vr_path, output_dir=repo_root / "artifacts" / "release-test"
-        )
+        build_release(cfg, vr_path=vr_path, output_dir=out_dir)
+    _cleanup_path(out_dir)
 
 
 def test_release_allows_missing_out_of_repo_evidence_root(tmp_path: Path) -> None:
     repo_root = Path(__file__).resolve().parents[1]
+    out_dir = repo_root / ".pytest-release-test"
+    _cleanup_path(out_dir)
     missing_outside = tmp_path / "missing-outside-evidence"
 
     vr_path = tmp_path / "VR.json"
@@ -128,17 +145,18 @@ def test_release_allows_missing_out_of_repo_evidence_root(tmp_path: Path) -> Non
         evidence_root_base=repo_root / "artifacts" / "evidence",
     )
 
-    rep = build_release(
-        cfg, vr_path=vr_path, output_dir=repo_root / "artifacts" / "release-test"
-    )
+    rep = build_release(cfg, vr_path=vr_path, output_dir=out_dir)
     assert rep["evidence_included"] is False
+    _cleanup_path(out_dir)
 
 
 def test_release_sets_evidence_included_false_when_missing_dir(tmp_path: Path) -> None:
     repo_root = Path(__file__).resolve().parents[1]
+    out_dir = repo_root / ".pytest-release-test"
+    _cleanup_path(out_dir)
     vr_path = tmp_path / "VR.json"
     vr_path.write_text(
-        '{"evidence_root": "artifacts/does-not-exist-for-release-test"}\n',
+        '{"evidence_root": "does-not-exist-for-release-test"}\n',
         encoding="utf-8",
     )
 
@@ -153,7 +171,6 @@ def test_release_sets_evidence_included_false_when_missing_dir(tmp_path: Path) -
         evidence_root_base=repo_root / "artifacts" / "evidence",
     )
 
-    rep = build_release(
-        cfg, vr_path=vr_path, output_dir=repo_root / "artifacts" / "release-test"
-    )
+    rep = build_release(cfg, vr_path=vr_path, output_dir=out_dir)
     assert rep["evidence_included"] is False
+    _cleanup_path(out_dir)

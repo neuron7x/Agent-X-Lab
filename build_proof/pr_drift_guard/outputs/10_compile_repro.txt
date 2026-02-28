@@ -1,0 +1,7 @@
+*** Error compiling 'engine/vendor/scpe-cimqa-2026.3.0/tools/run_interpreter.py'...
+  File "engine/vendor/scpe-cimqa-2026.3.0/tools/run_interpreter.py", line 69
+    nonlocal step
+    ^^^^^^^^^^^^^
+SyntaxError: no binding for nonlocal 'step' found
+
+EXIT_CODE=1
