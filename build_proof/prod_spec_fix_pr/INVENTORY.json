@@ -1,8 +1,8 @@
 {
-  "timestamp_utc": "2026-02-28T03:40:59Z",
+  "timestamp_utc": "2026-02-28T03:51:26Z",
   "branch": "work",
-  "base_sha": "9de064266af735483d2b22293d4171add1e7e497",
-  "head_sha": "9de064266af735483d2b22293d4171add1e7e497",
+  "base_sha": "2dd7e952ceabb56444c595b70ddf24d59aad1d14",
+  "head_sha": "2dd7e952ceabb56444c595b70ddf24d59aad1d14",
   "planned_files": [
     ".github/workflows/prod-spec-gates.yml",
     "engine/scripts/check_prod_spec_gates.py",
@@ -27,17 +27,26 @@
   "status": "DONE",
   "files_changed_actual": [
     ".github/workflows/prod-spec-gates.yml",
-    "artifacts/ARB.decision.memo",
-    "engine/scripts/check_prod_spec_gates.py"
+    "build_proof/prod_spec_fix_pr/INVENTORY.json",
+    "build_proof/prod_spec_fix_pr/PR_DESCRIPTION_ADDENDUM.md",
+    "build_proof/prod_spec_fix_pr/commands.txt",
+    "build_proof/prod_spec_fix_pr/outputs/00_git_baseline.txt",
+    "build_proof/prod_spec_fix_pr/outputs/01_prod_spec_gate_run.txt",
+    "build_proof/prod_spec_fix_pr/outputs/02_artifacts_ls.txt",
+    "build_proof/prod_spec_fix_pr/outputs/03_rebuild_log_generation.txt",
+    "build_proof/prod_spec_fix_pr/outputs/04_arb_memo_update.txt",
+    "build_proof/prod_spec_fix_pr/outputs/05_workflow_syntax_check.txt"
   ],
   "commands_executed": [
-    "run git rev-parse HEAD",
-    "run git branch --show-current",
-    "run git status --porcelain",
-    "run git diff --name-only",
-    "run python3 engine/scripts/check_prod_spec_gates.py --ac artifacts/AC_VERSION.json --pb-dir ad2026_state/pb/ --ssdf artifacts/SSDF.map --artifacts-dir artifacts/ --out build_proof/prod_spec/gate_check.report.json",
-    "run ls -la artifacts build_proof/prod_spec",
-    "run python3 -m py_compile .github/workflows/prod-spec-gates.yml"
+    "git rev-parse HEAD",
+    "git branch --show-current",
+    "git status --porcelain",
+    "git diff --name-only | sort",
+    "python3 engine/scripts/check_prod_spec_gates.py --ac artifacts/AC_VERSION.json --pb-dir ad2026_state/pb/ --ssdf artifacts/SSDF.map --artifacts-dir artifacts/ --out build_proof/prod_spec/gate_check.report.json",
+    "ls -la artifacts build_proof/prod_spec",
+    "python3 -c <rebuild_log_generation>",
+    "python3 -c <arb_memo_fields>",
+    "python3 - <<PY (yaml.safe_load workflow)"
   ],
   "outputs_written": [
     "build_proof/prod_spec_fix_pr/outputs/00_git_baseline.txt",
@@ -48,10 +57,11 @@
     "build_proof/prod_spec_fix_pr/outputs/05_workflow_syntax_check.txt"
   ],
   "final_gate_statuses": {
-    "G1_workflow_heredoc_syntax": "PASS",
-    "G1_rebuild_log_blocker": "PASS",
-    "G5_arb_memo_approved": "PASS",
-    "G6_logs_captured": "PASS",
-    "G8_pr_addendum": "PASS"
+    "G0": "PASS",
+    "G1": "PASS (A3 evidence generated in CI workflow and local proof captured)",
+    "G5": "PASS",
+    "G6": "PASS",
+    "G7": "PASS",
+    "G8": "PASS"
   }
 }

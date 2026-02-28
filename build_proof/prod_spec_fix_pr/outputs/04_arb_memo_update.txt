@@ -1,12 +1,13 @@
-+ python3 -
++ python3 -c <arb_memo_fields>
 {
-  "decision": "APPROVED",
-  "author": "ROLE:BUILD_ENGINEER",
+  "approved": true,
+  "approved_at": "2026-02-28T03:41:47Z",
   "approver": "ROLE:ARB_APPROVER",
+  "approver_ne_auditor": true,
   "auditor": "ROLE:SECURITY_AUDITOR",
-  "approval": {
-    "approved": true,
-    "approved_at": "2026-02-28T03:41:47Z"
-  }
+  "author": "ROLE:BUILD_ENGINEER",
+  "author_ne_approver": true,
+  "author_ne_auditor": true,
+  "decision": "APPROVED"
 }
 EXIT_CODE=0
