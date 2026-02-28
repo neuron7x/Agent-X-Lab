@@ -1,0 +1,10 @@
+run git run branch run --show-current 
+run git run rev-parse run HEAD 
+run git run status run --short 
+run find run . run -maxdepth run 3 run -type run d 
+run rg run --files run src run workers run engine run udgs_core run docs 
+run npm run ci 
+run npm run run run lint 
+run npm run run run typecheck 
+run npm run test 
+run python run -m run pytest run engine run udgs_core 

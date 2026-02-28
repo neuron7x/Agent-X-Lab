@@ -175,6 +175,7 @@ def cmd_ad2026_gate_run(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Primary UDGS CLI entrypoint for deterministic governance commands."""
     p = argparse.ArgumentParser(prog="udgs")
     sub = p.add_subparsers(dest="cmd", required=True)
 

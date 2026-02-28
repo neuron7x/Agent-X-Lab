@@ -1,6 +1,10 @@
 /**
- * App root — D1: route-based architecture with code-splitting.
- * Each route is a separate lazy chunk.
+ * Application composition root.
+ *
+ * Responsibilities:
+ * - Defines provider/routing boundaries for the UI runtime.
+ * - Enforces query retry invariant: do not retry UNAUTHORIZED/RATE_LIMITED failures.
+ * - Delegates route implementations to lazily-loaded modules in `src/modules/*`.
  */
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
