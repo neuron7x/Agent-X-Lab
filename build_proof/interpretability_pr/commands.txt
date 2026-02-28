@@ -1,10 +1,14 @@
-run git run branch run --show-current 
-run git run rev-parse run HEAD 
-run git run status run --short 
-run find run . run -maxdepth run 3 run -type run d 
-run rg run --files run src run workers run engine run udgs_core run docs 
-run npm run ci 
-run npm run run run lint 
-run npm run run run typecheck 
-run npm run test 
-run python run -m run pytest run engine run udgs_core 
+export PYTHONHASHSEED=0 LC_ALL=C LANG=C TZ=UTC GIT_PAGER=cat PAGER=cat PYTHONDONTWRITEBYTECODE=1
+mkdir -p build_proof/interpretability_pr/outputs
+git stash push -u -m "WIP: isolate pytest gate fix"
+git status --porcelain
+git rev-parse HEAD
+git status --porcelain
+pwd
+python -V
+python -c "import sys; print('\\n'.join(sys.path))"
+find . -type d -name __pycache__ -prune -exec rm -rf {} + || true
+find . -type f -name '*.pyc' -delete || true
+find . -type d -name '.pytest_cache' -prune -exec rm -rf {} + || true
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="$(pwd)" python -m pytest -q --import-mode=importlib --rootdir="$(pwd)" > build_proof/interpretability_pr/outputs/07_py_tests.txt 2>&1
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="$(pwd)" python -m pytest -q --import-mode=importlib --rootdir="$(pwd)" engine udgs_core > build_proof/interpretability_pr/outputs/07_py_tests_rerun.txt 2>&1

@@ -1,61 +1,29 @@
 {
-  "timestamp_utc": "2026-02-28T03:03:58Z",
-  "branch": "work",
-  "base_sha": "ea4b89a0dbd05b2118b483831b226d1b09629a95",
-  "head_sha": "ea4b89a0dbd05b2118b483831b226d1b09629a95",
-  "status_short": [
-    " M engine/exoneural_governor/cli.py",
-    " M src/App.tsx",
-    " M src/main.tsx",
-    " M udgs_core/cli.py",
-    " M workers/axl-bff/src/index.ts",
-    "?? build_proof/interpretability_pr/"
+  "timestamp_utc": "2026-02-28T03:37:33Z",
+  "head_sha": "98fcb6af44efdae02f5b46d8e3eef30a0838ec66",
+  "stash_used": true,
+  "commands_executed": [
+    "git stash push -u -m \"WIP: isolate pytest gate fix\"",
+    "git status --porcelain",
+    "git rev-parse HEAD",
+    "pwd",
+    "python -V",
+    "python -c \"import sys; print('\n'.join(sys.path))\"",
+    "find . -type d -name __pycache__ -prune -exec rm -rf {} + || true",
+    "find . -type f -name '*.pyc' -delete || true",
+    "find . -type d -name '.pytest_cache' -prune -exec rm -rf {} + || true",
+    "timeout 120s bash -lc 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=\"/workspace/Agent-X-Lab\" python -m pytest -q --import-mode=importlib --rootdir=\"/workspace/Agent-X-Lab\"'",
+    "timeout 120s bash -lc 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=\"/workspace/Agent-X-Lab\" python -m pytest -q --import-mode=importlib --rootdir=\"/workspace/Agent-X-Lab\" engine udgs_core' (conditional)"
   ],
-  "files_changed_planned": [
-    {
-      "path": "src/main.tsx",
-      "purpose": "UI entrypoint invariants comment"
-    },
-    {
-      "path": "src/App.tsx",
-      "purpose": "UI composition-root responsibilities comment"
-    },
-    {
-      "path": "workers/axl-bff/src/index.ts",
-      "purpose": "Worker fetch entrypoint invariants comment"
-    },
-    {
-      "path": "engine/exoneural_governor/cli.py",
-      "purpose": "Engine CLI main docstring"
-    },
-    {
-      "path": "udgs_core/cli.py",
-      "purpose": "UDGS CLI main docstring"
-    },
-    {
-      "path": "build_proof/interpretability_pr/commands.txt",
-      "purpose": "deterministic command transcript"
-    }
+  "outputs_written": [
+    "build_proof/interpretability_pr/commands.txt",
+    "build_proof/interpretability_pr/outputs/07_py_tests_diagnostics.txt",
+    "build_proof/interpretability_pr/outputs/07_py_tests.txt",
+    "build_proof/interpretability_pr/outputs/07_py_tests_rerun.txt"
   ],
-  "entrypoints_touched": [
-    "src/main.tsx",
-    "src/App.tsx",
-    "workers/axl-bff/src/index.ts",
-    "engine/exoneural_governor/cli.py",
-    "udgs_core/cli.py"
-  ],
-  "commands_file": "build_proof/interpretability_pr/commands.txt",
-  "outputs": [
-    "build_proof/interpretability_pr/outputs/g0_branch.log",
-    "build_proof/interpretability_pr/outputs/g0_head.log",
-    "build_proof/interpretability_pr/outputs/g0_repomap_dirs.log",
-    "build_proof/interpretability_pr/outputs/g0_repomap_src.log",
-    "build_proof/interpretability_pr/outputs/g0_status.log",
-    "build_proof/interpretability_pr/outputs/g5_npm_ci.log",
-    "build_proof/interpretability_pr/outputs/g5_npm_lint.log",
-    "build_proof/interpretability_pr/outputs/g5_npm_test.log",
-    "build_proof/interpretability_pr/outputs/g5_npm_typecheck.log",
-    "build_proof/interpretability_pr/outputs/g5_pytest.log"
-  ],
-  "gate_failure": "G5 python -m pytest engine udgs_core exit code 1"
+  "final_exit_codes": {
+    "diagnostics": "see build_proof/interpretability_pr/outputs/07_py_tests_diagnostics.txt",
+    "pytest_full": "EXIT_CODE=124",
+    "pytest_rerun": "EXIT_CODE=0"
+  }
 }
