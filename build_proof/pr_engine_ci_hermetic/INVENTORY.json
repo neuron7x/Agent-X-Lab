@@ -1,0 +1,55 @@
+{
+  "allowlist_files": [
+    ".github/workflows/engine-drift-guard.yml",
+    "engine/vendor/scpe-cimqa-2026.3.0/tools/run_interpreter.py",
+    "engine/tests/test_vendor_scpe_syntax.py",
+    "engine/tests/test_config.py",
+    "engine/tests/test_doctor.py",
+    "engine/tests/test_readme_contract.py",
+    "engine/tests/test_rebuild_catalog_index.py",
+    "engine/tests/test_rebuild_checksums.py",
+    "engine/tests/test_repo_invariants.py",
+    "engine/tests/test_run_gate.py",
+    "engine/tests/test_workflow_guards.py",
+    "engine/tools/run_gate.py",
+    "engine/tools/generate_titan9_proof.py",
+    "engine/tools/titan9_inventory.py",
+    "engine/tools/verify_readme_contract.py",
+    "engine/scripts/rebuild_catalog_index.py",
+    "engine/scripts/rebuild_checksums.py",
+    "engine/scripts/validate_arsenal.py",
+    "engine/configs/sg.config.schema.json",
+    "engine/scripts/quickstart.sh",
+    "README.md",
+    "build_proof/pr_engine_ci_hermetic/**"
+  ],
+  "base_sha": "d21f9248ca33f6c0793c6063ca7080cf6d553a74",
+  "branch": "fix/engine-ci-hermetic-2026",
+  "commands_file": "build_proof/pr_engine_ci_hermetic/commands.txt",
+  "files_changed": [
+    ".github/workflows/engine-drift-guard.yml",
+    "engine/scripts/quickstart.sh",
+    "engine/tests/test_doctor.py",
+    "engine/tests/test_run_gate.py",
+    "engine/tools/run_gate.py"
+  ],
+  "forbid": [
+    "Any edits outside allowlist_files (fail-closed).",
+    "Any weakening of correctness by relaxing assertions (e.g., \u201creturncode in (0,1)\u201d or replacing executable-bit checks with content checks) unless you first PROVE the original invariant is wrong and replace it with a strictly stronger invariant.",
+    "Any skip/xfail to hide failures.",
+    "Any dependency upgrades / lockfile churn unless REQUIRED to run tests, and proven with before/after evidence.",
+    "Any workflow action references by tag (e.g., @v4/@v5) when repo policy requires SHA pinning.",
+    "Any workflow steps that create files inside the repo workspace for \u201cstatus/diff capture\u201d (must use $RUNNER_TEMP).",
+    "Any changes that alter shipped runtime behavior (UI/Worker/Engine). Allowed: governance tooling + tests + CI hardening only."
+  ],
+  "head_sha": "aee98315bcc8e8b123238129cb15c8e9a869f354",
+  "objective_deficits": [
+    "A_SHA_PINNING",
+    "B_PYTEST_PROVISION",
+    "C_VENDOR_SYNTAX",
+    "D_HERMETIC_TESTS",
+    "E_EVIDENCE_BUNDLE"
+  ],
+  "outputs_dir": "build_proof/pr_engine_ci_hermetic/outputs",
+  "timestamp_utc": "2026-02-28T09:11:32Z"
+}

@@ -1,0 +1,8 @@
+git rev-parse --abbrev-ref HEAD
+git rev-parse HEAD
+python -m compileall -q engine
+python -m pytest -q engine/tests
+python engine/tools/verify_action_pinning.py --workflows .github/workflows
+python engine/tools/verify_action_pinning.py --workflows .github/workflows
+git status --porcelain
+python engine/tools/verify_action_pinning.py --workflows .github/workflows > build_proof/pr_engine_ci_hermetic/outputs/30_action_pinning_final.txt 2>&1

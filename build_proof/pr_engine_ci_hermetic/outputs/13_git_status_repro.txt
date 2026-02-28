@@ -1,0 +1,5 @@
+?? artifacts/agent/
+?? build_proof/pr_engine_ci_hermetic/
+?? engine/artifacts/release-test/
+?? engine/artifacts/tmp-evidence-test/
+EXIT_CODE=0

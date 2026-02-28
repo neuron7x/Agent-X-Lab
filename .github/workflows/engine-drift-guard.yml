@@ -68,7 +68,7 @@ jobs:
           printf 'Changed paths after gates:\n%s\n' "${changed[*]}"
 
           for path in "${changed[@]}"; do
-            if [[ "$path" == build_proof/pr_drift_guard/* ]]; then
+            if [[ "$path" == build_proof/pr_engine_ci_hermetic/* ]]; then
               continue
             fi
             if [[ "$path" == engine/artifacts/* ]] || \
