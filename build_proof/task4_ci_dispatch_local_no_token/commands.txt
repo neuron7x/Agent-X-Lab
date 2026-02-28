@@ -1,0 +1,2 @@
+python tools/verify_action_pinning.py --workflows .github/workflows
+python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows

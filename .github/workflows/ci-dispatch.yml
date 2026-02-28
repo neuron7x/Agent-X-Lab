@@ -1,0 +1,73 @@
+name: ci-dispatch
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR number to evaluate and dispatch"
+        required: true
+        type: string
+      dry_run:
+        description: "Compute required workflows but do not dispatch"
+        required: false
+        default: "false"
+        type: choice
+        options: ["false", "true"]
+
+permissions:
+  contents: read
+  pull-requests: read
+  actions: write
+  checks: read
+
+concurrency:
+  group: ci-dispatch-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  PYTHON_VERSION: "3.13.8"
+  PIP_VERSION: "26.0"
+
+jobs:
+  dispatch-ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Set up Python + pinned pip
+        uses: ./.github/actions/setup-python-pip
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          pip-version: ${{ env.PIP_VERSION }}
+
+      - name: Run PR CI dispatcher
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p "${RUNNER_TEMP}/ci_dispatch"
+          python tools/ci/dispatch_ci_for_pr.py \
+            --pr "${{ inputs.pr_number }}" \
+            --dry-run "${{ inputs.dry_run }}" \
+            --out-dir "${RUNNER_TEMP}/ci_dispatch"
+
+      - name: Check workspace drift
+        run: |
+          set -euo pipefail
+          git status --porcelain | tee "${RUNNER_TEMP}/ci_dispatch/drift-status.txt"
+          git diff --name-only | tee "${RUNNER_TEMP}/ci_dispatch/drift-diff.txt"
+          if [[ -s "${RUNNER_TEMP}/ci_dispatch/drift-status.txt" || -s "${RUNNER_TEMP}/ci_dispatch/drift-diff.txt" ]]; then
+            echo "::error::workspace drift detected"
+            exit 1
+          fi
+
+      - name: Upload CI dispatch evidence
+        if: always()
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        with:
+          name: ci-dispatch-${{ github.run_id }}
+          retention-days: 30
+          if-no-files-found: error
+          path: ${{ runner.temp }}/ci_dispatch/**

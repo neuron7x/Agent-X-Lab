@@ -1,0 +1,5 @@
+0d7cb7cb61c6b7efcacf26b47b97a8f4f70d218037318599e0288372a097b051  ./commands.txt
+6ab4f67c9b450270393d541fd45467ad31f8b13b84b234cc567167236c266671  ./outputs/dispatcher_run.txt
+babd2d70bb9bd8c5ee7991f7e08ae0720c5f9791ef4a28042af6f1f75490a78c  ./outputs/verify_action_pinning.txt
+a735a840cca039ec8e46dffaeefce5217665d76d8b50fd01e653ed91ba29fc2f  ./outputs/verify_workflow_hygiene.txt
+2dbce6c1780fc4ccf16d6c2c56f6bdc47b333eb4d704381f7daa6f52143c6a2d  ./patches/final.patch
