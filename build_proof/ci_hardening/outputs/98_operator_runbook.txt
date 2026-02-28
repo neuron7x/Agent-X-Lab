@@ -1,0 +1,36 @@
+# Operator Runbook — Action Pin Repair & CI Proof (PR #100)
+
+Use this in an environment with GitHub network access and authenticated gh CLI.
+
+1) Authenticate:
+   gh auth login
+   gh auth status
+
+2) Resolve and validate pins via API:
+   gh api /repos/actions/dependency-review-action/git/ref/tags/v4.3.5
+   gh api /repos/actions/dependency-review-action/commits/<resolved_sha>
+   gh api -i /repos/actions/dependency-review-action/tarball/<resolved_sha>
+
+   gh api /repos/gitleaks/gitleaks-action/git/ref/tags/v2.3.6
+   gh api /repos/gitleaks/gitleaks-action/commits/<resolved_sha>
+   gh api -i /repos/gitleaks/gitleaks-action/tarball/<resolved_sha>
+
+   gh api /repos/reviewdog/action-actionlint/git/ref/tags/v1.58.0
+   gh api /repos/reviewdog/action-actionlint/commits/<resolved_sha>
+   gh api -i /repos/reviewdog/action-actionlint/tarball/<resolved_sha>
+
+3) Patch workflows with validated SHAs and keep version comments.
+
+4) Trigger and verify CI:
+   gh workflow run "Dependency Review" --ref <branch>
+   gh workflow run "Secret Scan (Gitleaks)" --ref <branch>
+   gh workflow run "Workflow Hygiene" --ref <branch>
+   gh run list --repo neuron7x/Agent-X-Lab --branch <branch> --limit 20
+   gh run watch <run_id>
+   gh run view <run_id> --json jobs,conclusion,url
+   gh run view <run_id> --log-failed > build_proof/ci_hardening/outputs/09_ci_rerun_proof.txt
+
+5) Update evidence files:
+   - outputs/02_pin_validation_api.txt (HTTP 200/302 proofs)
+   - ci_links.txt (fresh run + job URLs)
+   - docs/99_CHECKLIST.md (flip FAIL->PASS only with evidence anchors)

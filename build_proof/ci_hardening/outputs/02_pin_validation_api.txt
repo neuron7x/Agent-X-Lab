@@ -1,0 +1,28 @@
+# API validation for repaired action pins (PR #100)
+
+Environment capability:
+- gh CLI: unavailable (`command not found`)
+- GH_TOKEN/GITHUB_TOKEN: not set in environment
+- Direct api.github.com access: blocked (`CONNECT tunnel failed, response 403`)
+
+Attempted validations (required by G1):
+1) actions/dependency-review-action
+   tag: v4.3.5 (intended from workflow comment)
+   commit SHA: 9b1a7f45f3e5d1f839bafb9f2ee58b24dfcf8b2d
+   commit API: GET /repos/actions/dependency-review-action/commits/9b1a7f45f3e5d1f839bafb9f2ee58b24dfcf8b2d -> HTTP_STATUS=000 (curl 56, CONNECT tunnel 403)
+   tarball API: GET /repos/actions/dependency-review-action/tarball/9b1a7f45f3e5d1f839bafb9f2ee58b24dfcf8b2d -> HTTP_STATUS=000 (curl 56, CONNECT tunnel 403)
+
+2) gitleaks/gitleaks-action
+   tag: v2.3.6 (intended from workflow comment)
+   commit SHA: b0f320ce5e5370a97f4cde6f0f08f442a5f2e0d1
+   commit API: NOT EXECUTED (same network/auth blocker)
+   tarball API: NOT EXECUTED (same network/auth blocker)
+
+3) reviewdog/action-actionlint
+   tag: v1.58.0 (intended from workflow comment)
+   commit SHA: c5f8846e0cf154140a390f389ec69a56495bb8de
+   commit API: NOT EXECUTED (same network/auth blocker)
+   tarball API: NOT EXECUTED (same network/auth blocker)
+
+Result:
+- G1 cannot be satisfied in this environment (no 200 commit proof and no 302/200 tarball proof reachable).

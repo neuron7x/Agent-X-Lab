@@ -1,3 +1,4 @@
 https://github.com/neuron7x/Agent-X-Lab/actions/runs/22500920063/job/65187507908?pr=97
 https://github.com/neuron7x/Agent-X-Lab/actions/runs/22500920069/job/65187507974?pr=97
 # Superseding note (PR #100 hardening run): fresh run/job URLs could not be collected in this environment due gh/api access blockers.
+# PR #100 action-pin repair run: no fresh run/job URLs collected; see outputs/98_operator_runbook.txt.

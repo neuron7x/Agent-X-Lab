@@ -12,3 +12,13 @@
 12. rg -n "uses:\s*" .github/workflows/*.yml
 13. rg -n "NOT_PINNED" build_proof/ci_hardening/outputs/01_action_pin_audit.txt
 14. actionlint -version
+15. git status --short
+16. git rev-parse HEAD
+17. git branch --show-current
+18. git remote -v
+19. gh --version
+20. gh auth status
+21. printenv GH_TOKEN
+22. printenv GITHUB_TOKEN
+23. curl -sS --max-time 20 https://api.github.com/repos/actions/dependency-review-action/commits/9b1a7f45f3e5d1f839bafb9f2ee58b24dfcf8b2d
+24. curl -sS --max-time 20 https://api.github.com/repos/actions/dependency-review-action/tarball/9b1a7f45f3e5d1f839bafb9f2ee58b24dfcf8b2d -I

@@ -24,6 +24,7 @@
     "build_proof/ci_hardening/outputs/01_action_pin_audit.txt",
     "build_proof/ci_hardening/outputs/01_node___version.txt",
     "build_proof/ci_hardening/outputs/02_npm___version.txt",
+    "build_proof/ci_hardening/outputs/02_pin_validation_api.txt",
     "build_proof/ci_hardening/outputs/03_npm_ci.txt",
     "build_proof/ci_hardening/outputs/04_npm_run_lint.txt",
     "build_proof/ci_hardening/outputs/05_npm_run_typecheck.txt",
@@ -36,11 +37,12 @@
     "build_proof/ci_hardening/outputs/13_ci_log_access_check.txt",
     "build_proof/ci_hardening/outputs/14_git_baseline.txt",
     "build_proof/ci_hardening/outputs/15_gh_capability_check.txt",
-    "build_proof/ci_hardening/outputs/16_github_api_runs_probe.txt"
+    "build_proof/ci_hardening/outputs/16_github_api_runs_probe.txt",
+    "build_proof/ci_hardening/outputs/98_operator_runbook.txt"
   ],
   "pr_number": 100,
   "branch": "work",
   "base_sha": "UNKNOWN",
-  "head_sha": "aafcd725429b84b9ea6e0800bf2d866d05d952c7",
-  "timestamp_utc": "2026-02-28T02:37:46Z"
+  "head_sha": "eef8e77c8aeca9aa7ebd1303639ee72b089f9856",
+  "timestamp_utc": "2026-02-28T02:46:59Z"
 }

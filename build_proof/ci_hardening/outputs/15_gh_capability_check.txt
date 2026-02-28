@@ -4,3 +4,11 @@ EXIT_CODE=127
 + gh auth status
 /tmp/run_evidence_100.sh: line 4: gh: command not found
 EXIT_CODE=127
+
+# superseding probe
++ gh --version
+bash: command not found
+EXIT_CODE=127
++ gh auth status
+bash: command not found
+EXIT_CODE=127

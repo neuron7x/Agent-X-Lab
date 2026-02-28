@@ -1,22 +1,25 @@
 # Root-cause record (PR #100) — supersedes earlier capture
 
-## Verified mechanical root causes fixed in this patch
-1) Unpinned workflow actions remained in `ui-perf.yml` (`actions/setup-node@v4` in two jobs), violating CHK-CI-G3.
-2) Workflow Hygiene check publication needed explicit `pull-requests: read` in addition to `checks: write` and `contents: read` for `github-pr-check` reporter least-privilege clarity.
+Failing actions reported by CI logs:
+- actions/dependency-review-action@9b1a7f45f3e5d1f839bafb9f2ee58b24dfcf8b2d
+- gitleaks/gitleaks-action@b0f320ce5e5370a97f4cde6f0f08f442a5f2e0d1
+- reviewdog/action-actionlint@c5f8846e0cf154140a390f389ec69a56495bb8de
 
-## Evidence of applied fixes
-- `ui-perf.yml` now pins both setup-node steps to `60edb5dd545a775178f52524783378180af0d1f8`.
-- `workflow-hygiene.yml` permissions now: `contents: read`, `checks: write`, `pull-requests: read`.
-- Pin audit now reports zero `NOT_PINNED` lines.
+Error class (from provided failure context):
+- GitHub Actions download failure on pinned tarballs (404/unreachable class) for the above SHAs.
 
-## Verification blockers (cannot prove CI green from this environment)
-- `gh` CLI unavailable (`command not found`).
-- GitHub API run query blocked (`CONNECT tunnel failed, response 403`).
+Required URI patterns to validate (G1):
+- /repos/actions/dependency-review-action/tarball/<sha>
+- /repos/gitleaks/gitleaks-action/tarball/<sha>
+- /repos/reviewdog/action-actionlint/tarball/<sha>
 
-## Minimal operator runbook to unblock G6
-1. `gh run list --repo neuron7x/Agent-X-Lab --branch <pr-branch> --limit 20`
-2. `gh run rerun <run-id>` (or push noop commit)
-3. `gh run watch <run-id>`
-4. `gh run view <run-id> --json jobs,conclusion,url`
-5. `gh run view <run-id> --log-failed > build_proof/ci_hardening/outputs/17_ci_failed_logs_excerpt.txt`
-6. Update `build_proof/ci_hardening/ci_links.txt` with run+job URLs and set checklist items to PASS only for proven green checks.
+Verification result in this environment:
+- gh CLI unavailable (`command not found`).
+- GH_TOKEN/GITHUB_TOKEN not set.
+- api.github.com inaccessible (`CONNECT tunnel failed, response 403`).
+
+One-line stop reason:
+- VERIFICATION BLOCKED (G1): cannot prove commit(200) + tarball(302/200) for repaired pins from this environment.
+
+Smallest unblock action:
+- Run `build_proof/ci_hardening/outputs/98_operator_runbook.txt` in a GitHub-authenticated environment and attach resulting API/CI logs.

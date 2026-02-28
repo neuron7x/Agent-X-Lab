@@ -1,3 +1,8 @@
 + curl -sS --max-time 20 https://api.github.com/repos/neuron7x/Agent-X-Lab/actions/runs?per_page=5
 curl: (56) CONNECT tunnel failed, response 403
 EXIT_CODE=56
+
+# superseding probe for PR #100 action-pin repair
++ curl -sS --max-time 20 https://api.github.com/repos/actions/dependency-review-action/commits/9b1a7f45f3e5d1f839bafb9f2ee58b24dfcf8b2d
+curl: (56) CONNECT tunnel failed, response 403
+EXIT_CODE=56

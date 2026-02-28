@@ -40,11 +40,18 @@ EVIDENCE: build_proof/ci_hardening/outputs/12_not_pinned_check.txt:L1-L3
 
 
 ## 8.5 Evidence limitations and blockers {#security-evidence-limitations}
-This environment cannot access GitHub runs/logs: `gh` is unavailable and API access to `api.github.com` fails with CONNECT 403, so CI-green verification remains blocked.
-EVIDENCE: build_proof/ci_hardening/outputs/15_gh_capability_check.txt:L1-L6
-EVIDENCE: build_proof/ci_hardening/outputs/16_github_api_runs_probe.txt:L1-L3
+This environment cannot access GitHub runs/logs: `gh` is unavailable, tokens are unset, and API access to `api.github.com` fails with CONNECT 403, so CI-green verification remains blocked.
+EVIDENCE: build_proof/ci_hardening/outputs/15_gh_capability_check.txt:L1-L12
+EVIDENCE: build_proof/ci_hardening/outputs/16_github_api_runs_probe.txt:L1-L8
 Local `actionlint` binary is unavailable; CI-log-based proof is required to promote CHK-CI-G6B.
 EVIDENCE: build_proof/ci_hardening/outputs/07_actionlint__version.txt:L1-L3
 
 
 Supersedes: prior blocker captures are superseded by `outputs/00_ci_failures_root_cause.txt` in this run.
+
+
+## 8.6 Pin validation API evidence {#pin-validation-api}
+Action pin validity for failing downloads requires upstream API proof: commit endpoint HTTP 200 and tarball endpoint HTTP 302/200 for each pinned SHA.
+EVIDENCE: build_proof/ci_hardening/outputs/02_pin_validation_api.txt:L1-L31
+Current run is fail-closed because API/network auth is blocked in this environment; operator runbook is provided.
+EVIDENCE: build_proof/ci_hardening/outputs/98_operator_runbook.txt:L1-L35

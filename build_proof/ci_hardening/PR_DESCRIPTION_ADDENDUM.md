@@ -1,22 +1,22 @@
 ## CI Security + Workflow Quality Gate Hardening Addendum
 
 ### WHAT
-- SHA-pinned remaining `actions/setup-node@v4` refs in `.github/workflows/ui-perf.yml`.
-- Updated Workflow Hygiene permissions to include `pull-requests: read` alongside `contents: read` and `checks: write` for `github-pr-check` reporter.
-- Regenerated pin audit with corrected `uses:` detection and confirmed zero `NOT_PINNED` entries.
+- No workflow pin changes were made in this run because required upstream API validation for failing action SHAs could not be executed from this environment.
+- Added API validation evidence and operator runbook artifacts for deterministic continuation in a GitHub-authenticated environment.
 
 ### WHY
-- Remove last CHK-CI-G3 blocker and keep workflow-hygiene least-privilege permissions aligned to check publication behavior.
+- Task requires fail-closed proof for action-pin validity (commit endpoint 200 + tarball endpoint 302/200).
+- This environment lacks `gh`, has no GH token, and cannot reach `api.github.com` (CONNECT 403).
 
 ### EVIDENCE
-- `build_proof/ci_hardening/outputs/01_action_pin_audit.txt`
-- `build_proof/ci_hardening/outputs/12_not_pinned_check.txt`
+- `build_proof/ci_hardening/outputs/00_ci_failures_root_cause.txt`
+- `build_proof/ci_hardening/outputs/02_pin_validation_api.txt`
 - `build_proof/ci_hardening/outputs/15_gh_capability_check.txt`
 - `build_proof/ci_hardening/outputs/16_github_api_runs_probe.txt`
+- `build_proof/ci_hardening/outputs/98_operator_runbook.txt`
 
 ### SCOPE
-- Edited only workflows/docs/evidence files.
+- Updated only evidence/docs artifacts; runtime code unchanged.
 
 ### CURRENT STATUS
-- FAIL-CLOSED: verification blocked. This environment cannot query GitHub Actions runs/logs (`gh` missing; API CONNECT 403).
-- Operator runbook is provided in `outputs/00_ci_failures_root_cause.txt`.
+- FAIL-CLOSED: verification blocked at G1/G3 (no API/log access), pending operator execution of the runbook.
