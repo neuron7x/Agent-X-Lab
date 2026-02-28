@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 from pathlib import Path
 
@@ -8,7 +9,15 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
-def _run_with_cwd(run_cwd: Path, target_cwd: Path, stdout: Path, stderr: Path) -> None:
+def _run_with_cwd(
+    run_cwd: Path,
+    target_cwd: Path,
+    stdout: Path,
+    stderr: Path,
+    evidence_root: Path,
+) -> None:
+    env = dict(os.environ)
+    env["AXL_EVIDENCE_ROOT"] = str(evidence_root)
     proc = subprocess.run(
         [
             "python",
@@ -30,6 +39,7 @@ def _run_with_cwd(run_cwd: Path, target_cwd: Path, stdout: Path, stderr: Path) -
         capture_output=True,
         text=True,
         check=False,
+        env=env,
     )
     assert proc.returncode == 0, proc.stdout + "\n" + proc.stderr
 
@@ -40,7 +50,10 @@ def _run_with_relative_evidence_file(
     evidence_file: str,
     stdout: Path,
     stderr: Path,
+    evidence_root: Path,
 ) -> None:
+    env = dict(os.environ)
+    env["AXL_EVIDENCE_ROOT"] = str(evidence_root)
     proc = subprocess.run(
         [
             "python",
@@ -64,16 +77,18 @@ def _run_with_relative_evidence_file(
         capture_output=True,
         text=True,
         check=False,
+        env=env,
     )
     assert proc.returncode == 0, proc.stdout + "\n" + proc.stderr
 
 
-def test_run_gate_writes_default_evidence_under_repo_root(tmp_path: Path) -> None:
+def test_run_gate_writes_default_evidence_under_configured_root(tmp_path: Path) -> None:
     target_cwd = REPO_ROOT / "tests"
     run_cwd = tmp_path / "outside"
     run_cwd.mkdir()
+    evidence_root = tmp_path / "evidence-root"
 
-    evidence = REPO_ROOT / "artifacts" / "agent" / "evidence.jsonl"
+    evidence = evidence_root / "artifacts" / "agent" / "evidence.jsonl"
     before = evidence.read_text(encoding="utf-8") if evidence.exists() else ""
 
     _run_with_cwd(
@@ -81,6 +96,7 @@ def test_run_gate_writes_default_evidence_under_repo_root(tmp_path: Path) -> Non
         target_cwd=target_cwd,
         stdout=tmp_path / "out1.txt",
         stderr=tmp_path / "err1.txt",
+        evidence_root=evidence_root,
     )
 
     assert evidence.exists()
@@ -91,8 +107,8 @@ def test_run_gate_writes_default_evidence_under_repo_root(tmp_path: Path) -> Non
 
 def test_run_gate_default_evidence_path_stable_across_cwds(tmp_path: Path) -> None:
     target_cwd = REPO_ROOT / "tests"
-    evidence = REPO_ROOT / "artifacts" / "agent" / "evidence.jsonl"
-
+    evidence_root = tmp_path / "evidence-root"
+    evidence = evidence_root / "artifacts" / "agent" / "evidence.jsonl"
     start = evidence.read_text(encoding="utf-8") if evidence.exists() else ""
 
     run_cwd_a = tmp_path / "a"
@@ -105,12 +121,14 @@ def test_run_gate_default_evidence_path_stable_across_cwds(tmp_path: Path) -> No
         target_cwd=target_cwd,
         stdout=tmp_path / "out_a.txt",
         stderr=tmp_path / "err_a.txt",
+        evidence_root=evidence_root,
     )
     _run_with_cwd(
         run_cwd=run_cwd_b,
         target_cwd=target_cwd,
         stdout=tmp_path / "out_b.txt",
         stderr=tmp_path / "err_b.txt",
+        evidence_root=evidence_root,
     )
 
     lines = evidence.read_text(encoding="utf-8")[len(start) :].strip().splitlines()
@@ -124,11 +142,10 @@ def test_run_gate_relative_evidence_file_is_repo_root_anchored(tmp_path: Path) -
     target_cwd = REPO_ROOT / "tests"
     run_cwd = tmp_path / "outside"
     run_cwd.mkdir()
+    evidence_root = tmp_path / "evidence-root"
 
     rel_evidence = "artifacts/agent/custom-evidence.jsonl"
-    repo_evidence_path = REPO_ROOT / rel_evidence
-    if repo_evidence_path.exists():
-        repo_evidence_path.unlink()
+    repo_evidence_path = evidence_root / rel_evidence
 
     _run_with_relative_evidence_file(
         run_cwd=run_cwd,
@@ -136,6 +153,7 @@ def test_run_gate_relative_evidence_file_is_repo_root_anchored(tmp_path: Path) -
         evidence_file=rel_evidence,
         stdout=tmp_path / "out_custom.txt",
         stderr=tmp_path / "err_custom.txt",
+        evidence_root=evidence_root,
     )
 
     assert repo_evidence_path.exists()

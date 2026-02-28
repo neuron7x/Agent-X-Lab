@@ -1,0 +1,2 @@
+OK: catalog/index.json rebuilt
+EXIT_CODE=0

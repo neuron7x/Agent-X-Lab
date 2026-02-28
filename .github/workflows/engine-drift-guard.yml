@@ -1,0 +1,83 @@
+name: engine-drift-guard
+
+on:
+  pull_request:
+    paths:
+      - 'engine/**'
+      - '.github/workflows/engine-drift-guard.yml'
+
+jobs:
+  drift-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d
+        with:
+          python-version: '3.13'
+
+      - name: Install engine test dependencies (fail-closed)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip --version
+
+          # Install engine runtime deps (PyYAML/jsonschema) plus dev test deps.
+          if [[ -f requirements-dev.txt ]]; then
+            python -m pip install -r requirements-dev.txt
+            if [[ -f engine/pyproject.toml ]]; then
+              python -m pip install -e './engine[dev]'
+            fi
+          elif [[ -f engine/requirements-dev.txt ]]; then
+            python -m pip install -e './engine[dev]'
+            python -m pip install -r engine/requirements-dev.txt
+          elif [[ -f engine/pyproject.toml ]]; then
+            python -m pip install -e './engine[dev]'
+          else
+            echo "No dependency manifest found (requirements-dev.txt | engine/requirements-dev.txt | engine/pyproject.toml)" >&2
+            exit 1
+          fi
+
+      - name: Run engine gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m compileall -q engine
+          python -m pytest -q engine/tests
+
+      - name: Capture workspace state
+        shell: bash
+        run: |
+          set -euo pipefail
+          STATUS_FILE="${RUNNER_TEMP}/drift-status.txt"
+          DIFF_FILE="${RUNNER_TEMP}/drift-diff.txt"
+          git status --porcelain | tee "${STATUS_FILE}"
+          git diff --name-only | tee "${DIFF_FILE}"
+
+      - name: Fail on drift
+        shell: bash
+        run: |
+          set -euo pipefail
+          STATUS_FILE="${RUNNER_TEMP}/drift-status.txt"
+          DIFF_FILE="${RUNNER_TEMP}/drift-diff.txt"
+          mapfile -t changed < <((awk '{print $2}' "${STATUS_FILE}"; cat "${DIFF_FILE}") | sed '/^$/d' | sort -u)
+          if [ "${#changed[@]}" -eq 0 ]; then
+            echo "No drift detected"
+            exit 0
+          fi
+          printf 'Changed paths after gates:\n%s\n' "${changed[*]}"
+
+          for path in "${changed[@]}"; do
+            if [[ "$path" == build_proof/pr_engine_ci_hermetic/* ]]; then
+              continue
+            fi
+            if [[ "$path" == engine/artifacts/* ]] || \
+               [[ "$path" == artifacts/* ]] || \
+               [[ "$path" == engine/catalog/index.json ]] || \
+               [[ "$path" == engine/artifacts/titan9/inventory.json ]]; then
+              echo "Forbidden drift path changed: $path" >&2
+              exit 1
+            fi
+            echo "Unexpected post-test change: $path" >&2
+            exit 1
+          done

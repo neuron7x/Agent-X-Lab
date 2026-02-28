@@ -13,7 +13,7 @@ def test_load_config_rejects_repo_root_without_pyproject(tmp_path: Path) -> None
     cfg_dir = repo / "configs"
     cfg_dir.mkdir(parents=True)
 
-    schema_src = Path("configs/sg.config.schema.json")
+    schema_src = Path(__file__).resolve().parents[1] / "configs/sg.config.schema.json"
     schema_dst = repo / "configs" / "sg.config.schema.json"
     schema_dst.write_text(schema_src.read_text(encoding="utf-8"), encoding="utf-8")
 

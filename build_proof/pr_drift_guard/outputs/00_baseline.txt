@@ -1,0 +1,7 @@
+$ git rev-parse --abbrev-ref HEAD
+work
+$ git rev-parse HEAD
+b60bcba76fd3a13e53aeeb259e668d5ba115b002
+$ git status --porcelain
+?? build_proof/pr_drift_guard/
+EXIT_CODE=0
