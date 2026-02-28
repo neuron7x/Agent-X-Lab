@@ -1,0 +1,23 @@
+# UAIP v6 command log
+export PYTHONHASHSEED=0
+export PYTHONDONTWRITEBYTECODE=1
+export LC_ALL=C
+export TZ=UTC
+uname -a
+python --version
+python -m pip --version
+git rev-parse HEAD || echo SNAPSHOT_MODE
+git status --porcelain
+python - <<PY (build dag, entropy, tensor mode)
+python - <<PY (determinism hazard scan)
+PYTHONPROFILEIMPORTTIME=1 python -m compileall -q udgs_core engine tools scripts
+python -m cProfile -s cumulative -m compileall -q udgs_core engine tools scripts
+python -m pytest -q udgs_core/tests --durations=20
+python tools/verify_action_pinning.py --workflows .github/workflows
+python tools/verify_workflow_hygiene.py --workflows .github/workflows
+rg -n 'for .*:\n\s*for ' -g '*.py'
+python - <<PY (microbench algorithmic candidates)
+cat > INVARIANT_MAP.md
+cat > HOTPATH_REPORT.md
+cat > TASK_REGISTER.md
+sha256sum (evidence files)
