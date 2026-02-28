@@ -1,0 +1,34 @@
+.github/workflows/run-engine-dispatch.yml:36:  PIP_VERSION: "26.0"
+.github/workflows/run-engine-dispatch.yml:59:          pip-version: ${{ env.PIP_VERSION }}
+.github/workflows/run-engine-dispatch.yml:66:            python -m pip install -r engine/requirements.lock
+.github/workflows/run-engine-dispatch.yml:70:            python -m pip install -e ./engine
+.github/workflows/run-engine-dispatch.yml:74:            python -m pip install -e ./udgs_core
+.github/workflows/run-engine-dispatch.yml:102:            python -m pip install jsonschema==4.23.0 --quiet
+.github/workflows/prod-spec-gates.yml:31:  PIP_VERSION: '24.3.1'
+.github/workflows/prod-spec-gates.yml:43:          pip-version: ${{ env.PIP_VERSION }}
+.github/workflows/prod-spec-gates.yml:47:          python -m pip install --quiet jsonschema
+.github/workflows/prod-spec-gates.yml:84:          pip-version: ${{ env.PIP_VERSION }}
+.github/workflows/prod-spec-gates.yml:165:          pip-version: ${{ env.PIP_VERSION }}
+.github/workflows/engine-drift-guard.yml:18:  PIP_VERSION: "26.0"
+.github/workflows/engine-drift-guard.yml:33:          pip-version: ${{ env.PIP_VERSION }}
+.github/workflows/engine-drift-guard.yml:49:          python -m pip install -r engine/requirements-dev.txt
+.github/workflows/workflow-hygiene.yml:26:  PIP_VERSION: '24.3.1'
+.github/workflows/workflow-hygiene.yml:38:          "pip-version": ${{ env.PIP_VERSION }}
+.github/workflows/workflow-hygiene.yml:53:          "pip-version": ${{ env.PIP_VERSION }}
+.github/workflows/workflow-hygiene.yml:126:          "pip-version": ${{ env.PIP_VERSION }}
+.github/workflows/workflow-hygiene.yml:130:          python -m pip --version
+.github/workflows/workflow-hygiene.yml:131:          python -m pip install pyyaml==6.0.2
+.github/workflows/python-verify.yml:18:  PIP_VERSION: '24.3.1'
+.github/workflows/python-verify.yml:29:          pip-version: ${{ env.PIP_VERSION }}
+.github/workflows/python-verify.yml:36:            python -m pip install -e .
+.github/workflows/python-verify.yml:39:            python -m pip install -e ./engine
+.github/workflows/python-verify.yml:41:              python -m pip install -r engine/requirements-dev.txt
+.github/workflows/python-verify.yml:45:            python -m pip install -r requirements-dev.txt
+.github/workflows/python-verify.yml:48:            python -m pip install -r engine/requirements-dev.txt
+.github/actions/pin-pip/action.yml:14:        python -m pip install --upgrade "pip==${{ inputs.pip-version }}"
+.github/actions/pin-pip/action.yml:15:        python -m pip --version
+.github/actions/pin-pip/README.md:3:Composite action that pins pip to an explicit version and prints `python -m pip --version`.
+.github/actions/setup-python-pip/action.yml:18:        PIP_DISABLE_PIP_VERSION_CHECK: "1"
+.github/actions/setup-python-pip/action.yml:26:        python -m pip install --upgrade "pip==${requested}"
+.github/actions/setup-python-pip/action.yml:27:        python -m pip --version
+.github/actions/setup-python-pip/action.yml:28:        actual="$(python -m pip --version | awk '{print $2}')"

@@ -13,6 +13,20 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
     - name: Pin pip
-      uses: ./.github/actions/pin-pip
-      with:
-        pip-version: ${{ inputs.pip-version }}
+      shell: bash
+      env:
+        PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      run: |
+        set -euo pipefail
+        requested='${{ inputs.pip-version }}'
+        if [[ -z "${requested}" ]]; then
+          echo "::error::pip-version input must not be empty"
+          exit 1
+        fi
+        python -m pip install --upgrade "pip==${requested}"
+        python -m pip --version
+        actual="$(python -m pip --version | awk '{print $2}')"
+        if [[ "${actual}" != "${requested}" ]]; then
+          echo "::error::pip version mismatch (requested=${requested}, actual=${actual})"
+          exit 1
+        fi

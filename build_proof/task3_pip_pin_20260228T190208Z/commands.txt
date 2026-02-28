@@ -1,0 +1,28 @@
+RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)"; PROOF_DIR="build_proof/task3_pip_pin_${RUN_ID}"; mkdir -p "${PROOF_DIR}"/{outputs,patches,tmp}
+uname -a > "${PROOF_DIR}/outputs/env.txt"
+python --version >> "${PROOF_DIR}/outputs/env.txt" 2>&1 || true
+python -m pip --version >> "${PROOF_DIR}/outputs/env.txt" 2>&1 || true
+git rev-parse HEAD >> "${PROOF_DIR}/outputs/env.txt"
+git status --porcelain >> "${PROOF_DIR}/outputs/env.txt"
+ls -la .github/workflows > "${PROOF_DIR}/outputs/workflows_ls.txt"
+grep -RIn --line-number -E 'PIP_VERSION|pip==|install --upgrade pip|python -m pip --version|[^-]pip --version|\bpip install\b' .github > "${PROOF_DIR}/outputs/pip_inventory.txt" || true
+sed -n '1,220p' .github/actions/setup-python-pip/action.yml
+sed -n '1,260p' .github/workflows/run-engine-dispatch.yml
+sed -n '1,260p' .github/workflows/engine-drift-guard.yml
+sed -n '1,220p' .github/actions/pin-pip/action.yml
+cat "build_proof/task3_pip_pin_20260228T190208Z/outputs/pip_inventory.txt"
+apply_patch (update .github/actions/setup-python-pip/action.yml)
+apply_patch (update .github/workflows/run-engine-dispatch.yml)
+apply_patch (update .github/workflows/engine-drift-guard.yml)
+python tools/verify_action_pinning.py --workflows .github/workflows > "${PROOF_DIR}/outputs/verify_action_pinning.txt" 2>&1
+python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows > "${PROOF_DIR}/outputs/verify_workflow_hygiene.txt" 2>&1
+grep -RIn --line-number -E 'PIP_VERSION|pip==|install --upgrade pip|python -m pip --version|[^-]pip --version|\bpip install\b' .github > "${PROOF_DIR}/outputs/pip_inventory.txt" || true
+cat "build_proof/task3_pip_pin_20260228T190208Z/outputs/pip_inventory.txt"
+git diff > "${PROOF_DIR}/patches/final.patch"
+(cd "${PROOF_DIR}" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "${PROOF_DIR}/sha256sum.txt"
+git add .github/actions .github/workflows "${PROOF_DIR}"
+cat "${PROOF_DIR}/outputs/verify_action_pinning.txt"
+cat "${PROOF_DIR}/outputs/verify_workflow_hygiene.txt"
+git status --short
+git add "${PROOF_DIR}/commands.txt"
+git commit -m "ci: centralize deterministic pip pinning in workflows"
