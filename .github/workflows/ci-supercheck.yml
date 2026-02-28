@@ -156,47 +156,101 @@ jobs:
           def poll(repo, sha, required):
               if not required:
                   return 0
-              deadline = time.time() + 900
-              grace_period = time.time() + 60
+
+              start_time = time.time()
+              deadline = start_time + 900
+              grace_period = start_time + 60
+              summary_path = os.environ.get('GITHUB_STEP_SUMMARY')
+
+              print(f"INTEGRITY AUDIT START: Target SHA {sha[:8]}")
+              print(f"EXPECTED GATES: {', '.join(required)}")
 
               while time.time() < deadline:
-                  data = api(f'https://api.github.com/repos/{repo}/commits/{sha}/check-runs?per_page=100')
-                  seen = {
-                      normalize_check_name(r['name']): r
-                      for r in data.get('check_runs', [])
-                      if normalize_check_name(r['name']) != 'CI Supercheck'
-                  }
+                  try:
+                      # 1. Paginated API Fetch (Handles >100 checks scaling)
+                      runs = []
+                      page = 1
+                      while True:
+                          data = api(f'https://api.github.com/repos/{repo}/commits/{sha}/check-runs?per_page=100&page={page}')
+                          page_runs = data.get('check_runs', [])
+                          if not page_runs:
+                              break
+                          runs.extend(page_runs)
+                          page += 1
 
-                  pending = []
-                  for req in list(required):
-                      if req not in seen:
-                          if time.time() > grace_period:
-                              print(f"WARN: '{req}' never triggered by GitHub (likely skipped by YAML paths). Pruning from required list.")
-                              required.remove(req)
-                          else:
+                      # 2. Aggregation for Matrix/Re-runs
+                      grouped = {}
+                      for r in runs:
+                          norm_name = normalize_check_name(r['name'])
+                          if norm_name != 'CI Supercheck':
+                              grouped.setdefault(norm_name, []).append(r)
+
+                      pending = []
+                      failed_blocks = []
+
+                      # 3. State Evaluation Engine
+                      for req in list(required):
+                          if req not in grouped:
+                              if time.time() > grace_period:
+                                  print(f"ADAPTIVE PRUNING: '{req}' skipped by YAML paths. Pruning.")
+                                  required.remove(req)
+                              else:
+                                  pending.append(req)
+                              continue
+
+                          req_runs = grouped[req]
+                          statuses = [r.get('status') for r in req_runs]
+                          conclusions = [r.get('conclusion') for r in req_runs]
+
+                          # Fail-Fast if ANY run in the matrix group failed
+                          if any(c in ('failure', 'cancelled', 'timed_out', 'action_required') for c in conclusions):
+                              bad_run = next(r for r in req_runs if r.get('conclusion') in ('failure', 'cancelled', 'timed_out', 'action_required'))
+                              failed_blocks.append(f"'{req}' terminal state. URL: {bad_run.get('html_url')}")
+                              continue
+
+                          # Pending if NOT ALL runs are completed
+                          if not all(s == 'completed' for s in statuses):
                               pending.append(req)
-                          continue
+                              continue
 
-                      conclusion = seen[req].get('conclusion')
-                      if seen[req].get('status') == 'completed':
-                          if conclusion in ('failure', 'cancelled', 'timed_out', 'action_required'):
-                              print(f"BLOCK: '{req}' terminal failure ({conclusion}).")
-                              return 1
-                          elif conclusion not in ('success', 'neutral', 'skipped'):
+                          # Pending if any completed but blocked in an unknown state
+                          if any(c not in ('success', 'neutral', 'skipped') for c in conclusions):
                               pending.append(req)
-                      else:
-                          pending.append(req)
 
-                  missing = [r for r in required if r not in seen]
-                  if not pending and not missing:
-                      print('PASS: Execution unblocked. All valid checks verified.')
-                      return 0
+                      # Terminate immediately if blockers detected
+                      if failed_blocks:
+                          for err in failed_blocks:
+                              print(f"BLOCKER: {err}")
+                          return 1
 
-                  print(f"WAIT: missing={missing} pending={pending}")
-                  time.sleep(20)
+                      # 4. Success Clearance & Telemetry
+                      missing = [r for r in required if r not in grouped]
+                      if not pending and not missing:
+                          print("SUCCESS: All active gates verified.")
+                          if summary_path:
+                              try:
+                                  with open(summary_path, 'a', encoding='utf-8') as f:
+                                      f.write("\n### 🛡️ CI Integrity Report (AD-2026)\n")
+                                      f.write(f"**Target SHA:** `{sha}`\n\n")
+                                      f.write("| Gate | Status | Conclusion |\n| :--- | :--- | :--- |\n")
+                                      for r in required:
+                                          c = grouped[r][0].get('conclusion', 'success').upper()
+                                          f.write(f"| **{r}** | ✅ COMPLETED | {c} |\n")
+                              except Exception as ex:
+                                  print(f"WARN: Telemetry write failed: {ex}")
+                          return 0
 
-              print(f"TIMEOUT: 15m deadline reached. missing={missing}, pending={pending}")
+                      elapsed = int(time.time() - start_time)
+                      print(f"HEARTBEAT [{elapsed}s]: {len(required)-len(pending)}/{len(required)} gates closed.")
+                      time.sleep(20)
+
+                  except Exception as e:
+                      print(f"TRANSIENT ERROR: {str(e)}. Retrying API...")
+                      time.sleep(10)
+
+              print(f"TIMEOUT: Gates {pending} failed to close after 15m.")
               return 1
+
           repo = os.environ['GITHUB_REPOSITORY']
           sha = os.environ['GITHUB_SHA']
           files = changed_files(os.environ['GITHUB_EVENT_NAME'], repo, os.environ['GITHUB_EVENT_PATH'])
