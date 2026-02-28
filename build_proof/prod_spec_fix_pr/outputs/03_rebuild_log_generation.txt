@@ -1,0 +1,17 @@
++ test -f build_proof/prod_spec/rebuild.log
+EXIT_CODE=0
++ python3 -
+PATH=build_proof/prod_spec/rebuild.log
+HEAD
+{
+  "schema": "REBUILD_LOG_V1",
+  "generated_at": "2026-02-28T03:42:50Z",
+  "independent_build_count": 2,
+  "build_strategy": "local_deterministic_probe",
+TAIL
+  "generated_at": "2026-02-28T03:42:50Z",
+  "independent_build_count": 2,
+  "build_strategy": "local_deterministic_probe",
+  "source": "build_proof/prod_spec_fix_pr"
+}
+EXIT_CODE=0

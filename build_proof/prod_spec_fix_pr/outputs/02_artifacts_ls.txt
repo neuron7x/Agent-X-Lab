@@ -1,0 +1,37 @@
++ ls -la artifacts build_proof/prod_spec
+artifacts:
+total 17720
+drwxr-xr-x  4 root root    4096 Feb 28 02:09 .
+drwxr-xr-x 25 root root    4096 Feb 28 02:09 ..
+-rw-r--r--  1 root root 9017568 Feb 28 02:09 AC.package
+-rw-r--r--  1 root root      44 Feb 28 02:09 AC.root_key.pub
+-rw-r--r--  1 root root     255 Feb 28 02:09 AC.signature.jws
+-rw-r--r--  1 root root    1868 Feb 28 02:09 AC_VERSION.json
+-rw-r--r--  1 root root    1096 Feb 28 03:41 ARB.decision.memo
+-rw-r--r--  1 root root    1330 Feb 28 02:09 PhaseG.contract
+-rw-r--r--  1 root root     686 Feb 28 02:09 SMT.bridge
+-rw-r--r--  1 root root    1608 Feb 28 02:09 SPS.candidates
+-rw-r--r--  1 root root    4248 Feb 28 02:09 SSDF.map
+-rw-r--r--  1 root root      77 Feb 28 02:09 artifact.sha256
+-rw-r--r--  1 root root     655 Feb 28 02:09 build.lock
+-rw-r--r--  1 root root     618 Feb 28 02:09 build.provenance
+-rw-r--r--  1 root root     596 Feb 28 02:09 env.fingerprint
+-rw-r--r--  1 root root    7764 Feb 28 02:09 gate_check.report.json
+-rw-r--r--  1 root root    2189 Feb 28 02:09 incident_playbook.md
+-rw-r--r--  1 root root     238 Feb 28 02:09 model_check.report
+drwxr-xr-x  2 root root    4096 Feb 28 02:09 proof_bundle
+-rw-r--r--  1 root root 9017568 Feb 28 02:09 rebuilt_artifact
+-rw-r--r--  1 root root     275 Feb 28 02:09 replay.report
+-rw-r--r--  1 root root     926 Feb 28 02:09 rollback.plan
+-rw-r--r--  1 root root    2190 Feb 28 02:09 runbook.md
+drwxr-xr-x  2 root root    4096 Feb 28 02:09 scientific_product
+-rw-r--r--  1 root root     598 Feb 28 02:09 selection.proof
+-rw-r--r--  1 root root     291 Feb 28 02:09 verifier.rules
+
+build_proof/prod_spec:
+total 20
+drwxr-xr-x 2 root root 4096 Feb 28 03:42 .
+drwxr-xr-x 8 root root 4096 Feb 28 03:41 ..
+-rw-r--r-- 1 root root 7684 Feb 28 03:42 gate_check.report.json
+-rw-r--r-- 1 root root  200 Feb 28 03:42 rebuild.log
+EXIT_CODE=0
