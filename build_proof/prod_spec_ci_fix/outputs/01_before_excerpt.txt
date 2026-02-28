@@ -137,14 +137,7 @@ jobs:
             --out    build_proof/prod_spec/gate_check.report.json
           ec=$?
           if [ ! -f build_proof/prod_spec/gate_check.report.json ]; then
-            python3 - <<'PY'
-            import json
-            from pathlib import Path
-            p = Path("build_proof/prod_spec/gate_check.report.json")
-            p.parent.mkdir(parents=True, exist_ok=True)
-            p.write_text(json.dumps({"rrd_status":"UNKNOWN","error":"checker_failed_before_report"}, separators=(",",":"), sort_keys=True) + "\n", encoding="utf-8")
-            print("WROTE_FALLBACK_REPORT", str(p))
-            PY
+            python3 -c 'import json; json.dump({"rrd_status":"UNKNOWN","error":"checker_failed_before_report"}, open("build_proof/prod_spec/gate_check.report.json", "w"))'
           fi
           echo "exit_code=$ec" >> "$GITHUB_OUTPUT"
           exit 0
@@ -153,48 +146,7 @@ jobs:
         env:
           CHECKER_EXIT_CODE: ${{ steps.gate_check.outputs.exit_code }}
         run: |
-          python3 - <<'PY'
-          import json
-          import os
-          import sys
-          from pathlib import Path
-
-          report_path = Path("build_proof/prod_spec/gate_check.report.json")
-          checker_exit_code = int(os.environ.get("CHECKER_EXIT_CODE", "1"))
-
-          if not report_path.is_file():
-              print(f"ERROR: missing report at {report_path}")
-              sys.exit(1)
-
-          try:
-              report = json.loads(report_path.read_text(encoding="utf-8"))
-          except Exception as exc:
-              print(f"ERROR: invalid JSON report: {exc}")
-              sys.exit(1)
-
-          rrd = report.get("rrd_status", "UNKNOWN")
-          gates = report.get("gates", [])
-          gate_status = {g.get("gate_id"): g.get("status") for g in gates if isinstance(g, dict)}
-          g0_status = gate_status.get("G0")
-          g3_status = gate_status.get("G3")
-
-          if g0_status == "FAIL":
-              print("BLOCK: G0 FAIL")
-              sys.exit(1)
-          if g3_status == "FAIL":
-              print("BLOCK: G3 FAIL")
-              sys.exit(1)
-
-          if checker_exit_code != 0:
-              if rrd == "PRODUCTION_SPEC_V2.1":
-                  print("BLOCK: checker exited non-zero with RRD=PRODUCTION_SPEC_V2.1")
-                  sys.exit(1)
-              if g0_status == "PASS" and g3_status == "PASS":
-                  print("WARN: checker exited non-zero for non-release state; not merge-blocking")
-                  sys.exit(0)
-
-          sys.exit(0)
-          PY
+          python3 -c 'import json, os, sys; checker_exit_code=int(os.environ.get("CHECKER_EXIT_CODE","1")); report=json.load(open("build_proof/prod_spec/gate_check.report.json", encoding="utf-8")); rrd=report.get("rrd_status","UNKNOWN"); gates=report.get("gates",[]); print(f"RRD: {rrd}"); passed=sum(1 for g in gates if g["status"]=="PASS"); failed=sum(1 for g in gates if g["status"]=="FAIL"); skipped=sum(1 for g in gates if g["status"]=="SKIP"); print(f"Gates: {passed} PASS, {failed} FAIL, {skipped} SKIP"); blockers=report.get("blockers",[]); print("\nBLOCKERS:") if blockers else None; [print(f"  • {b}") for b in blockers]; g3=next((g for g in gates if g["gate_id"]=="G3"), None); g0=next((g for g in gates if g["gate_id"]=="G0"), None); print("❌ G3-SSDF_COVERAGE FAIL — this blocks merge") if (g3 and g3["status"]=="FAIL") else None; print("❌ G0-BASELINE_SEAL FAIL — this blocks merge") if (g0 and g0["status"]=="FAIL") else None; print(f"\n{("✅" if rrd == "PRODUCTION_SPEC_V2.1" else "⚠️ ")} RRD={rrd}"); sys.exit(1 if checker_exit_code != 0 or (g3 and g3["status"]=="FAIL") or (g0 and g0["status"]=="FAIL") else 0)'
 
       - name: Upload gate report
         if: always()
