@@ -9,6 +9,11 @@ on:
 jobs:
   drift-guard:
     runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONHASHSEED: "0"
+      AXL_TEST_OUTPUT_DIR: ${{ runner.temp }}/axl_test_output
+      AXL_ARTIFACTS_ROOT: ${{ runner.temp }}/axl_artifacts
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
 
@@ -21,29 +26,26 @@ jobs:
         run: |
           set -euo pipefail
           python -m pip --version
-
-          # Install engine runtime deps (PyYAML/jsonschema) plus dev test deps.
-          if [[ -f requirements-dev.txt ]]; then
-            python -m pip install -r requirements-dev.txt
-            if [[ -f engine/pyproject.toml ]]; then
-              python -m pip install -e './engine[dev]'
-            fi
-          elif [[ -f engine/requirements-dev.txt ]]; then
-            python -m pip install -e './engine[dev]'
+          if [[ -f engine/requirements-dev.txt ]]; then
             python -m pip install -r engine/requirements-dev.txt
-          elif [[ -f engine/pyproject.toml ]]; then
-            python -m pip install -e './engine[dev]'
           else
-            echo "No dependency manifest found (requirements-dev.txt | engine/requirements-dev.txt | engine/pyproject.toml)" >&2
-            exit 1
+            python -m pip install pytest pyyaml
           fi
 
       - name: Run engine gates
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p "${AXL_TEST_OUTPUT_DIR}" "${AXL_ARTIFACTS_ROOT}"
           python -m compileall -q engine
           python -m pytest -q engine/tests
+
+      - name: Remove stray drift directories before capture
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf engine/artifacts/release-test engine/artifacts/tmp-evidence-test artifacts/agent
+          mkdir -p "${AXL_TEST_OUTPUT_DIR}" "${AXL_ARTIFACTS_ROOT}"
 
       - name: Capture workspace state
         shell: bash

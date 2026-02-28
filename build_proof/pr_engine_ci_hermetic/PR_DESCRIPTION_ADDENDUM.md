@@ -1,29 +1,27 @@
 ## WHAT
-- Hardened `engine-drift-guard` workflow dependency bootstrap and drift handling:
-  - keeps SHA-pinned actions,
-  - uses `python -m pip ...` only,
-  - captures workspace state in `$RUNNER_TEMP`,
-  - updates allowlisted build-proof path for this PR bundle.
-- Added hermetic evidence-path redirection support in `engine/tools/run_gate.py` via `AXL_EVIDENCE_ROOT`.
-- Strengthened run-gate tests to use isolated temporary evidence roots and kept strict assertions.
-- Restored executable-bit invariant in `engine/tests/test_doctor.py` and fixed tracked mode on `engine/scripts/quickstart.sh` (`chmod +x`).
+- Fixed `engine-drift-guard` CI workflow pinning/install/hermetic controls:
+  - SHA-pinned `actions/checkout` and `actions/setup-python`.
+  - deterministic dependency install including pytest (`engine/requirements-dev.txt` if present, else `pytest pyyaml`).
+  - hermetic env (`AXL_TEST_OUTPUT_DIR`, `AXL_ARTIFACTS_ROOT`, `PYTHONDONTWRITEBYTECODE`, `PYTHONHASHSEED`).
+  - pre-capture cleanup of stray drift dirs (`engine/artifacts/release-test`, `engine/artifacts/tmp-evidence-test`, `artifacts/agent`).
+- Added root wrapper `tools/verify_action_pinning.py` to resolve root tool path mismatch.
+- Hermeticized `engine/tests/test_stack.py` to avoid persistent creation of `engine/artifacts/release-test` and `engine/artifacts/tmp-evidence-test` by:
+  - moving release output to dedicated `.pytest-*` directories,
+  - cleaning those directories inside tests,
+  - avoiding previous drift directory names.
+- Added autouse hermetic env fixture in `engine/tests/conftest.py` with guard to avoid breaking env-isolation tests.
 
 ## WHY
-- Fixes the CI issue class where engine tests and gate tooling can write into tracked workspace paths.
-- Restores strong invariants instead of assertion weakening.
-- Maintains fail-closed behavior in CI workflow.
+- Eliminate CI/workspace drift and make engine test execution deterministic.
+- Ensure action pin audits can be invoked from repo root path expected by gates.
 
 ## EVIDENCE
-- Baseline/repro capture:
-  - `build_proof/pr_engine_ci_hermetic/outputs/10_compile_repro.txt`
-  - `build_proof/pr_engine_ci_hermetic/outputs/11_pytest_repro.txt`
-  - `build_proof/pr_engine_ci_hermetic/outputs/12_action_pinning_repro.txt`
-  - `build_proof/pr_engine_ci_hermetic/outputs/13_git_status_repro.txt`
-- Post-fix attempted gate:
-  - `build_proof/pr_engine_ci_hermetic/outputs/30_action_pinning_final.txt`
-- Current working-tree snapshot:
-  - `build_proof/pr_engine_ci_hermetic/outputs/99_git_status_now.txt`
+- Baseline: `outputs/00_baseline.txt`
+- Pinning before fix: `outputs/01_action_pinning_before.txt`
+- Compile: `outputs/10_compile_engine.txt`
+- Pytest: `outputs/11_pytest_engine.txt`
+- Post-gates status/diff: `outputs/12_git_status_after_gates.txt`, `outputs/13_git_diff_names_after_gates.txt`
+- Pinning after fix: `outputs/20_action_pinning_after.txt`
 
 ## COMPAT
-- Runtime behavior of shipped Engine/UI/Worker is unchanged.
-- Changes are CI/test/governance hardening only.
+- No shipped runtime behavior changes; modifications are limited to CI/test/tooling guardrails and hermetic test output handling.

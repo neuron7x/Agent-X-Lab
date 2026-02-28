@@ -62,3 +62,17 @@ def isolate_runtime_state() -> Iterator[None]:
         os.environ[key] = value
 
     assert _canonical_env_hash(dict(os.environ)) == environ_before_hash
+
+
+
+@pytest.fixture(autouse=True)
+def enforce_hermetic_artifact_roots(
+    request: pytest.FixtureRequest,
+    tmp_path_factory: pytest.TempPathFactory,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    if "test_isolation_fixture.py" in request.node.nodeid:
+        return
+    root = tmp_path_factory.mktemp("axl-hermetic")
+    monkeypatch.setenv("AXL_TEST_OUTPUT_DIR", str((root / "test-output").resolve()))
+    monkeypatch.setenv("AXL_ARTIFACTS_ROOT", str((root / "artifacts").resolve()))

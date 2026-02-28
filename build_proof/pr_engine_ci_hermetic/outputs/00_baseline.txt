@@ -1,0 +1,7 @@
+pr/engine-ci-hermetic
+84050b883875ea3a28a59f22aa4bb2b9864890eb
+Python 3.13.8
+ M build_proof/pr_engine_ci_hermetic/INVENTORY.json
+ M build_proof/pr_engine_ci_hermetic/commands.txt
+?? build_proof/pr_engine_ci_hermetic/outputs/00_baseline.txt
+EXIT_CODE=0
