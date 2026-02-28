@@ -1,53 +1,13 @@
 {
-  "timestamp_utc": "2026-02-28T10:12:00Z",
-  "branch": "pr/engine-ci-hermetic",
-  "base_sha": "84050b883875ea3a28a59f22aa4bb2b9864890eb",
-  "allowlist_files": [
-    ".github/workflows/engine-drift-guard.yml",
-    "tools/verify_action_pinning.py",
-    "engine/tests/conftest.py",
-    "engine/tests/test_stack.py",
-    "build_proof/pr_engine_ci_hermetic/INVENTORY.json",
+  "timestamp_utc": "2026-02-28T10:43:12Z",
+  "head_sha": "recorded-in-commit-history",
+  "bundle": [
     "build_proof/pr_engine_ci_hermetic/commands.txt",
-    "build_proof/pr_engine_ci_hermetic/PR_DESCRIPTION_ADDENDUM.md",
     "build_proof/pr_engine_ci_hermetic/outputs/00_baseline.txt",
-    "build_proof/pr_engine_ci_hermetic/outputs/01_action_pinning_before.txt",
+    "build_proof/pr_engine_ci_hermetic/outputs/01_action_pinning.txt",
     "build_proof/pr_engine_ci_hermetic/outputs/10_compile_engine.txt",
     "build_proof/pr_engine_ci_hermetic/outputs/11_pytest_engine.txt",
     "build_proof/pr_engine_ci_hermetic/outputs/12_git_status_after_gates.txt",
-    "build_proof/pr_engine_ci_hermetic/outputs/13_git_diff_names_after_gates.txt",
-    "build_proof/pr_engine_ci_hermetic/outputs/20_action_pinning_after.txt"
-  ],
-  "forbid": [
-    "Any edits outside allowlist_files.",
-    "Any fix that only hides drift by whitelisting engine/artifacts/** in drift guard (forbidden: add these paths to exceptions).",
-    "Any weakening of tests/gates (no skip/xfail to hide failures; no continue-on-error for required steps).",
-    "Any runtime behavior change of shipped product; allowed changes are test hermeticity and CI guardrails only.",
-    "Any new dependencies / lockfile changes.",
-    "Any commit unless all post_fix_gates PASS."
-  ],
-  "head_sha": "54cf76b273bef789fb49487074a7e9fded99c9c4",
-  "files_changed": [
-    ".github/workflows/engine-drift-guard.yml",
-    "build_proof/pr_engine_ci_hermetic/INVENTORY.json",
-    "build_proof/pr_engine_ci_hermetic/PR_DESCRIPTION_ADDENDUM.md",
-    "build_proof/pr_engine_ci_hermetic/commands.txt",
-    "build_proof/pr_engine_ci_hermetic/outputs/00_baseline.txt",
-    "build_proof/pr_engine_ci_hermetic/outputs/01_action_pinning_before.txt",
-    "build_proof/pr_engine_ci_hermetic/outputs/10_compile_engine.txt",
-    "build_proof/pr_engine_ci_hermetic/outputs/11_pytest_engine.txt",
-    "build_proof/pr_engine_ci_hermetic/outputs/12_git_status_after_gates.txt",
-    "build_proof/pr_engine_ci_hermetic/outputs/13_git_diff_names_after_gates.txt",
-    "build_proof/pr_engine_ci_hermetic/outputs/20_action_pinning_after.txt",
-    "engine/tests/conftest.py",
-    "engine/tests/test_stack.py",
-    "tools/verify_action_pinning.py"
-  ],
-  "gate_results": {
-    "G4_PINNING_PASS": "PASS",
-    "G5_PYTEST_INSTALLED_IN_CI": "PASS",
-    "G6_NO_DRIFT_AFTER_GATES_LOCAL": "PASS",
-    "G7_NO_DRIFT_IN_CI_DESIGN": "PASS",
-    "G8_EVIDENCE_COMPLETE": "PASS"
-  }
+    "build_proof/pr_engine_ci_hermetic/outputs/13_git_diff_names_after_gates.txt"
+  ]
 }
