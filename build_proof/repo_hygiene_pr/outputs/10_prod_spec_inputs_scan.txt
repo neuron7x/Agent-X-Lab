@@ -1,0 +1,20 @@
+udgs_core/CHANGELOG.md:21:- `build_proof/ITERATION_CYCLE_02_QA8_AUTONOMOUS_AUDIT.md` — Iteration checkpoint.
+udgs_core/CHANGELOG.md:24:- **CRITICAL**: `dao_lifebook_adapter.proof_bundle_to_udgs_packet()` generated
+udgs_core/CHANGELOG.md:32:- `build_proof/scripts/check_ui_contract.py` — Added QA8 marker and config checks.
+tools/prod_spec/make_ac_package.py:51:    "sources/**",
+tools/prod_spec/make_ac_package.py:64:    "build_proof/**",
+udgs_core/system_object.py:53:    if os.path.isdir(os.path.join(root, "sources/legacy/E-legacy_snapshot")):
+udgs_core/system_object.py:54:        add_tree("E_LEGACY_SDK", "sources/legacy/E-legacy_snapshot", "legacy")
+udgs_core/adapters/dao_lifebook_adapter.py:18:def proof_bundle_to_udgs_packet(proof_bundle: Dict[str, Any], *, pre_verification_script: str) -> Dict[str, Any]:
+udgs_core/adapters/dao_lifebook_adapter.py:27:        if k not in proof_bundle:
+udgs_core/adapters/dao_lifebook_adapter.py:30:    status = proof_bundle["required_checks_status"]
+udgs_core/adapters/dao_lifebook_adapter.py:41:        "commit_sha": proof_bundle["commit_sha"],
+udgs_core/adapters/dao_lifebook_adapter.py:43:        "artifact_hashes": proof_bundle["artifact_hashes"],
+udgs_core/tests/test_udgs_core.py:301:from udgs_core.adapters.dao_lifebook_adapter import proof_bundle_to_udgs_packet
+udgs_core/tests/test_udgs_core.py:313:        pkt = proof_bundle_to_udgs_packet(self._bundle("success"), pre_verification_script="make check")
+udgs_core/tests/test_udgs_core.py:319:        pkt = proof_bundle_to_udgs_packet(self._bundle(status), pre_verification_script="run")
+udgs_core/tests/test_udgs_core.py:325:            proof_bundle_to_udgs_packet(self._bundle("INVALID"), pre_verification_script="r")
+udgs_core/tests/test_udgs_core.py:330:            proof_bundle_to_udgs_packet(bundle, pre_verification_script="r")
+udgs_core/tests/test_udgs_core.py:334:        pkt = proof_bundle_to_udgs_packet(self._bundle(), pre_verification_script="r")
+udgs_core/tests/test_udgs_core.py:338:        pkt = proof_bundle_to_udgs_packet(self._bundle(), pre_verification_script="r")
+EXIT_CODE=0

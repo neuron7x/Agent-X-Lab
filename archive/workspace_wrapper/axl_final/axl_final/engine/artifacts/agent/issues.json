@@ -1,6 +1,0 @@
-{
-  "status": "BLOCKED_ON_VERIFICATION",
-  "failing_command": "make check",
-  "exit_code": 2,
-  "stderr_excerpt": "ruff format --check .\nWould reformat: tools/verify_action_pinning.py\n1 file would be reformatted, 59 files already formatted\nmake: *** [Makefile:21: format_check] Error 1"
-}

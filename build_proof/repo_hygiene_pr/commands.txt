@@ -1,0 +1,37 @@
++ git status --porcelain
+EXIT_CODE=0
++ git rev-parse --abbrev-ref HEAD
+EXIT_CODE=0
++ git rev-parse HEAD
+EXIT_CODE=0
++ git status --porcelain
+EXIT_CODE=0
++ baseline_tree_capture
+EXIT_CODE=0
++ baseline_sizes_capture
+EXIT_CODE=0
++ python3 INVENTORY_init
+EXIT_CODE=0
++ inbound_reference_scans_03_08
+EXIT_CODE=0
++ protection_scans_09_10
+EXIT_CODE=0
++ write 11_removal_decisions
+EXIT_CODE=0
++ manifest_generation
+EXIT_CODE=0
++ write export runbook
+EXIT_CODE=0
++ git rm -r -- archive artifacts/proof_bundle control-plane engine/.github/workflows
+EXIT_CODE=0
++ post_reference_scans
+EXIT_CODE=0
++ docs updates
+EXIT_CODE=0
++ local checks capture
+EXIT_CODE=0
++ inventory finalize + addendum
+EXIT_CODE=0
++ git diff --name-only
+README.md
+EXIT_CODE=0

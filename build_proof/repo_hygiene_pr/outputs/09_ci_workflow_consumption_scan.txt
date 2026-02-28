@@ -1,0 +1,36 @@
+Makefile:48:		--out build_proof/prod_spec/gate_check.report.json
+docs/prompts/LOGIC_MATH_CORRECTNESS_HARDENING_AGENT.md:26:- docs/** and build_proof/** only for evidence and documentation alignment.
+docs/prompts/LOGIC_MATH_CORRECTNESS_HARDENING_AGENT.md:39:G4: Evidence bundle in build_proof/math_hardening/**.
+docs/prompts/LOGIC_MATH_CORRECTNESS_HARDENING_AGENT.md:53:- Write build_proof/math_hardening/INVENTORY.json with scanned files, modified files, tests, invariants.
+docs/prompts/LOGIC_MATH_CORRECTNESS_HARDENING_AGENT.md:56:- Produce build_proof/math_hardening/outputs/00_static_scan_findings.md with FindingID, file:line, severity, invariant, minimal fix, test strategy.
+docs/prompts/LOGIC_MATH_CORRECTNESS_HARDENING_AGENT.md:81:- Create build_proof/math_hardening/commands.txt.
+docs/prompts/LOGIC_MATH_CORRECTNESS_HARDENING_AGENT.md:82:- Record commands, outputs, and exit codes under build_proof/math_hardening/outputs/*.
+docs/prompts/LOGIC_MATH_CORRECTNESS_HARDENING_AGENT.md:97:- build_proof/math_hardening/DIFF_SUMMARY.md
+docs/prompts/LOGIC_MATH_CORRECTNESS_HARDENING_AGENT.md:98:- build_proof/math_hardening/PR_DESCRIPTION_ADDENDUM.md
+docs/prompts/LOGIC_MATH_CORRECTNESS_HARDENING_AGENT.md:99:- build_proof/math_hardening/CHECKLIST.md
+docs/99_CHECKLIST.md:11:| CHK-C1 | Audit bundle includes gate command transcript file. | docs/06_CI_AND_RELEASE.md#local-gates | build_proof/docs_audit/commands.txt:L1-L16 | PASS |
+docs/99_CHECKLIST.md:12:| CHK-C2 | Audit bundle includes per-gate outputs and CI link file. | docs/06_CI_AND_RELEASE.md#artifact-locations | build_proof/docs_audit/outputs/01_node_version.txt:L1-L2; build_proof/docs_audit/ci_links.txt:L1-L1 | PASS |
+docs/99_CHECKLIST.md:13:| CHK-D1 | No behavior-changing source edits under src/e2e. | docs/07_TROUBLESHOOTING.md#lint-typecheck-fail | build_proof/docs_audit/outputs/04_lint.txt:L1-L7; build_proof/docs_audit/outputs/05_typecheck.txt:L1-L7 | PASS |
+docs/99_CHECKLIST.md:15:| CHK-G1 | Baseline gates rerun after doc work with unchanged outcomes. | docs/06_CI_AND_RELEASE.md#local-gates | build_proof/docs_audit/outputs/11_npm_ci_post.txt:L1-L8; build_proof/docs_audit/outputs/16_test_e2e_post.txt:L1-L8 | PASS |
+docs/99_CHECKLIST.md:16:| CHK-LINK1 | Relative links in docs/top-level doc files resolve. | docs/06_CI_AND_RELEASE.md#artifact-locations | build_proof/docs_audit/outputs/17_link_check.txt:L1-L2 | PASS |
+docs/06_CI_AND_RELEASE.md:16:Evidence logs are committed under `build_proof/docs_audit/outputs/`.
+docs/06_CI_AND_RELEASE.md:17:EVIDENCE: build_proof/docs_audit/commands.txt:L1-L16
+docs/98_CONTRACT_INDEX.md:65:Tested by: build_proof/docs_audit/outputs/08_test_e2e.txt:L1-L8 (local preflight failure mode proves dependency)
+udgs_core/CHANGELOG.md:21:- `build_proof/ITERATION_CYCLE_02_QA8_AUTONOMOUS_AUDIT.md` — Iteration checkpoint.
+udgs_core/CHANGELOG.md:32:- `build_proof/scripts/check_ui_contract.py` — Added QA8 marker and config checks.
+docs/ui/README.md:108:After each engine run, `build_proof/ui/` contains:
+docs/TECHNICAL_DEBT_REPORT_2026-02-26.md:7:3. **Lint scope contamination**: root lint ran as `eslint .` and scanned archive/snapshot folders, generating non-product warnings.
+udgs_core/system_object.py:53:    if os.path.isdir(os.path.join(root, "sources/legacy/E-legacy_snapshot")):
+udgs_core/system_object.py:54:        add_tree("E_LEGACY_SDK", "sources/legacy/E-legacy_snapshot", "legacy")
+tools/prod_spec/make_ac_package.py:51:    "sources/**",
+tools/prod_spec/make_ac_package.py:64:    "build_proof/**",
+.github/workflows/prod-spec-gates.yml:117:          mkdir -p artifacts ad2026_state/pb build_proof/prod_spec
+.github/workflows/prod-spec-gates.yml:121:          python3 -c 'import datetime, json, pathlib; payload={"schema":"REBUILD_LOG_V1","generated_at":datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00","Z"),"independent_build_count":2,"build_strategy":"ci_deterministic_probe","source":".github/workflows/prod-spec-gates.yml"}; pathlib.Path("artifacts/rebuild.log").write_text(json.dumps(payload, indent=2)+"\n", encoding="utf-8"); pathlib.Path("build_proof/prod_spec/rebuild.log").write_text(json.dumps(payload, indent=2)+"\n", encoding="utf-8")'
+.github/workflows/prod-spec-gates.yml:126:          test -s build_proof/prod_spec/rebuild.log
+.github/workflows/prod-spec-gates.yml:137:            --out    build_proof/prod_spec/gate_check.report.json
+.github/workflows/prod-spec-gates.yml:139:          if [ ! -f build_proof/prod_spec/gate_check.report.json ]; then
+.github/workflows/prod-spec-gates.yml:140:            python3 -c 'import json; json.dump({"rrd_status":"UNKNOWN","error":"checker_failed_before_report"}, open("build_proof/prod_spec/gate_check.report.json", "w"))'
+.github/workflows/prod-spec-gates.yml:149:          python3 -c 'import json, os, sys; checker_exit_code=int(os.environ.get("CHECKER_EXIT_CODE","1")); report=json.load(open("build_proof/prod_spec/gate_check.report.json", encoding="utf-8")); rrd=report.get("rrd_status","UNKNOWN"); gates=report.get("gates",[]); print(f"RRD: {rrd}"); passed=sum(1 for g in gates if g["status"]=="PASS"); failed=sum(1 for g in gates if g["status"]=="FAIL"); skipped=sum(1 for g in gates if g["status"]=="SKIP"); print(f"Gates: {passed} PASS, {failed} FAIL, {skipped} SKIP"); blockers=report.get("blockers",[]); print("\nBLOCKERS:") if blockers else None; [print(f"  • {b}") for b in blockers]; g3=next((g for g in gates if g["gate_id"]=="G3"), None); g0=next((g for g in gates if g["gate_id"]=="G0"), None); print("❌ G3-SSDF_COVERAGE FAIL — this blocks merge") if (g3 and g3["status"]=="FAIL") else None; print("❌ G0-BASELINE_SEAL FAIL — this blocks merge") if (g0 and g0["status"]=="FAIL") else None; print(f"\n{("✅" if rrd == "PRODUCTION_SPEC_V2.1" else "⚠️ ")} RRD={rrd}"); sys.exit(1 if checker_exit_code != 0 or (g3 and g3["status"]=="FAIL") or (g0 and g0["status"]=="FAIL") else 0)'
+.github/workflows/prod-spec-gates.yml:158:            build_proof/prod_spec/gate_check.report.json
+.github/workflows/prod-spec-gates.yml:159:            build_proof/prod_spec/rebuild.log
+EXIT_CODE=0

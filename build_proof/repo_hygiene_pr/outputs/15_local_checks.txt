@@ -1,0 +1,17 @@
+README.md
+diff --git a/README.md b/README.md
+index f35c1c1..fee2da4 100644
+--- a/README.md
++++ b/README.md
+@@ -11,7 +11,6 @@ Production monorepo for AXL UI, Cloudflare Worker BFF, Python engine, and determ
+ - `tools/`: supporting developer and prod-spec tooling.
+ - `docs/`: operational, security, UI, and deployment docs.
+ - `.github/workflows/`: CI workflows.
+-- `archive/`: preserved wrapper/snapshot material moved out of active code paths.
+ - `evidence/`: release/promoted proof artifacts and migration evidence.
+ 
+ ## Quickstart
+v22.21.1
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+11.4.2
+EXIT_CODE=0
