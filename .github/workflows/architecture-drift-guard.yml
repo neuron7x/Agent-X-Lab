@@ -1,0 +1,100 @@
+name: Architecture Drift Guard
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  topology-gate:
+    name: Empirical Graph Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Base State
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          path: _state_base
+
+      - name: Checkout Head State
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: _state_head
+
+      - name: Provision Exoneural Runtime
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Platform Dependencies
+        run: pip install PyYAML
+
+      - name: Synthesize Base Contract
+        working-directory: _state_base
+        run: |
+          make repo-model
+          cp engine/artifacts/repo_model/repo_model.json ../base_contract.json
+
+      - name: Synthesize Head Contract
+        working-directory: _state_head
+        run: |
+          make repo-model
+          cp engine/artifacts/repo_model/repo_model.json ../head_contract.json
+
+      - name: Execute Epistemic Comparator
+        id: comparator
+        env:
+          HAS_OVERRIDE: ${{ contains(github.event.pull_request.labels.*.name, 'architecture-override') }}
+        run: |
+          python _state_head/engine/scripts/check_architecture_drift.py \
+            --base base_contract.json \
+            --head head_contract.json \
+            --override "$HAS_OVERRIDE" \
+            --summary "$GITHUB_STEP_SUMMARY" \
+            --report-out architecture_drift_report.md
+
+      - name: Materialize PR Evidence
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const marker = '<!-- architecture-drift-guard -->';
+            const body = fs.readFileSync('architecture_drift_report.md', 'utf8');
+            const message = `${marker}\n${body}`;
+
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.pull_request.number;
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            });
+
+            const existing = comments.find((c) => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body: message,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body: message,
+              });
+            }
