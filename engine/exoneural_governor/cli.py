@@ -145,7 +145,7 @@ def main(argv: list[str] | None = None) -> None:
     elif args.cmd == "selftest":
         rc = cmd_selftest(cfg_path)
     elif args.cmd == "repo-model":
-        rc = repo_model_cli(["--repo-root", ".", "--out", str(args.out)])
+        rc = repo_model_cli(["--out", str(args.out)])
     else:
         raise RuntimeError("unreachable")
 

@@ -54,4 +54,4 @@ reproduce: test
 
 repo-model:
 	mkdir -p engine/artifacts/repo_model
-	PYTHONPATH=engine $(PYTHON_RUN) -m exoneural_governor repo-model --out engine/artifacts/repo_model/repo_model.json
+	PYTHONPATH=engine $(PYTHON_RUN) -m exoneural_governor repo-model
