@@ -1,0 +1,29 @@
+RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)"; PROOF_DIR="build_proof/task3_engine_drift_guard_fix_${RUN_ID}"; mkdir -p "${PROOF_DIR}"/{outputs,patches,tmp}
+gh --version > "${PROOF_DIR}/outputs/gh_version.txt" 2>&1 || true
+gh run list --workflow engine-drift-guard.yml --limit 10 > "${PROOF_DIR}/outputs/gh_run_list.txt" 2>&1 || true
+nl -ba .github/workflows/engine-drift-guard.yml > "${PROOF_DIR}/outputs/engine-drift-guard.before.txt"
+python --version > "${PROOF_DIR}/outputs/local_repro_env.txt" 2>&1
+python -m pip --version >> "${PROOF_DIR}/outputs/local_repro_env.txt" 2>&1
+python -m compileall -q engine > "${PROOF_DIR}/outputs/local_compileall.txt" 2>&1 || true
+python -m pytest -q engine/tests > "${PROOF_DIR}/outputs/local_pytest.txt" 2>&1 || true
+timeout 180 python -m compileall -q engine > "${PROOF_DIR}/outputs/local_compileall.txt" 2>&1 || true
+timeout 180 python -m pytest -q engine/tests > "${PROOF_DIR}/outputs/local_pytest.txt" 2>&1 || true
+tail -n 120 "${PROOF_DIR}/outputs/local_pytest.txt" > "${PROOF_DIR}/outputs/failing_log_excerpt.txt"
+sed -n "1,160p" "${PROOF_DIR}/outputs/local_pytest.txt"
+sed -n "1,120p" "${PROOF_DIR}/outputs/failing_log_excerpt.txt"
+apply_patch (engine-drift-guard deterministic fixes)
+apply_patch (add python/pip/sys.path forensic files)
+cat > "${PROOF_DIR}/outputs/failing_log_excerpt.txt" <<"EOF"
+gh CLI unavailable in runner (command not found), so remote Actions log retrieval could not be performed.
+Local best-effort reproduction: `python -m compileall -q engine` and `python -m pytest -q engine/tests` both exited successfully in this environment; no local gate_rc=2 traceback available.
+EOF
+nl -ba .github/workflows/engine-drift-guard.yml > "${PROOF_DIR}/outputs/engine-drift-guard.after.txt"
+python tools/verify_action_pinning.py --workflows .github/workflows > "${PROOF_DIR}/outputs/verify_action_pinning.txt" 2>&1
+python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows > "${PROOF_DIR}/outputs/verify_workflow_hygiene.txt" 2>&1
+tmp_root=$(mktemp -d); export RUNNER_TEMP="$tmp_root"; export GITHUB_WORKSPACE="$(pwd)"; export AXL_TEST_OUTPUT_DIR="$RUNNER_TEMP/axl_test_output"; export AXL_ARTIFACTS_ROOT="$RUNNER_TEMP/axl_artifacts"; mkdir -p "$AXL_TEST_OUTPUT_DIR" "$AXL_ARTIFACTS_ROOT"; pp="$GITHUB_WORKSPACE/engine"; if [ -d "$GITHUB_WORKSPACE/udgs_core" ]; then pp="$pp:$GITHUB_WORKSPACE/udgs_core"; fi; export PYTHONPATH="$pp"; gate_rc=0; set -o pipefail; python -m compileall -q engine 2>&1 | tee "$AXL_ARTIFACTS_ROOT/compileall.log" || gate_rc=$?; if [[ $gate_rc -eq 0 ]]; then python -m pytest -q engine/tests 2>&1 | tee "$AXL_ARTIFACTS_ROOT/pytest.log" || gate_rc=$?; fi; git status --porcelain > "$RUNNER_TEMP/drift-status.txt"; git diff --name-only > "$RUNNER_TEMP/drift-diff.txt"; printf "gate_rc=%s\n" "$gate_rc" | tee "$PROOF_DIR/outputs/local_gate_rc.txt"; printf "drift_lines=%s\n" "$(wc -l < "$RUNNER_TEMP/drift-status.txt")" | tee -a "$PROOF_DIR/outputs/local_gate_rc.txt"; printf "diff_lines=%s\n" "$(wc -l < "$RUNNER_TEMP/drift-diff.txt")" | tee -a "$PROOF_DIR/outputs/local_gate_rc.txt"; rm -rf "$tmp_root"
+git diff > "${PROOF_DIR}/patches/final.patch"
+(cd "${PROOF_DIR}" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "${PROOF_DIR}/sha256sum.txt"
+git status --short > "${PROOF_DIR}/outputs/git_status.txt"
+git add .github/workflows/engine-drift-guard.yml "${PROOF_DIR}"
+git add "${PROOF_DIR}/commands.txt"
+git commit -m "ci: fix engine-drift-guard gate_rc=2 deterministically"

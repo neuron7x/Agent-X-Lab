@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PYTHON_VERSION: "3.13"
+  PYTHON_VERSION: "3.13.8"
   PIP_VERSION: "26.0"
 
 jobs:
@@ -32,6 +32,32 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           pip-version: ${{ env.PIP_VERSION }}
 
+      - name: Configure PYTHONPATH (no workspace mutation)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${RUNNER_TEMP}/axl_artifacts"
+          pp="${GITHUB_WORKSPACE}/engine"
+          if [ -d "${GITHUB_WORKSPACE}/udgs_core" ]; then
+            pp="${pp}:${GITHUB_WORKSPACE}/udgs_core"
+          fi
+          echo "PYTHONPATH=${pp}" >> "$GITHUB_ENV"
+          {
+            python --version
+            python -m pip --version
+          } | tee "${RUNNER_TEMP}/axl_artifacts/python-env.txt"
+          python - <<'PY'
+          import sys
+          print("SYSPATH_BEGIN")
+          for p in sys.path: print(p)
+          print("SYSPATH_END")
+          PY
+          python - <<'PY' > "${RUNNER_TEMP}/axl_artifacts/sys-path.txt"
+          import sys
+          for p in sys.path:
+              print(p)
+          PY
+
       - name: Init hermetic temp dirs
         shell: bash
         run: |
@@ -46,6 +72,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          python -m pip --version
+          if [ -f engine/requirements.lock ]; then
+            python -m pip install -r engine/requirements.lock
+          fi
           python -m pip install -r engine/requirements-dev.txt
 
       - name: Run engine gates and record exit code
@@ -53,12 +83,13 @@ jobs:
         shell: bash
         run: |
           set -u
+          set -o pipefail
           mkdir -p "${AXL_TEST_OUTPUT_DIR}" "${AXL_ARTIFACTS_ROOT}"
           gate_rc=0
 
-          python -m compileall -q engine || gate_rc=$?
+          python -m compileall -q engine 2>&1 | tee "${AXL_ARTIFACTS_ROOT}/compileall.log" || gate_rc=$?
           if [[ $gate_rc -eq 0 ]]; then
-            python -m pytest -q engine/tests || gate_rc=$?
+            python -m pytest -q engine/tests 2>&1 | tee "${AXL_ARTIFACTS_ROOT}/pytest.log" || gate_rc=$?
           fi
 
           echo "gate_rc=$gate_rc" >> "$GITHUB_OUTPUT"
@@ -100,6 +131,22 @@ jobs:
           else
             echo "forbidden_detected=0" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Upload drift guard diagnostics
+        if: always()
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        with:
+          name: engine-drift-guard-diagnostics-${{ github.run_id }}
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/axl_artifacts/compileall.log
+            ${{ runner.temp }}/axl_artifacts/pytest.log
+            ${{ runner.temp }}/axl_artifacts/python-env.txt
+            ${{ runner.temp }}/axl_artifacts/sys-path.txt
+            ${{ runner.temp }}/drift-status.txt
+            ${{ runner.temp }}/drift-diff.txt
+            ${{ runner.temp }}/forbidden-paths.txt
 
       - name: Finalize gate and drift status
         if: always()
