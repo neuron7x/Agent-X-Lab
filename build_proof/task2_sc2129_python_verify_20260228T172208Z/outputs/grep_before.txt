@@ -1,0 +1,4 @@
+34:            echo "ROOT=." >> "$GITHUB_ENV"
+37:            echo "ROOT=engine" >> "$GITHUB_ENV"
+43:            echo "ROOT=." >> "$GITHUB_ENV"
+46:            echo "ROOT=engine" >> "$GITHUB_ENV"

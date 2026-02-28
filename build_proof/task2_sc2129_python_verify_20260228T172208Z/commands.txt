@@ -1,0 +1,19 @@
+uname -a > build_proof/task2_sc2129_python_verify_20260228T172208Z/outputs/env.txt
+python --version >> build_proof/task2_sc2129_python_verify_20260228T172208Z/outputs/env.txt 2>&1 || true
+python -m pip --version >> build_proof/task2_sc2129_python_verify_20260228T172208Z/outputs/env.txt 2>&1 || true
+git rev-parse HEAD >> build_proof/task2_sc2129_python_verify_20260228T172208Z/outputs/env.txt
+git status --porcelain >> build_proof/task2_sc2129_python_verify_20260228T172208Z/outputs/env.txt
+nl -ba .github/workflows/python-verify.yml | sed -n '20,90p' > build_proof/task2_sc2129_python_verify_20260228T172208Z/outputs/python_verify_before.txt
+grep -n '>> "\$GITHUB_ENV"' -n .github/workflows/python-verify.yml > build_proof/task2_sc2129_python_verify_20260228T172208Z/outputs/grep_before.txt || true
+python edit .github/workflows/python-verify.yml
+nl -ba .github/workflows/python-verify.yml | sed -n '1,140p' > build_proof/task2_sc2129_python_verify_20260228T172208Z/outputs/python_verify_full_current.txt
+sed -n '30,80p' .github/workflows/python-verify.yml
+python edit .github/workflows/python-verify.yml
+nl -ba .github/workflows/python-verify.yml | sed -n '20,90p' > build_proof/task2_sc2129_python_verify_20260228T172208Z/outputs/python_verify_after.txt
+grep -n '>> "\$GITHUB_ENV"' -n .github/workflows/python-verify.yml > build_proof/task2_sc2129_python_verify_20260228T172208Z/outputs/grep_after.txt
+python tools/verify_workflow_hygiene.py --workflows .github/workflows > build_proof/task2_sc2129_python_verify_20260228T172208Z/outputs/policy_workflow_hygiene.txt 2>&1
+python tools/verify_action_pinning.py --workflows .github/workflows > build_proof/task2_sc2129_python_verify_20260228T172208Z/outputs/policy_action_pinning.txt 2>&1
+git status --porcelain
+rm -rf build_proof/task2_sc2129_python_verify_20260228T172150Z
+git diff > build_proof/task2_sc2129_python_verify_20260228T172208Z/patches/final.patch
+git add .github/workflows/python-verify.yml build_proof/task2_sc2129_python_verify_20260228T172208Z

@@ -1,0 +1,76 @@
+54:          echo "ROOT=${root}" >> "$GITHUB_ENV"
+
+     1	name: Python Verify
+     2	
+     3	on:
+     4	  pull_request:
+     5	  push:
+     6	    branches: [main]
+     7	  workflow_dispatch:
+     8	
+     9	permissions:
+    10	  contents: read
+    11	
+    12	concurrency:
+    13	  group: python-verify-${{ github.ref }}
+    14	  cancel-in-progress: true
+    15	
+    16	env:
+    17	  PYTHON_VERSION: '3.13.8'
+    18	  PIP_VERSION: '24.3.1'
+    19	
+    20	jobs:
+    21	  verify:
+    22	    runs-on: ubuntu-latest
+    23	    timeout-minutes: 15
+    24	    steps:
+    25	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    26	      - uses: ./.github/actions/setup-python-pip
+    27	        with:
+    28	          python-version: ${{ env.PYTHON_VERSION }}
+    29	          pip-version: ${{ env.PIP_VERSION }}
+    30	      - name: Discover python test contract
+    31	        run: |
+    32	          set -euo pipefail
+    33	          root=""
+    34	          if [ -f pyproject.toml ]; then
+    35	            root="."
+    36	            python -m pip install -e .
+    37	          elif [ -f engine/pyproject.toml ]; then
+    38	            root="engine"
+    39	            python -m pip install -e ./engine
+    40	            if [ -f engine/requirements-dev.txt ]; then
+    41	              python -m pip install -r engine/requirements-dev.txt
+    42	            fi
+    43	          elif [ -f requirements-dev.txt ]; then
+    44	            root="."
+    45	            python -m pip install -r requirements-dev.txt
+    46	          elif [ -f engine/requirements-dev.txt ]; then
+    47	            root="engine"
+    48	            python -m pip install -r engine/requirements-dev.txt
+    49	          else
+    50	            echo "missing Python test contract" >&2
+    51	            exit 1
+    52	          fi
+    53	          if [ -z "${root}" ]; then echo "missing Python test contract" >&2; exit 1; fi
+    54	          echo "ROOT=${root}" >> "$GITHUB_ENV"
+    55	      - run: |
+    56	          set -euo pipefail
+    57	          python -m compileall "$ROOT"
+    58	      - run: |
+    59	          set -euo pipefail
+    60	          if [ -d tests ] || [ -d engine/tests ] || find . -maxdepth 3 -name 'test_*.py' | grep -q .; then
+    61	            python -m pytest -q
+    62	          else
+    63	            echo "No python tests found; explicit policy required" >&2
+    64	            exit 1
+    65	          fi
+    66	      - name: Python dependency vulnerability gate (pip-audit)
+    67	        if: hashFiles('engine/requirements.lock', 'engine/policies/pip_audit_allowlist.json') != ''
+    68	        run: |
+    69	          set -euo pipefail
+    70	          mkdir -p artifacts/security
+    71	          python engine/tools/pip_audit_gate.py \
+    72	            --requirements engine/requirements.lock \
+    73	            --allowlist engine/policies/pip_audit_allowlist.json \
+    74	            --out artifacts/security/pip-audit.json

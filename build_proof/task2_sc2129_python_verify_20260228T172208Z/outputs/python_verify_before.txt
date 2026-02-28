@@ -1,0 +1,52 @@
+    20	jobs:
+    21	  verify:
+    22	    runs-on: ubuntu-latest
+    23	    timeout-minutes: 15
+    24	    steps:
+    25	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    26	      - uses: ./.github/actions/setup-python-pip
+    27	        with:
+    28	          python-version: ${{ env.PYTHON_VERSION }}
+    29	          pip-version: ${{ env.PIP_VERSION }}
+    30	      - name: Discover python test contract
+    31	        run: |
+    32	          set -euo pipefail
+    33	          if [ -f pyproject.toml ]; then
+    34	            echo "ROOT=." >> "$GITHUB_ENV"
+    35	            python -m pip install -e .
+    36	          elif [ -f engine/pyproject.toml ]; then
+    37	            echo "ROOT=engine" >> "$GITHUB_ENV"
+    38	            python -m pip install -e ./engine
+    39	            if [ -f engine/requirements-dev.txt ]; then
+    40	              python -m pip install -r engine/requirements-dev.txt
+    41	            fi
+    42	          elif [ -f requirements-dev.txt ]; then
+    43	            echo "ROOT=." >> "$GITHUB_ENV"
+    44	            python -m pip install -r requirements-dev.txt
+    45	          elif [ -f engine/requirements-dev.txt ]; then
+    46	            echo "ROOT=engine" >> "$GITHUB_ENV"
+    47	            python -m pip install -r engine/requirements-dev.txt
+    48	          else
+    49	            echo "missing Python test contract" >&2
+    50	            exit 1
+    51	          fi
+    52	      - run: |
+    53	          set -euo pipefail
+    54	          python -m compileall "$ROOT"
+    55	      - run: |
+    56	          set -euo pipefail
+    57	          if [ -d tests ] || [ -d engine/tests ] || find . -maxdepth 3 -name 'test_*.py' | grep -q .; then
+    58	            python -m pytest -q
+    59	          else
+    60	            echo "No python tests found; explicit policy required" >&2
+    61	            exit 1
+    62	          fi
+    63	      - name: Python dependency vulnerability gate (pip-audit)
+    64	        if: hashFiles('engine/requirements.lock', 'engine/policies/pip_audit_allowlist.json') != ''
+    65	        run: |
+    66	          set -euo pipefail
+    67	          mkdir -p artifacts/security
+    68	          python engine/tools/pip_audit_gate.py \
+    69	            --requirements engine/requirements.lock \
+    70	            --allowlist engine/policies/pip_audit_allowlist.json \
+    71	            --out artifacts/security/pip-audit.json
