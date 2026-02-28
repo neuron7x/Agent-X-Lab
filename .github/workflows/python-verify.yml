@@ -60,3 +60,12 @@ jobs:
             echo "No python tests found; explicit policy required" >&2
             exit 1
           fi
+      - name: Python dependency vulnerability gate (pip-audit)
+        if: hashFiles('engine/requirements.lock', 'engine/policies/pip_audit_allowlist.json') != ''
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/security
+          python engine/tools/pip_audit_gate.py \
+            --requirements engine/requirements.lock \
+            --allowlist engine/policies/pip_audit_allowlist.json \
+            --out artifacts/security/pip-audit.json
