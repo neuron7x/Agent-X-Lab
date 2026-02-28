@@ -165,9 +165,11 @@ jobs:
               print(f"INTEGRITY AUDIT START: Target SHA {sha[:8]}")
               print(f"EXPECTED GATES: {', '.join(required)}")
 
+              # Initialize outside loop to prevent UnboundLocalError on API network failure
+              pending = list(required)
+
               while time.time() < deadline:
                   try:
-                      # 1. Paginated API Fetch (Handles >100 checks scaling)
                       runs = []
                       page = 1
                       while True:
@@ -178,7 +180,6 @@ jobs:
                           runs.extend(page_runs)
                           page += 1
 
-                      # 2. Aggregation for Matrix/Re-runs
                       grouped = {}
                       for r in runs:
                           norm_name = normalize_check_name(r['name'])
@@ -187,8 +188,8 @@ jobs:
 
                       pending = []
                       failed_blocks = []
+                      failed_markdown = []
 
-                      # 3. State Evaluation Engine
                       for req in list(required):
                           if req not in grouped:
                               if time.time() > grace_period:
@@ -202,28 +203,33 @@ jobs:
                           statuses = [r.get('status') for r in req_runs]
                           conclusions = [r.get('conclusion') for r in req_runs]
 
-                          # Fail-Fast if ANY run in the matrix group failed
                           if any(c in ('failure', 'cancelled', 'timed_out', 'action_required') for c in conclusions):
                               bad_run = next(r for r in req_runs if r.get('conclusion') in ('failure', 'cancelled', 'timed_out', 'action_required'))
                               failed_blocks.append(f"'{req}' terminal state. URL: {bad_run.get('html_url')}")
+                              failed_markdown.append(f"| ❌ **{req}** | {bad_run.get('conclusion').upper()} | [View Logs]({bad_run.get('html_url')}) |")
                               continue
 
-                          # Pending if NOT ALL runs are completed
                           if not all(s == 'completed' for s in statuses):
                               pending.append(req)
                               continue
 
-                          # Pending if any completed but blocked in an unknown state
                           if any(c not in ('success', 'neutral', 'skipped') for c in conclusions):
                               pending.append(req)
 
-                      # Terminate immediately if blockers detected
                       if failed_blocks:
                           for err in failed_blocks:
                               print(f"BLOCKER: {err}")
+                          if summary_path:
+                              try:
+                                  with open(summary_path, 'a', encoding='utf-8') as f:
+                                      f.write("\n### ❌ CI Integrity Violation\n")
+                                      f.write(f"**Target SHA:** `{sha}`\n\n")
+                                      f.write("| Gate | Conclusion | Evidence |\n| :--- | :--- | :--- |\n")
+                                      for fm in failed_markdown: f.write(f"{fm}\n")
+                              except Exception:
+                                  pass
                           return 1
 
-                      # 4. Success Clearance & Telemetry
                       missing = [r for r in required if r not in grouped]
                       if not pending and not missing:
                           print("SUCCESS: All active gates verified.")
@@ -236,8 +242,8 @@ jobs:
                                       for r in required:
                                           c = grouped[r][0].get('conclusion', 'success').upper()
                                           f.write(f"| **{r}** | ✅ COMPLETED | {c} |\n")
-                              except Exception as ex:
-                                  print(f"WARN: Telemetry write failed: {ex}")
+                              except Exception:
+                                  pass
                           return 0
 
                       elapsed = int(time.time() - start_time)
@@ -249,6 +255,13 @@ jobs:
                       time.sleep(10)
 
               print(f"TIMEOUT: Gates {pending} failed to close after 15m.")
+              if summary_path:
+                  try:
+                      with open(summary_path, 'a', encoding='utf-8') as f:
+                          f.write("\n### ⚠️ CI Timeout\n")
+                          f.write(f"The following gates failed to close within 15 minutes: `{pending}`\n")
+                  except Exception:
+                      pass
               return 1
 
           repo = os.environ['GITHUB_REPOSITORY']
