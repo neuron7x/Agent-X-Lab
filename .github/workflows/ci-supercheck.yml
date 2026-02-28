@@ -39,8 +39,8 @@ jobs:
           import sys
           import time
           import urllib.request
-          
-          
+
+
           def api(url):
               req = urllib.request.Request(
                   url,
@@ -52,8 +52,8 @@ jobs:
               )
               with urllib.request.urlopen(req, timeout=30) as resp:
                   return json.loads(resp.read().decode('utf-8'))
-          
-          
+
+
           def changed_files(event_name, repo, event_path):
               event = json.loads(open(event_path, encoding='utf-8').read())
               if event_name == 'pull_request':
@@ -67,11 +67,11 @@ jobs:
                       files.extend(item['filename'] for item in data)
                       page += 1
                   return sorted(set(files))
-          
+
               data = subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', 'HEAD'], text=True)
               return sorted(line for line in data.splitlines() if line)
-          
-          
+
+
           def is_docs_only(paths):
               allowed = (
                   lambda p: p.startswith('docs/')
@@ -79,19 +79,19 @@ jobs:
                   or p.endswith('.md')
               )
               return all(allowed(p) for p in paths)
-          
-          
+
+
           def any_match(paths, predicates):
               for p in paths:
                   for pred in predicates:
                       if pred(p):
                           return True
               return False
-          
-          
+
+
           def required_patterns(paths):
               req = []
-          
+
               ui_preds = [
                   lambda p: p.startswith('src/'),
                   lambda p: p.startswith('workers/'),
@@ -112,7 +112,7 @@ jobs:
                       'Bundle Size Check',
                       'Lighthouse CI',
                   ])
-          
+
               prod_preds = [
                   lambda p: p.startswith('engine/'),
                   lambda p: p.startswith('udgs_core/'),
@@ -125,7 +125,7 @@ jobs:
                       'Schema Validation (G0/G3)',
                       'Full RRD Gate Check',
                   ])
-          
+
               wf_preds = [
                   lambda p: p.startswith('.github/workflows/'),
                   lambda p: p.startswith('.github/actions/'),
@@ -136,23 +136,23 @@ jobs:
                       'Action Pin Verify',
                       'Workflow Tools + Actionlint',
                   ])
-          
+
               if not is_docs_only(paths):
                   req.extend([
                       'analyze',
                       'review',
                       'scan',
                   ])
-          
+
               return sorted(set(req))
-          
-          
+
+
           def normalize_check_name(name):
               if ' / ' in name:
                   return name.split(' / ', 1)[1]
               return name
-          
-          
+
+
           def poll(repo, sha, required):
               if not required:
                   return 0
@@ -192,11 +192,11 @@ jobs:
                       print('PASS: Execution unblocked. All valid checks verified.')
                       return 0
 
+                  print(f"WAIT: missing={missing} pending={pending}")
                   time.sleep(20)
 
+              print(f"TIMEOUT: 15m deadline reached. missing={missing}, pending={pending}")
               return 1
-          
-          
           repo = os.environ['GITHUB_REPOSITORY']
           sha = os.environ['GITHUB_SHA']
           files = changed_files(os.environ['GITHUB_EVENT_NAME'], repo, os.environ['GITHUB_EVENT_PATH'])
@@ -206,6 +206,6 @@ jobs:
           if not required:
               print('No required checks for this change-set; PASS')
               sys.exit(0)
-          
+
           sys.exit(poll(repo, sha, required))
           PY
