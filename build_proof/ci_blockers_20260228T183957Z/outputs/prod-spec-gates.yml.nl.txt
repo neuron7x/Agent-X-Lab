@@ -1,0 +1,210 @@
+     1	name: PROD_SPEC_V2.1 Gate Check (RRD)
+     2	
+     3	on:
+     4	  push:
+     5	    branches: [main]
+     6	    paths:
+     7	      - 'artifacts/AC_VERSION.json'
+     8	      - 'artifacts/SSDF.map'
+     9	      - 'ad2026_state/pb/**'
+    10	      - 'engine/scripts/check_prod_spec_gates.py'
+    11	      - 'engine/schemas/**'
+    12	      - 'engine/policies/prod_spec_v2/**'
+    13	  pull_request:
+    14	    paths:
+    15	      - 'engine/**'
+    16	      - 'udgs_core/**'
+    17	      - 'tools/prod_spec/**'
+    18	      - 'artifacts/**'
+    19	      - '.github/workflows/prod-spec-gates.yml'
+    20	  workflow_dispatch:
+    21	
+    22	permissions:
+    23	  contents: read
+    24	
+    25	concurrency:
+    26	  group: prod-spec-${{ github.ref }}
+    27	  cancel-in-progress: true
+    28	
+    29	env:
+    30	  PYTHON_VERSION: '3.13.8'
+    31	  PIP_VERSION: '24.3.1'
+    32	
+    33	jobs:
+    34	  schema-validate:
+    35	    name: Schema Validation (G0/G3)
+    36	    runs-on: ubuntu-latest
+    37	    timeout-minutes: 5
+    38	    steps:
+    39	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    40	      - uses: ./.github/actions/setup-python-pip
+    41	        with:
+    42	          python-version: ${{ env.PYTHON_VERSION }}
+    43	          pip-version: ${{ env.PIP_VERSION }}
+    44	      - name: Install validator
+    45	        run: |
+    46	          set -euo pipefail
+    47	          python -m pip install --quiet jsonschema
+    48	      - name: Validate AC_VERSION schema
+    49	        run: |
+    50	          set -euo pipefail
+    51	          python3 -c 'import json,jsonschema; schema=json.load(open("engine/schemas/ac.schema.json", encoding="utf-8")); data=json.load(open("artifacts/AC_VERSION.json", encoding="utf-8")); filtered={k:v for k,v in data.items() if not k.startswith("_")}; jsonschema.validate(filtered, schema, format_checker=jsonschema.FormatChecker()); print("AC_VERSION schema PASS")'
+    52	      - name: Validate SSDF map
+    53	        run: |
+    54	          set -euo pipefail
+    55	          python3 - <<'PY'
+    56	          import json
+    57	          import pathlib
+    58	          import sys
+    59	
+    60	          path = pathlib.Path("artifacts/SSDF.map")
+    61	          if not path.exists():
+    62	              print("SSDF.map not found - skip")
+    63	              raise SystemExit(0)
+    64	
+    65	          data = json.loads(path.read_text(encoding="utf-8"))
+    66	          required = ["generated_at", "ac_version_sha256", "coverage_fraction", "controls"]
+    67	          missing = [k for k in required if k not in data]
+    68	          if missing or data.get("coverage_fraction", 0) < 0.80:
+    69	              raise SystemExit(1)
+    70	
+    71	          print("SSDF.map PASS")
+    72	          PY
+    73	
+    74	  gate-check:
+    75	    name: Full RRD Gate Check
+    76	    runs-on: ubuntu-latest
+    77	    timeout-minutes: 10
+    78	    needs: schema-validate
+    79	    steps:
+    80	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    81	      - uses: ./.github/actions/setup-python-pip
+    82	        with:
+    83	          python-version: ${{ env.PYTHON_VERSION }}
+    84	          pip-version: ${{ env.PIP_VERSION }}
+    85	      - name: Prepare dirs
+    86	        run: |
+    87	          set -euo pipefail
+    88	          mkdir -p artifacts ad2026_state/pb build_proof/prod_spec
+    89	      - name: Generate deterministic rebuild evidence
+    90	        run: |
+    91	          set -euo pipefail
+    92	          python3 -c 'import datetime,json,pathlib; payload={"schema":"REBUILD_LOG_V1","generated_at":datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00","Z"),"independent_build_count":2,"build_strategy":"ci_deterministic_probe","source":".github/workflows/prod-spec-gates.yml"}; text=json.dumps(payload, indent=2)+"\n"; pathlib.Path("artifacts/rebuild.log").write_text(text, encoding="utf-8"); pathlib.Path("build_proof/prod_spec/rebuild.log").write_text(text, encoding="utf-8")'
+    93	      - name: Assert evidence
+    94	        run: |
+    95	          set -euo pipefail
+    96	          test -s artifacts/rebuild.log
+    97	          test -s build_proof/prod_spec/rebuild.log
+    98	      - name: Run PROD_SPEC checker and ensure report
+    99	        id: gate_check
+   100	        run: |
+   101	          set -euo pipefail
+   102	          set +e
+   103	          python3 engine/scripts/check_prod_spec_gates.py \
+   104	            --ac artifacts/AC_VERSION.json \
+   105	            --pb-dir ad2026_state/pb/ \
+   106	            --ssdf artifacts/SSDF.map \
+   107	            --artifacts-dir artifacts/ \
+   108	            --out build_proof/prod_spec/gate_check.report.json
+   109	          ec=$?
+   110	          set -e
+   111	          if [ ! -f build_proof/prod_spec/gate_check.report.json ]; then
+   112	            python3 -c 'import json,pathlib; p=pathlib.Path("build_proof/prod_spec/gate_check.report.json"); p.parent.mkdir(parents=True, exist_ok=True); p.write_text(json.dumps({"error":"checker_failed_before_report","rrd_status":"UNKNOWN"}, sort_keys=True)+"\n", encoding="utf-8")'
+   113	          fi
+   114	          echo "exit_code=$ec" >> "$GITHUB_OUTPUT"
+   115	          exit 0
+   116	      - name: Enforce gate semantics
+   117	        env:
+   118	          CHECKER_EXIT_CODE: ${{ steps.gate_check.outputs.exit_code }}
+   119	        run: |
+   120	          set -euo pipefail
+   121	          python3 - <<'PY'
+   122	          import json
+   123	          import os
+   124	          import pathlib
+   125	          import sys
+   126	
+   127	          report = json.loads(pathlib.Path("build_proof/prod_spec/gate_check.report.json").read_text(encoding="utf-8"))
+   128	          gates = report.get("gates", [])
+   129	          gate_map = {g.get("gate_id"): g.get("status") for g in gates if isinstance(g, dict)}
+   130	          rrd = report.get("rrd_status", "UNKNOWN")
+   131	          exit_code = int(os.environ.get("CHECKER_EXIT_CODE", "1"))
+   132	
+   133	          if gate_map.get("G0") == "FAIL" or gate_map.get("G3") == "FAIL":
+   134	              print("BLOCK: G0/G3 FAIL")
+   135	              raise SystemExit(1)
+   136	          if exit_code != 0 and rrd == "PRODUCTION_SPEC_V2.1":
+   137	              print("BLOCK: checker non-zero with release status")
+   138	              raise SystemExit(1)
+   139	
+   140	          print("RRD gate semantics PASS")
+   141	          PY
+   142	      - if: always()
+   143	        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+   144	        with:
+   145	          name: prod-spec-gates-${{ github.run_id }}
+   146	          retention-days: 90
+   147	          path: |
+   148	            build_proof/prod_spec/gate_check.report.json
+   149	            build_proof/prod_spec/rebuild.log
+   150	            artifacts/AC_VERSION.json
+   151	            artifacts/SSDF.map
+   152	            artifacts/rebuild.log
+   153	
+   154	  pb-chain-check:
+   155	    name: PB Chain Integrity (G2)
+   156	    runs-on: ubuntu-latest
+   157	    timeout-minutes: 10
+   158	    needs: schema-validate
+   159	    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+   160	    steps:
+   161	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+   162	      - uses: ./.github/actions/setup-python-pip
+   163	        with:
+   164	          python-version: ${{ env.PYTHON_VERSION }}
+   165	          pip-version: ${{ env.PIP_VERSION }}
+   166	      - name: Validate PB chain integrity
+   167	        run: |
+   168	          set -euo pipefail
+   169	          python3 - <<'PY'
+   170	          import hashlib
+   171	          import json
+   172	          import pathlib
+   173	          import sys
+   174	
+   175	          pb_dir = pathlib.Path("ad2026_state/pb")
+   176	          if not pb_dir.exists():
+   177	              print("PB dir missing - skip")
+   178	              raise SystemExit(0)
+   179	
+   180	          bundles = sorted(pb_dir.glob("PB-*.json"))
+   181	          if not bundles:
+   182	              print("No PB bundles - skip")
+   183	              raise SystemExit(0)
+   184	
+   185	          records = [(path, json.loads(path.read_text(encoding="utf-8"))) for path in bundles]
+   186	          records.sort(key=lambda item: item[1].get("timestamp", ""))
+   187	          required = [
+   188	              "pb_id", "timestamp", "environment_class", "ac_version_sha256", "prev_pb_hash",
+   189	              "input_state_hash", "output_state_hash", "gate_results", "metrics", "actions",
+   190	              "evidence_anchors", "signature",
+   191	          ]
+   192	
+   193	          for _, pb in records:
+   194	              if any(key not in pb for key in required):
+   195	                  raise SystemExit(1)
+   196	
+   197	          prev_hash = None
+   198	          for path, pb in records:
+   199	              digest = pb.get("prev_pb_hash")
+   200	              if (prev_hash is None and digest is not None) or (prev_hash is not None and digest != prev_hash):
+   201	                  print("PB chain broken")
+   202	                  raise SystemExit(1)
+   203	              prev_hash = hashlib.sha256(path.read_bytes()).hexdigest()
+   204	
+   205	          if any(pb.get("environment_class") == "NO_TEE" for _, pb in records):
+   206	              print("NO_TEE found")
+   207	              raise SystemExit(1)
+   208	
+   209	          print("PB chain integrity PASS")
+   210	          PY

@@ -1,0 +1,50 @@
+     1	name: UI E2E (Playwright)
+     2	
+     3	on:
+     4	  push:
+     5	    branches: [main]
+     6	    paths: ['src/**', 'e2e/**', 'scripts/**', 'playwright.config.ts', 'package*.json', 'eslint.config.js', 'vitest.config.ts', 'tsconfig*.json']
+     7	  pull_request:
+     8	    paths: ['src/**', 'e2e/**', 'scripts/**', 'playwright.config.ts', 'package*.json', 'eslint.config.js', 'vitest.config.ts', 'tsconfig*.json']
+     9	  workflow_dispatch:
+    10	
+    11	permissions:
+    12	  contents: read
+    13	
+    14	concurrency:
+    15	  group: ui-e2e-${{ github.ref }}
+    16	  cancel-in-progress: true
+    17	
+    18	env:
+    19	  NODE_VERSION: '20'
+    20	
+    21	jobs:
+    22	  e2e:
+    23	    name: Playwright E2E Smoke
+    24	    runs-on: ubuntu-latest
+    25	    timeout-minutes: 20
+    26	    steps:
+    27	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    28	      - uses: ./.github/actions/setup-node-npm
+    29	        with:
+    30	          node-version: ${{ env.NODE_VERSION }}
+    31	      - run: npm run e2e:install:ci
+    32	      - run: npm run build
+    33	        env:
+    34	          VITE_AXL_API_BASE: 'http://localhost:4173'
+    35	          VITE_AXL_API_KEY: 'e2e-test-key'
+    36	      - run: npm run test:e2e
+    37	        env:
+    38	          CI: 'true'
+    39	      - if: failure()
+    40	        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+    41	        with:
+    42	          name: playwright-traces-${{ github.run_id }}
+    43	          retention-days: 14
+    44	          path: playwright-report/
+    45	      - if: always()
+    46	        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+    47	        with:
+    48	          name: ui-e2e-${{ github.run_id }}
+    49	          retention-days: 30
+    50	          path: dist/EVD-UI-E2E.json

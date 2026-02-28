@@ -1,0 +1,19 @@
+     1	name: CodeQL Analysis
+     2	on:
+     3	  pull_request:
+     4	  push:
+     5	    branches: [main]
+     6	  workflow_dispatch:
+     7	permissions:
+     8	  contents: read
+     9	  security-events: write
+    10	concurrency:
+    11	  group: codeql-${{ github.ref }}
+    12	  cancel-in-progress: true
+    13	jobs:
+    14	  analyze:
+    15	    runs-on: ubuntu-latest
+    16	    timeout-minutes: 20
+    17	    steps:
+    18	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    19	      - run: echo "CodeQL placeholder gate enabled"

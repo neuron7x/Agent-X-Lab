@@ -1,0 +1,16 @@
+export PYTHONHASHSEED=0
+export PYTHONDONTWRITEBYTECODE=1
+export LC_ALL=C.UTF-8
+export TZ=UTC
+RUN_ID=20260228T183958Z # actual:20260228T183957Z
+mkdir -p build_proof/ci_blockers_20260228T183957Z/{outputs,patches,tmp}
+python tools/verify_action_pinning.py --workflows .github/workflows > outputs/verify_action_pinning.txt 2>&1
+python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows > outputs/verify_workflow_hygiene.txt 2>&1
+for f in .github/workflows/*.yml; do nl -ba "$f" > outputs/$(basename "$f").nl.txt; done
+grep -RIn --line-number -E '>>\s*"\$GITHUB_ENV"|>>\s*"\$GITHUB_OUTPUT"' .github/workflows > outputs/redirect_hits.txt || true
+cat > outputs/blockers.json
+python tools/verify_action_pinning.py --workflows .github/workflows > outputs/verify_action_pinning_after.txt 2>&1
+python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows > outputs/verify_workflow_hygiene_after.txt 2>&1
+grep -RIn --line-number -E '>>\s*"\$GITHUB_ENV"|>>\s*"\$GITHUB_OUTPUT"' .github/workflows > outputs/redirect_hits_after.txt || true
+git diff > patches/final.patch
+(cd build_proof/ci_blockers_<RUN_ID> && find . -type f -print0 | sort -z | xargs -0 sha256sum) > sha256sum.txt
