@@ -1,0 +1,28 @@
+{
+  "base_branch": "work",
+  "base_sha": "b77bdb7fdb6da9380d58de008e9fa8cb05d35692",
+  "ci_run_urls": [],
+  "files_changed": [
+    ".github/workflows/prod-spec-gates.yml",
+    "build_proof/prod_spec_ci_fix/INVENTORY.json",
+    "build_proof/prod_spec_ci_fix/PR_DESCRIPTION_ADDENDUM.md",
+    "build_proof/prod_spec_ci_fix/commands.txt",
+    "build_proof/prod_spec_ci_fix/outputs/00_repo_state.txt",
+    "build_proof/prod_spec_ci_fix/outputs/01_before_excerpt.txt",
+    "build_proof/prod_spec_ci_fix/outputs/02_after_excerpt.txt",
+    "build_proof/prod_spec_ci_fix/outputs/03_ci_run_proof.txt"
+  ],
+  "head_branch": "work",
+  "head_sha": "cea789552f5bab250e9f397e5372ce91fce070f6",
+  "purpose_per_file": {
+    ".github/workflows/prod-spec-gates.yml": "Fix fallback report creation and merge-blocking decision logic for PROD_SPEC gates.",
+    "build_proof/prod_spec_ci_fix/INVENTORY.json": "Record deterministic evidence inventory and metadata for this CI fix change set.",
+    "build_proof/prod_spec_ci_fix/PR_DESCRIPTION_ADDENDUM.md": "Provide PR addendum summarizing WHAT/WHY/EVIDENCE/COMPAT for the workflow fix.",
+    "build_proof/prod_spec_ci_fix/commands.txt": "Log executed commands for reproducible audit evidence.",
+    "build_proof/prod_spec_ci_fix/outputs/00_repo_state.txt": "Capture baseline branch, HEAD SHA, and clean status before edits.",
+    "build_proof/prod_spec_ci_fix/outputs/01_before_excerpt.txt": "Capture pre-fix workflow excerpt around gate checker and parsing steps.",
+    "build_proof/prod_spec_ci_fix/outputs/02_after_excerpt.txt": "Capture post-fix workflow excerpt proving applied modifications.",
+    "build_proof/prod_spec_ci_fix/outputs/03_ci_run_proof.txt": "Capture CI offload attempt evidence and merge-blocking unavailability details."
+  },
+  "timestamp_utc": "2026-02-28T07:15:18Z"
+}

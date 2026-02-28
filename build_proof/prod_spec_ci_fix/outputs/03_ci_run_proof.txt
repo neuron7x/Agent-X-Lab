@@ -1,0 +1,8 @@
+bash: command not found: gh
+EXIT_CODE=127
+MERGE-BLOCKING: gh CLI unavailable, cannot execute CI offload proof steps under ci_offload_only policy.
+SMALLEST_UNBLOCK_STEPS:
+1) Install gh CLI.
+2) Authenticate with workflow permissions.
+3) Run: gh workflow run .github/workflows/prod-spec-gates.yml --ref <branch>
+4) Capture run via gh run view ... into this proof file.
