@@ -19,10 +19,13 @@ python tools/prod_spec/sign_ac_package.py --allow-ephemeral
 # 3) Formal + finality artifacts
 python tools/prod_spec/generate_formal_artifacts.py
 
-# 4) Runtime replay harness
+# 4) Architecture contract (JSON -> JSONL, module I/O promises)
+python tools/prod_spec/generate_architecture_contract.py --root .
+
+# 5) Runtime replay harness
 python tools/prod_spec/run_replay_harness.py
 
-# 5) Gate check
+# 6) Gate check
 python engine/scripts/check_prod_spec_gates.py \
   --ac artifacts/AC_VERSION.json \
   --pb-dir ad2026_state/pb/ \
