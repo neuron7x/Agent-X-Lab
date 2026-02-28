@@ -1,0 +1,4 @@
+POTENTIAL_REQUIRED: Action Pin Verify, Bundle Size Check, Full RRD Gate Check, Lighthouse CI, Lint + Typecheck + Unit Tests + Build, Playwright E2E Smoke, Schema Validation (G0/G3), Worker TypeScript, Workflow Static Hygiene, Workflow Tools + Actionlint, analyze, review, scan
+LOCALLY_INFERRED_SEEN_NORMALIZED: Action Pin Verify, Bundle Size Check, CI Supercheck, Engine Run + VR Publish, Full RRD Gate Check, Lighthouse CI, Lint + Typecheck + Unit Tests + Build, PB Chain Integrity (G2), Playwright E2E Smoke, Schema Validation (G0/G3), Worker TypeScript, Workflow Static Hygiene, Workflow Tools + Actionlint, analyze, audit, drift-guard, review, scan, verify
+REQUIRED_BUT_NEVER_SEEN_LOCAL_INFERENCE: none
+SEEN_BUT_NEVER_REQUIRED_LOCAL_INFERENCE: CI Supercheck, Engine Run + VR Publish, PB Chain Integrity (G2), audit, drift-guard, verify

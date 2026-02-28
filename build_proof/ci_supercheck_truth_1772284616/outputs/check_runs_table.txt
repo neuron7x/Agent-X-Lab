@@ -1,0 +1,20 @@
+raw_name | normalized_name | status | conclusion | workflow
+Action Pin Audit / audit | audit | N/A(local-only) | N/A(local-only) | action-pin-audit.yml
+CI Supercheck / CI Supercheck | CI Supercheck | N/A(local-only) | N/A(local-only) | ci-supercheck.yml
+CodeQL Analysis / analyze | analyze | N/A(local-only) | N/A(local-only) | codeql-analysis.yml
+Dependency Review / review | review | N/A(local-only) | N/A(local-only) | dependency-review.yml
+engine-drift-guard / drift-guard | drift-guard | N/A(local-only) | N/A(local-only) | engine-drift-guard.yml
+PROD_SPEC_V2.1 Gate Check (RRD) / Schema Validation (G0/G3) | Schema Validation (G0/G3) | N/A(local-only) | N/A(local-only) | prod-spec-gates.yml
+PROD_SPEC_V2.1 Gate Check (RRD) / Full RRD Gate Check | Full RRD Gate Check | N/A(local-only) | N/A(local-only) | prod-spec-gates.yml
+PROD_SPEC_V2.1 Gate Check (RRD) / PB Chain Integrity (G2) | PB Chain Integrity (G2) | N/A(local-only) | N/A(local-only) | prod-spec-gates.yml
+Python Verify / verify | verify | N/A(local-only) | N/A(local-only) | python-verify.yml
+Run Engine (Dispatch) / Engine Run + VR Publish | Engine Run + VR Publish | N/A(local-only) | N/A(local-only) | run-engine-dispatch.yml
+Secret Scan (Gitleaks) / scan | scan | N/A(local-only) | N/A(local-only) | secret-scan.yml
+UI E2E (Playwright) / Playwright E2E Smoke | Playwright E2E Smoke | N/A(local-only) | N/A(local-only) | ui-e2e.yml
+UI Performance + Bundle Budgets / Bundle Size Check | Bundle Size Check | N/A(local-only) | N/A(local-only) | ui-perf.yml
+UI Performance + Bundle Budgets / Lighthouse CI | Lighthouse CI | N/A(local-only) | N/A(local-only) | ui-perf.yml
+UI Verify / Lint + Typecheck + Unit Tests + Build | Lint + Typecheck + Unit Tests + Build | N/A(local-only) | N/A(local-only) | ui-verify.yml
+UI Verify / Worker TypeScript | Worker TypeScript | N/A(local-only) | N/A(local-only) | ui-verify.yml
+Workflow Hygiene / Workflow Static Hygiene | Workflow Static Hygiene | N/A(local-only) | N/A(local-only) | workflow-hygiene.yml
+Workflow Hygiene / Action Pin Verify | Action Pin Verify | N/A(local-only) | N/A(local-only) | workflow-hygiene.yml
+Workflow Hygiene / Workflow Tools + Actionlint | Workflow Tools + Actionlint | N/A(local-only) | N/A(local-only) | workflow-hygiene.yml

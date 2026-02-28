@@ -1,0 +1,116 @@
+## Triggers (on:)
+   3: on:
+   4:   pull_request:
+   5:   push:
+   6:     branches: [main]
+   7:   workflow_dispatch:
+
+## Required check-name computation + dynamic mapping
+  82:           
+  83:           
+  84:           def any_match(paths, predicates):
+  85:               for p in paths:
+  86:                   for pred in predicates:
+  87:                       if pred(p):
+  88:                           return True
+  89:               return False
+  90:           
+  91:           
+  92:           def required_patterns(paths):
+  93:               req = []
+  94:           
+  95:               ui_preds = [
+  96:                   lambda p: p.startswith('src/'),
+  97:                   lambda p: p.startswith('workers/'),
+  98:                   lambda p: p.startswith('e2e/'),
+  99:                   lambda p: p == 'playwright.config.ts',
+ 100:                   lambda p: p == 'vite.config.ts',
+ 101:                   lambda p: p == 'vitest.config.ts',
+ 102:                   lambda p: p == 'eslint.config.js',
+ 103:                   lambda p: fnmatch.fnmatch(p, 'tsconfig*.json'),
+ 104:                   lambda p: fnmatch.fnmatch(p, 'package*.json'),
+ 105:                   lambda p: p.startswith('scripts/'),
+ 106:               ]
+ 107:               if any_match(paths, ui_preds):
+ 108:                   req.extend([
+ 109:                       'Lint + Typecheck + Unit Tests + Build',
+ 110:                       'Worker TypeScript',
+ 111:                       'Playwright E2E Smoke',
+ 112:                       'Bundle Size Check',
+ 113:                       'Lighthouse CI',
+ 114:                   ])
+ 115:           
+ 116:               prod_preds = [
+ 117:                   lambda p: p.startswith('engine/'),
+ 118:                   lambda p: p.startswith('udgs_core/'),
+ 119:                   lambda p: p.startswith('tools/prod_spec/'),
+ 120:                   lambda p: p.startswith('artifacts/'),
+ 121:                   lambda p: p == '.github/workflows/prod-spec-gates.yml',
+ 122:               ]
+ 123:               if any_match(paths, prod_preds):
+ 124:                   req.extend([
+ 125:                       'Schema Validation (G0/G3)',
+ 126:                       'Full RRD Gate Check',
+ 127:                   ])
+ 128:           
+ 129:               wf_preds = [
+ 130:                   lambda p: p.startswith('.github/workflows/'),
+ 131:                   lambda p: p.startswith('.github/actions/'),
+ 132:               ]
+ 133:               if any_match(paths, wf_preds):
+ 134:                   req.extend([
+ 135:                       'Workflow Static Hygiene',
+ 136:                       'Action Pin Verify',
+ 137:                       'Workflow Tools + Actionlint',
+ 138:                   ])
+ 139:           
+ 140:               if not is_docs_only(paths):
+ 141:                   req.extend([
+ 142:                       'analyze',
+ 143:                       'review',
+ 144:                       'scan',
+ 145:                   ])
+ 146:           
+ 147:               return sorted(set(req))
+ 148:           
+
+## Normalization logic
+ 151:               if ' / ' in name:
+ 152:                   return name.split(' / ', 1)[1]
+ 153:               return name
+ 154:           
+
+## Polling endpoint + timeout
+ 157:               deadline = time.time() + 900
+ 158:               while time.time() < deadline:
+ 159:                   data = api(f'https://api.github.com/repos/{repo}/commits/{sha}/check-runs?per_page=100')
+ 160:                   runs = data.get('check_runs', [])
+ 161:                   seen = {}
+ 162:                   for r in runs:
+ 163:                       base = normalize_check_name(r['name'])
+ 164:                       if base == 'CI Supercheck':
+ 165:                           continue
+ 166:                       seen[base] = (r['status'], r.get('conclusion'), r['name'])
+ 167:           
+ 168:                   missing = [n for n in required if n not in seen]
+ 169:                   failed = [
+ 170:                       (n, *seen[n])
+ 171:                       for n in required
+ 172:                       if n in seen and not (seen[n][0] == 'completed' and seen[n][1] == 'success')
+ 173:                   ]
+ 174:                   if not missing and not failed:
+ 175:                       print('CI Supercheck PASS')
+ 176:                       return 0
+ 177:           
+ 178:                   print('Waiting for required checks...')
+ 179:                   print('MISSING:', ', '.join(missing) if missing else 'none')
+ 180:                   if failed:
+ 181:                       for n, status, conclusion, raw in failed:
+ 182:                           print(f'FAILED {n} raw={raw} status={status} conclusion={conclusion}')
+ 183:                   time.sleep(20)
+ 184:           
+ 185:               print('CI Supercheck timeout')
+ 186:               print('Required:', ', '.join(required) if required else 'none')
+ 187:               return 1
+ 188:           
+
