@@ -1,0 +1,28 @@
++ rg -n "uses:\\s*" .github/workflows/*.yml | sort
+.github/workflows/prod-spec-gates.yml:109:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+.github/workflows/prod-spec-gates.yml:111:      - uses: actions/setup-python@v5
+.github/workflows/prod-spec-gates.yml:201:        uses: actions/upload-artifact@v4
+.github/workflows/prod-spec-gates.yml:223:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+.github/workflows/prod-spec-gates.yml:225:      - uses: actions/setup-python@v5
+.github/workflows/prod-spec-gates.yml:38:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/prod-spec-gates.yml:40:      - uses: actions/setup-python@v5
+.github/workflows/run-engine-dispatch.yml:172:        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+.github/workflows/run-engine-dispatch.yml:48:        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/run-engine-dispatch.yml:55:        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
+.github/workflows/ui-e2e.yml:20:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+.github/workflows/ui-e2e.yml:22:      - uses: actions/setup-node@v4
+.github/workflows/ui-e2e.yml:46:        uses: actions/upload-artifact@v4
+.github/workflows/ui-e2e.yml:54:        uses: actions/upload-artifact@v4
+.github/workflows/ui-perf.yml:19:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+.github/workflows/ui-perf.yml:21:      - uses: actions/setup-node@v4
+.github/workflows/ui-perf.yml:35:        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+.github/workflows/ui-perf.yml:50:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+.github/workflows/ui-perf.yml:52:      - uses: actions/setup-node@v4
+.github/workflows/ui-perf.yml:72:        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+.github/workflows/ui-verify.yml:21:        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/ui-verify.yml:24:        uses: actions/setup-node@v4
+.github/workflows/ui-verify.yml:48:        uses: actions/upload-artifact@v4
+.github/workflows/ui-verify.yml:65:        uses: actions/upload-artifact@v4
+.github/workflows/ui-verify.yml:79:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+.github/workflows/ui-verify.yml:80:      - uses: actions/setup-node@v4
+EXIT_CODE=0

@@ -1,0 +1,19 @@
+export PYTHONHASHSEED=0 LC_ALL=C LANG=C TZ=UTC GIT_PAGER=cat PAGER=cat PYTHONDONTWRITEBYTECODE=1
+
+git rev-parse --abbrev-ref HEAD
+git rev-parse HEAD
+git status --porcelain
+ls -la .github/workflows
+rg -n "^name:" .github/workflows/*.yml
+rg -n "^(on:|permissions:|concurrency:|timeout-minutes:)" .github/workflows/*.yml
+rg -n "uses:\s*" .github/workflows/*.yml | sort
+npm ci
+npm run lint:strict
+npm run typecheck
+npm test
+python3 -V
+python -m pip --version
+python -m pytest -q
+python3 -c "import yaml"
+python3 tools/ci/action_pin_audit.py --fail
+gh auth status

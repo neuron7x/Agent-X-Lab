@@ -1,0 +1,21 @@
+name: Setup Node + npm ci
+inputs:
+  node-version:
+    required: true
+  cache-dependency-path:
+    required: false
+    default: package-lock.json
+runs:
+  using: composite
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+        cache-dependency-path: ${{ inputs.cache-dependency-path }}
+    - name: npm ci
+      shell: bash
+      run: |
+        set -euo pipefail
+        npm ci

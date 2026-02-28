@@ -1,0 +1,14 @@
+name: Pin pip
+inputs:
+  pip-version:
+    description: Exact pip version
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Pin pip version
+      shell: bash
+      run: |
+        set -euo pipefail
+        python -m pip install --upgrade "pip==${{ inputs.pip-version }}"
+        python -m pip --version

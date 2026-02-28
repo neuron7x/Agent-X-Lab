@@ -1,0 +1,23 @@
+name: Workflow Hygiene
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: workflow-hygiene-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  hygiene:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
+        with:
+          python-version: '3.13.8'
+      - run: |
+          set -euo pipefail
+          python3 tools/ci/action_pin_audit.py --fail

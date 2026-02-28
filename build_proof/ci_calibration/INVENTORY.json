@@ -1,0 +1,20 @@
+{
+  "base_sha": "accd18feb0a097f549df3b096e956208555c4f34",
+  "head_sha": "2f2205e4aab7f88af55fe2099ddbd12b6aed618f",
+  "proof_dir": "build_proof/ci_calibration",
+  "outputs": [
+    "outputs/00_baseline.txt",
+    "outputs/01_workflow_list.txt",
+    "outputs/02_uses_scan_pre.txt",
+    "outputs/03_uses_scan_post.txt",
+    "outputs/04_npm_ci.txt",
+    "outputs/05_ui_lint.txt",
+    "outputs/06_ui_typecheck.txt",
+    "outputs/07_ui_tests.txt",
+    "outputs/08_py_verify.txt",
+    "outputs/09_prod_spec_gate_local.txt",
+    "outputs/10_action_pin_audit_local.txt",
+    "outputs/11_gh_runs.json",
+    "outputs/12_gh_logs_failed.txt"
+  ]
+}

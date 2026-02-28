@@ -1,0 +1,62 @@
+name: Python Verify
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: python-verify-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: '3.13.8'
+  PIP_VERSION: '24.3.1'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: ./.github/actions/setup-python-pip
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          pip-version: ${{ env.PIP_VERSION }}
+      - name: Discover python test contract
+        run: |
+          set -euo pipefail
+          if [ -f pyproject.toml ]; then
+            echo "ROOT=." >> "$GITHUB_ENV"
+            python -m pip install -e .
+          elif [ -f engine/pyproject.toml ]; then
+            echo "ROOT=engine" >> "$GITHUB_ENV"
+            python -m pip install -e ./engine
+            if [ -f engine/requirements-dev.txt ]; then
+              python -m pip install -r engine/requirements-dev.txt
+            fi
+          elif [ -f requirements-dev.txt ]; then
+            echo "ROOT=." >> "$GITHUB_ENV"
+            python -m pip install -r requirements-dev.txt
+          elif [ -f engine/requirements-dev.txt ]; then
+            echo "ROOT=engine" >> "$GITHUB_ENV"
+            python -m pip install -r engine/requirements-dev.txt
+          else
+            echo "missing Python test contract" >&2
+            exit 1
+          fi
+      - run: |
+          set -euo pipefail
+          python -m compileall "$ROOT"
+      - run: |
+          set -euo pipefail
+          if [ -d tests ] || [ -d engine/tests ] || find . -maxdepth 3 -name 'test_*.py' | grep -q .; then
+            python -m pytest -q
+          else
+            echo "No python tests found; explicit policy required" >&2
+            exit 1
+          fi

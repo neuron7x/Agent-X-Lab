@@ -6,6 +6,14 @@ on:
     paths: ['src/**', 'package*.json', 'vite.config.ts', '.lighthouserc.json', 'eslint.config.js', 'vitest.config.ts', 'tsconfig*.json', '.github/workflows/ui-perf.yml']
   pull_request:
     paths: ['src/**', 'vite.config.ts', '.lighthouserc.json', 'eslint.config.js', 'vitest.config.ts', 'tsconfig*.json', 'package*.json', '.github/workflows/ui-perf.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ui-perf-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   NODE_VERSION: '20'
@@ -16,24 +24,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
-
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: ./.github/actions/setup-node-npm
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-
-      - name: Install deps
-        run: npm ci
-
-      - name: Build + analyze bundle
-        run: |
+      - run: |
+          set -euo pipefail
           ANALYZE=true npm run build
           npm run analyze:bundle -- --mode=perf-bundle-evd
-
-      - name: Upload bundle evidence
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
-        if: always()
+      - if: always()
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: bundle-evidence-${{ github.run_id }}
           retention-days: 30
@@ -47,31 +47,13 @@ jobs:
     timeout-minutes: 15
     needs: bundle-budget
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
-
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: ./.github/actions/setup-node-npm
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-
-      - name: Install deps
-        run: |
-          npm ci
-          npm install -g @lhci/cli@0.14.x
-
-      - name: Build for preview
-        run: npm run build
+      - run: npm install -g @lhci/cli@0.14.x
+      - run: npm run build
         env:
           VITE_AXL_API_BASE: 'http://localhost:8787'
           VITE_COMMIT_SHA: ${{ github.sha }}
-
-      - name: Run Lighthouse CI
-        run: lhci autorun --config=.lighthouserc.json
-
-      - name: Upload LHCI evidence
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
-        if: always()
-        with:
-          name: lhci-results-${{ github.run_id }}
-          retention-days: 30
-          path: .lighthouseci/
+      - run: npm run build:perf
