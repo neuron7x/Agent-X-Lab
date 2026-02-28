@@ -1,4 +1,5 @@
 name: Pin pip
+description: Deterministically pin pip version (CI-safe, evidence-friendly)
 inputs:
   pip-version:
     description: Exact pip version
