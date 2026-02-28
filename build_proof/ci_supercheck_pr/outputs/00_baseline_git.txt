@@ -1,0 +1,8 @@
++ git rev-parse HEAD
+03490102ec6dc7728401bd72989bfe0310f0e2cc
+EXIT_CODE=0
++ git status --porcelain
+?? build_proof/ci_supercheck_pr/
+EXIT_CODE=0
++ git diff --name-only
+EXIT_CODE=0

@@ -1,0 +1,20 @@
++ rg -n ^name:|^on:|^permissions:|^concurrency:|timeout-minutes: .github/workflows/prod-spec-gates.yml .github/workflows/workflow-hygiene.yml .github/workflows/ci-supercheck.yml
+.github/workflows/ci-supercheck.yml:1:name: CI Supercheck
+.github/workflows/ci-supercheck.yml:3:on:
+.github/workflows/ci-supercheck.yml:9:permissions:
+.github/workflows/ci-supercheck.yml:14:concurrency:
+.github/workflows/ci-supercheck.yml:22:    timeout-minutes: 20
+.github/workflows/prod-spec-gates.yml:1:name: PROD_SPEC_V2.1 Gate Check (RRD)
+.github/workflows/prod-spec-gates.yml:3:on:
+.github/workflows/prod-spec-gates.yml:20:permissions:
+.github/workflows/prod-spec-gates.yml:23:concurrency:
+.github/workflows/prod-spec-gates.yml:35:    timeout-minutes: 5
+.github/workflows/prod-spec-gates.yml:61:    timeout-minutes: 10
+.github/workflows/prod-spec-gates.yml:125:    timeout-minutes: 10
+.github/workflows/workflow-hygiene.yml:1:name: Workflow Hygiene
+.github/workflows/workflow-hygiene.yml:3:on:
+.github/workflows/workflow-hygiene.yml:9:permissions:
+.github/workflows/workflow-hygiene.yml:12:concurrency:
+.github/workflows/workflow-hygiene.yml:20:    timeout-minutes: 5
+.github/workflows/workflow-hygiene.yml:34:    timeout-minutes: 10
+EXIT_CODE=0

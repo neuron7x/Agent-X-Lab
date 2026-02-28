@@ -1,0 +1,37 @@
++ rg -n "uses:\\s*" .github/workflows/*.yml | sort
+.github/workflows/action-pin-audit.yml:21:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/action-pin-audit.yml:22:      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
+.github/workflows/action-pin-audit.yml:28:      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+.github/workflows/codeql-analysis.yml:18:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/dependency-review.yml:15:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/prod-spec-gates.yml:112:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/prod-spec-gates.yml:113:      - uses: ./.github/actions/setup-python-pip
+.github/workflows/prod-spec-gates.yml:37:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/prod-spec-gates.yml:38:      - uses: ./.github/actions/setup-python-pip
+.github/workflows/prod-spec-gates.yml:61:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/prod-spec-gates.yml:62:      - uses: ./.github/actions/setup-python-pip
+.github/workflows/prod-spec-gates.yml:94:        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+.github/workflows/python-verify.yml:25:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/python-verify.yml:26:      - uses: ./.github/actions/setup-python-pip
+.github/workflows/run-engine-dispatch.yml:172:        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+.github/workflows/run-engine-dispatch.yml:48:        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/run-engine-dispatch.yml:55:        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
+.github/workflows/secret-scan.yml:17:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/ui-e2e.yml:27:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/ui-e2e.yml:28:      - uses: ./.github/actions/setup-node-npm
+.github/workflows/ui-e2e.yml:40:        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+.github/workflows/ui-e2e.yml:46:        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+.github/workflows/ui-perf.yml:27:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/ui-perf.yml:28:      - uses: ./.github/actions/setup-node-npm
+.github/workflows/ui-perf.yml:36:        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+.github/workflows/ui-perf.yml:50:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/ui-perf.yml:51:      - uses: ./.github/actions/setup-node-npm
+.github/workflows/ui-verify.yml:27:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/ui-verify.yml:28:      - uses: ./.github/actions/setup-node-npm
+.github/workflows/ui-verify.yml:36:        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+.github/workflows/ui-verify.yml:47:        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+.github/workflows/ui-verify.yml:60:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/ui-verify.yml:61:      - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4
+.github/workflows/workflow-hygiene.yml:17:      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+.github/workflows/workflow-hygiene.yml:18:      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
+EXIT_CODE=0

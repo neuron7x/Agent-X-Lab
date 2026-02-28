@@ -1,0 +1,21 @@
++ rg -n cat\s*<<|<<\s*'JSON'|<<\s*JSON|EOF .github/workflows/prod-spec-gates.yml
+EXIT_CODE=1
++ rg -n gate_check.report.json|set -euo pipefail .github/workflows/prod-spec-gates.yml
+44:          set -euo pipefail
+48:          set -euo pipefail
+52:          set -euo pipefail
+71:          set -euo pipefail
+75:          set -euo pipefail
+79:          set -euo pipefail
+85:          set -euo pipefail
+92:            --out build_proof/prod_spec/gate_check.report.json
+95:          if [ ! -f build_proof/prod_spec/gate_check.report.json ]; then
+96:            python3 -c 'import json,pathlib; p=pathlib.Path("build_proof/prod_spec/gate_check.report.json"); p.parent.mkdir(parents=True, exist_ok=True); p.write_text(json.dumps({"error":"checker_failed_before_report","rrd_status":"UNKNOWN"}, sort_keys=True)+"\n", encoding="utf-8")'
+104:          set -euo pipefail
+105:          python3 -c 'import json,os,pathlib,sys; p=pathlib.Path("build_proof/prod_spec/gate_check.report.json"); report=json.loads(p.read_text(encoding="utf-8")); gates=report.get("gates",[]); m={g.get("gate_id"): g.get("status") for g in gates if isinstance(g, dict)}; rrd=report.get("rrd_status","UNKNOWN"); ec=int(os.environ.get("CHECKER_EXIT_CODE","1"));\
+116:            build_proof/prod_spec/gate_check.report.json
+136:          set -euo pipefail
+EXIT_CODE=0
++ actionlint .github/workflows/prod-spec-gates.yml
+actionlint unavailable locally; CI offload required
+EXIT_CODE=127

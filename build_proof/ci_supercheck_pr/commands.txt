@@ -1,0 +1,24 @@
+export PYTHONHASHSEED=0 LC_ALL=C LANG=C TZ=UTC GIT_PAGER=cat PAGER=cat PYTHONDONTWRITEBYTECODE=1
+run(){ echo "+ $*"; "$@"; rc=$?; echo "EXIT_CODE=$rc"; return $rc; }
+
+# baseline
+run git rev-parse HEAD
+run git status --porcelain
+run git diff --name-only
+run ls -la
+run ls -la .github/workflows
+run rg -n "^name:|^jobs:|^\s{2}[a-zA-Z0-9_-]+:" .github/workflows/*.yml
+
+# local verification
+run npm ci
+run npm run lint:strict
+run npm run typecheck
+run npm run test:unit
+run npm run build
+
+# workflow smoke and pins
+run rg -n "cat\s*<<|<<\s*'JSON'|<<\s*JSON|EOF" .github/workflows/prod-spec-gates.yml
+run rg -n "gate_check.report.json|set -euo pipefail" .github/workflows/prod-spec-gates.yml
+# actionlint unavailable locally
+run rg -n "uses:\s*" .github/workflows/*.yml
+run python3 tools/ci/action_pin_audit.py --fail

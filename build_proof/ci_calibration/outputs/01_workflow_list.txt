@@ -1,0 +1,26 @@
++ ls -la .github/workflows
+total 48
+drwxr-xr-x 2 root root  4096 Feb 28 07:24 .
+drwxr-xr-x 3 root root  4096 Feb 28 06:58 ..
+-rw-r--r-- 1 root root 12592 Feb 28 07:24 prod-spec-gates.yml
+-rw-r--r-- 1 root root  8633 Feb 28 06:58 run-engine-dispatch.yml
+-rw-r--r-- 1 root root  1535 Feb 28 06:58 ui-e2e.yml
+-rw-r--r-- 1 root root  2220 Feb 28 06:58 ui-perf.yml
+-rw-r--r-- 1 root root  2442 Feb 28 06:58 ui-verify.yml
+EXIT_CODE=0
++ rg -n "^name:" .github/workflows/*.yml
+.github/workflows/ui-verify.yml:1:name: UI Verify
+.github/workflows/ui-e2e.yml:1:name: UI E2E (Playwright)
+.github/workflows/prod-spec-gates.yml:1:name: PROD_SPEC_V2.1 Gate Check (RRD)
+.github/workflows/ui-perf.yml:1:name: UI Performance + Bundle Budgets
+.github/workflows/run-engine-dispatch.yml:1:name: Run Engine (Dispatch)
+EXIT_CODE=0
++ rg -n "^(on:|permissions:|concurrency:|timeout-minutes:)" .github/workflows/*.yml
+.github/workflows/ui-verify.yml:3:on:
+.github/workflows/ui-e2e.yml:3:on:
+.github/workflows/prod-spec-gates.yml:3:on:
+.github/workflows/ui-perf.yml:3:on:
+.github/workflows/run-engine-dispatch.yml:8:on:
+.github/workflows/run-engine-dispatch.yml:25:permissions:
+.github/workflows/run-engine-dispatch.yml:29:concurrency:
+EXIT_CODE=0
