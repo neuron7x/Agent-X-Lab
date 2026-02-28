@@ -126,6 +126,7 @@ def main(argv: list[str] | None = None) -> None:
 
     rm = sub.add_parser("repo-model", help="Generate repository architecture model artifact.")
     rm.add_argument("--out", default="engine/artifacts/repo_model/repo_model.json", help="Output path for repository model JSON.")
+    rm.add_argument("--stdout", action="store_true", help="Print JSON model to stdout.")
 
     args = p.parse_args(argv)
     cfg_path = Path(args.config)
@@ -145,7 +146,10 @@ def main(argv: list[str] | None = None) -> None:
     elif args.cmd == "selftest":
         rc = cmd_selftest(cfg_path)
     elif args.cmd == "repo-model":
-        rc = repo_model_cli(["--out", str(args.out)])
+        rm_args = ["--out", str(args.out)]
+        if args.stdout:
+            rm_args.append("--stdout")
+        rc = repo_model_cli(rm_args)
     else:
         raise RuntimeError("unreachable")
 

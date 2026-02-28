@@ -3,7 +3,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import re
 import shlex
 import subprocess
 from collections import deque
@@ -98,6 +97,10 @@ def _kind_for_path(repo_root: Path, path: Path) -> str:
         or rel.startswith("tools/")
         or rel.startswith("engine/scripts/")
     ):
+        if path.name == "__init__.py" and not (
+            rel.startswith("scripts/") or rel.startswith("engine/scripts/")
+        ):
+            return Kind.OTHER
         return Kind.CLI_SCRIPT
     if path.suffix.lower() == ".md" and "runbook" in path.name.lower():
         return Kind.RUNBOOK_DOC
@@ -113,7 +116,11 @@ def discover_agents(repo_root: Path) -> list[dict[str, Any]]:
     if makefile.exists():
         paths.add(makefile)
 
-    for sub in (repo_root / "scripts", repo_root / "tools", repo_root / "engine" / "scripts"):
+    for sub in (
+        repo_root / "scripts",
+        repo_root / "tools",
+        repo_root / "engine" / "scripts",
+    ):
         for p in _iter_files(sub):
             if p.suffix in SCRIPT_SUFFIXES:
                 paths.add(p)
@@ -132,11 +139,11 @@ def discover_agents(repo_root: Path) -> list[dict[str, Any]]:
     return agents
 
 
-def _safe_load_yaml(path: Path, parse_failures: list[str]) -> Any:
+def _safe_load_yaml(repo_root: Path, path: Path, parse_failures: list[str]) -> Any:
     try:
         return yaml.safe_load(path.read_text(encoding="utf-8"))
     except Exception:
-        parse_failures.append(path.as_posix())
+        parse_failures.append(_rel(repo_root, path))
         return None
 
 
@@ -144,61 +151,104 @@ def _iter_steps(data: Any) -> list[dict[str, Any]]:
     steps: list[dict[str, Any]] = []
     if isinstance(data, dict):
         if isinstance(data.get("steps"), list):
-            for s in data["steps"]:
-                if isinstance(s, dict):
-                    steps.append(s)
-        for v in data.values():
-            steps.extend(_iter_steps(v))
+            for step in data["steps"]:
+                if isinstance(step, dict):
+                    steps.append(step)
+        for value in data.values():
+            steps.extend(_iter_steps(value))
     elif isinstance(data, list):
         for item in data:
             steps.extend(_iter_steps(item))
     return steps
 
 
-def _resolve_local_action_target(repo_root: Path, source_file: Path, uses_value: str) -> Path | None:
-    text = uses_value.strip()
-    if "@" in text:
-        text = text.split("@", 1)[0]
+def _normalize_local_action_ref(
+    repo_root: Path, src_file: Path, uses_value: str
+) -> Path | None:
+    ref = uses_value.strip()
+    if "@" in ref:
+        ref = ref.split("@", 1)[0]
 
-    candidate: Path | None = None
-    if text.startswith("./"):
-        candidate = (source_file.parent / text).resolve()
-    elif text.startswith(".github/"):
-        candidate = (repo_root / text).resolve()
-    elif "/.github/actions/" in text:
-        suffix = text.split("/.github/actions/", 1)[1]
-        candidate = (repo_root / ".github" / "actions" / suffix).resolve()
+    candidates: list[Path] = []
+    if ref.startswith("./"):
+        candidates.append((repo_root / ref).resolve())
+        candidates.append((src_file.parent / ref).resolve())
+    elif ref.startswith(".github/"):
+        candidates.append((repo_root / ref).resolve())
+    elif "/.github/actions/" in ref:
+        suffix = ref.split("/.github/actions/", 1)[1]
+        candidates.append((repo_root / ".github" / "actions" / suffix).resolve())
+    else:
+        candidates.append((repo_root / ref).resolve())
 
-    if candidate is None:
-        return None
-    if candidate.is_dir():
-        for name in ("action.yml", "action.yaml"):
-            f = candidate / name
-            if f.exists():
-                return f
-        return None
-    if candidate.exists():
-        return candidate
+    for candidate in candidates:
+        if candidate.is_dir():
+            for name in ("action.yml", "action.yaml"):
+                action_file = candidate / name
+                if action_file.exists() and action_file.is_file():
+                    return action_file
+        if candidate.is_file() and candidate.name in {"action.yml", "action.yaml"}:
+            return candidate
     return None
 
 
-def _resolve_script_candidate(repo_root: Path, source_file: Path, token: str) -> Path | None:
+def _normalize_local_workflow_ref(
+    repo_root: Path, src_file: Path, uses_value: str
+) -> Path | None:
+    ref = uses_value.strip()
+    if "@" in ref:
+        ref = ref.split("@", 1)[0]
+
+    candidates: list[Path] = []
+    if ref.startswith("./"):
+        candidates.append((repo_root / ref).resolve())
+        candidates.append((src_file.parent / ref).resolve())
+    elif ref.startswith(".github/"):
+        candidates.append((repo_root / ref).resolve())
+    else:
+        candidates.append((repo_root / ref).resolve())
+
+    for candidate in candidates:
+        if (
+            candidate.is_file()
+            and candidate.suffix in {".yml", ".yaml"}
+            and _rel(repo_root, candidate).startswith(".github/workflows/")
+        ):
+            return candidate
+    return None
+
+
+def _normalize_script_ref(
+    repo_root: Path,
+    token: str,
+    base_dir: Path | None = None,
+    source_file: Path | None = None,
+) -> Path | None:
     if not token:
         return None
-    token = token.strip().strip('"\'`')
-    if token.startswith("$"):
+    normalized = token.strip().strip('"\'`')
+    if normalized.startswith("$"):
         return None
 
-    if token.startswith("./"):
-        candidate = (source_file.parent / token).resolve()
+    if normalized.startswith("./"):
+        base = (base_dir or repo_root).resolve()
+        candidate = (base / normalized).resolve()
+        if not candidate.exists() and source_file is not None:
+            candidate = (source_file.parent / normalized).resolve()
     else:
-        candidate = (repo_root / token).resolve()
+        candidate = (repo_root / normalized).resolve()
+
     if candidate.exists() and candidate.is_file() and candidate.suffix in SCRIPT_SUFFIXES:
         return candidate
     return None
 
 
-def _extract_run_paths(repo_root: Path, source_file: Path, run_value: str) -> list[Path]:
+def _extract_run_paths(
+    repo_root: Path,
+    source_file: Path,
+    run_value: str,
+    base_dir: Path | None = None,
+) -> list[Path]:
     found: set[Path] = set()
     for raw_line in run_value.splitlines():
         line = raw_line.strip()
@@ -212,17 +262,32 @@ def _extract_run_paths(repo_root: Path, source_file: Path, run_value: str) -> li
             continue
 
         if tokens[0] in EXECUTABLES and len(tokens) > 1:
-            target = _resolve_script_candidate(repo_root, source_file, tokens[1])
+            target = _normalize_script_ref(
+                repo_root,
+                tokens[1],
+                base_dir=base_dir,
+                source_file=source_file,
+            )
             if target:
                 found.add(target)
 
         for token in tokens:
             if token.startswith("./scripts/") or token.startswith("scripts/"):
-                target = _resolve_script_candidate(repo_root, source_file, token)
+                target = _normalize_script_ref(
+                    repo_root,
+                    token,
+                    base_dir=base_dir,
+                    source_file=source_file,
+                )
                 if target:
                     found.add(target)
             elif any(token.endswith(ext) for ext in SCRIPT_SUFFIXES):
-                target = _resolve_script_candidate(repo_root, source_file, token)
+                target = _normalize_script_ref(
+                    repo_root,
+                    token,
+                    base_dir=base_dir,
+                    source_file=source_file,
+                )
                 if target:
                     found.add(target)
     return sorted(found)
@@ -233,88 +298,153 @@ def _extract_makefile_run_edges(repo_root: Path, makefile: Path) -> list[tuple[s
     for line in makefile.read_text(encoding="utf-8").splitlines():
         if not line.startswith("\t"):
             continue
-        for path in _extract_run_paths(repo_root, makefile, line):
+        for path in _extract_run_paths(repo_root, makefile, line, base_dir=repo_root):
             edges.add((_rel(repo_root, makefile), _rel(repo_root, path), "RUNS_SCRIPT"))
     return sorted(edges)
 
 
-def extract_wiring_edges(repo_root: Path, agents: list[dict[str, Any]]) -> tuple[list[dict[str, str]], dict[str, Any]]:
-    agent_paths = {a["path"] for a in agents}
+def extract_wiring_edges(
+    repo_root: Path, agents: list[dict[str, Any]]
+) -> tuple[list[dict[str, str]], dict[str, Any]]:
+    known_paths = {agent["path"] for agent in agents}
     parse_failures: list[str] = []
+    dangling_edges: list[dict[str, str]] = []
     edge_rows: set[tuple[str, str, str]] = set()
 
-    workflow_files = sorted((repo_root / ".github" / "workflows").glob("**/*.yml")) + sorted(
-        (repo_root / ".github" / "workflows").glob("**/*.yaml")
+    workflow_dir = repo_root / ".github" / "workflows"
+    action_dir = repo_root / ".github" / "actions"
+    workflow_files = sorted(workflow_dir.glob("**/*.yml")) + sorted(
+        workflow_dir.glob("**/*.yaml")
     )
-    action_files = sorted((repo_root / ".github" / "actions").glob("**/action.yml")) + sorted(
-        (repo_root / ".github" / "actions").glob("**/action.yaml")
+    action_files = sorted(action_dir.glob("**/action.yml")) + sorted(
+        action_dir.glob("**/action.yaml")
     )
 
-    # A + C on workflows
-    for wf in workflow_files:
-        data = _safe_load_yaml(wf, parse_failures)
+    for workflow in workflow_files:
+        data = _safe_load_yaml(repo_root, workflow, parse_failures)
         if not isinstance(data, dict):
             continue
-        src = _rel(repo_root, wf)
+
+        source_path = _rel(repo_root, workflow)
+
+        jobs = data.get("jobs", {})
+        if isinstance(jobs, dict):
+            for _, job_data in sorted(jobs.items()):
+                if not isinstance(job_data, dict):
+                    continue
+                uses_value = job_data.get("uses")
+                if isinstance(uses_value, str):
+                    target = _normalize_local_workflow_ref(repo_root, workflow, uses_value)
+                    if target is not None:
+                        edge_rows.add(
+                            (
+                                source_path,
+                                _rel(repo_root, target),
+                                "USES_REUSABLE_WORKFLOW",
+                            )
+                        )
+
         for step in _iter_steps(data):
             uses = step.get("uses")
             if isinstance(uses, str):
-                target = _resolve_local_action_target(repo_root, wf, uses)
+                target = _normalize_local_action_ref(repo_root, workflow, uses)
                 if target is not None:
-                    dst = _rel(repo_root, target)
-                    edge_rows.add((src, dst, "USES_LOCAL_ACTION"))
+                    edge_rows.add(
+                        (source_path, _rel(repo_root, target), "USES_LOCAL_ACTION")
+                    )
+
             run_value = step.get("run")
             if isinstance(run_value, str):
-                for script_path in _extract_run_paths(repo_root, wf, run_value):
-                    edge_rows.add((src, _rel(repo_root, script_path), "RUNS_SCRIPT"))
+                base_dir = repo_root
+                working_dir = step.get("working-directory")
+                if isinstance(working_dir, str) and working_dir.strip():
+                    base_dir = (repo_root / working_dir.strip()).resolve()
+                for script_path in _extract_run_paths(
+                    repo_root,
+                    workflow,
+                    run_value,
+                    base_dir=base_dir,
+                ):
+                    edge_rows.add((source_path, _rel(repo_root, script_path), "RUNS_SCRIPT"))
 
-    # B + C on composite actions
     for action in action_files:
-        data = _safe_load_yaml(action, parse_failures)
+        data = _safe_load_yaml(repo_root, action, parse_failures)
         if not isinstance(data, dict):
             continue
-        src = _rel(repo_root, action)
+
+        source_path = _rel(repo_root, action)
         runs = data.get("runs", {})
         steps = runs.get("steps", []) if isinstance(runs, dict) else []
         if not isinstance(steps, list):
             steps = []
+
         for step in steps:
             if not isinstance(step, dict):
                 continue
             uses = step.get("uses")
             if isinstance(uses, str):
-                target = _resolve_local_action_target(repo_root, action, uses)
+                target = _normalize_local_action_ref(repo_root, action, uses)
                 if target is not None:
-                    edge_rows.add((src, _rel(repo_root, target), "USES_ACTION_IN_ACTION"))
+                    edge_rows.add(
+                        (
+                            source_path,
+                            _rel(repo_root, target),
+                            "USES_ACTION_IN_ACTION",
+                        )
+                    )
+
             run_value = step.get("run")
             if isinstance(run_value, str):
-                for script_path in _extract_run_paths(repo_root, action, run_value):
-                    edge_rows.add((src, _rel(repo_root, script_path), "RUNS_SCRIPT"))
+                base_dir = repo_root
+                working_dir = step.get("working-directory")
+                if isinstance(working_dir, str) and working_dir.strip():
+                    base_dir = (repo_root / working_dir.strip()).resolve()
+                for script_path in _extract_run_paths(
+                    repo_root,
+                    action,
+                    run_value,
+                    base_dir=base_dir,
+                ):
+                    edge_rows.add((source_path, _rel(repo_root, script_path), "RUNS_SCRIPT"))
 
-    # D optional
     makefile = repo_root / "Makefile"
     if makefile.exists():
         edge_rows.update(_extract_makefile_run_edges(repo_root, makefile))
 
-    # add referenced paths as nodes if discovered by extraction but missing from initial list
-    for _, dst, _ in list(edge_rows):
-        if dst not in agent_paths:
-            agent_paths.add(dst)
+    resolved_edges: list[dict[str, str]] = []
+    for src_path, dst_path, edge_type in sorted(edge_rows, key=lambda x: (x[0], x[1], x[2])):
+        dst_exists = (repo_root / dst_path).exists()
+        if src_path in known_paths and dst_path in known_paths:
+            resolved_edges.append(
+                {
+                    "from_id": _sha12(src_path),
+                    "to_id": _sha12(dst_path),
+                    "edge_type": edge_type,
+                    "from_path": src_path,
+                    "to_path": dst_path,
+                }
+            )
+        elif dst_exists:
+            dangling_edges.append(
+                {
+                    "from_path": src_path,
+                    "to_path": dst_path,
+                    "edge_type": edge_type,
+                }
+            )
 
-    edges = [
-        {
-            "from_id": _sha12(src),
-            "to_id": _sha12(dst),
-            "edge_type": edge_type,
-            "from_path": src,
-            "to_path": dst,
-        }
-        for src, dst, edge_type in sorted(edge_rows, key=lambda x: (x[0], x[1], x[2]))
-    ]
-    return edges, {"parse_failures": sorted(set(parse_failures))}
+    return resolved_edges, {
+        "parse_failures": sorted(set(parse_failures)),
+        "dangling_edges": sorted(
+            dangling_edges,
+            key=lambda item: (item["from_path"], item["to_path"], item["edge_type"]),
+        ),
+    }
 
 
-def _build_graph(nodes: list[str], edges: list[tuple[str, str]]) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
+def _build_graph(
+    nodes: list[str], edges: list[tuple[str, str]]
+) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
     out_adj = {n: [] for n in nodes}
     in_adj = {n: [] for n in nodes}
     for src, dst in sorted(set(edges)):
@@ -326,13 +456,19 @@ def _build_graph(nodes: list[str], edges: list[tuple[str, str]]) -> tuple[dict[s
             in_adj[dst] = []
         out_adj[src].append(dst)
         in_adj[dst].append(src)
-    for n in sorted(out_adj):
-        out_adj[n] = sorted(set(out_adj[n]))
-        in_adj[n] = sorted(set(in_adj[n]))
+    for node in sorted(out_adj):
+        out_adj[node] = sorted(set(out_adj[node]))
+        in_adj[node] = sorted(set(in_adj[node]))
     return out_adj, in_adj
 
 
-def pagerank(nodes: list[str], edges: list[tuple[str, str]], damping: float = 0.85, max_iter: int = 100, tol: float = 1e-10) -> dict[str, float]:
+def pagerank(
+    nodes: list[str],
+    edges: list[tuple[str, str]],
+    damping: float = 0.85,
+    max_iter: int = 100,
+    tol: float = 1e-10,
+) -> dict[str, float]:
     ordered = sorted(set(nodes))
     if not ordered:
         return {}
@@ -343,57 +479,59 @@ def pagerank(nodes: list[str], edges: list[tuple[str, str]], damping: float = 0.
     for _ in range(max_iter):
         dangling = sum(ranks[node] for node in ordered if not out_adj[node])
         new_ranks: dict[str, float] = {}
-        diff = 0.0
+        delta = 0.0
         for node in ordered:
             value = (1.0 - damping) / n
             value += damping * dangling / n
             for src in in_adj[node]:
                 value += damping * (ranks[src] / len(out_adj[src]))
             new_ranks[node] = value
-            diff += abs(value - ranks[node])
+            delta += abs(value - ranks[node])
         ranks = new_ranks
-        if diff <= tol:
+        if delta <= tol:
             break
 
     total = sum(ranks.values())
     if total > 0:
-        ranks = {k: v / total for k, v in ranks.items()}
+        ranks = {node: value / total for node, value in ranks.items()}
     return ranks
 
 
-def betweenness_centrality_brandes(nodes: list[str], edges: list[tuple[str, str]]) -> dict[str, float]:
+def betweenness_centrality_brandes(
+    nodes: list[str], edges: list[tuple[str, str]]
+) -> dict[str, float]:
     ordered = sorted(set(nodes))
     out_adj, _ = _build_graph(ordered, edges)
-    bc = {v: 0.0 for v in ordered}
+    bc = {node: 0.0 for node in ordered}
 
-    for s in ordered:
+    for source in ordered:
         stack: list[str] = []
-        pred: dict[str, list[str]] = {w: [] for w in ordered}
-        sigma = {w: 0.0 for w in ordered}
-        dist = {w: -1 for w in ordered}
-        sigma[s] = 1.0
-        dist[s] = 0
+        pred: dict[str, list[str]] = {node: [] for node in ordered}
+        sigma = {node: 0.0 for node in ordered}
+        dist = {node: -1 for node in ordered}
+        sigma[source] = 1.0
+        dist[source] = 0
 
-        q: deque[str] = deque([s])
+        q: deque[str] = deque([source])
         while q:
-            v = q.popleft()
-            stack.append(v)
-            for w in out_adj[v]:
-                if dist[w] < 0:
-                    q.append(w)
-                    dist[w] = dist[v] + 1
-                if dist[w] == dist[v] + 1:
-                    sigma[w] += sigma[v]
-                    pred[w].append(v)
+            vertex = q.popleft()
+            stack.append(vertex)
+            for nxt in out_adj[vertex]:
+                if dist[nxt] < 0:
+                    q.append(nxt)
+                    dist[nxt] = dist[vertex] + 1
+                if dist[nxt] == dist[vertex] + 1:
+                    sigma[nxt] += sigma[vertex]
+                    pred[nxt].append(vertex)
 
-        delta = {w: 0.0 for w in ordered}
+        delta = {node: 0.0 for node in ordered}
         while stack:
-            w = stack.pop()
-            for v in sorted(pred[w]):
-                if sigma[w] > 0:
-                    delta[v] += (sigma[v] / sigma[w]) * (1.0 + delta[w])
-            if w != s:
-                bc[w] += delta[w]
+            node = stack.pop()
+            for parent in sorted(pred[node]):
+                if sigma[node] > 0:
+                    delta[parent] += (sigma[parent] / sigma[node]) * (1.0 + delta[node])
+            if node != source:
+                bc[node] += delta[node]
 
     n = len(ordered)
     if n > 2:
@@ -427,86 +565,76 @@ def generate_repo_model(repo_root: Path) -> dict[str, Any]:
     agents = discover_agents(repo_root)
     edges, unknowns = extract_wiring_edges(repo_root, agents)
 
-    by_path = {a["path"]: a for a in agents}
-    for edge in edges:
-        for rel in (edge["from_path"], edge["to_path"]):
-            if rel not in by_path:
-                p = repo_root / rel
-                by_path[rel] = {
-                    "agent_id": _sha12(rel),
-                    "path": rel,
-                    "kind": _kind_for_path(repo_root, p),
-                    "name": None,
-                }
-
-    all_agents = sorted(by_path.values(), key=lambda a: a["agent_id"])
-    node_ids = sorted(a["agent_id"] for a in all_agents)
-    directed = [(e["from_id"], e["to_id"]) for e in edges]
+    all_agents = sorted(agents, key=lambda agent: agent["agent_id"])
+    node_ids = sorted(agent["agent_id"] for agent in all_agents)
+    directed = [(edge["from_id"], edge["to_id"]) for edge in edges]
 
     pr = pagerank(node_ids, directed)
     bc = betweenness_centrality_brandes(node_ids, directed)
     max_pr = max(pr.values()) if pr else 0.0
     max_bc = max(bc.values()) if bc else 0.0
 
-    deg: dict[str, int] = {node: 0 for node in node_ids}
+    degree: dict[str, int] = {node: 0 for node in node_ids}
     for src, dst in directed:
-        deg[src] += 1
-        deg[dst] += 1
-    n_nonzero = sum(1 for v in deg.values() if v > 0)
-    k = max(5, min(25, round(0.08 * n_nonzero))) if n_nonzero else 5
+        degree[src] += 1
+        degree[dst] += 1
+    nonzero_nodes = sum(1 for value in degree.values() if value > 0)
+    k = max(5, min(25, round(0.08 * nonzero_nodes))) if nonzero_nodes else 5
 
+    by_id = {agent["agent_id"]: agent for agent in all_agents}
     ranked: list[dict[str, Any]] = []
-    path_by_id = {a["agent_id"]: a["path"] for a in all_agents}
-    kind_by_id = {a["agent_id"]: a["kind"] for a in all_agents}
     for node in node_ids:
         pr_norm = (pr.get(node, 0.0) / max_pr) if max_pr > 0 else 0.0
         bc_norm = (bc.get(node, 0.0) / max_bc) if max_bc > 0 else 0.0
-        score = 0.6 * pr_norm + 0.4 * bc_norm
+        core_score = 0.6 * pr_norm + 0.4 * bc_norm
         ranked.append(
             {
                 "agent_id": node,
-                "path": path_by_id[node],
-                "kind": kind_by_id[node],
+                "path": by_id[node]["path"],
+                "kind": by_id[node]["kind"],
                 "pr": pr.get(node, 0.0),
                 "bc": bc.get(node, 0.0),
                 "pr_norm": pr_norm,
                 "bc_norm": bc_norm,
-                "core_score": score,
+                "core_score": core_score,
             }
         )
 
     ranked.sort(
-        key=lambda r: (
-            -r["core_score"],
-            -r["pr_norm"],
-            -r["bc_norm"],
-            r["agent_id"],
+        key=lambda row: (
+            -row["core_score"],
+            -row["pr_norm"],
+            -row["bc_norm"],
+            row["agent_id"],
         )
     )
-    core_candidates = []
-    for idx, row in enumerate(ranked[:k], start=1):
-        core_candidates.append(
-            {
-                "agent_id": row["agent_id"],
-                "path": row["path"],
-                "kind": row["kind"],
-                "pr": row["pr"],
-                "bc": row["bc"],
-                "core_score": row["core_score"],
-                "rank": idx,
-            }
-        )
+    core_candidates = [
+        {
+            "agent_id": row["agent_id"],
+            "path": row["path"],
+            "kind": row["kind"],
+            "pr": row["pr"],
+            "bc": row["bc"],
+            "core_score": row["core_score"],
+            "rank": idx,
+        }
+        for idx, row in enumerate(ranked[:k], start=1)
+    ]
 
-    scan_paths = [a["path"] for a in all_agents]
     return {
         "repo_root": repo_root.as_posix(),
-        "repo_fingerprint": _repo_fingerprint(repo_root, scan_paths),
+        "repo_fingerprint": _repo_fingerprint(
+            repo_root, [agent["path"] for agent in all_agents]
+        ),
         "agents": all_agents,
         "agents_count": len(all_agents),
-        "wiring": {"edges": edges, "edges_count": len(edges)},
+        "wiring": {
+            "edges": edges,
+            "edges_count": len(edges),
+        },
         "centrality": {
-            "pagerank": {k: pr[k] for k in sorted(pr)},
-            "betweenness": {k: bc[k] for k in sorted(bc)},
+            "pagerank": {node: pr[node] for node in sorted(pr)},
+            "betweenness": {node: bc[node] for node in sorted(bc)},
         },
         "core_candidates": core_candidates,
         "core_candidates_count": len(core_candidates),
@@ -516,17 +644,30 @@ def generate_repo_model(repo_root: Path) -> dict[str, Any]:
 
 def write_repo_model(out_path: Path, model: dict[str, Any]) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(model, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    out_path.write_text(
+        json.dumps(model, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
 
 
 def cli(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="repo-model")
     parser.add_argument("--out", default="engine/artifacts/repo_model/repo_model.json")
+    parser.add_argument("--stdout", action="store_true")
     args = parser.parse_args(argv)
 
     repo_root = discover_repo_root(Path.cwd())
+    out_path = Path(args.out)
     model = generate_repo_model(repo_root)
-    write_repo_model(Path(args.out), model)
+    write_repo_model(out_path, model)
+
+    if args.stdout:
+        print(json.dumps(model, indent=2, sort_keys=True))
+    else:
+        try:
+            rel = out_path.resolve().relative_to(Path.cwd().resolve()).as_posix()
+        except ValueError:
+            rel = out_path.as_posix()
+        print(f"WROTE:{rel}")
     return 0
 
 
