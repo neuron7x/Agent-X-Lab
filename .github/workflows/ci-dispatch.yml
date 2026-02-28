@@ -61,6 +61,16 @@ jobs:
             git rev-parse HEAD
           } | tee "${RUNNER_TEMP}/ci_dispatch/env.txt"
 
+      - name: Assert pinned pip version
+        run: |
+          set -euo pipefail
+          actual="$(python -m pip --version | awk '{print $2}')"
+          expected="${PIP_VERSION}"
+          if [[ "${actual}" != "${expected}" ]]; then
+            echo "::error::pip version mismatch (expected=${expected}, actual=${actual})"
+            exit 1
+          fi
+
       - name: Run PR CI dispatcher
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

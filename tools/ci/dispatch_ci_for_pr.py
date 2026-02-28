@@ -6,6 +6,7 @@ import datetime as dt
 import json
 import os
 import pathlib
+import re
 import subprocess
 import sys
 import time
@@ -74,6 +75,14 @@ def _infer_local_head_ref() -> str:
 
 def _infer_local_head_sha() -> str:
     return _git_output(["git", "rev-parse", "HEAD"]) or ""
+
+
+def _workflow_supports_dispatch(workflow_file: str) -> bool:
+    workflow_path = REPO_ROOT / ".github" / "workflows" / workflow_file
+    if not workflow_path.exists() or not workflow_path.is_file():
+        return False
+    data = workflow_path.read_text(encoding="utf-8")
+    return bool(re.search(r"(?m)^\s*workflow_dispatch\s*:", data))
 
 
 def _redact_token(text: str, token: str | None) -> str:
@@ -314,6 +323,13 @@ def main() -> int:
                     "dispatch_status": "SKIP_DRY_RUN" if dry_run else "PENDING",
                     "dispatch_ref": pr_head_ref,
                 }
+                if not _workflow_supports_dispatch(workflow_file):
+                    dispatch_entry["dispatch_status"] = "SKIP_UNSUPPORTED"
+                    errors.append(
+                        f"unsupported workflow target: {workflow_file} (missing workflow_dispatch or file not found)"
+                    )
+                    dispatched_workflows.append(dispatch_entry)
+                    continue
                 try:
                     if not dry_run:
                         client.request("POST", f"actions/workflows/{workflow_file}/dispatches", {"ref": pr_head_ref})
