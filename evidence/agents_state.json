@@ -1,0 +1,1 @@
+{"state":"BLOCKED","blocker":"REPO_SNAPSHOT_MISSING","repo":{"repo_root":"","top_level_dirs":[],"file_count_depth3":0,"git_present":false},"agents":[],"wiring":{"edges":[],"core_candidates":[]},"evolution":{"mode":"INFERRED_FROM_REPO","per_agent":[]},"unknowns":[]}
