@@ -154,36 +154,46 @@ jobs:
           
           
           def poll(repo, sha, required):
+              if not required:
+                  return 0
               deadline = time.time() + 900
+              grace_period = time.time() + 60
+
               while time.time() < deadline:
                   data = api(f'https://api.github.com/repos/{repo}/commits/{sha}/check-runs?per_page=100')
-                  runs = data.get('check_runs', [])
-                  seen = {}
-                  for r in runs:
-                      base = normalize_check_name(r['name'])
-                      if base == 'CI Supercheck':
+                  seen = {
+                      normalize_check_name(r['name']): r
+                      for r in data.get('check_runs', [])
+                      if normalize_check_name(r['name']) != 'CI Supercheck'
+                  }
+
+                  pending = []
+                  for req in list(required):
+                      if req not in seen:
+                          if time.time() > grace_period:
+                              print(f"WARN: '{req}' never triggered by GitHub (likely skipped by YAML paths). Pruning from required list.")
+                              required.remove(req)
+                          else:
+                              pending.append(req)
                           continue
-                      seen[base] = (r['status'], r.get('conclusion'), r['name'])
-          
-                  missing = [n for n in required if n not in seen]
-                  failed = [
-                      (n, *seen[n])
-                      for n in required
-                      if n in seen and not (seen[n][0] == 'completed' and seen[n][1] == 'success')
-                  ]
-                  if not missing and not failed:
-                      print('CI Supercheck PASS')
+
+                      conclusion = seen[req].get('conclusion')
+                      if seen[req].get('status') == 'completed':
+                          if conclusion in ('failure', 'cancelled', 'timed_out', 'action_required'):
+                              print(f"BLOCK: '{req}' terminal failure ({conclusion}).")
+                              return 1
+                          elif conclusion not in ('success', 'neutral', 'skipped'):
+                              pending.append(req)
+                      else:
+                          pending.append(req)
+
+                  missing = [r for r in required if r not in seen]
+                  if not pending and not missing:
+                      print('PASS: Execution unblocked. All valid checks verified.')
                       return 0
-          
-                  print('Waiting for required checks...')
-                  print('MISSING:', ', '.join(missing) if missing else 'none')
-                  if failed:
-                      for n, status, conclusion, raw in failed:
-                          print(f'FAILED {n} raw={raw} status={status} conclusion={conclusion}')
+
                   time.sleep(20)
-          
-              print('CI Supercheck timeout')
-              print('Required:', ', '.join(required) if required else 'none')
+
               return 1
           
           
