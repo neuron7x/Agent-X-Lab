@@ -13,12 +13,6 @@
       "path": "engine/scripts/run_object_evals.py"
     },
     {
-      "agent_id": "091dfbcc3c82",
-      "kind": "CLI_SCRIPT",
-      "name": null,
-      "path": "tools/__init__.py"
-    },
-    {
       "agent_id": "107181b0136f",
       "kind": "CLI_SCRIPT",
       "name": null,
@@ -143,12 +137,6 @@
       "kind": "GITHUB_WORKFLOW",
       "name": null,
       "path": ".github/workflows/codeql-analysis.yml"
-    },
-    {
-      "agent_id": "737973ca0363",
-      "kind": "CLI_SCRIPT",
-      "name": null,
-      "path": "tools/dao-arbiter/dao_lifebook/__init__.py"
     },
     {
       "agent_id": "761881281f17",
@@ -343,18 +331,6 @@
       "path": "scripts/e2e-preflight.mjs"
     },
     {
-      "agent_id": "df1ce49b7d84",
-      "kind": "CLI_SCRIPT",
-      "name": null,
-      "path": "tools/prod_spec/__init__.py"
-    },
-    {
-      "agent_id": "e76a8411873e",
-      "kind": "CLI_SCRIPT",
-      "name": null,
-      "path": "tools/ci/__init__.py"
-    },
-    {
       "agent_id": "e9563f3a98ea",
       "kind": "CLI_SCRIPT",
       "name": null,
@@ -381,55 +357,55 @@
   ],
   "core_candidates": [
     {
-      "agent_id": "79ac8cbe2be0",
+      "agent_id": "c7714d6aa3ec",
       "bc": 0.0,
       "core_score": 0.6,
-      "kind": "CLI_SCRIPT",
-      "path": "tools/ci/action_pin_audit.py",
-      "pr": 0.033828996283047454,
+      "kind": "GITHUB_COMPOSITE_ACTION",
+      "path": ".github/actions/setup-python-pip/action.yml",
+      "pr": 0.0685198732037087,
       "rank": 1
     },
     {
-      "agent_id": "a48c1f2ad5ec",
+      "agent_id": "b9d464b9e214",
       "bc": 0.0,
-      "core_score": 0.4879120879105662,
-      "kind": "CLI_SCRIPT",
-      "path": "tools/ci/dispatch_ci_for_pr.py",
-      "pr": 0.02750929368063411,
+      "core_score": 0.45480427046120536,
+      "kind": "GITHUB_COMPOSITE_ACTION",
+      "path": ".github/actions/setup-node-npm/action.yml",
+      "pr": 0.051938551574178385,
       "rank": 2
     },
     {
-      "agent_id": "d53c234440ca",
+      "agent_id": "79ac8cbe2be0",
       "bc": 0.0,
-      "core_score": 0.4879120879105662,
+      "core_score": 0.273309608537712,
       "kind": "CLI_SCRIPT",
-      "path": "engine/scripts/check_prod_spec_gates.py",
-      "pr": 0.02750929368063411,
+      "path": "tools/ci/action_pin_audit.py",
+      "pr": 0.031211899537265483,
       "rank": 3
-    },
-    {
-      "agent_id": "955dae5c3467",
-      "bc": 0.0,
-      "core_score": 0.3758241758211322,
-      "kind": "CLI_SCRIPT",
-      "path": "tools/verify_action_pinning.py",
-      "pr": 0.021189591078220757,
-      "rank": 4
     },
     {
       "agent_id": "9978a13b71da",
       "bc": 0.0,
-      "core_score": 0.3758241758211322,
+      "core_score": 0.18256227757596535,
       "kind": "CLI_SCRIPT",
       "path": "scripts/generate_manifest.py",
-      "pr": 0.021189591078220757,
+      "pr": 0.020848573518809033,
+      "rank": 4
+    },
+    {
+      "agent_id": "a48c1f2ad5ec",
+      "bc": 0.0,
+      "core_score": 0.18256227757596535,
+      "kind": "CLI_SCRIPT",
+      "path": "tools/ci/dispatch_ci_for_pr.py",
+      "pr": 0.020848573518809033,
       "rank": 5
     }
   ],
   "counts": {
-    "agents_count": 63,
+    "agents_count": 59,
     "core_candidates_count": 5,
-    "edges_count": 7
+    "edges_count": 16
   },
   "edges": [
     {
@@ -441,6 +417,26 @@
       "edge_type": "RUNS_SCRIPT",
       "from_id": "02ccd5545223",
       "to_id": "955dae5c3467"
+    },
+    {
+      "edge_type": "USES_LOCAL_ACTION",
+      "from_id": "02ccd5545223",
+      "to_id": "c7714d6aa3ec"
+    },
+    {
+      "edge_type": "USES_LOCAL_ACTION",
+      "from_id": "13f4f85ff413",
+      "to_id": "b9d464b9e214"
+    },
+    {
+      "edge_type": "USES_LOCAL_ACTION",
+      "from_id": "1a380f34e244",
+      "to_id": "b9d464b9e214"
+    },
+    {
+      "edge_type": "USES_LOCAL_ACTION",
+      "from_id": "5eb18b5caa52",
+      "to_id": "c7714d6aa3ec"
     },
     {
       "edge_type": "RUNS_SCRIPT",
@@ -458,19 +454,56 @@
       "to_id": "79ac8cbe2be0"
     },
     {
+      "edge_type": "USES_LOCAL_ACTION",
+      "from_id": "9f58ecd05211",
+      "to_id": "c7714d6aa3ec"
+    },
+    {
       "edge_type": "RUNS_SCRIPT",
       "from_id": "9f58ecd05211",
       "to_id": "d53c234440ca"
     },
     {
+      "edge_type": "USES_LOCAL_ACTION",
+      "from_id": "a573abac079d",
+      "to_id": "c7714d6aa3ec"
+    },
+    {
+      "edge_type": "USES_LOCAL_ACTION",
+      "from_id": "acb157b43d64",
+      "to_id": "c7714d6aa3ec"
+    },
+    {
       "edge_type": "RUNS_SCRIPT",
       "from_id": "adef7ce44438",
       "to_id": "a48c1f2ad5ec"
+    },
+    {
+      "edge_type": "USES_LOCAL_ACTION",
+      "from_id": "adef7ce44438",
+      "to_id": "c7714d6aa3ec"
+    },
+    {
+      "edge_type": "USES_LOCAL_ACTION",
+      "from_id": "b4361375d6c8",
+      "to_id": "b9d464b9e214"
     }
   ],
-  "repo_fingerprint": "f73fa1d06453bfec492a29fc82dcc3ac247a8c19",
+  "repo_fingerprint": "7548c3f625f36812b01b8459a51541cb9581838a",
   "repo_root": "/workspace/Agent-X-Lab",
   "unknowns": {
+    "dangling_edges": [
+      {
+        "edge_type": "RUNS_SCRIPT",
+        "from_path": ".github/workflows/python-verify.yml",
+        "to_path": "engine/tools/pip_audit_gate.py"
+      },
+      {
+        "edge_type": "RUNS_SCRIPT",
+        "from_path": ".github/workflows/workflow-hygiene.yml",
+        "to_path": "engine/tools/verify_workflow_hygiene.py"
+      }
+    ],
     "parse_failures": []
   }
 }

@@ -49,3 +49,10 @@ def test_repo_model_smoke_current_repo() -> None:
     assert counts["agents_count"] > 0
     assert counts["edges_count"] > 0
     assert counts["core_candidates_count"] >= 5
+
+
+def test_repo_model_includes_local_wiring_edges() -> None:
+    repo_root = discover_repo_root(Path(__file__).resolve().parent)
+    model = build_repo_model(repo_root)
+    edge_types = {edge["edge_type"] for edge in model["edges"]}
+    assert edge_types & {"USES_LOCAL_ACTION", "USES_ACTION_IN_ACTION", "USES_REUSABLE_WORKFLOW"}

@@ -143,7 +143,7 @@ def main(argv: list[str] | None = None) -> None:
     elif args.cmd == "selftest":
         rc = cmd_selftest(cfg_path)
     elif args.cmd == "repo-model":
-        rc = cmd_repo_model(out=Path(args.out))
+        rc = cmd_repo_model(out=Path(args.out), emit_stdout=args.stdout)
     else:
         raise RuntimeError("unreachable")
 

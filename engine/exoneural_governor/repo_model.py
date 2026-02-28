@@ -125,7 +125,7 @@ def discover_agents(repo_root: Path) -> dict[str, dict[str, Any]]:
         suffix = p.suffix.lower()
         if rel.startswith("scripts/") and suffix in {".mjs", ".ts", ".js", ".py", ".sh"}:
             add(p, AgentKind.CLI_SCRIPT)
-        elif rel.startswith("tools/") and suffix == ".py":
+        elif rel.startswith("tools/") and suffix == ".py" and p.name != "__init__.py":
             add(p, AgentKind.CLI_SCRIPT)
         elif rel.startswith("engine/scripts/") and suffix == ".py":
             add(p, AgentKind.CLI_SCRIPT)
@@ -140,28 +140,62 @@ def _safe_yaml_load(path: Path, parse_failures: list[str], repo_root: Path) -> A
         return {}
 
 
-def _normalize_local_action_ref(ref: str, src_file: Path, repo_root: Path) -> Path | None:
+def _strip_ref_suffix(ref: str) -> str:
     text = ref.strip()
     if "@" in text:
         text = text.split("@", 1)[0]
+    return text
+
+
+def _resolve_local_ref_path(ref: str, src_file: Path, repo_root: Path) -> Path | None:
+    text = _strip_ref_suffix(ref)
+    candidates: list[Path] = []
     if text.startswith("./"):
-        candidate = (src_file.parent / text).resolve()
+        candidates.append((repo_root / text).resolve())
+        candidates.append((src_file.parent / text).resolve())
     elif text.startswith(".github/"):
-        candidate = (repo_root / text).resolve()
+        candidates.append((repo_root / text).resolve())
     elif "/.github/actions/" in text:
         _, tail = text.split("/.github/actions/", 1)
-        candidate = (repo_root / ".github" / "actions" / tail).resolve()
+        candidates.append((repo_root / ".github" / "actions" / tail).resolve())
+    elif "/.github/workflows/" in text:
+        _, tail = text.split("/.github/workflows/", 1)
+        candidates.append((repo_root / ".github" / "workflows" / tail).resolve())
     else:
         return None
 
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    return None
+
+
+def _normalize_local_action_ref(ref: str, src_file: Path, repo_root: Path) -> Path | None:
+    candidate = _resolve_local_ref_path(ref, src_file, repo_root)
+    if candidate is None:
+        return None
     if candidate.is_dir():
         action_file = candidate / "action.yml"
         return action_file if action_file.exists() else None
-    if candidate.is_file():
+    if candidate.is_file() and candidate.name == "action.yml":
         return candidate
+    if candidate.is_file():
+        return candidate if candidate.suffix.lower() in {".yml", ".yaml"} else None
     action_file = candidate / "action.yml"
-    if action_file.exists():
-        return action_file
+    return action_file if action_file.exists() else None
+
+
+def _normalize_local_workflow_ref(ref: str, src_file: Path, repo_root: Path) -> Path | None:
+    candidate = _resolve_local_ref_path(ref, src_file, repo_root)
+    if candidate is None:
+        return None
+    if candidate.is_file() and candidate.suffix.lower() in {".yml", ".yaml"}:
+        workflow_dir = (repo_root / ".github" / "workflows").resolve()
+        try:
+            candidate.relative_to(workflow_dir)
+        except ValueError:
+            return None
+        return candidate
     return None
 
 
@@ -173,25 +207,46 @@ def _extract_run_script_refs(run_text: str) -> list[str]:
     return refs
 
 
-def _normalize_script_ref(ref: str, src_file: Path, repo_root: Path) -> Path | None:
+def _resolve_working_directory(step: dict[str, Any], repo_root: Path) -> Path:
+    working_dir = step.get("working-directory")
+    if not isinstance(working_dir, str) or not working_dir.strip():
+        return repo_root
+    path = Path(working_dir.strip())
+    if path.is_absolute():
+        return path.resolve()
+    return (repo_root / path).resolve()
+
+
+def _normalize_script_ref(
+    ref: str,
+    repo_root: Path,
+    base_dir: Path | None = None,
+) -> Path | None:
     path = ref.strip().strip("\"'")
     if not path:
         return None
+    base = base_dir or repo_root
     candidate: Path
     if path.startswith("./"):
-        candidate = (src_file.parent / path).resolve()
+        candidate = (base / path).resolve()
     else:
         candidate = (repo_root / path).resolve()
-    if candidate.exists() and candidate.is_file() and candidate.suffix.lower() in SCRIPT_EXTENSIONS:
-        return candidate
-    return None
+    if not (candidate.exists() and candidate.is_file()):
+        return None
+    if candidate.suffix.lower() not in SCRIPT_EXTENSIONS:
+        return None
+    try:
+        candidate.relative_to(repo_root)
+    except ValueError:
+        return None
+    return candidate
 
 
-def _iter_workflow_steps(doc: dict[str, Any]) -> list[dict[str, Any]]:
+def _iter_workflow_steps(doc: dict[str, Any]) -> list[tuple[dict[str, Any], dict[str, Any]]]:
     jobs = doc.get("jobs")
     if not isinstance(jobs, dict):
         return []
-    steps: list[dict[str, Any]] = []
+    steps: list[tuple[dict[str, Any], dict[str, Any]]] = []
     for job_data in jobs.values():
         if not isinstance(job_data, dict):
             continue
@@ -200,36 +255,39 @@ def _iter_workflow_steps(doc: dict[str, Any]) -> list[dict[str, Any]]:
             continue
         for step in job_steps:
             if isinstance(step, dict):
-                steps.append(step)
+                steps.append((job_data, step))
     return steps
 
 
-def _iter_action_steps(doc: dict[str, Any]) -> list[dict[str, Any]]:
+def _iter_action_steps(doc: dict[str, Any]) -> list[tuple[dict[str, Any], dict[str, Any]]]:
     runs = doc.get("runs")
     if not isinstance(runs, dict):
         return []
     steps = runs.get("steps")
     if not isinstance(steps, list):
         return []
-    return [step for step in steps if isinstance(step, dict)]
+    return [(runs, step) for step in steps if isinstance(step, dict)]
 
 
 def extract_edges(
     repo_root: Path,
     agents: dict[str, dict[str, Any]],
     parse_failures: list[str],
-) -> list[dict[str, str]]:
+) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
     path_to_id = {meta["path"]: aid for aid, meta in agents.items()}
     edge_set: set[tuple[str, str, str]] = set()
+    dangling: set[tuple[str, str, str]] = set()
 
     def add_edge(src_path: str, dst_path: str, edge_type: str) -> None:
         src_id = path_to_id.get(src_path)
         dst_id = path_to_id.get(dst_path)
-        if src_id is None or dst_id is None:
+        if src_id is not None and dst_id is not None:
+            edge_set.add((src_id, dst_id, edge_type))
             return
-        edge_set.add((src_id, dst_id, edge_type))
+        if src_id is not None and dst_id is None and (repo_root / dst_path).exists():
+            dangling.add((src_path, dst_path, edge_type))
 
-    for aid, meta in agents.items():
+    for meta in agents.values():
         kind = meta["kind"]
         rel_path = meta["path"]
         path = repo_root / rel_path
@@ -243,19 +301,33 @@ def extract_edges(
         if kind == AgentKind.MAKEFILE:
             for line in path.read_text(encoding="utf-8").splitlines():
                 for ref in _extract_run_script_refs(line):
-                    resolved = _normalize_script_ref(ref, path, repo_root)
+                    resolved = _normalize_script_ref(ref, repo_root=repo_root, base_dir=repo_root)
                     if resolved is None:
                         continue
                     add_edge(rel_path, _rel_posix(resolved, repo_root), "RUNS_SCRIPT")
             continue
 
         doc = _safe_yaml_load(path, parse_failures, repo_root)
-        steps = (
-            _iter_workflow_steps(doc)
-            if kind == AgentKind.GITHUB_WORKFLOW
-            else _iter_action_steps(doc)
-        )
-        for step in steps:
+        if kind == AgentKind.GITHUB_WORKFLOW:
+            jobs = doc.get("jobs")
+            if isinstance(jobs, dict):
+                for job_data in jobs.values():
+                    if not isinstance(job_data, dict):
+                        continue
+                    job_uses = job_data.get("uses")
+                    if isinstance(job_uses, str):
+                        resolved_workflow = _normalize_local_workflow_ref(job_uses, path, repo_root)
+                        if resolved_workflow is not None:
+                            add_edge(
+                                rel_path,
+                                _rel_posix(resolved_workflow, repo_root),
+                                "USES_REUSABLE_WORKFLOW",
+                            )
+            step_entries = _iter_workflow_steps(doc)
+        else:
+            step_entries = _iter_action_steps(doc)
+
+        for parent, step in step_entries:
             uses = step.get("uses")
             if isinstance(uses, str):
                 resolved_action = _normalize_local_action_ref(uses, path, repo_root)
@@ -269,10 +341,14 @@ def extract_edges(
                             else "USES_ACTION_IN_ACTION"
                         ),
                     )
+
             run_text = step.get("run")
             if isinstance(run_text, str):
+                base_dir = _resolve_working_directory(step, repo_root)
+                if base_dir == repo_root:
+                    base_dir = _resolve_working_directory(parent, repo_root)
                 for ref in _extract_run_script_refs(run_text):
-                    resolved = _normalize_script_ref(ref, path, repo_root)
+                    resolved = _normalize_script_ref(ref, repo_root=repo_root, base_dir=base_dir)
                     if resolved is None:
                         continue
                     add_edge(rel_path, _rel_posix(resolved, repo_root), "RUNS_SCRIPT")
@@ -281,11 +357,19 @@ def extract_edges(
         {"from_id": a, "to_id": b, "edge_type": t}
         for a, b, t in sorted(edge_set, key=lambda item: (item[0], item[1], item[2]))
     ]
-    return edges
+    dangling_edges = [
+        {"from_path": src, "to_path": dst, "edge_type": edge_type}
+        for src, dst, edge_type in sorted(dangling, key=lambda item: (item[0], item[1], item[2]))
+    ]
+    return edges, dangling_edges
 
 
 def compute_pagerank(
-    node_ids: list[str], edges: list[tuple[str, str]], damping: float = 0.85, max_iter: int = 100, tol: float = 1e-10
+    node_ids: list[str],
+    edges: list[tuple[str, str]],
+    damping: float = 0.85,
+    max_iter: int = 100,
+    tol: float = 1e-10,
 ) -> dict[str, float]:
     sorted_nodes = sorted(node_ids)
     n = len(sorted_nodes)
@@ -456,7 +540,7 @@ def _repo_fingerprint(repo_root: Path, agents: dict[str, dict[str, Any]]) -> str
 def build_repo_model(repo_root: Path) -> dict[str, Any]:
     agents = discover_agents(repo_root)
     parse_failures: list[str] = []
-    edges = extract_edges(repo_root, agents, parse_failures)
+    edges, dangling_edges = extract_edges(repo_root, agents, parse_failures)
     core_candidates = _compute_core_candidates(agents, edges)
     return {
         "repo_root": repo_root.as_posix(),
@@ -471,6 +555,7 @@ def build_repo_model(repo_root: Path) -> dict[str, Any]:
         },
         "unknowns": {
             "parse_failures": sorted(parse_failures),
+            "dangling_edges": dangling_edges,
         },
     }
 
@@ -480,14 +565,21 @@ def write_repo_model_artifact(model: dict[str, Any], out_path: Path) -> None:
     out_path.write_text(json.dumps(model, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
-def cmd_repo_model(out: Path | None = None, cwd: Path | None = None) -> int:
+def cmd_repo_model(
+    out: Path | None = None,
+    cwd: Path | None = None,
+    emit_stdout: bool = False,
+) -> int:
     repo_root = discover_repo_root(cwd)
     output = out or (repo_root / "engine" / "artifacts" / "repo_model" / "repo_model.json")
     if not output.is_absolute():
         output = repo_root / output
     model = build_repo_model(repo_root)
     write_repo_model_artifact(model, output)
-    print(json.dumps(model, indent=2, sort_keys=True))
+    if emit_stdout:
+        print(json.dumps(model, indent=2, sort_keys=True))
+    else:
+        print(f"WROTE:{output.relative_to(repo_root).as_posix()}")
     return 0
 
 
@@ -500,4 +592,9 @@ def build_repo_model_parser(subparsers: argparse._SubParsersAction[argparse.Argu
         "--out",
         default="engine/artifacts/repo_model/repo_model.json",
         help="Output JSON path.",
+    )
+    parser.add_argument(
+        "--stdout",
+        action="store_true",
+        help="Print JSON to stdout instead of one-line status output.",
     )
