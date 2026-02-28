@@ -1,13 +1,15 @@
 {
-  "timestamp_utc": "2026-02-28T10:43:12Z",
+  "timestamp_utc": "2026-02-28T11:32:33Z",
   "head_sha": "recorded-in-commit-history",
   "bundle": [
     "build_proof/pr_engine_ci_hermetic/commands.txt",
-    "build_proof/pr_engine_ci_hermetic/outputs/00_baseline.txt",
     "build_proof/pr_engine_ci_hermetic/outputs/01_action_pinning.txt",
+    "build_proof/pr_engine_ci_hermetic/outputs/02_workflow_hygiene.txt",
+    "build_proof/pr_engine_ci_hermetic/outputs/03_actionlint.txt",
     "build_proof/pr_engine_ci_hermetic/outputs/10_compile_engine.txt",
     "build_proof/pr_engine_ci_hermetic/outputs/11_pytest_engine.txt",
     "build_proof/pr_engine_ci_hermetic/outputs/12_git_status_after_gates.txt",
-    "build_proof/pr_engine_ci_hermetic/outputs/13_git_diff_names_after_gates.txt"
+    "build_proof/pr_engine_ci_hermetic/outputs/13_git_diff_names_after_gates.txt",
+    "build_proof/pr_engine_ci_hermetic/outputs/14_forbidden_paths_scan.txt"
   ]
 }

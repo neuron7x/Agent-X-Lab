@@ -1,4 +1,5 @@
 name: Setup Python + pinned pip
+description: Install Python and pin pip to a required version.
 inputs:
   python-version:
     required: true

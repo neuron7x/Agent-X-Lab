@@ -6,20 +6,36 @@ on:
       - 'engine/**'
       - '.github/workflows/engine-drift-guard.yml'
 
+permissions:
+  contents: read
+
+concurrency:
+  group: engine-drift-guard-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   drift-guard:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       PYTHONDONTWRITEBYTECODE: "1"
       PYTHONHASHSEED: "0"
-      AXL_TEST_OUTPUT_DIR: ${{ runner.temp }}/axl_test_output
-      AXL_ARTIFACTS_ROOT: ${{ runner.temp }}/axl_artifacts
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
 
       - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d
         with:
           python-version: '3.13'
+
+      - name: Init hermetic temp dirs
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo "AXL_TEST_OUTPUT_DIR=${RUNNER_TEMP}/axl_test_output"
+            echo "AXL_ARTIFACTS_ROOT=${RUNNER_TEMP}/axl_artifacts"
+          } >> "$GITHUB_ENV"
+          mkdir -p "${RUNNER_TEMP}/axl_test_output" "${RUNNER_TEMP}/axl_artifacts"
 
       - name: Install engine test dependencies (deterministic)
         shell: bash
@@ -52,13 +68,33 @@ jobs:
           set -euo pipefail
           STATUS_FILE="${RUNNER_TEMP}/drift-status.txt"
           DIFF_FILE="${RUNNER_TEMP}/drift-diff.txt"
+          FORBIDDEN_FILE="${RUNNER_TEMP}/forbidden-paths.txt"
+
           git status --porcelain | tee "${STATUS_FILE}"
           git diff --name-only | tee "${DIFF_FILE}"
+
+          forbidden_paths=(
+            "engine/artifacts/release-test"
+            "engine/artifacts/tmp-evidence-test"
+            "artifacts/agent"
+          )
+          : > "${FORBIDDEN_FILE}"
+          for path in "${forbidden_paths[@]}"; do
+            if [[ -e "${path}" ]]; then
+              echo "${path}" | tee -a "${FORBIDDEN_FILE}"
+            fi
+          done
 
           if [[ -s "${STATUS_FILE}" || -s "${DIFF_FILE}" ]]; then
             echo "drift_detected=1" >> "$GITHUB_OUTPUT"
           else
             echo "drift_detected=0" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [[ -s "${FORBIDDEN_FILE}" ]]; then
+            echo "forbidden_detected=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "forbidden_detected=0" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Finalize gate and drift status
@@ -68,14 +104,18 @@ jobs:
           set -euo pipefail
           gate_rc='${{ steps.gates.outputs.gate_rc }}'
           drift='${{ steps.capture.outputs.drift_detected }}'
+          forbidden='${{ steps.capture.outputs.forbidden_detected }}'
 
           if [[ "$drift" != "0" ]]; then
             echo "Drift detected after gates." >&2
           fi
+          if [[ "$forbidden" != "0" ]]; then
+            echo "Forbidden paths detected after gates." >&2
+          fi
 
-          if [[ "$gate_rc" != "0" || "$drift" != "0" ]]; then
-            echo "engine-drift-guard failed: gate_rc=$gate_rc drift_detected=$drift" >&2
+          if [[ "$gate_rc" != "0" || "$drift" != "0" || "$forbidden" != "0" ]]; then
+            echo "engine-drift-guard failed: gate_rc=$gate_rc drift_detected=$drift forbidden_detected=$forbidden" >&2
             exit 1
           fi
 
-          echo "engine-drift-guard passed: gate_rc=$gate_rc drift_detected=$drift"
+          echo "engine-drift-guard passed: gate_rc=$gate_rc drift_detected=$drift forbidden_detected=$forbidden"

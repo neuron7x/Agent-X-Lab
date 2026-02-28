@@ -1,0 +1,143 @@
+{
+  ".github/workflows/action-pin-audit.yml": {
+    "pull_request": true,
+    "jobs": [
+      {
+        "job_id": "audit",
+        "name": "audit"
+      }
+    ]
+  },
+  ".github/workflows/ci-supercheck.yml": {
+    "pull_request": true,
+    "jobs": [
+      {
+        "job_id": "supercheck",
+        "name": "CI Supercheck"
+      }
+    ]
+  },
+  ".github/workflows/codeql-analysis.yml": {
+    "pull_request": true,
+    "jobs": [
+      {
+        "job_id": "analyze",
+        "name": "analyze"
+      }
+    ]
+  },
+  ".github/workflows/dependency-review.yml": {
+    "pull_request": true,
+    "jobs": [
+      {
+        "job_id": "review",
+        "name": "review"
+      }
+    ]
+  },
+  ".github/workflows/engine-drift-guard.yml": {
+    "pull_request": true,
+    "jobs": [
+      {
+        "job_id": "drift-guard",
+        "name": "drift-guard"
+      }
+    ]
+  },
+  ".github/workflows/prod-spec-gates.yml": {
+    "pull_request": true,
+    "jobs": [
+      {
+        "job_id": "schema-validate",
+        "name": "Schema Validation (G0/G3)"
+      },
+      {
+        "job_id": "gate-check",
+        "name": "Full RRD Gate Check"
+      },
+      {
+        "job_id": "pb-chain-check",
+        "name": "PB Chain Integrity (G2)"
+      }
+    ]
+  },
+  ".github/workflows/python-verify.yml": {
+    "pull_request": true,
+    "jobs": [
+      {
+        "job_id": "verify",
+        "name": "verify"
+      }
+    ]
+  },
+  ".github/workflows/run-engine-dispatch.yml": {
+    "pull_request": false,
+    "jobs": [
+      {
+        "job_id": "run-engine",
+        "name": "Engine Run + VR Publish"
+      }
+    ]
+  },
+  ".github/workflows/secret-scan.yml": {
+    "pull_request": true,
+    "jobs": [
+      {
+        "job_id": "scan",
+        "name": "scan"
+      }
+    ]
+  },
+  ".github/workflows/ui-e2e.yml": {
+    "pull_request": true,
+    "jobs": [
+      {
+        "job_id": "e2e",
+        "name": "Playwright E2E Smoke"
+      }
+    ]
+  },
+  ".github/workflows/ui-perf.yml": {
+    "pull_request": true,
+    "jobs": [
+      {
+        "job_id": "bundle-budget",
+        "name": "Bundle Size Check"
+      },
+      {
+        "job_id": "lighthouse",
+        "name": "Lighthouse CI"
+      }
+    ]
+  },
+  ".github/workflows/ui-verify.yml": {
+    "pull_request": true,
+    "jobs": [
+      {
+        "job_id": "verify",
+        "name": "Lint + Typecheck + Unit Tests + Build"
+      },
+      {
+        "job_id": "worker-typecheck",
+        "name": "Worker TypeScript"
+      }
+    ]
+  },
+  ".github/workflows/workflow-hygiene.yml": {
+    "pull_request": true,
+    "jobs": [
+      {
+        "job_id": "static-pin-audit",
+        "name": "Workflow Static Hygiene"
+      },
+      {
+        "job_id": "action-pin-verify",
+        "name": "Action Pin Verify"
+      },
+      {
+        "job_id": "workflow-tools-and-actionlint",
+        "name": "Workflow Tools + Actionlint"
+      }
+    ]
+  }
+}

@@ -1,0 +1,2 @@
+bash: command not found: actionlint
+EXIT_CODE:127

@@ -11,6 +11,35 @@ import yaml
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 
 
+def _discover_default_workflows_dir() -> Path | None:
+    for candidate in (Path.cwd(), *Path.cwd().parents):
+        workflows = candidate / ".github" / "workflows"
+        if workflows.is_dir():
+            return workflows
+    return None
+
+
+def _resolve_workflow_dir(workflows_arg: Path | None) -> tuple[Path | None, list[str]]:
+    if workflows_arg is None:
+        root = _discover_default_workflows_dir()
+        if root is None:
+            return None, [
+                "workflows directory not found; pass --workflows or run within a repository containing .github/workflows"
+            ]
+    else:
+        root = workflows_arg.resolve()
+
+    if not root.exists():
+        return None, [f"workflows directory does not exist: {root}"]
+    if not root.is_dir():
+        return None, [f"workflows path is not a directory: {root}"]
+
+    workflows = _iter_workflows(root)
+    if not workflows:
+        return None, [f"no workflow files found in: {root}"]
+    return root, []
+
+
 def _iter_workflows(root: Path) -> list[Path]:
     return sorted(
         set(root.rglob("*.yml")).union(root.rglob("*.yaml")),
@@ -55,10 +84,17 @@ def _collect_uses_entries(doc: dict[str, Any]) -> list[tuple[str, str]]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--workflows", type=Path, default=Path(".github/workflows"))
+    parser.add_argument("--workflows", type=Path)
     args = parser.parse_args()
 
-    root = args.workflows.resolve()
+    root, setup_errors = _resolve_workflow_dir(args.workflows)
+    if setup_errors:
+        print("FAIL: workflows directory validation failed")
+        for item in setup_errors:
+            print(item)
+        return 2
+    assert root is not None
+
     violations: list[str] = []
     parse_errors: list[str] = []
 

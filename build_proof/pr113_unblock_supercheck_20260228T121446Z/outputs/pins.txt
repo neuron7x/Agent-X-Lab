@@ -1,0 +1,3 @@
+No new external action pins were added in this commit.
+Existing actionlint execution uses pinned action in workflow-hygiene.yml:
+devops-actions/actionlint@469810fd82c015d3c43815cd2b0e4d02eecc4819

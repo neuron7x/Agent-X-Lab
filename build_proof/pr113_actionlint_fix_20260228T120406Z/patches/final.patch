@@ -1,0 +1,109 @@
+diff --git a/.github/actions/setup-node-npm/action.yml b/.github/actions/setup-node-npm/action.yml
+index 4fe9ddb..dd512b2 100644
+--- a/.github/actions/setup-node-npm/action.yml
++++ b/.github/actions/setup-node-npm/action.yml
+@@ -1,4 +1,5 @@
+ name: Setup Node + npm ci
++description: Install Node.js and project dependencies with npm ci.
+ inputs:
+   node-version:
+     required: true
+diff --git a/.github/actions/setup-python-pip/action.yml b/.github/actions/setup-python-pip/action.yml
+index 6def43a..c4550a0 100644
+--- a/.github/actions/setup-python-pip/action.yml
++++ b/.github/actions/setup-python-pip/action.yml
+@@ -1,4 +1,5 @@
+ name: Setup Python + pinned pip
++description: Install Python and pin pip to a required version.
+ inputs:
+   python-version:
+     required: true
+diff --git a/.github/workflows/engine-drift-guard.yml b/.github/workflows/engine-drift-guard.yml
+index ab3a756..20de392 100644
+--- a/.github/workflows/engine-drift-guard.yml
++++ b/.github/workflows/engine-drift-guard.yml
+@@ -20,8 +20,6 @@ jobs:
+     env:
+       PYTHONDONTWRITEBYTECODE: "1"
+       PYTHONHASHSEED: "0"
+-      AXL_TEST_OUTPUT_DIR: ${{ runner.temp }}/axl_test_output
+-      AXL_ARTIFACTS_ROOT: ${{ runner.temp }}/axl_artifacts
+     steps:
+       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+ 
+@@ -29,6 +27,16 @@ jobs:
+         with:
+           python-version: '3.13'
+ 
++      - name: Init temp dirs
++        shell: bash
++        run: |
++          set -euo pipefail
++          {
++            echo "AXL_TEST_OUTPUT_DIR=${RUNNER_TEMP}/axl_test_output"
++            echo "AXL_ARTIFACTS_ROOT=${RUNNER_TEMP}/axl_artifacts"
++          } >> "$GITHUB_ENV"
++          mkdir -p "${RUNNER_TEMP}/axl_test_output" "${RUNNER_TEMP}/axl_artifacts"
++
+       - name: Install engine test dependencies (deterministic)
+         shell: bash
+         run: |
+diff --git a/.github/workflows/run-engine-dispatch.yml b/.github/workflows/run-engine-dispatch.yml
+index 392aff6..5e5caf3 100644
+--- a/.github/workflows/run-engine-dispatch.yml
++++ b/.github/workflows/run-engine-dispatch.yml
+@@ -186,13 +186,15 @@ jobs:
+       - name: Job summary
+         if: always()
+         run: |
+-          echo "## Engine Run Summary" >> "$GITHUB_STEP_SUMMARY"
+-          echo "" >> "$GITHUB_STEP_SUMMARY"
+-          echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
+-          echo "|-------|-------|" >> "$GITHUB_STEP_SUMMARY"
+-          echo "| Run ID | \`${{ github.run_id }}\` |" >> "$GITHUB_STEP_SUMMARY"
+-          echo "| Trigger | \`${{ github.event_name }}\` |" >> "$GITHUB_STEP_SUMMARY"
+-          echo "| Ref | \`${{ github.sha }}\` |" >> "$GITHUB_STEP_SUMMARY"
+-          echo "| VR SHA-256 | \`${{ steps.vr_hash.outputs.sha256 }}\` |" >> "$GITHUB_STEP_SUMMARY"
+-          echo "| Dry-run | \`${{ github.event.inputs.dry_run || 'false' }}\` |" >> "$GITHUB_STEP_SUMMARY"
+-          echo "| Published branch | \`${{ env.VR_BRANCH }}\` |" >> "$GITHUB_STEP_SUMMARY"
++          {
++            echo "## Engine Run Summary"
++            echo ""
++            echo "| Field | Value |"
++            echo "|-------|-------|"
++            echo "| Run ID | \`${{ github.run_id }}\` |"
++            echo "| Trigger | \`${{ github.event_name }}\` |"
++            echo "| Ref | \`${{ github.sha }}\` |"
++            echo "| VR SHA-256 | \`${{ steps.vr_hash.outputs.sha256 }}\` |"
++            echo "| Dry-run | \`${{ github.event.inputs.dry_run || 'false' }}\` |"
++            echo "| Published branch | \`${{ env.VR_BRANCH }}\` |"
++          } >> "$GITHUB_STEP_SUMMARY"
+diff --git a/.github/workflows/workflow-hygiene.yml b/.github/workflows/workflow-hygiene.yml
+index dab3fbb..50179c3 100644
+--- a/.github/workflows/workflow-hygiene.yml
++++ b/.github/workflows/workflow-hygiene.yml
+@@ -123,12 +123,11 @@ jobs:
+         with:
+           python-version: ${{ env.PYTHON_VERSION }}
+           pip-version: ${{ env.PIP_VERSION }}
+-      - name: Install lint dependencies
++      - name: Install workflow tool dependencies
+         run: |
+           set -euo pipefail
+           python -m pip --version
+-          python -m pip install actionlint-py==1.7.7.23 pyyaml==6.0.2
+-          actionlint --version
++          python -m pip install pyyaml==6.0.2
+       - name: Verify action pinning tool
+         run: |
+           set -euo pipefail
+@@ -138,6 +137,6 @@ jobs:
+           set -euo pipefail
+           python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows
+       - name: Run actionlint
+-        run: |
+-          set -euo pipefail
+-          actionlint -color -oneline .github/workflows/*.yml
++        uses: devops-actions/actionlint@469810fd82c015d3c43815cd2b0e4d02eecc4819 # v0.1.11
++        with:
++          args: -color -oneline .github/workflows/*.yml

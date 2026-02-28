@@ -186,13 +186,15 @@ jobs:
       - name: Job summary
         if: always()
         run: |
-          echo "## Engine Run Summary" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
-          echo "|-------|-------|" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Run ID | \`${{ github.run_id }}\` |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Trigger | \`${{ github.event_name }}\` |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Ref | \`${{ github.sha }}\` |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| VR SHA-256 | \`${{ steps.vr_hash.outputs.sha256 }}\` |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Dry-run | \`${{ github.event.inputs.dry_run || 'false' }}\` |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Published branch | \`${{ env.VR_BRANCH }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "## Engine Run Summary"
+            echo ""
+            echo "| Field | Value |"
+            echo "|-------|-------|"
+            echo "| Run ID | \`${{ github.run_id }}\` |"
+            echo "| Trigger | \`${{ github.event_name }}\` |"
+            echo "| Ref | \`${{ github.sha }}\` |"
+            echo "| VR SHA-256 | \`${{ steps.vr_hash.outputs.sha256 }}\` |"
+            echo "| Dry-run | \`${{ github.event.inputs.dry_run || 'false' }}\` |"
+            echo "| Published branch | \`${{ env.VR_BRANCH }}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"

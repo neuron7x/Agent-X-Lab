@@ -100,6 +100,78 @@ jobs:
 
 
 
+
+def test_verify_action_pinning_fails_closed_for_missing_workflows(tmp_path: Path) -> None:
+    missing = tmp_path / "does-not-exist"
+    p = _run([
+        "python",
+        "tools/verify_action_pinning.py",
+        "--workflows",
+        str(missing),
+    ])
+    assert p.returncode == 2
+    assert "FAIL: workflows directory validation failed" in p.stdout
+
+
+def test_verify_action_pinning_fails_closed_for_empty_workflows(tmp_path: Path) -> None:
+    workflows_dir = tmp_path / "workflows"
+    workflows_dir.mkdir()
+    p = _run([
+        "python",
+        "tools/verify_action_pinning.py",
+        "--workflows",
+        str(workflows_dir),
+    ])
+    assert p.returncode == 2
+    assert "no workflow files found" in p.stdout
+
+
+def test_verify_action_pinning_autodetects_repo_root_from_subdir(tmp_path: Path) -> None:
+    nested_dir = REPO_ROOT / "tests"
+    p = subprocess.run(
+        ["python", str(REPO_ROOT / "tools" / "verify_action_pinning.py")],
+        cwd=nested_dir,
+        capture_output=True,
+        text=True,
+    )
+    assert p.returncode == 0, p.stdout + "\n" + p.stderr
+
+
+def test_verify_workflow_hygiene_fails_closed_for_missing_workflows(tmp_path: Path) -> None:
+    missing = tmp_path / "does-not-exist"
+    p = _run([
+        "python",
+        "tools/verify_workflow_hygiene.py",
+        "--workflows",
+        str(missing),
+    ])
+    assert p.returncode == 2
+    assert "FAIL: workflow hygiene validation setup failed" in p.stdout
+
+
+def test_verify_workflow_hygiene_fails_closed_for_empty_workflows(tmp_path: Path) -> None:
+    workflows_dir = tmp_path / "workflows"
+    workflows_dir.mkdir()
+    p = _run([
+        "python",
+        "tools/verify_workflow_hygiene.py",
+        "--workflows",
+        str(workflows_dir),
+    ])
+    assert p.returncode == 2
+    assert "no workflow files found" in p.stdout
+
+
+def test_verify_workflow_hygiene_autodetects_repo_root_from_subdir() -> None:
+    nested_dir = REPO_ROOT / "tests"
+    p = subprocess.run(
+        ["python", str(REPO_ROOT / "tools" / "verify_workflow_hygiene.py")],
+        cwd=nested_dir,
+        capture_output=True,
+        text=True,
+    )
+    assert p.returncode == 0, p.stdout + "\n" + p.stderr
+
 def test_scorecard_workflow_has_fail_closed_sarif_contract() -> None:
     workflow_path = WORKFLOW_ROOT / ".github/workflows/scorecard.yml"
     if not workflow_path.exists():

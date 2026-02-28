@@ -2,6 +2,14 @@ name: Workflow Hygiene
 
 on:
   pull_request:
+    paths:
+      - '.github/workflows/**'
+      - '.github/actions/**'
+      - 'engine/tools/verify_action_pinning.py'
+      - 'engine/tools/verify_workflow_hygiene.py'
+      - 'tools/verify_action_pinning.py'
+      - 'tools/verify_workflow_hygiene.py'
+      - 'engine/tests/test_workflow_guards.py'
   push:
     branches: [main]
   workflow_dispatch:
@@ -13,6 +21,10 @@ concurrency:
   group: workflow-hygiene-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  PYTHON_VERSION: '3.13.8'
+  PIP_VERSION: '24.3.1'
+
 jobs:
   static-pin-audit:
     name: Workflow Static Hygiene
@@ -20,9 +32,10 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
+      - uses: ./.github/actions/setup-python-pip
         with:
-          python-version: '3.13.8'
+          python-version: ${{ env.PYTHON_VERSION }}
+          pip-version: ${{ env.PIP_VERSION }}
       - name: Static action pin audit
         run: |
           set -euo pipefail
@@ -34,67 +47,97 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
+      - uses: ./.github/actions/setup-python-pip
         with:
-          python-version: '3.13.8'
+          python-version: ${{ env.PYTHON_VERSION }}
+          pip-version: ${{ env.PIP_VERSION }}
       - name: Verify pinned action SHAs through GitHub API
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           python3 - <<'PY'
-import os
-import pathlib
-import re
-import subprocess
-import sys
+          import os
+          import pathlib
+          import re
+          import subprocess
+          import sys
 
-pattern = re.compile(r"^\s*-?\s*uses:\s*([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)@([0-9a-f]{40})\s*(?:#.*)?$")
-entries = []
-for wf in sorted(pathlib.Path('.github/workflows').glob('*.yml')):
-    for idx, line in enumerate(wf.read_text(encoding='utf-8').splitlines(), start=1):
-        m = pattern.match(line)
-        if m:
-            owner_repo, sha = m.groups()
-            owner, repo = owner_repo.split('/', 1)
-            entries.append((str(wf), idx, owner, repo, sha))
+          pattern = re.compile(r"^\s*-?\s*uses:\s*([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)@([0-9a-f]{40})\s*(?:#.*)?$")
+          entries = []
+          for wf in sorted(pathlib.Path('.github/workflows').glob('*.yml')):
+              for idx, line in enumerate(wf.read_text(encoding='utf-8').splitlines(), start=1):
+                  match = pattern.match(line)
+                  if match:
+                      owner_repo, sha = match.groups()
+                      owner, repo = owner_repo.split('/', 1)
+                      entries.append((str(wf), idx, owner, repo, sha))
 
-if not entries:
-    print('No pinned third-party action entries found')
-    sys.exit(0)
+          if not entries:
+              print('No pinned third-party action entries found')
+              raise SystemExit(0)
 
-failures = []
-for wf, line_no, owner, repo, sha in entries:
-    commit_url = f"https://api.github.com/repos/{owner}/{repo}/commits/{sha}"
-    tar_url = f"https://api.github.com/repos/{owner}/{repo}/tarball/{sha}"
+          failures = []
+          for wf, line_no, owner, repo, sha in entries:
+              commit_url = f"https://api.github.com/repos/{owner}/{repo}/commits/{sha}"
+              tar_url = f"https://api.github.com/repos/{owner}/{repo}/tarball/{sha}"
 
-    r1 = subprocess.run([
-        'curl', '--silent', '--show-error', '--location', '--output', '/dev/null',
-        '--write-out', '%{http_code}',
-        '-H', 'Authorization: Bearer ' + os.environ['GITHUB_TOKEN'],
-        '-H', 'Accept: application/vnd.github+json',
-        commit_url,
-    ], capture_output=True, text=True, check=False)
-    code1 = r1.stdout.strip()
+              r1 = subprocess.run([
+                  'curl', '--silent', '--show-error', '--location', '--output', '/dev/null',
+                  '--write-out', '%{http_code}',
+                  '-H', 'Authorization: Bearer ' + os.environ['GITHUB_TOKEN'],
+                  '-H', 'Accept: application/vnd.github+json',
+                  commit_url,
+              ], capture_output=True, text=True, check=False)
+              code1 = r1.stdout.strip()
 
-    r2 = subprocess.run([
-        'curl', '--silent', '--show-error', '--location', '--head', '--output', '/dev/null',
-        '--write-out', '%{http_code}',
-        '-H', 'Authorization: Bearer ' + os.environ['GITHUB_TOKEN'],
-        '-H', 'Accept: application/vnd.github+json',
-        tar_url,
-    ], capture_output=True, text=True, check=False)
-    code2 = r2.stdout.strip()
+              r2 = subprocess.run([
+                  'curl', '--silent', '--show-error', '--location', '--head', '--output', '/dev/null',
+                  '--write-out', '%{http_code}',
+                  '-H', 'Authorization: Bearer ' + os.environ['GITHUB_TOKEN'],
+                  '-H', 'Accept: application/vnd.github+json',
+                  tar_url,
+              ], capture_output=True, text=True, check=False)
+              code2 = r2.stdout.strip()
 
-    ok1 = code1 == '200'
-    ok2 = code2 in {'200', '302'}
-    status = 'PASS' if ok1 and ok2 else 'FAIL'
-    print(f"{status} {wf}:{line_no} {owner}/{repo}@{sha} commit={code1} tarball={code2}")
-    if status == 'FAIL':
-        failures.append((wf, line_no, owner, repo, sha, code1, code2))
+              ok1 = code1 == '200'
+              ok2 = code2 in {'200', '302'}
+              status = 'PASS' if ok1 and ok2 else 'FAIL'
+              print(f"{status} {wf}:{line_no} {owner}/{repo}@{sha} commit={code1} tarball={code2}")
+              if status == 'FAIL':
+                  failures.append((wf, line_no, owner, repo, sha, code1, code2))
 
-if failures:
-    print('Action pin API verification failures detected')
-    sys.exit(1)
-print('Action pin API verification PASS')
-PY
+          if failures:
+              print('Action pin API verification failures detected')
+              raise SystemExit(1)
+
+          print('Action pin API verification PASS')
+          PY
+
+  workflow-tools-and-actionlint:
+    name: Workflow Tools + Actionlint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: ./.github/actions/setup-python-pip
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          pip-version: ${{ env.PIP_VERSION }}
+      - name: Install workflow tool dependencies
+        run: |
+          set -euo pipefail
+          python -m pip --version
+          python -m pip install pyyaml==6.0.2
+      - name: Verify action pinning tool
+        run: |
+          set -euo pipefail
+          python tools/verify_action_pinning.py --workflows .github/workflows
+      - name: Verify workflow hygiene tool
+        run: |
+          set -euo pipefail
+          python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows
+      - name: Run actionlint
+        uses: devops-actions/actionlint@469810fd82c015d3c43815cd2b0e4d02eecc4819 # v0.1.11
+        with:
+          args: -color -oneline .github/workflows/*.yml

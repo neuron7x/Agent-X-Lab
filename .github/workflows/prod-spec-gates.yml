@@ -12,9 +12,11 @@ on:
       - 'engine/policies/prod_spec_v2/**'
   pull_request:
     paths:
-      - 'artifacts/AC_VERSION.json'
-      - 'artifacts/SSDF.map'
       - 'engine/**'
+      - 'udgs_core/**'
+      - 'tools/prod_spec/**'
+      - 'artifacts/**'
+      - '.github/workflows/prod-spec-gates.yml'
   workflow_dispatch:
 
 permissions:
@@ -50,10 +52,24 @@ jobs:
       - name: Validate SSDF map
         run: |
           set -euo pipefail
-          python3 -c 'import json,pathlib,sys; p=pathlib.Path("artifacts/SSDF.map");\
-if not p.exists(): print("SSDF.map not found - skip"); sys.exit(0)\
-; data=json.loads(p.read_text(encoding="utf-8")); required=["generated_at","ac_version_sha256","coverage_fraction","controls"]; missing=[k for k in required if k not in data];\
-(sys.exit(1) if missing or data.get("coverage_fraction",0)<0.80 else print("SSDF.map PASS"))'
+          python3 - <<'PY'
+          import json
+          import pathlib
+          import sys
+
+          path = pathlib.Path("artifacts/SSDF.map")
+          if not path.exists():
+              print("SSDF.map not found - skip")
+              raise SystemExit(0)
+
+          data = json.loads(path.read_text(encoding="utf-8"))
+          required = ["generated_at", "ac_version_sha256", "coverage_fraction", "controls"]
+          missing = [k for k in required if k not in data]
+          if missing or data.get("coverage_fraction", 0) < 0.80:
+              raise SystemExit(1)
+
+          print("SSDF.map PASS")
+          PY
 
   gate-check:
     name: Full RRD Gate Check
@@ -102,11 +118,27 @@ if not p.exists(): print("SSDF.map not found - skip"); sys.exit(0)\
           CHECKER_EXIT_CODE: ${{ steps.gate_check.outputs.exit_code }}
         run: |
           set -euo pipefail
-          python3 -c 'import json,os,pathlib,sys; p=pathlib.Path("build_proof/prod_spec/gate_check.report.json"); report=json.loads(p.read_text(encoding="utf-8")); gates=report.get("gates",[]); m={g.get("gate_id"): g.get("status") for g in gates if isinstance(g, dict)}; rrd=report.get("rrd_status","UNKNOWN"); ec=int(os.environ.get("CHECKER_EXIT_CODE","1"));\
-if m.get("G0")=="FAIL" or m.get("G3")=="FAIL": print("BLOCK: G0/G3 FAIL"); sys.exit(1)\
-;\
-if ec!=0 and rrd=="PRODUCTION_SPEC_V2.1": print("BLOCK: checker non-zero with release status"); sys.exit(1)\
-; print("RRD gate semantics PASS")'
+          python3 - <<'PY'
+          import json
+          import os
+          import pathlib
+          import sys
+
+          report = json.loads(pathlib.Path("build_proof/prod_spec/gate_check.report.json").read_text(encoding="utf-8"))
+          gates = report.get("gates", [])
+          gate_map = {g.get("gate_id"): g.get("status") for g in gates if isinstance(g, dict)}
+          rrd = report.get("rrd_status", "UNKNOWN")
+          exit_code = int(os.environ.get("CHECKER_EXIT_CODE", "1"))
+
+          if gate_map.get("G0") == "FAIL" or gate_map.get("G3") == "FAIL":
+              print("BLOCK: G0/G3 FAIL")
+              raise SystemExit(1)
+          if exit_code != 0 and rrd == "PRODUCTION_SPEC_V2.1":
+              print("BLOCK: checker non-zero with release status")
+              raise SystemExit(1)
+
+          print("RRD gate semantics PASS")
+          PY
       - if: always()
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
@@ -134,18 +166,45 @@ if ec!=0 and rrd=="PRODUCTION_SPEC_V2.1": print("BLOCK: checker non-zero with re
       - name: Validate PB chain integrity
         run: |
           set -euo pipefail
-          python3 -c 'import hashlib,json,pathlib,sys; pb_dir=pathlib.Path("ad2026_state/pb");\
-if not pb_dir.exists(): print("PB dir missing - skip"); sys.exit(0)\
-; bundles=sorted(pb_dir.glob("PB-*.json"));\
-if not bundles: print("No PB bundles - skip"); sys.exit(0)\
-; pbs=[(p,json.loads(p.read_text(encoding="utf-8"))) for p in bundles]; pbs.sort(key=lambda x: x[1].get("timestamp","")); req=["pb_id","timestamp","environment_class","ac_version_sha256","prev_pb_hash","input_state_hash","output_state_hash","gate_results","metrics","actions","evidence_anchors","signature"];\
-[sys.exit(1) for _,pb in pbs if any(k not in pb for k in req)]; prev=None\
-\
-for p,pb in pbs:\
- d=pb.get("prev_pb_hash");\
- if (prev is None and d is not None) or (prev is not None and d!=prev): print("PB chain broken"); sys.exit(1);\
- prev=hashlib.sha256(p.read_bytes()).hexdigest()\
-\
-;\
-if any(pb.get("environment_class")=="NO_TEE" for _,pb in pbs): print("NO_TEE found"); sys.exit(1)\
-; print("PB chain integrity PASS")'
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import pathlib
+          import sys
+
+          pb_dir = pathlib.Path("ad2026_state/pb")
+          if not pb_dir.exists():
+              print("PB dir missing - skip")
+              raise SystemExit(0)
+
+          bundles = sorted(pb_dir.glob("PB-*.json"))
+          if not bundles:
+              print("No PB bundles - skip")
+              raise SystemExit(0)
+
+          records = [(path, json.loads(path.read_text(encoding="utf-8"))) for path in bundles]
+          records.sort(key=lambda item: item[1].get("timestamp", ""))
+          required = [
+              "pb_id", "timestamp", "environment_class", "ac_version_sha256", "prev_pb_hash",
+              "input_state_hash", "output_state_hash", "gate_results", "metrics", "actions",
+              "evidence_anchors", "signature",
+          ]
+
+          for _, pb in records:
+              if any(key not in pb for key in required):
+                  raise SystemExit(1)
+
+          prev_hash = None
+          for path, pb in records:
+              digest = pb.get("prev_pb_hash")
+              if (prev_hash is None and digest is not None) or (prev_hash is not None and digest != prev_hash):
+                  print("PB chain broken")
+                  raise SystemExit(1)
+              prev_hash = hashlib.sha256(path.read_bytes()).hexdigest()
+
+          if any(pb.get("environment_class") == "NO_TEE" for _, pb in records):
+              print("NO_TEE found")
+              raise SystemExit(1)
+
+          print("PB chain integrity PASS")
+          PY

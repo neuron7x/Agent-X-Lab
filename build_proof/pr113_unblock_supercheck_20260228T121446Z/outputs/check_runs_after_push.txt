@@ -1,0 +1,2 @@
+Push failed: no configured git remote, so check-runs cannot be listed for HEAD.
+fatal: No configured push destination.

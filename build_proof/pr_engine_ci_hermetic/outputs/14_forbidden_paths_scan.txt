@@ -1,0 +1,4 @@
+OK: forbidden paths absent
+engine/artifacts/release-test
+engine/artifacts/tmp-evidence-test
+artifacts/agent
