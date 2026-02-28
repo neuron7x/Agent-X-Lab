@@ -1,0 +1,10 @@
+git rev-parse HEAD > build_proof/pr120_actionlint_inputs_fix_20260228T181347Z/outputs/env.txt
+git status --porcelain >> build_proof/pr120_actionlint_inputs_fix_20260228T181347Z/outputs/env.txt
+python --version >> build_proof/pr120_actionlint_inputs_fix_20260228T181347Z/outputs/env.txt 2>&1
+python -m pip --version >> build_proof/pr120_actionlint_inputs_fix_20260228T181347Z/outputs/env.txt 2>&1
+grep -n "name: Run actionlint" -n .github/workflows/workflow-hygiene.yml > build_proof/pr120_actionlint_inputs_fix_20260228T181347Z/outputs/actionlint_step_locator.txt
+apply_patch (remove invalid with block under Run actionlint)
+python tools/verify_action_pinning.py --workflows .github/workflows > build_proof/pr120_actionlint_inputs_fix_20260228T181347Z/outputs/verify_action_pinning.txt 2>&1
+python tools/verify_workflow_hygiene.py --workflows .github/workflows > build_proof/pr120_actionlint_inputs_fix_20260228T181347Z/outputs/verify_workflow_hygiene.txt 2>&1
+git diff > build_proof/pr120_actionlint_inputs_fix_20260228T181347Z/patches/final.patch
+git add .github/workflows/workflow-hygiene.yml build_proof/pr120_actionlint_inputs_fix_20260228T181347Z
