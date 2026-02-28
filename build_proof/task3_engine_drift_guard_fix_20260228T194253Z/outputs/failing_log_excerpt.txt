@@ -1,0 +1,2 @@
+gh CLI unavailable in runner (command not found), so remote Actions log retrieval could not be performed.
+Local best-effort reproduction: `python -m compileall -q engine` and `python -m pytest -q engine/tests` both exited successfully in this environment; no local gate_rc=2 traceback available.
