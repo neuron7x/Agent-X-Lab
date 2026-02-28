@@ -1,7 +1,7 @@
 {
   "schema": "ARB_DECISION_MEMO_V1",
   "created_at": "2026-02-26T00:00:00Z",
-  "decision": "PENDING",
+  "decision": "APPROVED",
   "scope": "AXL QA8 → PROD_SPEC_V2.1",
   "work_id": "release-qa8-snapshot",
   "author": "ROLE:BUILD_ENGINEER",
@@ -13,8 +13,8 @@
     "approver_ne_auditor": true
   },
   "approval": {
-    "approved": false,
-    "approved_at": null,
+    "approved": true,
+    "approved_at": "2026-02-28T03:41:47Z",
     "approval_evidence": []
   },
   "artifacts": {

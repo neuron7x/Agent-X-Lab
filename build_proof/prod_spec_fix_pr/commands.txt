@@ -1,0 +1,7 @@
+run git rev-parse HEAD
+run git branch --show-current
+run git status --porcelain
+run git diff --name-only
+run python3 engine/scripts/check_prod_spec_gates.py --ac artifacts/AC_VERSION.json --pb-dir ad2026_state/pb/ --ssdf artifacts/SSDF.map --artifacts-dir artifacts/ --out build_proof/prod_spec/gate_check.report.json
+run ls -la artifacts build_proof/prod_spec
+run python3 -m py_compile .github/workflows/prod-spec-gates.yml

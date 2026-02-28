@@ -1,0 +1,4 @@
++ python3 -
+heredoc_openers=[(49, 'EOF'), (81, 'EOF'), (144, 'EOF'), (218, 'EOF')]
+heredoc terminators found for all openers
+EXIT_CODE=0

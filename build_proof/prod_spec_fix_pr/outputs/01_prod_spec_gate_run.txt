@@ -1,0 +1,66 @@
++ python3 engine/scripts/check_prod_spec_gates.py --ac artifacts/AC_VERSION.json --pb-dir ad2026_state/pb/ --ssdf artifacts/SSDF.map --artifacts-dir artifacts/ --out build_proof/prod_spec/gate_check.report.json
+
+[1m========================================================================[0m
+[1m  PRODUCTION_SPEC_V2.1 — Gate Check Report[0m
+  2026-02-28T03:42:32.855811+00:00
+========================================================================[0m
+
+✅ [1mG0 — BASELINE_SEAL[0m [PASS]
+    ✓ G0-A1: ok
+    ✓ G0-A2: sha256 match: 5b06f3f574cd1c01...
+    ✓ G0-A3: ok
+    ✓ G0-A4: env_class=restricted_sandbox
+
+✅ [1mG1 — BUILD_REPRO[0m [PASS]
+    ✓ G1-A1: Core build provenance artifacts present
+    ✓ G1-A2: Hash match: 5b06f3f574cd1c01...
+    ~ G1-A3: rebuild.log missing; reason=restricted_sandbox_ci_offload
+
+✅ [1mG2 — EVIDENCE_CHAIN[0m [PASS]
+    ✓ G2-A1: Found 1 bundles
+    ✓ G2-A2: 1 bundles schema-valid
+    ✓ G2-A3: Hash chain intact
+    ✓ G2-A4: All PBs have signature.jws field
+    ✓ G2-A5: ok
+    ✓ G2-A6: All PBs reference current AC version
+
+✅ [1mG3 — SSDF_COVERAGE[0m [PASS]
+    ✓ G3-A1: ok
+    ✓ G3-A2: coverage=0.830 >= threshold=0.8
+    ✓ G3-A3: 6 critical controls all COVERED
+    ✓ G3-A4: ok
+
+✅ [1mG4 — RUNTIME_DETERMINISM[0m [PASS]
+    ✓ G4-A1: ok
+    ✓ G4-A2: N=500 >= 500
+    ✓ G4-A3: m=0
+    ✓ G4-A4: ok
+
+✅ [1mG5 — RELEASE_PACK[0m [PASS]
+    ✓ G5-A1: All release pack artifacts present
+    ✓ G5-A2: ARB decision APPROVED
+    ✓ G5-A3: author≠approver≠auditor
+    ✓ G5-A4: ARB memo binds to current AC sha256
+
+✅ [1mG6 — AUTH_HW_BINDING[0m [PASS]
+    ✓ G6-A1: AC.signature.jws present — JWS crypto verification requires key material (run in TEE)
+    ~ G6-A2: AAID.attestation not present — required for tee_enabled only
+
+✅ [1mG7 — FORMAL_VERIFICATION[0m [PASS]
+    ✓ G7-A1: ok
+    ✓ G7-A2: ok
+    ✓ G7-A3: ok
+    ✓ G7-A4: Z3 UNSAT — invariants hold
+    ✓ G7-A5: ok
+
+✅ [1mG11 — OUTPUT_FINALITY[0m [PASS]
+    ✓ G11-A1: ok
+    ✓ G11-A3: chosen_sps_hash present: d062c64ad6ebd1a2...
+    ~ G11-A2: Deterministic replay requires runtime; check manually
+
+========================================================================
+[1m  RRD: PRODUCTION_SPEC_V2.1[0m
+========================================================================
+
+Report written: build_proof/prod_spec/gate_check.report.json
+EXIT_CODE=0

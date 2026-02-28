@@ -1,0 +1,19 @@
++ git rev-parse HEAD
+9de064266af735483d2b22293d4171add1e7e497
+EXIT_CODE=0
++ git branch --show-current
+work
+EXIT_CODE=0
++ git status --porcelain
+?? build_proof/prod_spec_fix_pr/
+EXIT_CODE=0
++ git diff --name-only
+
+OUT_OF_SCOPE=[]
+EXIT_CODE=0
++ git diff --name-only (post-fix)
+.github/workflows/prod-spec-gates.yml
+artifacts/ARB.decision.memo
+engine/scripts/check_prod_spec_gates.py
+OUT_OF_SCOPE_POSTFIX=[]
+EXIT_CODE=0

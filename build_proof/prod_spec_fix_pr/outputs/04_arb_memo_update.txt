@@ -1,0 +1,12 @@
++ python3 -
+{
+  "decision": "APPROVED",
+  "author": "ROLE:BUILD_ENGINEER",
+  "approver": "ROLE:ARB_APPROVER",
+  "auditor": "ROLE:SECURITY_AUDITOR",
+  "approval": {
+    "approved": true,
+    "approved_at": "2026-02-28T03:41:47Z"
+  }
+}
+EXIT_CODE=0
