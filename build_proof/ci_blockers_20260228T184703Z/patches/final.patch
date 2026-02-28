@@ -1,0 +1,64 @@
+diff --git a/.github/actions/setup-node-npm/action.yml b/.github/actions/setup-node-npm/action.yml
+index dd512b2..5931e11 100644
+--- a/.github/actions/setup-node-npm/action.yml
++++ b/.github/actions/setup-node-npm/action.yml
+@@ -2,8 +2,10 @@ name: Setup Node + npm ci
+ description: Install Node.js and project dependencies with npm ci.
+ inputs:
+   node-version:
++    description: Node.js version to install.
+     required: true
+   cache-dependency-path:
++    description: Path to the npm lockfile used for cache keying.
+     required: false
+     default: package-lock.json
+ runs:
+diff --git a/.github/actions/setup-python-pip/action.yml b/.github/actions/setup-python-pip/action.yml
+index c4550a0..c0b91d7 100644
+--- a/.github/actions/setup-python-pip/action.yml
++++ b/.github/actions/setup-python-pip/action.yml
+@@ -2,8 +2,10 @@ name: Setup Python + pinned pip
+ description: Install Python and pin pip to a required version.
+ inputs:
+   python-version:
++    description: Python version to install.
+     required: true
+   pip-version:
++    description: Exact pip version to pin after Python setup.
+     required: true
+ runs:
+   using: composite
+diff --git a/.github/workflows/engine-drift-guard.yml b/.github/workflows/engine-drift-guard.yml
+index fd62445..f0da238 100644
+--- a/.github/workflows/engine-drift-guard.yml
++++ b/.github/workflows/engine-drift-guard.yml
+@@ -85,17 +85,19 @@ jobs:
+             fi
+           done
+ 
+-          if [[ -s "${STATUS_FILE}" || -s "${DIFF_FILE}" ]]; then
+-            echo "drift_detected=1" >> "$GITHUB_OUTPUT"
+-          else
+-            echo "drift_detected=0" >> "$GITHUB_OUTPUT"
+-          fi
++          {
++            if [[ -s "${STATUS_FILE}" || -s "${DIFF_FILE}" ]]; then
++              echo "drift_detected=1"
++            else
++              echo "drift_detected=0"
++            fi
+ 
+-          if [[ -s "${FORBIDDEN_FILE}" ]]; then
+-            echo "forbidden_detected=1" >> "$GITHUB_OUTPUT"
+-          else
+-            echo "forbidden_detected=0" >> "$GITHUB_OUTPUT"
+-          fi
++            if [[ -s "${FORBIDDEN_FILE}" ]]; then
++              echo "forbidden_detected=1"
++            else
++              echo "forbidden_detected=0"
++            fi
++          } >> "$GITHUB_OUTPUT"
+ 
+       - name: Finalize gate and drift status
+         if: always()

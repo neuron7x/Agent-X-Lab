@@ -1,0 +1,59 @@
+     1	name: UI Performance + Bundle Budgets
+     2	
+     3	on:
+     4	  push:
+     5	    branches: [main]
+     6	    paths: ['src/**', 'package*.json', 'vite.config.ts', '.lighthouserc.json', 'eslint.config.js', 'vitest.config.ts', 'tsconfig*.json', '.github/workflows/ui-perf.yml']
+     7	  pull_request:
+     8	    paths: ['src/**', 'vite.config.ts', '.lighthouserc.json', 'eslint.config.js', 'vitest.config.ts', 'tsconfig*.json', 'package*.json', '.github/workflows/ui-perf.yml']
+     9	  workflow_dispatch:
+    10	
+    11	permissions:
+    12	  contents: read
+    13	
+    14	concurrency:
+    15	  group: ui-perf-${{ github.ref }}
+    16	  cancel-in-progress: true
+    17	
+    18	env:
+    19	  NODE_VERSION: '20'
+    20	
+    21	jobs:
+    22	  bundle-budget:
+    23	    name: Bundle Size Check
+    24	    runs-on: ubuntu-latest
+    25	    timeout-minutes: 10
+    26	    steps:
+    27	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    28	      - uses: ./.github/actions/setup-node-npm
+    29	        with:
+    30	          node-version: ${{ env.NODE_VERSION }}
+    31	      - run: |
+    32	          set -euo pipefail
+    33	          ANALYZE=true npm run build
+    34	          npm run analyze:bundle -- --mode=perf-bundle-evd
+    35	      - if: always()
+    36	        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+    37	        with:
+    38	          name: bundle-evidence-${{ github.run_id }}
+    39	          retention-days: 30
+    40	          path: |
+    41	            dist/EVD-UI-BUNDLE.json
+    42	            dist/EVD-UI-BUNDLE.html
+    43	
+    44	  lighthouse:
+    45	    name: Lighthouse CI
+    46	    runs-on: ubuntu-latest
+    47	    timeout-minutes: 15
+    48	    needs: bundle-budget
+    49	    steps:
+    50	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    51	      - uses: ./.github/actions/setup-node-npm
+    52	        with:
+    53	          node-version: ${{ env.NODE_VERSION }}
+    54	      - run: npm install -g @lhci/cli@0.14.x
+    55	      - run: npm run build
+    56	        env:
+    57	          VITE_AXL_API_BASE: 'http://localhost:8787'
+    58	          VITE_COMMIT_SHA: ${{ github.sha }}
+    59	      - run: npm run build:perf

@@ -1,0 +1,16 @@
+     1	name: Dependency Review
+     2	on:
+     3	  pull_request:
+     4	  workflow_dispatch:
+     5	permissions:
+     6	  contents: read
+     7	concurrency:
+     8	  group: dependency-review-${{ github.ref }}
+     9	  cancel-in-progress: true
+    10	jobs:
+    11	  review:
+    12	    runs-on: ubuntu-latest
+    13	    timeout-minutes: 10
+    14	    steps:
+    15	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    16	      - run: echo "Dependency review gate enabled"

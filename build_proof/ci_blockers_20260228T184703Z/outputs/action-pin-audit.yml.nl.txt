@@ -1,0 +1,32 @@
+     1	name: Action Pin Audit
+     2	
+     3	on:
+     4	  pull_request:
+     5	  push:
+     6	    branches: [main]
+     7	  workflow_dispatch:
+     8	
+     9	permissions:
+    10	  contents: read
+    11	
+    12	concurrency:
+    13	  group: action-pin-audit-${{ github.ref }}
+    14	  cancel-in-progress: true
+    15	
+    16	jobs:
+    17	  audit:
+    18	    runs-on: ubuntu-latest
+    19	    timeout-minutes: 5
+    20	    steps:
+    21	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    22	      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
+    23	        with:
+    24	          python-version: '3.13.8'
+    25	      - run: |
+    26	          set -euo pipefail
+    27	          python3 tools/ci/action_pin_audit.py --fail | tee action-pin-audit-report.txt
+    28	      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+    29	        if: always()
+    30	        with:
+    31	          name: action-pin-audit-${{ github.run_id }}
+    32	          path: action-pin-audit-report.txt

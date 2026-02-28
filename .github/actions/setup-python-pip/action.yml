@@ -2,8 +2,10 @@ name: Setup Python + pinned pip
 description: Install Python and pin pip to a required version.
 inputs:
   python-version:
+    description: Python version to install.
     required: true
   pip-version:
+    description: Exact pip version to pin after Python setup.
     required: true
 runs:
   using: composite

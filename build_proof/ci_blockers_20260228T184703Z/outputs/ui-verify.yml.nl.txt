@@ -1,0 +1,70 @@
+     1	name: UI Verify
+     2	
+     3	on:
+     4	  push:
+     5	    branches: [main]
+     6	    paths: ['src/**', 'workers/**', 'package*.json', 'vite.config.ts', 'tsconfig*.json', 'eslint.config.js', 'vitest.config.ts', 'playwright.config.ts', 'scripts/**', '.github/workflows/ui-verify.yml']
+     7	  pull_request:
+     8	    paths: ['src/**', 'workers/**', 'package*.json', 'vite.config.ts', 'tsconfig*.json', 'eslint.config.js', 'vitest.config.ts', 'playwright.config.ts', 'scripts/**', '.github/workflows/ui-verify.yml']
+     9	  workflow_dispatch:
+    10	
+    11	permissions:
+    12	  contents: read
+    13	
+    14	concurrency:
+    15	  group: ui-verify-${{ github.ref }}
+    16	  cancel-in-progress: true
+    17	
+    18	env:
+    19	  NODE_VERSION: '20'
+    20	
+    21	jobs:
+    22	  verify:
+    23	    name: Lint + Typecheck + Unit Tests + Build
+    24	    runs-on: ubuntu-latest
+    25	    timeout-minutes: 15
+    26	    steps:
+    27	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    28	      - uses: ./.github/actions/setup-node-npm
+    29	        with:
+    30	          node-version: ${{ env.NODE_VERSION }}
+    31	      - run: npm run lint:strict
+    32	      - run: npm run typecheck
+    33	      - run: npm run test:unit -- --coverage --reporter=verbose
+    34	      - run: npm run test:a11y:ci
+    35	      - if: always()
+    36	        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+    37	        with:
+    38	          name: ui-a11y-${{ github.run_id }}
+    39	          retention-days: 30
+    40	          path: dist/EVD-UI-A11Y.json
+    41	      - run: npm run build
+    42	        env:
+    43	          VITE_AXL_API_BASE: 'https://placeholder.workers.dev'
+    44	          VITE_AXL_API_KEY: 'ci-placeholder'
+    45	      - run: npm run analyze:bundle -- --mode=verify-bundle-budget
+    46	      - if: always()
+    47	        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+    48	        with:
+    49	          name: ui-build-${{ github.run_id }}
+    50	          retention-days: 30
+    51	          path: |
+    52	            dist/
+    53	            coverage/
+    54	
+    55	  worker-typecheck:
+    56	    name: Worker TypeScript
+    57	    runs-on: ubuntu-latest
+    58	    timeout-minutes: 5
+    59	    steps:
+    60	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    61	      - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4
+    62	        with:
+    63	          node-version: '20'
+    64	          cache: npm
+    65	          cache-dependency-path: workers/axl-bff/package-lock.json
+    66	      - run: |
+    67	          set -euo pipefail
+    68	          cd workers/axl-bff
+    69	          npm ci
+    70	          npm run typecheck

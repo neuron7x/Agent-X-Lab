@@ -2,8 +2,10 @@ name: Setup Node + npm ci
 description: Install Node.js and project dependencies with npm ci.
 inputs:
   node-version:
+    description: Node.js version to install.
     required: true
   cache-dependency-path:
+    description: Path to the npm lockfile used for cache keying.
     required: false
     default: package-lock.json
 runs:
