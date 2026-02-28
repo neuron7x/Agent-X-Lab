@@ -1,0 +1,707 @@
+{
+  "agents": [
+    {
+      "agent_id": "02ccd5545223",
+      "kind": "GITHUB_WORKFLOW",
+      "name": null,
+      "path": ".github/workflows/workflow-hygiene.yml"
+    },
+    {
+      "agent_id": "07b857d36fe3",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/scripts/run_object_evals.py"
+    },
+    {
+      "agent_id": "091dfbcc3c82",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/__init__.py"
+    },
+    {
+      "agent_id": "107181b0136f",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/dao-arbiter/dao_lifebook/evidence.py"
+    },
+    {
+      "agent_id": "13f4f85ff413",
+      "kind": "GITHUB_WORKFLOW",
+      "name": null,
+      "path": ".github/workflows/ui-perf.yml"
+    },
+    {
+      "agent_id": "18b9e121bf29",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/dao-arbiter/dao_lifebook/_retry.py"
+    },
+    {
+      "agent_id": "1a380f34e244",
+      "kind": "GITHUB_WORKFLOW",
+      "name": null,
+      "path": ".github/workflows/ui-verify.yml"
+    },
+    {
+      "agent_id": "1acf4838acb5",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "scripts/run-a11y-ci.mjs"
+    },
+    {
+      "agent_id": "205935321408",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/prod_spec/generate_architecture_contract.py"
+    },
+    {
+      "agent_id": "2071f12f1fdc",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "scripts/ensure-dist.mjs"
+    },
+    {
+      "agent_id": "22891e7f6bdf",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/dao-arbiter/dao_lifebook/metrics.py"
+    },
+    {
+      "agent_id": "296f2abfe95f",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/scripts/schema_validate.py"
+    },
+    {
+      "agent_id": "345cb2d648c0",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/ci/trigger_ci_dispatch.py"
+    },
+    {
+      "agent_id": "359c0e728169",
+      "kind": "OTHER",
+      "name": null,
+      "path": ".github/actions/pin-pip/README.md"
+    },
+    {
+      "agent_id": "35ae4a8ef16f",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/dao-arbiter/dao_lifebook/models.py"
+    },
+    {
+      "agent_id": "3c40e639b708",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/prod_spec/generate_build_artifacts.py"
+    },
+    {
+      "agent_id": "41f6a90a2fdb",
+      "kind": "OTHER",
+      "name": null,
+      "path": ".github/actions/setup-python-pip/README.md"
+    },
+    {
+      "agent_id": "494134882b71",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/scripts/generate_proof_bundle.py"
+    },
+    {
+      "agent_id": "4b68ec6643ec",
+      "kind": "GITHUB_COMPOSITE_ACTION",
+      "name": null,
+      "path": ".github/actions/pin-pip/action.yml"
+    },
+    {
+      "agent_id": "4bebda360782",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/scripts/validate_arsenal.py"
+    },
+    {
+      "agent_id": "528ef445cd0e",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/dao-arbiter/dao_lifebook/_types.py"
+    },
+    {
+      "agent_id": "5439dad6e944",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/dao-arbiter/dao_lifebook/cli.py"
+    },
+    {
+      "agent_id": "54647cd29853",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/prod_spec/_jws_ed25519.py"
+    },
+    {
+      "agent_id": "5eb18b5caa52",
+      "kind": "GITHUB_WORKFLOW",
+      "name": null,
+      "path": ".github/workflows/engine-drift-guard.yml"
+    },
+    {
+      "agent_id": "605d1b717c3c",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/scripts/arsenal.py"
+    },
+    {
+      "agent_id": "63bd641104d1",
+      "kind": "GITHUB_WORKFLOW",
+      "name": null,
+      "path": ".github/workflows/codeql-analysis.yml"
+    },
+    {
+      "agent_id": "737973ca0363",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/dao-arbiter/dao_lifebook/__init__.py"
+    },
+    {
+      "agent_id": "761881281f17",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/prod_spec/run_replay_harness.py"
+    },
+    {
+      "agent_id": "76ed074a9305",
+      "kind": "MAKEFILE",
+      "name": null,
+      "path": "Makefile"
+    },
+    {
+      "agent_id": "79ac8cbe2be0",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/ci/action_pin_audit.py"
+    },
+    {
+      "agent_id": "7bf1bfd85ffc",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "scripts/analyze-bundle.mjs"
+    },
+    {
+      "agent_id": "7c818bec6261",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/verify_workflow_hygiene.py"
+    },
+    {
+      "agent_id": "7cdd3ccec44c",
+      "kind": "GITHUB_WORKFLOW",
+      "name": null,
+      "path": ".github/workflows/dependency-review.yml"
+    },
+    {
+      "agent_id": "810f752e610f",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/scripts/check_agent_duplicate_content.py"
+    },
+    {
+      "agent_id": "83d5ad62ebf4",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/dao-arbiter/dao_lifebook/constraints.py"
+    },
+    {
+      "agent_id": "84095bafd1ea",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/ci/ci_contract.py"
+    },
+    {
+      "agent_id": "88130c5cb3f9",
+      "kind": "GITHUB_WORKFLOW",
+      "name": null,
+      "path": ".github/workflows/action-pin-audit.yml"
+    },
+    {
+      "agent_id": "8c161845b6cd",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/dao-arbiter/dao_lifebook/engine.py"
+    },
+    {
+      "agent_id": "8fad63b5805a",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/scripts/quickstart.sh"
+    },
+    {
+      "agent_id": "9396ecc12364",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/scripts/bootstrap_env.py"
+    },
+    {
+      "agent_id": "955dae5c3467",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/verify_action_pinning.py"
+    },
+    {
+      "agent_id": "95b6f7b21fa5",
+      "kind": "OTHER",
+      "name": null,
+      "path": "engine/tools/pip_audit_gate.py"
+    },
+    {
+      "agent_id": "9978a13b71da",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "scripts/generate_manifest.py"
+    },
+    {
+      "agent_id": "99f4c0c11ca3",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/prod_spec/sign_ac_package.py"
+    },
+    {
+      "agent_id": "9db81dcc8db6",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/scripts/rebuild_checksums.py"
+    },
+    {
+      "agent_id": "9f58ecd05211",
+      "kind": "GITHUB_WORKFLOW",
+      "name": null,
+      "path": ".github/workflows/prod-spec-gates.yml"
+    },
+    {
+      "agent_id": "a48c1f2ad5ec",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/ci/dispatch_ci_for_pr.py"
+    },
+    {
+      "agent_id": "a48ead286090",
+      "kind": "OTHER",
+      "name": null,
+      "path": "engine/tools/verify_workflow_hygiene.py"
+    },
+    {
+      "agent_id": "a573abac079d",
+      "kind": "GITHUB_WORKFLOW",
+      "name": null,
+      "path": ".github/workflows/run-engine-dispatch.yml"
+    },
+    {
+      "agent_id": "a8f4ad96f6d3",
+      "kind": "GITHUB_WORKFLOW",
+      "name": null,
+      "path": ".github/workflows/secret-scan.yml"
+    },
+    {
+      "agent_id": "ac2dfda93fe2",
+      "kind": "OTHER",
+      "name": null,
+      "path": ".github/actions/setup-node-npm/README.md"
+    },
+    {
+      "agent_id": "acb157b43d64",
+      "kind": "GITHUB_WORKFLOW",
+      "name": null,
+      "path": ".github/workflows/python-verify.yml"
+    },
+    {
+      "agent_id": "ad8a239f2d91",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "scripts/bootstrap.sh"
+    },
+    {
+      "agent_id": "adef7ce44438",
+      "kind": "GITHUB_WORKFLOW",
+      "name": null,
+      "path": ".github/workflows/ci-dispatch.yml"
+    },
+    {
+      "agent_id": "b2504b9c7c93",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/dao-arbiter/dao_lifebook/tests.py"
+    },
+    {
+      "agent_id": "b33fc1feeaae",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/dao-arbiter/dao_lifebook/truth_plane.py"
+    },
+    {
+      "agent_id": "b4361375d6c8",
+      "kind": "GITHUB_WORKFLOW",
+      "name": null,
+      "path": ".github/workflows/ui-e2e.yml"
+    },
+    {
+      "agent_id": "b4f661346660",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/vitest-custom-coverage.ts"
+    },
+    {
+      "agent_id": "b9d464b9e214",
+      "kind": "GITHUB_COMPOSITE_ACTION",
+      "name": null,
+      "path": ".github/actions/setup-node-npm/action.yml"
+    },
+    {
+      "agent_id": "c15e62628d67",
+      "kind": "GITHUB_WORKFLOW",
+      "name": null,
+      "path": ".github/workflows/ci-supercheck.yml"
+    },
+    {
+      "agent_id": "c531a9034661",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/dao-arbiter/scripts/verify_repo.py"
+    },
+    {
+      "agent_id": "c7714d6aa3ec",
+      "kind": "GITHUB_COMPOSITE_ACTION",
+      "name": null,
+      "path": ".github/actions/setup-python-pip/action.yml"
+    },
+    {
+      "agent_id": "d53c234440ca",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/scripts/check_prod_spec_gates.py"
+    },
+    {
+      "agent_id": "d763c671ea26",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "scripts/e2e-preflight.mjs"
+    },
+    {
+      "agent_id": "df1ce49b7d84",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/prod_spec/__init__.py"
+    },
+    {
+      "agent_id": "e61771ef6023",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/vitest-coverage-v8/index.js"
+    },
+    {
+      "agent_id": "e76a8411873e",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/ci/__init__.py"
+    },
+    {
+      "agent_id": "e9563f3a98ea",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/prod_spec/generate_formal_artifacts.py"
+    },
+    {
+      "agent_id": "eff08bbf59e2",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/prod_spec/make_ac_package.py"
+    },
+    {
+      "agent_id": "f89780a8cb8a",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/scripts/rebuild_catalog_index.py"
+    },
+    {
+      "agent_id": "fbb0fdb4053a",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "tools/dao-arbiter/dao_lifebook/roles.py"
+    }
+  ],
+  "agents_count": 71,
+  "centrality": {
+    "betweenness": {
+      "02ccd5545223": 0.0,
+      "07b857d36fe3": 0.0,
+      "091dfbcc3c82": 0.0,
+      "107181b0136f": 0.0,
+      "13f4f85ff413": 0.0,
+      "18b9e121bf29": 0.0,
+      "1a380f34e244": 0.0,
+      "1acf4838acb5": 0.0,
+      "205935321408": 0.0,
+      "2071f12f1fdc": 0.0,
+      "22891e7f6bdf": 0.0,
+      "296f2abfe95f": 0.0,
+      "345cb2d648c0": 0.0,
+      "359c0e728169": 0.0,
+      "35ae4a8ef16f": 0.0,
+      "3c40e639b708": 0.0,
+      "41f6a90a2fdb": 0.0,
+      "494134882b71": 0.0,
+      "4b68ec6643ec": 0.0,
+      "4bebda360782": 0.0,
+      "528ef445cd0e": 0.0,
+      "5439dad6e944": 0.0,
+      "54647cd29853": 0.0,
+      "5eb18b5caa52": 0.0,
+      "605d1b717c3c": 0.0,
+      "63bd641104d1": 0.0,
+      "737973ca0363": 0.0,
+      "761881281f17": 0.0,
+      "76ed074a9305": 0.0,
+      "79ac8cbe2be0": 0.0,
+      "7bf1bfd85ffc": 0.0,
+      "7c818bec6261": 0.0,
+      "7cdd3ccec44c": 0.0,
+      "810f752e610f": 0.0,
+      "83d5ad62ebf4": 0.0,
+      "84095bafd1ea": 0.0,
+      "88130c5cb3f9": 0.0,
+      "8c161845b6cd": 0.0,
+      "8fad63b5805a": 0.0,
+      "9396ecc12364": 0.0,
+      "955dae5c3467": 0.0,
+      "95b6f7b21fa5": 0.0,
+      "9978a13b71da": 0.0,
+      "99f4c0c11ca3": 0.0,
+      "9db81dcc8db6": 0.0,
+      "9f58ecd05211": 0.0,
+      "a48c1f2ad5ec": 0.0,
+      "a48ead286090": 0.0,
+      "a573abac079d": 0.0,
+      "a8f4ad96f6d3": 0.0,
+      "ac2dfda93fe2": 0.0,
+      "acb157b43d64": 0.0,
+      "ad8a239f2d91": 0.0,
+      "adef7ce44438": 0.0,
+      "b2504b9c7c93": 0.0,
+      "b33fc1feeaae": 0.0,
+      "b4361375d6c8": 0.0,
+      "b4f661346660": 0.0,
+      "b9d464b9e214": 0.0,
+      "c15e62628d67": 0.0,
+      "c531a9034661": 0.0,
+      "c7714d6aa3ec": 0.0,
+      "d53c234440ca": 0.0,
+      "d763c671ea26": 0.0,
+      "df1ce49b7d84": 0.0,
+      "e61771ef6023": 0.0,
+      "e76a8411873e": 0.0,
+      "e9563f3a98ea": 0.0,
+      "eff08bbf59e2": 0.0,
+      "f89780a8cb8a": 0.0,
+      "fbb0fdb4053a": 0.0
+    },
+    "pagerank": {
+      "02ccd5545223": 0.013140604467757463,
+      "07b857d36fe3": 0.013140604467757463,
+      "091dfbcc3c82": 0.013140604467757463,
+      "107181b0136f": 0.013140604467757463,
+      "13f4f85ff413": 0.013140604467757463,
+      "18b9e121bf29": 0.013140604467757463,
+      "1a380f34e244": 0.013140604467757463,
+      "1acf4838acb5": 0.013140604467757463,
+      "205935321408": 0.013140604467757463,
+      "2071f12f1fdc": 0.013140604467757463,
+      "22891e7f6bdf": 0.013140604467757463,
+      "296f2abfe95f": 0.013140604467757463,
+      "345cb2d648c0": 0.013140604467757463,
+      "359c0e728169": 0.013140604467757463,
+      "35ae4a8ef16f": 0.013140604467757463,
+      "3c40e639b708": 0.013140604467757463,
+      "41f6a90a2fdb": 0.013140604467757463,
+      "494134882b71": 0.013140604467757463,
+      "4b68ec6643ec": 0.013140604467757463,
+      "4bebda360782": 0.013140604467757463,
+      "528ef445cd0e": 0.013140604467757463,
+      "5439dad6e944": 0.013140604467757463,
+      "54647cd29853": 0.013140604467757463,
+      "5eb18b5caa52": 0.013140604467757463,
+      "605d1b717c3c": 0.013140604467757463,
+      "63bd641104d1": 0.013140604467757463,
+      "737973ca0363": 0.013140604467757463,
+      "761881281f17": 0.013140604467757463,
+      "76ed074a9305": 0.013140604467757463,
+      "79ac8cbe2be0": 0.028033289532028573,
+      "7bf1bfd85ffc": 0.013140604467757463,
+      "7c818bec6261": 0.013140604467757463,
+      "7cdd3ccec44c": 0.013140604467757463,
+      "810f752e610f": 0.013140604467757463,
+      "83d5ad62ebf4": 0.013140604467757463,
+      "84095bafd1ea": 0.013140604467757463,
+      "88130c5cb3f9": 0.013140604467757463,
+      "8c161845b6cd": 0.013140604467757463,
+      "8fad63b5805a": 0.013140604467757463,
+      "9396ecc12364": 0.013140604467757463,
+      "955dae5c3467": 0.01686377573382524,
+      "95b6f7b21fa5": 0.024310118265960794,
+      "9978a13b71da": 0.01686377573382524,
+      "99f4c0c11ca3": 0.013140604467757463,
+      "9db81dcc8db6": 0.013140604467757463,
+      "9f58ecd05211": 0.013140604467757463,
+      "a48c1f2ad5ec": 0.024310118265960794,
+      "a48ead286090": 0.01686377573382524,
+      "a573abac079d": 0.013140604467757463,
+      "a8f4ad96f6d3": 0.013140604467757463,
+      "ac2dfda93fe2": 0.013140604467757463,
+      "acb157b43d64": 0.013140604467757463,
+      "ad8a239f2d91": 0.01686377573382524,
+      "adef7ce44438": 0.013140604467757463,
+      "b2504b9c7c93": 0.013140604467757463,
+      "b33fc1feeaae": 0.013140604467757463,
+      "b4361375d6c8": 0.013140604467757463,
+      "b4f661346660": 0.013140604467757463,
+      "b9d464b9e214": 0.013140604467757463,
+      "c15e62628d67": 0.013140604467757463,
+      "c531a9034661": 0.013140604467757463,
+      "c7714d6aa3ec": 0.013140604467757463,
+      "d53c234440ca": 0.028033289532028573,
+      "d763c671ea26": 0.013140604467757463,
+      "df1ce49b7d84": 0.013140604467757463,
+      "e61771ef6023": 0.013140604467757463,
+      "e76a8411873e": 0.013140604467757463,
+      "e9563f3a98ea": 0.013140604467757463,
+      "eff08bbf59e2": 0.013140604467757463,
+      "f89780a8cb8a": 0.013140604467757463,
+      "fbb0fdb4053a": 0.013140604467757463
+    }
+  },
+  "core_candidates": [
+    {
+      "agent_id": "79ac8cbe2be0",
+      "bc": 0.0,
+      "core_score": 0.6,
+      "kind": "CLI_SCRIPT",
+      "path": "tools/ci/action_pin_audit.py",
+      "pr": 0.028033289532028573,
+      "rank": 1
+    },
+    {
+      "agent_id": "d53c234440ca",
+      "bc": 0.0,
+      "core_score": 0.6,
+      "kind": "CLI_SCRIPT",
+      "path": "engine/scripts/check_prod_spec_gates.py",
+      "pr": 0.028033289532028573,
+      "rank": 2
+    },
+    {
+      "agent_id": "95b6f7b21fa5",
+      "bc": 0.0,
+      "core_score": 0.5203124999979617,
+      "kind": "OTHER",
+      "path": "engine/tools/pip_audit_gate.py",
+      "pr": 0.024310118265960794,
+      "rank": 3
+    },
+    {
+      "agent_id": "a48c1f2ad5ec",
+      "bc": 0.0,
+      "core_score": 0.5203124999979617,
+      "kind": "CLI_SCRIPT",
+      "path": "tools/ci/dispatch_ci_for_pr.py",
+      "pr": 0.024310118265960794,
+      "rank": 4
+    },
+    {
+      "agent_id": "955dae5c3467",
+      "bc": 0.0,
+      "core_score": 0.36093749999388514,
+      "kind": "CLI_SCRIPT",
+      "path": "tools/verify_action_pinning.py",
+      "pr": 0.01686377573382524,
+      "rank": 5
+    }
+  ],
+  "core_candidates_count": 5,
+  "repo_fingerprint": "0668075d70f537b675e3e52af4cdc2b76cdeb855",
+  "repo_root": "/workspace/Agent-X-Lab",
+  "unknowns": {
+    "parse_failures": []
+  },
+  "wiring": {
+    "edges": [
+      {
+        "edge_type": "RUNS_SCRIPT",
+        "from_id": "88130c5cb3f9",
+        "from_path": ".github/workflows/action-pin-audit.yml",
+        "to_id": "79ac8cbe2be0",
+        "to_path": "tools/ci/action_pin_audit.py"
+      },
+      {
+        "edge_type": "RUNS_SCRIPT",
+        "from_id": "adef7ce44438",
+        "from_path": ".github/workflows/ci-dispatch.yml",
+        "to_id": "a48c1f2ad5ec",
+        "to_path": "tools/ci/dispatch_ci_for_pr.py"
+      },
+      {
+        "edge_type": "RUNS_SCRIPT",
+        "from_id": "9f58ecd05211",
+        "from_path": ".github/workflows/prod-spec-gates.yml",
+        "to_id": "d53c234440ca",
+        "to_path": "engine/scripts/check_prod_spec_gates.py"
+      },
+      {
+        "edge_type": "RUNS_SCRIPT",
+        "from_id": "acb157b43d64",
+        "from_path": ".github/workflows/python-verify.yml",
+        "to_id": "95b6f7b21fa5",
+        "to_path": "engine/tools/pip_audit_gate.py"
+      },
+      {
+        "edge_type": "RUNS_SCRIPT",
+        "from_id": "02ccd5545223",
+        "from_path": ".github/workflows/workflow-hygiene.yml",
+        "to_id": "a48ead286090",
+        "to_path": "engine/tools/verify_workflow_hygiene.py"
+      },
+      {
+        "edge_type": "RUNS_SCRIPT",
+        "from_id": "02ccd5545223",
+        "from_path": ".github/workflows/workflow-hygiene.yml",
+        "to_id": "79ac8cbe2be0",
+        "to_path": "tools/ci/action_pin_audit.py"
+      },
+      {
+        "edge_type": "RUNS_SCRIPT",
+        "from_id": "02ccd5545223",
+        "from_path": ".github/workflows/workflow-hygiene.yml",
+        "to_id": "955dae5c3467",
+        "to_path": "tools/verify_action_pinning.py"
+      },
+      {
+        "edge_type": "RUNS_SCRIPT",
+        "from_id": "76ed074a9305",
+        "from_path": "Makefile",
+        "to_id": "d53c234440ca",
+        "to_path": "engine/scripts/check_prod_spec_gates.py"
+      },
+      {
+        "edge_type": "RUNS_SCRIPT",
+        "from_id": "76ed074a9305",
+        "from_path": "Makefile",
+        "to_id": "ad8a239f2d91",
+        "to_path": "scripts/bootstrap.sh"
+      },
+      {
+        "edge_type": "RUNS_SCRIPT",
+        "from_id": "76ed074a9305",
+        "from_path": "Makefile",
+        "to_id": "9978a13b71da",
+        "to_path": "scripts/generate_manifest.py"
+      }
+    ],
+    "edges_count": 10
+  }
+}
