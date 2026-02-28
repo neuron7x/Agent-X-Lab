@@ -1,3 +1,3 @@
 + actionlint -version
-SKIPPED: command not available
+/tmp/ci_hardening_validate.sh: line 4: actionlint: command not found
 EXIT_CODE=127

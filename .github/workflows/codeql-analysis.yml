@@ -50,7 +50,7 @@ jobs:
           python-version: '3.11'
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@2f4f4f97d1e8d0f6c14a2fdbef674e7dc86d51a3 # v4.22.5
+        uses: github/codeql-action/init@89a39a4e59826350b863aa6b6252a07ad50cf83e # v4.32.4
         with:
           languages: ${{ matrix.language }}
           build-mode: none
@@ -60,6 +60,6 @@ jobs:
         run: npm ci
 
       - name: Run CodeQL Analysis
-        uses: github/codeql-action/analyze@2f4f4f97d1e8d0f6c14a2fdbef674e7dc86d51a3 # v4.22.5
+        uses: github/codeql-action/analyze@89a39a4e59826350b863aa6b6252a07ad50cf83e # v4.32.4
         with:
           category: '/language:${{ matrix.language }}'

@@ -1,24 +1,22 @@
-# Root-cause capture attempt for failing PR checks (PR #97)
+# Root-cause capture for initial failing PR checks (PR #100)
 
-## Attempted access method
-- Command: `curl -L --max-time 20 -sS https://github.com/neuron7x/Agent-X-Lab/actions/runs/22500920063/job/65187507908?pr=97`
-- Result: `curl: (56) CONNECT tunnel failed, response 403`
-- EXIT_CODE: 56
+## Decisive failure classes (from PR UI + inline review comments)
+1) CodeQL jobs (`codeql (javascript-typescript)`, `codeql (python)`): invalid `github/codeql-action` pin caused action resolution failure (`Can't find 'action.yml'` / 404 class).
+2) Workflow Hygiene (`actionlint`): reviewdog check publication failed with `Resource not accessible by integration` class due missing `checks: write` permission.
 
-- Command: `gh run view <run-id> --log`
-- Result: `bash: gh: command not found`
-- EXIT_CODE: 127
+## Implemented fixes in this patch
+- Re-pinned `github/codeql-action/{init,analyze,upload-sarif}` to `89a39a4e59826350b863aa6b6252a07ad50cf83e` (`v4.32.4`).
+- Added `checks: write` to Workflow Hygiene job permissions while keeping least privilege.
+- Completed remaining workflow SHA pinning across repository workflows in scope.
 
-## Failing jobs from PR UI screenshot
-- Аналіз CodeQL / codeql (javascript-typescript) (pull_request)
-- Аналіз CodeQL / codeql (python) (pull_request)
-- Перевірка залежностей / dependency-review (pull_request)
-- Секретне сканування (Gitleaks) / gitleaks (pull_request)
-- Гігієна робочого процесу / actionlint (pull_request)
+## Verification blocker in this execution environment
+- `gh` CLI unavailable (`command not found`).
+- Direct access to github.com Actions job page returns `CONNECT tunnel failed, response 403`.
 
-## Fail-closed blocker
-Unable to retrieve decisive CI log excerpts for each failing job due environment network restrictions to github.com and missing `gh` CLI.
+## Commands proving blocker
+- `gh --version` => EXIT_CODE=127
+- `curl -L --max-time 20 -sS https://github.com/neuron7x/Agent-X-Lab/actions/runs/22500920063/job/65187507908?pr=97` => EXIT_CODE=56
 
-## Remediation needed to proceed
-1. Provide network access to github.com Actions pages/API (or pre-exported job logs in repository artifacts).
-2. Install/authenticate `gh` CLI for deterministic `gh run view --log` retrieval.
+## Additional fail-closed blocker found during pin audit
+- `ui-perf.yml` still contains `actions/setup-node@v4` in two jobs.
+- These refs are outside this task's explicit allowed edit list, so CHK-CI-G3 cannot be promoted to PASS without scope expansion.

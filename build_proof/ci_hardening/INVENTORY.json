@@ -11,8 +11,6 @@
     ".github/workflows/workflow-hygiene.yml"
   ],
   "docs_files_modified_or_added": [
-    "README.md",
-    "docs/06_CI_AND_RELEASE.md",
     "docs/08_SECURITY_GATES.md",
     "docs/99_CHECKLIST.md"
   ],
@@ -32,6 +30,9 @@
     "build_proof/ci_hardening/outputs/06_npm_test.txt",
     "build_proof/ci_hardening/outputs/07_actionlint__version.txt",
     "build_proof/ci_hardening/outputs/08_blocker_network_and_actionlint_install.txt",
-    "build_proof/ci_hardening/outputs/09_gh_cli_check.txt"
+    "build_proof/ci_hardening/outputs/09_gh_cli_check.txt",
+    "build_proof/ci_hardening/outputs/11_postfix_uses_scan.txt",
+    "build_proof/ci_hardening/outputs/12_not_pinned_check.txt",
+    "build_proof/ci_hardening/outputs/13_ci_log_access_check.txt"
   ]
 }

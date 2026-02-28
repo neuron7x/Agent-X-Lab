@@ -1,10 +1,7 @@
-1. node --version
-2. npm --version
-3. npm ci
-4. npm run lint
-5. npm run typecheck
-6. npm test
-7. actionlint -version
-8. go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
-9. git ls-remote https://github.com/reviewdog/action-actionlint refs/tags/v1
-10. curl -L --max-time 20 -sS https://github.com/neuron7x/Agent-X-Lab/actions/runs/22500920063/job/65187507908?pr=97
+1. gh --version
+2. gh auth status
+3. rg -n '^\s*uses:\s*' .github/workflows/*.yml | sort
+4. actionlint -version
+5. curl -L --max-time 20 -sS https://github.com/neuron7x/Agent-X-Lab/actions/runs/22500920063/job/65187507908?pr=97
+6. rg -n '^\s*uses:\s*' .github/workflows/*.yml | sort > build_proof/ci_hardening/outputs/11_postfix_uses_scan.txt
+7. rg -n 'NOT_PINNED' build_proof/ci_hardening/outputs/01_action_pin_audit.txt

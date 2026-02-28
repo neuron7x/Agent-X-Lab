@@ -1,7 +1,6 @@
 + gh --version
-bash: gh: command not found
+/tmp/ci_hardening_validate.sh: line 4: gh: command not found
 EXIT_CODE=127
-
-+ gh auth status
-bash: gh: command not found
++ gh run list --limit 5
+/tmp/ci_hardening_validate.sh: line 4: gh: command not found
 EXIT_CODE=127

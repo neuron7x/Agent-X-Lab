@@ -1,33 +1,33 @@
 ## CI Security + Workflow Quality Gate Hardening Addendum
 
 ### WHAT changed
-- Added four hardened workflows: `CodeQL Analysis`, `Dependency Review`, `Secret Scan (Gitleaks)`, and `Workflow Hygiene` with explicit permissions, concurrency cancellation, workflow_dispatch, and job timeouts.
-- Corrected Workflow Hygiene action source to `reviewdog/action-actionlint`.
-- Aligned dependency and secret scanning to low-noise mode (no PR comments; output/artifact/SARIF-driven).
-- Added docs and evidence bundle under `docs/08_SECURITY_GATES.md` and `build_proof/ci_hardening/**`.
+- Corrected invalid CodeQL action pins by updating `github/codeql-action/{init,analyze,upload-sarif}` to `89a39a4e59826350b863aa6b6252a07ad50cf83e` (`v4.32.4`).
+- Added least-privilege `checks: write` permission to Workflow Hygiene so reviewdog can publish check results with `github-pr-check` reporter.
+- Completed remaining SHA pinning in scoped workflows (`ui-verify`, `ui-e2e`, `prod-spec-gates`) including `actions/setup-node` and `actions/upload-artifact` refs.
+- Regenerated action pin audit; detected two remaining unpinned refs in `.github/workflows/ui-perf.yml` (outside allowed scope for this task).
 
 ### WHY
-- Enforce deterministic, least-privilege, reproducible security gates.
-- Reduce CI noise while preserving fail-closed signals and auditable outputs.
-- Provide machine-checkable evidence mapping for reviewer verification.
+- Resolve immediate workflow boot failures caused by invalid action refs.
+- Align reviewdog reporter behavior with required GitHub Checks API permissions.
+- Enforce repository workflow supply-chain policy as far as allowed by current scope, and fail-closed when out-of-scope refs remain.
 
 ### EVIDENCE
-- Workflow definitions: `.github/workflows/{codeql-analysis.yml,dependency-review.yml,secret-scan.yml,workflow-hygiene.yml}`
-- Audit outputs: `build_proof/ci_hardening/outputs/`
+- Workflow definitions: `.github/workflows/{codeql-analysis.yml,secret-scan.yml,workflow-hygiene.yml,ui-verify.yml,ui-e2e.yml,prod-spec-gates.yml}`
+- Pin audit outputs:
+  - `build_proof/ci_hardening/outputs/01_action_pin_audit.txt`
+  - `build_proof/ci_hardening/outputs/12_not_pinned_check.txt` (shows remaining NOT_PINNED refs)
+- Initial failure classes and blocker capture:
+  - `build_proof/ci_hardening/outputs/00_ci_failures_root_cause.txt`
+  - `build_proof/ci_hardening/outputs/09_gh_cli_check.txt`
+  - `build_proof/ci_hardening/outputs/13_ci_log_access_check.txt`
 - CI links:
   - https://github.com/neuron7x/Agent-X-Lab/actions/runs/22500920063/job/65187507908?pr=97
   - https://github.com/neuron7x/Agent-X-Lab/actions/runs/22500920069/job/65187507974?pr=97
 
 ### SCOPE confirmation
-- Changed only workflow, documentation, and evidence files.
-- No edits under forbidden runtime/source paths.
-
+- Changed only workflow/docs/evidence files within allowed scope.
+- No runtime source changes.
 
 ### CURRENT STATUS (FAIL-CLOSED)
-- BLOCKED: Required GitHub Actions job-log retrieval and rerun verification could not be executed in this environment due network restrictions (`CONNECT tunnel failed, response 403`) and missing `gh` CLI.
-- BLOCKED: Local actionlint installation attempt failed because Go module fetch from `proxy.golang.org` is forbidden.
-
-### REMEDIATION
-1. Run this branch in an environment with github.com/API access (or provide exported failing job logs in-repo).
-2. Install/authenticate `gh` and collect `gh run view --log` excerpts for each failing job.
-3. Install `actionlint` (prebuilt binary or allow Go module fetch) and rerun CHK-CI-G6B evidence command.
+- CI pass-state verification is still blocked in this execution environment because `gh` CLI is unavailable and github.com Actions log access returns HTTP CONNECT 403.
+- Therefore checklist items requiring direct CI run-state proof remain FAIL until run logs can be queried from an environment with GitHub access.

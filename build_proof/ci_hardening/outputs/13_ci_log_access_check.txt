@@ -1,0 +1,3 @@
+curl: (56) CONNECT tunnel failed, response 403
++ curl -L --max-time 20 -sS https://github.com/neuron7x/Agent-X-Lab/actions/runs/22500920063/job/65187507908?pr=97
+EXIT_CODE=56
