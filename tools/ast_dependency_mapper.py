@@ -20,6 +20,9 @@ from pathlib import Path
 from typing import Any
 
 
+sys.setrecursionlimit(max(5000, sys.getrecursionlimit()))
+
+
 EXCLUDED_TOP_LEVEL = {".git", "node_modules", "build_proof", "evidence", "archive", "dist"}
 
 
@@ -28,7 +31,11 @@ def log(msg: str) -> None:
 
 
 def run_cmd(cmd: list[str], cwd: Path) -> tuple[int, str, str]:
-    proc = subprocess.run(cmd, cwd=str(cwd), capture_output=True, text=True)
+    try:
+        proc = subprocess.run(cmd, cwd=str(cwd), capture_output=True, text=True, check=False)
+    except FileNotFoundError as e:
+        log(f"[WARN] Binary not found: {cmd[0]} - {e}")
+        return 127, "", str(e)
     return proc.returncode, proc.stdout, proc.stderr
 
 
@@ -130,7 +137,6 @@ def extract_import_edges(
     tree: ast.AST,
     rel: str,
     module_index: dict[str, set[str]],
-    primary_module_for_file: dict[str, str],
 ) -> tuple[list[str], list[str]]:
     imports: set[str] = set()
     edges: set[str] = set()
@@ -208,25 +214,33 @@ def extract_interface_inputs(tree: ast.AST) -> list[dict[str, Any]]:
     for node in ast.walk(tree):
         if isinstance(node, ast.FunctionDef):
             for dec in node.decorator_list:
-                if isinstance(dec, ast.Call) and isinstance(dec.func, ast.Attribute):
+                if not isinstance(dec, ast.Call):
+                    continue
+                func_id = None
+                if isinstance(dec.func, ast.Name):
+                    func_id = dec.func.id
+                elif isinstance(dec.func, ast.Attribute):
                     if isinstance(dec.func.value, ast.Name) and dec.func.value.id == "click":
-                        if dec.func.attr in {"option", "argument"}:
-                            args = [literal(a) for a in dec.args if isinstance(literal(a), str)]
-                            default = None
-                            required = None
-                            for kw in dec.keywords:
-                                if kw.arg == "default":
-                                    default = literal(kw.value)
-                                if kw.arg == "required":
-                                    required = bool(literal(kw.value))
-                            inputs.append(
-                                {
-                                    "source": f"click.{dec.func.attr}",
-                                    "flags": args,
-                                    "required": required,
-                                    "default": default,
-                                }
-                            )
+                        func_id = dec.func.attr
+                if func_id not in {"option", "argument"}:
+                    continue
+
+                args = [literal(a) for a in dec.args if isinstance(literal(a), str)]
+                default = None
+                required = None
+                for kw in dec.keywords:
+                    if kw.arg == "default":
+                        default = literal(kw.value)
+                    if kw.arg == "required":
+                        required = bool(literal(kw.value))
+                inputs.append(
+                    {
+                        "source": f"click.{func_id}",
+                        "flags": args,
+                        "required": required,
+                        "default": default,
+                    }
+                )
     dedup = []
     seen = set()
     for item in inputs:
@@ -274,21 +288,31 @@ def blame_stats(repo_root: Path, rel: str) -> dict[str, Any]:
     }
 
 
-def find_invocations(repo_root: Path, rel: str) -> list[str]:
-    fname = Path(rel).name
-    code, out, _ = run_cmd(["rg", "-n", "--fixed-strings", fname, str(repo_root)], repo_root)
-    if code not in (0, 1):
-        return []
-    hits: list[str] = []
-    for line in out.splitlines():
-        if not line.strip():
+def build_invocation_index(repo_root: Path, py_files: list[Path]) -> dict[str, list[str]]:
+    tracked_filenames = {p.name for p in py_files}
+    index: dict[str, list[str]] = defaultdict(list)
+    text_suffixes = {".py", ".md", ".txt", ".json", ".yaml", ".yml", ".toml", ".ini", ".cfg", ".sh"}
+
+    for path in repo_root.rglob("*"):
+        if not path.is_file():
             continue
-        normalized = line.replace(str(repo_root) + "/", "")
-        first = normalized.split(":", 1)[0].split("/", 1)[0]
-        if first in EXCLUDED_TOP_LEVEL:
+        rel = path.relative_to(repo_root).as_posix()
+        top = rel.split("/", 1)[0]
+        if top in EXCLUDED_TOP_LEVEL:
             continue
-        hits.append(normalized)
-    return hits[:50]
+        if path.suffix and path.suffix.lower() not in text_suffixes:
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, OSError):
+            continue
+        for lineno, line in enumerate(text.splitlines(), start=1):
+            for fname in tracked_filenames:
+                if fname in line:
+                    index[fname].append(f"{rel}:{lineno}:{line.strip()}")
+    for fname in list(index.keys()):
+        index[fname] = index[fname][:50]
+    return index
 
 
 def pagerank(nodes: list[str], edges: list[tuple[str, str]], d: float = 0.85, iterations: int = 50) -> dict[str, float]:
@@ -326,7 +350,8 @@ def main() -> int:
     py_files = discover_python_files(repo_root)
     log(f"[phase1] python_files={len(py_files)}")
 
-    module_index, primary_mod = build_module_index(repo_root, py_files)
+    module_index, _ = build_module_index(repo_root, py_files)
+    invocation_index = build_invocation_index(repo_root, py_files)
 
     agents: list[dict[str, Any]] = []
     edges: set[tuple[str, str]] = set()
@@ -339,11 +364,11 @@ def main() -> int:
             log(json.dumps({"state": "BLOCKED", "file": rel, "error": err}, ensure_ascii=False))
             continue
 
-        imports, depends_on_paths = extract_import_edges(tree, rel, module_index, primary_mod)
+        imports, depends_on_paths = extract_import_edges(tree, rel, module_index)
         interface_inputs = extract_interface_inputs(tree)
         role = classify_role(rel, imports, interface_inputs)
         name = reconstruct_name(rel, tree)
-        invocations = find_invocations(repo_root, rel)
+        invocations = invocation_index.get(Path(rel).name, [])
         evolution = blame_stats(repo_root, rel)
 
         for dep in depends_on_paths:
@@ -427,7 +452,7 @@ def main() -> int:
             "cmdlog_refs": [
                 "git ls-files -z",
                 "git blame --line-porcelain <path>",
-                "rg -n --fixed-strings <filename> <repo_root>",
+                "python-text-scan:<repo_root>/* (single-pass invocation index)",
             ],
         }
     )
