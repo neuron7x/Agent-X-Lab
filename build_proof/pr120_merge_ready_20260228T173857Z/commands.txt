@@ -1,0 +1,12 @@
+uname -a > build_proof/pr120_merge_ready_20260228T173857Z/outputs/env.txt
+python --version >> build_proof/pr120_merge_ready_20260228T173857Z/outputs/env.txt 2>&1 || true
+python -m pip --version >> build_proof/pr120_merge_ready_20260228T173857Z/outputs/env.txt 2>&1 || true
+git rev-parse HEAD >> build_proof/pr120_merge_ready_20260228T173857Z/outputs/env.txt
+git status --porcelain >> build_proof/pr120_merge_ready_20260228T173857Z/outputs/env.txt
+{ grep -n '>> "\$GITHUB_ENV"' .github/workflows/python-verify.yml || true; echo; nl -ba .github/workflows/python-verify.yml | sed -n '1,140p'; } > build_proof/pr120_merge_ready_20260228T173857Z/outputs/python_verify_scan.txt
+python edit .github/workflows/workflow-hygiene.yml
+nl -ba .github/workflows/workflow-hygiene.yml | sed -n '128,170p' > build_proof/pr120_merge_ready_20260228T173857Z/outputs/workflow_hygiene_actionlint_step.txt
+python tools/verify_action_pinning.py --workflows .github/workflows > build_proof/pr120_merge_ready_20260228T173857Z/outputs/verify_action_pinning.txt 2>&1
+python tools/verify_workflow_hygiene.py --workflows .github/workflows > build_proof/pr120_merge_ready_20260228T173857Z/outputs/verify_workflow_hygiene.txt 2>&1
+git diff > build_proof/pr120_merge_ready_20260228T173857Z/patches/final.patch
+git add .github/workflows/workflow-hygiene.yml .github/workflows/python-verify.yml build_proof/pr120_merge_ready_20260228T173857Z

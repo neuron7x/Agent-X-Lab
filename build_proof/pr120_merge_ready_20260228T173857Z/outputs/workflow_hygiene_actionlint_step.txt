@@ -1,0 +1,18 @@
+   128	        run: |
+   129	          set -euo pipefail
+   130	          python -m pip --version
+   131	          python -m pip install pyyaml==6.0.2
+   132	      - name: Verify action pinning tool
+   133	        run: |
+   134	          set -euo pipefail
+   135	          python tools/verify_action_pinning.py --workflows .github/workflows
+   136	      - name: Verify workflow hygiene tool
+   137	        run: |
+   138	          set -euo pipefail
+   139	          python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows
+   140	      - name: Run actionlint
+   141	        uses: devops-actions/actionlint@469810fd82c015d3c43815cd2b0e4d02eecc4819 # v0.1.11
+   142	        with:
+   143	          files: .github/workflows/*.yml
+   144	          flags: -color -oneline
+   145	          version: 1.7.11
