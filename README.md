@@ -29,6 +29,18 @@ make test
 - Protected endpoints also require `VITE_AXL_API_KEY` in UI env and `AXL_API_KEY` in Worker secrets.
 - See `.env.example` and `workers/axl-bff/wrangler.toml` comments for setup.
 
+## Pull Request Quality Gates (GitHub)
+
+Branch protection should require these exact workflow names:
+- `CodeQL Analysis`
+- `Dependency Review`
+- `Secret Scan (Gitleaks)`
+- `Workflow Hygiene`
+- `UI Verify`
+- `UI E2E (Playwright)`
+- `UI Performance + Bundle Budgets`
+- `PROD_SPEC_V2.1 Gate Check (RRD)`
+
 ## Documentation
 
 Start at:

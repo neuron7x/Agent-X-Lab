@@ -1,0 +1,100 @@
++ npm test
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> axl-ui@1.3.0-qa8 test
+> vitest run
+
+
+ RUN  v3.2.4 /workspace/Agent-X-Lab
+
+ ✓ src/test/filters.test.ts > useEvidenceFilter > returns all entries with default filters 13ms
+ ✓ src/test/filters.test.ts > useEvidenceFilter > filters by PASS status 4ms
+ ✓ src/test/filters.test.ts > useEvidenceFilter > filters by FAIL status 3ms
+ ✓ src/test/filters.test.ts > useEvidenceFilter > filters by UNKNOWN status 3ms
+ ✓ src/test/filters.test.ts > useEvidenceFilter > UNKNOWN filter also includes ASSUMED evidence status 3ms
+ ✓ src/test/filters.test.ts > useEvidenceFilter > searches by type 2ms
+ ✓ src/test/filters.test.ts > useEvidenceFilter > searches by sha prefix 2ms
+ ✓ src/test/filters.test.ts > useEvidenceFilter > searches by message 2ms
+ ✓ src/test/filters.test.ts > useEvidenceFilter > time window 1h excludes old entries 3ms
+ ✓ src/test/filters.test.ts > useEvidenceFilter > combined filter: PASS + search "lint" 2ms
+ ✓ src/test/filters.test.ts > useEvidenceFilter > counts are correct 2ms
+ ✓ src/test/filters.test.ts > useEvidenceFilter > returns empty array when no matches 2ms
+ ✓ src/test/filters.test.ts > useArsenalSearch > returns all items with default filters 2ms
+ ✓ src/test/filters.test.ts > useArsenalSearch > filters by role 2ms
+ ✓ src/test/filters.test.ts > useArsenalSearch > filters by category 12ms
+ ✓ src/test/filters.test.ts > useArsenalSearch > searches by title 1ms
+ ✓ src/test/filters.test.ts > useArsenalSearch > searches by tag 1ms
+ ✓ src/test/filters.test.ts > useArsenalSearch > combined role + search 1ms
+ ✓ src/test/filters.test.ts > useArsenalSearch > exposes unique roles list 1ms
+ ✓ src/test/filters.test.ts > useArsenalSearch > exposes unique categories list 1ms
+ ✓ src/test/filters.test.ts > getActionGateStatus > returns ALLOWED when API key is set 0ms
+ ✓ src/test/filters.test.ts > getActionGateStatus > returns DEV_BYPASS in dev mode without key 0ms
+ ✓ src/test/filters.test.ts > getActionGateStatus > status is consistent across calls 0ms
+ ✓ src/test/example.test.ts > mapJobToGateStatus > returns PASS for success conclusion 1ms
+ ✓ src/test/example.test.ts > mapJobToGateStatus > returns FAIL for failure conclusion 0ms
+ ✓ src/test/example.test.ts > mapJobToGateStatus > returns FAIL for cancelled conclusion 0ms
+ ✓ src/test/example.test.ts > mapJobToGateStatus > returns FAIL for timed_out conclusion 0ms
+ ✓ src/test/example.test.ts > mapJobToGateStatus > returns FAIL for action_required conclusion 0ms
+ ✓ src/test/example.test.ts > mapJobToGateStatus > returns RUNNING for in_progress status 0ms
+ ✓ src/test/example.test.ts > mapJobToGateStatus > returns RUNNING for queued status 0ms
+ ✓ src/test/example.test.ts > mapJobToGateStatus > returns PENDING for null job 0ms
+ ✓ src/test/example.test.ts > mapJobToGateStatus > returns PENDING for neutral/skipped conclusion 1ms
+ ✓ src/test/example.test.ts > jobElapsed > returns "—" for null job 0ms
+ ✓ src/test/example.test.ts > jobElapsed > returns "—" when started_at or completed_at is null 0ms
+ ✓ src/test/example.test.ts > jobElapsed > formats <60s correctly 0ms
+ ✓ src/test/example.test.ts > jobElapsed > formats >=60s correctly 0ms
+ ✓ src/test/example.test.ts > jobElapsed > formats exactly 60s 0ms
+ ✓ src/test/example.test.ts > jobElapsed > returns "—" for invalid timestamps 0ms
+ ✓ src/test/example.test.ts > parseEvidenceLines > parses valid JSONL lines 1ms
+ ✓ src/test/example.test.ts > parseEvidenceLines > ignores empty lines 0ms
+ ✓ src/test/example.test.ts > parseEvidenceLines > counts malformed lines as parseFailures 0ms
+ ✓ src/test/example.test.ts > parseEvidenceLines > limits to 30 entries 1ms
+ ✓ src/test/example.test.ts > parseEvidenceLines > maps exit=0 to PASS, exit!=0 to FAIL 0ms
+ ✓ src/test/example.test.ts > parseEvidenceLines > maps missing exit and status to ASSUMED 0ms
+ ✓ src/test/example.test.ts > i18n completeness > UA and EN have identical key sets 18ms
+ ✓ src/lib/api.forge.test.ts > forgeStream endpoint routing > forgeStream calls /ai/forge by default 19ms
+ ✓ src/lib/api.forge.test.ts > forgeStream endpoint routing > forgeStream accepts custom endpoint override → /ai/forge/n8n 12ms
+ ✓ src/lib/api.forge.test.ts > forgeStream endpoint routing > forgeStreamGPT calls /ai/forge/gpt 12ms
+ ✓ src/lib/api.forge.test.ts > forgeStream endpoint routing > forgeStreamN8n routes to /ai/forge/n8n 11ms
+ ✓ src/lib/api.forge.test.ts > parseResponse + Zod schemas > parses valid VRData 5ms
+ ✓ src/lib/api.forge.test.ts > parseResponse + Zod schemas > throws AXLApiError on HTTP 401 3ms
+ ✓ src/lib/api.forge.test.ts > parseResponse + Zod schemas > throws AXLApiError on HTTP 429 with retryAfter 1ms
+ ✓ src/lib/api.forge.test.ts > parseResponse + Zod schemas > throws VALIDATION_ERROR on schema mismatch 1ms
+ ✓ src/lib/api.forge.test.ts > parseResponse + Zod schemas > passthrough fields preserved 1ms
+ ✓ src/lib/api.forge.test.ts > AXLApiError.fromResponse > status 401 → code UNAUTHORIZED 0ms
+ ✓ src/lib/api.forge.test.ts > AXLApiError.fromResponse > status 403 → code UNAUTHORIZED 0ms
+ ✓ src/lib/api.forge.test.ts > AXLApiError.fromResponse > status 404 → code NOT_FOUND 0ms
+ ✓ src/lib/api.forge.test.ts > AXLApiError.fromResponse > status 500 → code SERVER_ERROR 0ms
+ ✓ src/lib/api.forge.test.ts > AXLApiError.fromResponse > status 503 → code SERVER_ERROR 0ms
+ ✓ src/test/analyze-bundle.test.ts > analyzeBundle > classifies entry and non-entry files from manifest and writes evidence 16ms
+ ✓ src/test/analyze-bundle.test.ts > analyzeBundle > flags violations when chunk exceeds budget 89ms
+ ✓ src/test/analyze-bundle.test.ts > analyzeBundle > executes CLI entrypoint and writes bundle evidence 100ms
+ ✓ src/test/a11y.test.tsx > Accessibility (axe-core WCAG 2.2 AA) > SkeletonPanel has no critical axe violations 93ms
+ ✓ src/test/a11y.test.tsx > Accessibility (axe-core WCAG 2.2 AA) > ForgeScreen has no critical axe violations 103ms
+ ✓ src/test/a11y.test.tsx > Accessibility (axe-core WCAG 2.2 AA) > CommandPalette has no critical axe violations 115ms
+ ✓ src/test/a11y.test.tsx > WCAG structure invariants > ForgeScreen buttons have accessible names 21ms
+ ✓ src/test/a11y.test.tsx > WCAG structure invariants > ForgeScreen has textbox for user input 11ms
+ ✓ src/test/a11y.test.tsx > WCAG structure invariants > CommandPalette has dialog role 12ms
+ ✓ src/test/a11y.test.tsx > WCAG structure invariants > CommandPalette dialog has aria-label 15ms
+ ✓ src/modules/routes.test.tsx > route containers > renders status route container 29ms
+ ✓ src/modules/routes.test.tsx > route containers > renders pipeline route container 3ms
+ ✓ src/modules/routes.test.tsx > route containers > renders evidence route container 3ms
+ ✓ src/modules/routes.test.tsx > route containers > renders arsenal route container 2ms
+ ✓ src/modules/routes.test.tsx > route containers > renders settings route container 3ms
+ ✓ src/modules/routes.test.tsx > route containers > renders app shell landmarks and skip link 54ms
+ ✓ src/components/shell/CommandPalette.test.tsx > CommandPalette > renders and has dialog role 109ms
+ ✓ src/components/shell/CommandPalette.test.tsx > CommandPalette > has aria-label for accessibility 15ms
+ ✓ src/components/shell/CommandPalette.test.tsx > CommandPalette > closes on Escape key 12ms
+ ✓ src/components/shell/CommandPalette.test.tsx > CommandPalette > closes on backdrop click 12ms
+ ✓ src/components/shell/CommandPalette.test.tsx > CommandPalette > renders cmdk listbox container 23ms
+ ✓ src/components/shell/CommandPalette.test.tsx > CommandPalette > has input with placeholder 23ms
+ ✓ src/components/shell/CommandPalette.test.tsx > CommandPalette > shows keyboard hint footer 10ms
+ ✓ src/lib/api.dispatch.test.ts > dispatchRunEngine auth header > sends X-AXL-Api-Key for /dispatch/run-engine 8ms
+
+ Test Files  8 passed (8)
+      Tests  83 passed (83)
+   Start at  01:41:47
+   Duration  9.06s (transform 511ms, setup 479ms, collect 1.62s, tests 1.05s, environment 3.04s, prepare 755ms)
+
+JSON report written to /workspace/Agent-X-Lab/dist/EVD-UI-TESTS.json
+EXIT_CODE=0

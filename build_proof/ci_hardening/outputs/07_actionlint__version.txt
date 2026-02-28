@@ -1,0 +1,3 @@
++ actionlint -version
+SKIPPED: command not available
+EXIT_CODE=127

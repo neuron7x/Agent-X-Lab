@@ -1,0 +1,34 @@
+{
+  "workflows": [
+    ".github/workflows/codeql-analysis.yml",
+    ".github/workflows/dependency-review.yml",
+    ".github/workflows/prod-spec-gates.yml",
+    ".github/workflows/run-engine-dispatch.yml",
+    ".github/workflows/secret-scan.yml",
+    ".github/workflows/ui-e2e.yml",
+    ".github/workflows/ui-perf.yml",
+    ".github/workflows/ui-verify.yml",
+    ".github/workflows/workflow-hygiene.yml"
+  ],
+  "docs_files_modified_or_added": [
+    "README.md",
+    "docs/06_CI_AND_RELEASE.md",
+    "docs/08_SECURITY_GATES.md",
+    "docs/99_CHECKLIST.md"
+  ],
+  "evidence_bundle_files_added_or_modified": [
+    "build_proof/ci_hardening/INVENTORY.json",
+    "build_proof/ci_hardening/PROMPT_SUMMARY_UA_100_WORDS.md",
+    "build_proof/ci_hardening/PR_DESCRIPTION_ADDENDUM.md",
+    "build_proof/ci_hardening/ci_links.txt",
+    "build_proof/ci_hardening/commands.txt",
+    "build_proof/ci_hardening/outputs/01_action_pin_audit.txt",
+    "build_proof/ci_hardening/outputs/01_node___version.txt",
+    "build_proof/ci_hardening/outputs/02_npm___version.txt",
+    "build_proof/ci_hardening/outputs/03_npm_ci.txt",
+    "build_proof/ci_hardening/outputs/04_npm_run_lint.txt",
+    "build_proof/ci_hardening/outputs/05_npm_run_typecheck.txt",
+    "build_proof/ci_hardening/outputs/06_npm_test.txt",
+    "build_proof/ci_hardening/outputs/07_actionlint__version.txt"
+  ]
+}

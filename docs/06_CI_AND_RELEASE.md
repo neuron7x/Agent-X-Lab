@@ -31,3 +31,8 @@ EVIDENCE: .github/workflows/ui-verify.yml:L46-L53
 - E2E JSON + HTML report: `dist/EVD-UI-E2E.json`, `playwright-report/`.
 EVIDENCE: playwright.config.ts:L11-L13
 EVIDENCE: .github/workflows/ui-e2e.yml:L44-L58
+
+
+## 6.5 Security/quality gate hardening {#security-gates-hardening}
+Security-gate policy, correctness, and low-noise defaults are documented in `docs/08_SECURITY_GATES.md`.
+EVIDENCE: docs/08_SECURITY_GATES.md:L1-L33

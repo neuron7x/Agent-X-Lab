@@ -1,0 +1,7 @@
+1. node --version
+2. npm --version
+3. npm ci
+4. npm run lint
+5. npm run typecheck
+6. npm test
+7. actionlint -version

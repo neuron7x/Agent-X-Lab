@@ -1,0 +1,26 @@
+# Action Pin Audit
+
+SHA_PINNED | .github/workflows/codeql-analysis.yml:37:        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+SHA_PINNED | .github/workflows/codeql-analysis.yml:41:        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+SHA_PINNED | .github/workflows/codeql-analysis.yml:48:        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
+SHA_PINNED | .github/workflows/codeql-analysis.yml:53:        uses: github/codeql-action/init@2f4f4f97d1e8d0f6c14a2fdbef674e7dc86d51a3 # v4.22.5
+SHA_PINNED | .github/workflows/codeql-analysis.yml:63:        uses: github/codeql-action/analyze@2f4f4f97d1e8d0f6c14a2fdbef674e7dc86d51a3 # v4.22.5
+SHA_PINNED | .github/workflows/dependency-review.yml:25:        uses: actions/dependency-review-action@9b1a7f45f3e5d1f839bafb9f2ee58b24dfcf8b2d # v4.3.5
+NOT_PINNED | .github/workflows/prod-spec-gates.yml:188:        uses: actions/upload-artifact@v4
+SHA_PINNED | .github/workflows/run-engine-dispatch.yml:172:        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+SHA_PINNED | .github/workflows/run-engine-dispatch.yml:48:        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+SHA_PINNED | .github/workflows/run-engine-dispatch.yml:55:        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
+SHA_PINNED | .github/workflows/secret-scan.yml:30:        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+SHA_PINNED | .github/workflows/secret-scan.yml:34:        uses: gitleaks/gitleaks-action@b0f320ce5e5370a97f4cde6f0f08f442a5f2e0d1 # v2.3.6
+SHA_PINNED | .github/workflows/secret-scan.yml:41:        uses: github/codeql-action/upload-sarif@2f4f4f97d1e8d0f6c14a2fdbef674e7dc86d51a3 # v4.22.5
+SHA_PINNED | .github/workflows/secret-scan.yml:47:        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.6.0
+NOT_PINNED | .github/workflows/ui-e2e.yml:46:        uses: actions/upload-artifact@v4
+NOT_PINNED | .github/workflows/ui-e2e.yml:54:        uses: actions/upload-artifact@v4
+SHA_PINNED | .github/workflows/ui-perf.yml:35:        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+SHA_PINNED | .github/workflows/ui-perf.yml:72:        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+SHA_PINNED | .github/workflows/ui-verify.yml:21:        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+NOT_PINNED | .github/workflows/ui-verify.yml:24:        uses: actions/setup-node@v4
+NOT_PINNED | .github/workflows/ui-verify.yml:48:        uses: actions/upload-artifact@v4
+NOT_PINNED | .github/workflows/ui-verify.yml:65:        uses: actions/upload-artifact@v4
+SHA_PINNED | .github/workflows/workflow-hygiene.yml:29:        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+SHA_PINNED | .github/workflows/workflow-hygiene.yml:32:        uses: reviewdog/action-actionlint@c5f8846e0cf154140a390f389ec69a56495bb8de # v1.58.0
