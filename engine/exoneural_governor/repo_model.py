@@ -32,6 +32,10 @@ class Edge:
     edge_type: str
 
 
+def generate_id(rel_path: str) -> str:
+    return hashlib.sha256(rel_path.encode("utf-8")).hexdigest()[:12]
+
+
 def log(msg: str) -> None:
     print(msg, file=sys.stderr)
 
@@ -304,9 +308,9 @@ def parse_yaml_file(path: Path) -> Any:
         return None
 
 
-def polyglot_edges(repo_root: Path) -> tuple[set[str], set[Edge]]:
+def polyglot_edges(repo_root: Path) -> tuple[set[str], set[tuple[str, str, str]]]:
     agents: set[str] = set()
-    edges: set[Edge] = set()
+    edges: set[tuple[str, str, str]] = set()
     patterns = [repo_root / ".github/workflows", repo_root / ".github/actions"]
     yml_files: list[Path] = []
     for base in patterns:
@@ -331,13 +335,13 @@ def polyglot_edges(repo_root: Path) -> tuple[set[str], set[Edge]]:
                         tgt_rel = action_yml.relative_to(repo_root).as_posix()
                         agents.add(tgt_rel)
                         edge_type = "USES_LOCAL_ACTION" if "/workflows/" in rel else "USES_ACTION_IN_ACTION"
-                        edges.add(Edge(rel, tgt_rel, edge_type))
+                        edges.add((rel, tgt_rel, edge_type))
                 elif uses.startswith(".github/actions/"):
                     action_yml = (repo_root / uses / "action.yml").resolve()
                     if action_yml.exists():
                         tgt_rel = action_yml.relative_to(repo_root).as_posix()
                         agents.add(tgt_rel)
-                        edges.add(Edge(rel, tgt_rel, "USES_LOCAL_ACTION"))
+                        edges.add((rel, tgt_rel, "USES_LOCAL_ACTION"))
             run = step.get("run")
             if isinstance(run, str):
                 for target in extract_run_script_targets(run):
@@ -345,7 +349,7 @@ def polyglot_edges(repo_root: Path) -> tuple[set[str], set[Edge]]:
                     if t.exists():
                         tgt_rel = t.relative_to(repo_root).as_posix()
                         agents.add(tgt_rel)
-                        edges.add(Edge(rel, tgt_rel, "RUNS_SCRIPT"))
+                        edges.add((rel, tgt_rel, "RUNS_SCRIPT"))
 
     return agents, edges
 
@@ -474,22 +478,28 @@ def generate_repo_model(repo_root: Path) -> dict[str, Any]:
     owners = batch_git_ownership(repo_root)
     invocations = build_invocation_index_rg(repo_root, [p.name for p in py_files])
 
-    agents: list[dict[str, Any]] = []
-    agent_ids: set[str] = set()
-    edges: set[Edge] = set()
+    path_to_id: dict[str, str] = {}
+    for path in py_files:
+        rel = path.relative_to(repo_root).as_posix()
+        path_to_id[rel] = generate_id(rel)
+
+    py_agents: dict[str, dict[str, Any]] = {}
+    path_edges: set[tuple[str, str, str]] = set()
     unknowns: list[dict[str, Any]] = []
 
     for path in py_files:
         rel = path.relative_to(repo_root).as_posix()
         tree, err = parse_file(path)
         if err or tree is None:
-            unknowns.append({"type": "BLOCKED_AST_PARSE", "agent_id": rel, "error": err})
+            unknowns.append({"type": "BLOCKED_AST_PARSE", "path": rel, "error": err})
             continue
         imports, deps = extract_import_edges(tree, rel, module_index)
         iface = extract_interface_inputs(tree)
-        name = (ast.get_docstring(tree) or "").strip().splitlines()[0] if ast.get_docstring(tree) else path.stem.replace("_", " ").title()
-        agent = {
-            "agent_id": rel,
+        doc = ast.get_docstring(tree)
+        name = doc.strip().splitlines()[0] if doc else path.stem.replace("_", " ").title()
+        py_agents[rel] = {
+            "agent_id": path_to_id[rel],
+            "path": rel,
             "name": name,
             "role": classify_role(rel, imports, iface),
             "interface": {"inputs": iface, "invocation": invocations.get(path.name, [])},
@@ -497,30 +507,67 @@ def generate_repo_model(repo_root: Path) -> dict[str, Any]:
             "imports": imports,
             "evolution": owners.get(rel, {"bus_factor": 0, "primary_maintainer": None, "line_ownership": {}}),
         }
-        agents.append(agent)
-        agent_ids.add(rel)
         for dep in deps:
-            edges.add(Edge(rel, dep, "IMPORTS"))
+            path_edges.add((rel, dep, "IMPORTS"))
 
-    extra_agents, poly_edges = polyglot_edges(repo_root)
-    for aid in sorted(extra_agents):
-        if aid in agent_ids:
+    poly_paths, poly_path_edges = polyglot_edges(repo_root)
+    path_edges.update(poly_path_edges)
+
+    all_paths = set(py_agents.keys()) | set(poly_paths)
+    for src, dst, _ in path_edges:
+        all_paths.add(src)
+        all_paths.add(dst)
+    for rel in sorted(all_paths):
+        path_to_id.setdefault(rel, generate_id(rel))
+
+    agents: list[dict[str, Any]] = list(py_agents.values())
+    for rel in sorted(all_paths):
+        if rel in py_agents:
             continue
-        agents.append({"agent_id": aid, "name": Path(aid).name, "role": "ORCHESTRATOR", "interface": {"inputs": [], "invocation": []}, "depends_on_paths": [], "imports": [], "evolution": {"bus_factor": 0, "primary_maintainer": None, "line_ownership": {}}})
-        agent_ids.add(aid)
-    edges.update(poly_edges)
+        agents.append(
+            {
+                "agent_id": path_to_id[rel],
+                "path": rel,
+                "name": Path(rel).name,
+                "role": "ORCHESTRATOR" if rel.endswith((".yml", ".yaml")) else "TRANSFORMER",
+                "interface": {"inputs": [], "invocation": []},
+                "depends_on_paths": [],
+                "imports": [],
+                "evolution": {"bus_factor": 0, "primary_maintainer": None, "line_ownership": {}},
+            }
+        )
 
+    agent_ids = {a["agent_id"] for a in agents}
     verified_edges: list[dict[str, str]] = []
-    for e in sorted(edges, key=lambda x: (x.source, x.target, x.edge_type)):
-        if e.source in agent_ids and e.target in agent_ids:
-            verified_edges.append({"from": e.source, "to": e.target, "type": e.edge_type})
-        else:
-            unknowns.append({"type": "CRITICAL_LINK_ERROR", "from": e.source, "to": e.target, "edge_type": e.edge_type})
+    directed_edges: list[tuple[str, str]] = []
 
-    simple_edges = [(e["from"], e["to"]) for e in verified_edges]
+    for src_path, dst_path, edge_type in sorted(path_edges):
+        src_id = path_to_id.get(src_path)
+        dst_id = path_to_id.get(dst_path)
+        if src_id and dst_id and src_id in agent_ids and dst_id in agent_ids:
+            verified_edges.append(
+                {
+                    "source": src_id,
+                    "target": dst_id,
+                    "type": edge_type,
+                    "source_path": src_path,
+                    "target_path": dst_path,
+                }
+            )
+            directed_edges.append((src_id, dst_id))
+        else:
+            unknowns.append(
+                {
+                    "type": "CRITICAL_LINK_ERROR",
+                    "source_path": src_path,
+                    "target_path": dst_path,
+                    "edge_type": edge_type,
+                }
+            )
+
     nodes = sorted(agent_ids)
-    pr = pagerank(nodes, simple_edges)
-    bc = betweenness_centrality_brandes(nodes, simple_edges)
+    pr = pagerank(nodes, directed_edges)
+    bc = betweenness_centrality_brandes(nodes, directed_edges)
     max_pr = max(pr.values()) if pr else 1.0
     max_bc = max(bc.values()) if bc else 1.0
     max_pr = max_pr if max_pr > 0 else 1.0
@@ -531,12 +578,19 @@ def generate_repo_model(repo_root: Path) -> dict[str, Any]:
         pr_norm = pr.get(n, 0.0) / max_pr
         bc_norm = bc.get(n, 0.0) / max_bc
         core_score = 0.6 * pr_norm + 0.4 * bc_norm
-        core_candidates.append({"agent_id": n, "core_score": round(core_score, 12), "pr_norm": round(pr_norm, 12), "bc_norm": round(bc_norm, 12)})
+        core_candidates.append(
+            {
+                "agent_id": n,
+                "core_score": round(core_score, 12),
+                "pr_norm": round(pr_norm, 12),
+                "bc_norm": round(bc_norm, 12),
+            }
+        )
     core_candidates.sort(key=lambda x: (-x["core_score"], -x["pr_norm"], -x["bc_norm"], x["agent_id"]))
 
-    for comp in tarjan_scc(nodes, simple_edges):
+    for comp in tarjan_scc(nodes, directed_edges):
         if len(comp) > 1:
-            unknowns.append({"type": "ARCHITECTURAL_CYCLE_DETECTED", "nodes": comp})
+            unknowns.append({"type": "ARCHITECTURAL_CYCLE_DETECTED", "agent_ids": comp})
             log(f"[WARN] Cycle detected: {' -> '.join(comp)}")
 
     fp_after = compute_repo_fingerprint(repo_root)
