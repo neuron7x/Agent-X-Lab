@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import hashlib
+import io
 import json
 import os
 import pathlib
@@ -12,6 +13,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import zipfile
 
 API_ROOT = "https://api.github.com"
 WORKFLOW_FILE = "ci-dispatch.yml"
@@ -47,7 +49,7 @@ def _request(repo: str, token: str, method: str, endpoint: str, payload: dict | 
         "Accept": "application/vnd.github+json",
         "User-Agent": "axl-trigger-ci-dispatch",
     }
-    body = json.dumps(payload).encode("utf-8") if payload is not None else None
+    body = json.dumps(payload, sort_keys=True).encode("utf-8") if payload is not None else None
 
     backoff = 1
     for attempt in range(1, 8):
@@ -72,6 +74,17 @@ def _request(repo: str, token: str, method: str, endpoint: str, payload: dict | 
             raise TriggerError(f"GitHub API error {exc.code} for {method} {endpoint}") from exc
 
 
+def _download_bytes(url: str, token: str) -> bytes:
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "axl-trigger-ci-dispatch",
+    }
+    req = urllib.request.Request(url, headers=headers, method="GET")
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        return resp.read()
+
+
 def _iso_to_epoch(text: str | None) -> float:
     if not text:
         return 0.0
@@ -89,8 +102,40 @@ def _find_dispatch_run(repo: str, token: str, ref: str, start_epoch: float) -> d
         if matches:
             matches.sort(key=lambda r: _iso_to_epoch(r.get("created_at")))
             return matches[0]
-        time.sleep(10)
+        time.sleep(8)
     raise TriggerError("timeout waiting for ci-dispatch workflow run")
+
+
+def _poll_run_completion(repo: str, token: str, run_id: int, deadline_s: int = 900) -> dict:
+    deadline = time.time() + deadline_s
+    endpoint = f"actions/runs/{run_id}"
+    while time.time() < deadline:
+        payload = _request(repo, token, "GET", endpoint)
+        if isinstance(payload, dict) and payload.get("status") == "completed":
+            return payload
+        time.sleep(8)
+    raise TriggerError(f"timeout waiting for ci-dispatch run completion: run_id={run_id}")
+
+
+def _extract_run_artifacts(repo: str, token: str, run_id: int, artifacts_root: pathlib.Path) -> list[str]:
+    artifacts_root.mkdir(parents=True, exist_ok=True)
+    payload = _request(repo, token, "GET", f"actions/runs/{run_id}/artifacts?per_page=100")
+    artifacts = payload.get("artifacts", []) if isinstance(payload, dict) else []
+    extracted: list[str] = []
+    for artifact in artifacts:
+        if not isinstance(artifact, dict):
+            continue
+        name = str(artifact.get("name") or "unnamed-artifact")
+        archive_url = artifact.get("archive_download_url")
+        if not isinstance(archive_url, str) or not archive_url:
+            continue
+        zip_bytes = _download_bytes(archive_url, token)
+        target_dir = artifacts_root / name
+        target_dir.mkdir(parents=True, exist_ok=True)
+        with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
+            zf.extractall(target_dir)
+        extracted.append(name)
+    return sorted(extracted)
 
 
 def _write_sha256_manifest(root: pathlib.Path) -> None:
@@ -151,8 +196,13 @@ def main() -> int:
     )
 
     run = _find_dispatch_run(args.repo, token, args.ref, start_epoch)
-    run_id = str(run.get("id"))
-    run_url = str(run.get("html_url"))
+    run_id = run.get("id")
+    if not isinstance(run_id, int):
+        raise TriggerError("resolved ci-dispatch run missing numeric id")
+
+    completed_run = _poll_run_completion(args.repo, token, run_id)
+    run_url = str(completed_run.get("html_url") or run.get("html_url") or "")
+    conclusion = str(completed_run.get("conclusion") or "")
 
     pr_data = _request(args.repo, token, "GET", f"pulls/{args.pr}")
     head_sha = ((pr_data.get("head") or {}).get("sha")) if isinstance(pr_data, dict) else ""
@@ -160,13 +210,18 @@ def main() -> int:
     proof_root = pathlib.Path("build_proof") / f"task4_ci_dispatch_{run_id}"
     outputs_dir = proof_root / "outputs"
     patches_dir = proof_root / "patches"
+    artifacts_dir = proof_root / "artifacts"
     outputs_dir.mkdir(parents=True, exist_ok=True)
     patches_dir.mkdir(parents=True, exist_ok=True)
+
+    extracted_artifacts = _extract_run_artifacts(args.repo, token, run_id, artifacts_dir)
 
     commands = [
         f"python tools/ci/trigger_ci_dispatch.py --repo {args.repo} --pr {args.pr} --ref {args.ref}",
         f"POST /repos/{args.repo}/actions/workflows/{WORKFLOW_FILE}/dispatches (inputs: pr_number={args.pr}, dry_run=false)",
         f"GET /repos/{args.repo}/actions/workflows/{WORKFLOW_FILE}/runs?event=workflow_dispatch&branch={args.ref}&per_page=20",
+        f"GET /repos/{args.repo}/actions/runs/{run_id}",
+        f"GET /repos/{args.repo}/actions/runs/{run_id}/artifacts?per_page=100",
         "python tools/verify_action_pinning.py --workflows .github/workflows",
         "python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows",
         "python --version",
@@ -176,7 +231,17 @@ def main() -> int:
     (proof_root / "commands.txt").write_text("\n".join(commands) + "\n", encoding="utf-8")
 
     (outputs_dir / "dispatcher_run.txt").write_text(
-        f"run_id={run_id}\nrun_url={run_url}\npr={args.pr}\nhead_sha={head_sha}\n",
+        "\n".join(
+            [
+                f"run_id={run_id}",
+                f"run_url={run_url}",
+                f"pr={args.pr}",
+                f"head_sha={head_sha}",
+                f"conclusion={conclusion}",
+                f"artifacts={','.join(extracted_artifacts)}",
+            ]
+        )
+        + "\n",
         encoding="utf-8",
     )
 
@@ -191,8 +256,8 @@ def main() -> int:
     _capture_env(outputs_dir / "env.txt")
 
     (patches_dir / "final.patch").write_text(_build_patch_text(), encoding="utf-8")
-
     _write_sha256_manifest(proof_root)
+
     print(run_url)
     return 0
 

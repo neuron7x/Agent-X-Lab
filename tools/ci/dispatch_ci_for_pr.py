@@ -6,6 +6,7 @@ import datetime as dt
 import json
 import os
 import pathlib
+import subprocess
 import sys
 import time
 import urllib.error
@@ -22,6 +23,7 @@ if str(REPO_ROOT) not in sys.path:
 from tools.ci.ci_contract import calculate_required, get_changed_files
 
 API_ROOT = "https://api.github.com"
+CONTRACT_VERSION = "task4.v2"
 
 
 class DispatchError(RuntimeError):
@@ -30,15 +32,6 @@ class DispatchError(RuntimeError):
 
 def _iso_now() -> str:
     return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
-
-
-def _parse_bool(value: str) -> bool:
-    norm = (value or "").strip().lower()
-    if norm in {"1", "true", "yes", "y"}:
-        return True
-    if norm in {"0", "false", "no", "n", ""}:
-        return False
-    raise DispatchError(f"invalid bool value: {value}")
 
 
 def _to_epoch(iso_value: str | None) -> float:
@@ -50,12 +43,46 @@ def _to_epoch(iso_value: str | None) -> float:
         return 0.0
 
 
+def _parse_bool_strict(value: str) -> bool:
+    norm = value.strip().lower()
+    if norm == "true":
+        return True
+    if norm == "false":
+        return False
+    raise DispatchError(f"invalid --dry-run value: {value}; expected true|false")
+
+
+def _read_changed_files_file(path: pathlib.Path) -> list[str]:
+    if not path.exists():
+        raise DispatchError(f"changed-files-file does not exist: {path}")
+    if not path.is_file():
+        raise DispatchError(f"changed-files-file is not a file: {path}")
+    rows = [line.strip() for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    return sorted(set(rows))
+
+
+def _git_output(args: list[str]) -> str:
+    proc = subprocess.run(args, text=True, capture_output=True, check=False)
+    if proc.returncode != 0:
+        return ""
+    return proc.stdout.strip()
+
+
+def _infer_local_head_ref() -> str:
+    return _git_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]) or "HEAD"
+
+
+def _infer_local_head_sha() -> str:
+    return _git_output(["git", "rev-parse", "HEAD"]) or ""
+
+
 def _redact_token(text: str, token: str | None) -> str:
     redacted = text
     if token:
         redacted = redacted.replace(token, "[REDACTED_TOKEN]")
         if len(token) >= 8:
             redacted = redacted.replace(token[:8], "[REDACTED_TOKEN_PREFIX]")
+            redacted = redacted.replace(token[-8:], "[REDACTED_TOKEN_SUFFIX]")
     return redacted
 
 
@@ -71,7 +98,7 @@ class GitHubClient:
 
     def request(self, method: str, endpoint: str, payload: dict | None = None) -> object:
         url = f"{API_ROOT}/repos/{self.repo}/{endpoint.lstrip('/')}"
-        body = json.dumps(payload).encode("utf-8") if payload is not None else None
+        body = json.dumps(payload, sort_keys=True).encode("utf-8") if payload is not None else None
 
         backoff = 1.0
         for attempt in range(1, 8):
@@ -112,17 +139,17 @@ def _retry_wait(headers, fallback: float) -> int:
     return max(1, int(fallback))
 
 
-def _find_run_for_workflow(
+def _resolve_run_for_workflow(
     client: GitHubClient,
     workflow_file: str,
     head_sha: str,
     start_epoch: float,
-    started_at_utc: str,
     deadline_epoch: float,
-) -> dict:
+) -> dict | None:
     endpoint = f"actions/workflows/{workflow_file}/runs"
+    query = urllib.parse.urlencode({"event": "workflow_dispatch", "per_page": 20})
+
     while time.time() < deadline_epoch:
-        query = urllib.parse.urlencode({"event": "workflow_dispatch", "per_page": 20})
         data = client.request("GET", f"{endpoint}?{query}")
         runs = data.get("workflow_runs", []) if isinstance(data, dict) else []
         matches: list[dict] = []
@@ -134,19 +161,23 @@ def _find_run_for_workflow(
             created_epoch = _to_epoch(run.get("created_at"))
             if created_epoch >= start_epoch - 2:
                 matches.append(run)
-
         if matches:
             matches.sort(key=lambda item: _to_epoch(item.get("created_at")))
-            selected = matches[0]
-            if selected.get("head_sha") != head_sha:
-                raise DispatchError(
-                    f"resolved run head_sha mismatch for {workflow_file}: expected={head_sha} actual={selected.get('head_sha')}"
-                )
-            return selected
-        time.sleep(10)
-    raise DispatchError(
-        f"timeout resolving run for workflow_file={workflow_file} head_sha={head_sha} started_at={started_at_utc}"
-    )
+            return matches[0]
+        time.sleep(8)
+    return None
+
+
+def _poll_run_completion(client: GitHubClient, run_id: int, deadline_epoch: float) -> dict | None:
+    endpoint = f"actions/runs/{run_id}"
+    while time.time() < deadline_epoch:
+        data = client.request("GET", endpoint)
+        if not isinstance(data, dict):
+            return None
+        if data.get("status") == "completed":
+            return data
+        time.sleep(8)
+    return None
 
 
 def _write_summary(evidence: dict) -> None:
@@ -156,130 +187,203 @@ def _write_summary(evidence: dict) -> None:
     lines = [
         "## CI Dispatch Evidence",
         "",
+        f"- Repo: `{evidence['repo']}`",
         f"- PR: `{evidence['pr_number']}`",
         f"- Head SHA: `{evidence['head_sha']}`",
         "",
-        "| Workflow | Dispatch | Run | Conclusion |",
-        "|---|---|---|---|",
+        "| Workflow | Dispatch | Run | Status | Conclusion |",
+        "|---|---|---|---|---|",
     ]
-    resolved_by_wf = {entry["workflow_file"]: entry for entry in evidence.get("resolved_runs", [])}
+    by_wf = {item["workflow_file"]: item for item in evidence.get("resolved_runs", [])}
     for item in evidence.get("dispatched_workflows", []):
-        workflow = item["workflow_file"]
-        run = resolved_by_wf.get(workflow, {})
-        url = run.get("html_url")
-        run_text = f"[{run.get('run_id')}]({url})" if url else "-"
+        run = by_wf.get(item["workflow_file"], {})
+        run_url = run.get("html_url")
+        run_text = f"[{run.get('run_id')}]({run_url})" if run_url else "-"
         lines.append(
-            f"| `{workflow}` | `{item['dispatch_status']}` | {run_text} | `{run.get('conclusion', '-')}` |"
+            f"| `{item['workflow_file']}` | `{item['dispatch_status']}` | {run_text} | `{run.get('status', '-')}` | `{run.get('conclusion', '-')}` |"
         )
+    if evidence.get("errors"):
+        lines += ["", "### Errors"]
+        lines.extend(f"- {err}" for err in evidence["errors"])
     with open(summary_path, "a", encoding="utf-8") as handle:
         handle.write("\n".join(lines) + "\n")
 
 
+def _write_outputs(out_dir: pathlib.Path, evidence: dict, trace: list[str], changed_files: list[str]) -> None:
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "changed_files.txt").write_text(
+        "\n".join(changed_files) + ("\n" if changed_files else ""),
+        encoding="utf-8",
+    )
+    (out_dir / "api_trace.log").write_text("\n".join(trace) + ("\n" if trace else ""), encoding="utf-8")
+    (out_dir / "evidence.json").write_text(json.dumps(evidence, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    _write_summary(evidence)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Dispatch deterministic CI workflow set for a PR")
-    parser.add_argument("--pr", type=int, required=True)
-    parser.add_argument("--dry-run", default="false")
+    parser.add_argument("--pr", required=True, type=int)
+    parser.add_argument("--dry-run", required=True)
     parser.add_argument("--out-dir", required=True)
+    parser.add_argument("--changed-files-file")
+    parser.add_argument("--head-ref")
+    parser.add_argument("--head-sha")
+    parser.add_argument("--repo")
     args = parser.parse_args()
 
     out_dir = pathlib.Path(args.out_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
     trace: list[str] = []
     errors: list[str] = []
-
-    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
-    if not token:
-        raise SystemExit("ERROR: missing token; set GITHUB_TOKEN or GH_TOKEN")
-
-    repo = os.environ.get("GITHUB_REPOSITORY")
-    if not repo:
-        raise SystemExit("ERROR: GITHUB_REPOSITORY is required")
+    changed_files: list[str] = []
+    dispatched_workflows: list[dict] = []
+    resolved_runs: list[dict] = []
 
     started_at = _iso_now()
     start_epoch = time.time()
-    deadline = start_epoch + 900
+    deadline_epoch = start_epoch + 900
+
+    dry_run = _parse_bool_strict(args.dry_run)
+    offline_mode = bool(args.changed_files_file)
+
+    repo = args.repo or os.environ.get("GITHUB_REPOSITORY") or "local/local"
+    head_ref = args.head_ref or ""
+    head_sha = args.head_sha or ""
 
     evidence = {
+        "contract_version": CONTRACT_VERSION,
+        "repo": repo,
         "base_repo": repo,
         "pr_number": args.pr,
-        "head_ref": "",
-        "head_sha": "",
+        "head_ref": head_ref,
+        "head_sha": head_sha,
+        "started_at_utc": started_at,
         "run_started_at_utc": started_at,
-        "dispatched_workflows": [],
-        "resolved_runs": [],
+        "dispatched_workflows": dispatched_workflows,
+        "resolved_runs": resolved_runs,
         "errors": errors,
     }
 
-    changed_files_path = out_dir / "changed_files.txt"
-    changed_files_path.write_text("", encoding="utf-8")
+    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
 
     try:
-        client = GitHubClient(token, repo, trace)
-        pr_data = client.request("GET", f"pulls/{args.pr}")
-        if not isinstance(pr_data, dict):
-            raise DispatchError("unexpected PR response payload")
-
-        base_repo = ((pr_data.get("base") or {}).get("repo") or {}).get("full_name")
-        head_repo = ((pr_data.get("head") or {}).get("repo") or {}).get("full_name")
-        head_ref = (pr_data.get("head") or {}).get("ref")
-        head_sha = (pr_data.get("head") or {}).get("sha")
-
-        evidence["base_repo"] = str(base_repo or repo)
-        evidence["head_ref"] = str(head_ref or "")
-        evidence["head_sha"] = str(head_sha or "")
-
-        if not base_repo or not head_repo or not head_ref or not head_sha:
-            raise DispatchError("PR payload missing base/head repository metadata")
-        if head_repo != base_repo:
-            raise DispatchError(f"fork PRs are not allowed: base={base_repo} head={head_repo}")
-
-        changed_files = get_changed_files(token, repo, args.pr)
-        changed_files_path.write_text("\n".join(changed_files) + ("\n" if changed_files else ""), encoding="utf-8")
-
-        workflow_map = calculate_required(changed_files)
-        dry_run = _parse_bool(args.dry_run)
-
-        for workflow_file, reason in workflow_map.items():
-            status = "SKIP_DRY_RUN"
-            dispatch_ref = str(head_ref)
-            if not dry_run:
-                client.request("POST", f"actions/workflows/{workflow_file}/dispatches", {"ref": dispatch_ref})
-                status = "DISPATCHED"
-            evidence["dispatched_workflows"].append(
-                {
-                    "workflow_file": workflow_file,
-                    "reason": reason,
-                    "dispatch_status": status,
-                    "dispatch_ref": dispatch_ref,
-                }
-            )
-
-        if not dry_run:
-            for item in evidence["dispatched_workflows"]:
-                wf = item["workflow_file"]
-                run = _find_run_for_workflow(client, wf, str(head_sha), start_epoch, started_at, deadline)
-                if run.get("head_sha") != head_sha:
-                    raise DispatchError(
-                        f"resolved run head_sha mismatch for {wf}: expected={head_sha} actual={run.get('head_sha')}"
-                    )
-                evidence["resolved_runs"].append(
+        if offline_mode:
+            changed_files = _read_changed_files_file(pathlib.Path(args.changed_files_file or ""))
+            evidence["head_ref"] = head_ref or _infer_local_head_ref()
+            evidence["head_sha"] = head_sha or _infer_local_head_sha()
+            workflow_map = calculate_required(changed_files)
+            for workflow_file, reason in workflow_map.items():
+                dispatched_workflows.append(
                     {
-                        "workflow_file": wf,
-                        "run_id": run.get("id"),
-                        "html_url": run.get("html_url"),
-                        "head_sha": run.get("head_sha"),
-                        "status": run.get("status"),
-                        "conclusion": run.get("conclusion"),
-                        "created_at": run.get("created_at"),
+                        "workflow_file": workflow_file,
+                        "reason": reason,
+                        "dispatch_status": "SKIP_OFFLINE",
+                        "dispatch_ref": evidence["head_ref"],
                     }
                 )
+            if not dry_run:
+                errors.append("offline mode requires --dry-run true")
+        else:
+            if not token:
+                raise DispatchError("missing token; set GITHUB_TOKEN or GH_TOKEN")
+            client = GitHubClient(token, repo, trace)
+            pr_data = client.request("GET", f"pulls/{args.pr}")
+            if not isinstance(pr_data, dict):
+                raise DispatchError("unexpected PR response payload")
+
+            base_repo = ((pr_data.get("base") or {}).get("repo") or {}).get("full_name")
+            head_repo = ((pr_data.get("head") or {}).get("repo") or {}).get("full_name")
+            pr_head_ref = (pr_data.get("head") or {}).get("ref")
+            pr_head_sha = (pr_data.get("head") or {}).get("sha")
+
+            evidence["base_repo"] = str(base_repo or repo)
+            evidence["head_ref"] = str(pr_head_ref or "")
+            evidence["head_sha"] = str(pr_head_sha or "")
+
+            if not base_repo or not head_repo or not pr_head_ref or not pr_head_sha:
+                raise DispatchError("PR payload missing base/head repository metadata")
+            if head_repo != base_repo:
+                raise DispatchError(f"fork PRs are not allowed: base={base_repo} head={head_repo}")
+
+            changed_files = get_changed_files(token, repo, args.pr)
+            workflow_map = calculate_required(changed_files)
+
+            for workflow_file, reason in workflow_map.items():
+                dispatch_entry = {
+                    "workflow_file": workflow_file,
+                    "reason": reason,
+                    "dispatch_status": "SKIP_DRY_RUN" if dry_run else "PENDING",
+                    "dispatch_ref": pr_head_ref,
+                }
+                try:
+                    if not dry_run:
+                        client.request("POST", f"actions/workflows/{workflow_file}/dispatches", {"ref": pr_head_ref})
+                        dispatch_entry["dispatch_status"] = "DISPATCHED"
+                except Exception as exc:  # noqa: BLE001
+                    dispatch_entry["dispatch_status"] = "DISPATCH_FAILED"
+                    errors.append(_redact_token(f"dispatch failure for {workflow_file}: {exc}", token))
+                dispatched_workflows.append(dispatch_entry)
+
+            if not dry_run:
+                for item in dispatched_workflows:
+                    wf = item["workflow_file"]
+                    if item["dispatch_status"] != "DISPATCHED":
+                        continue
+
+                    run = _resolve_run_for_workflow(
+                        client=client,
+                        workflow_file=wf,
+                        head_sha=str(pr_head_sha),
+                        start_epoch=start_epoch,
+                        deadline_epoch=deadline_epoch,
+                    )
+                    if run is None:
+                        errors.append(
+                            f"resolve timeout for workflow_file={wf} head_sha={pr_head_sha} started_at={started_at}"
+                        )
+                        continue
+
+                    run_id = run.get("id")
+                    if not isinstance(run_id, int):
+                        errors.append(f"resolved run missing numeric id for workflow_file={wf}")
+                        continue
+
+                    completed = _poll_run_completion(client, run_id, deadline_epoch)
+                    if completed is None:
+                        errors.append(f"completion timeout for workflow_file={wf} run_id={run_id}")
+                        status = run.get("status")
+                        conclusion = run.get("conclusion")
+                    else:
+                        status = completed.get("status")
+                        conclusion = completed.get("conclusion")
+
+                    final_head_sha = (completed or run).get("head_sha")
+                    if final_head_sha != pr_head_sha:
+                        errors.append(
+                            f"head_sha mismatch for workflow_file={wf} run_id={run_id}: expected={pr_head_sha} actual={final_head_sha}"
+                        )
+
+                    resolved_runs.append(
+                        {
+                            "workflow_file": wf,
+                            "run_id": run_id,
+                            "html_url": (completed or run).get("html_url"),
+                            "head_sha": final_head_sha,
+                            "status": status,
+                            "conclusion": conclusion,
+                            "created_at": (completed or run).get("created_at"),
+                        }
+                    )
+
+                dispatched_count = sum(1 for item in dispatched_workflows if item["dispatch_status"] == "DISPATCHED")
+                if len(resolved_runs) < dispatched_count:
+                    errors.append(
+                        f"resolved run count mismatch: dispatched={dispatched_count} resolved={len(resolved_runs)}"
+                    )
 
     except Exception as exc:  # noqa: BLE001
         errors.append(_redact_token(str(exc), token))
 
-    (out_dir / "evidence.json").write_text(json.dumps(evidence, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    (out_dir / "api_trace.log").write_text("\n".join(trace) + ("\n" if trace else ""), encoding="utf-8")
-    _write_summary(evidence)
+    _write_outputs(out_dir, evidence, trace, changed_files)
 
     if errors:
         for err in errors:
