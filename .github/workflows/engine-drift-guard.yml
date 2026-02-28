@@ -21,33 +21,32 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Install engine test dependencies (fail-closed)
+      - name: Install engine test dependencies (deterministic)
         shell: bash
         run: |
           set -euo pipefail
           python -m pip --version
-          if [[ -f engine/requirements-dev.txt ]]; then
-            python -m pip install -r engine/requirements-dev.txt
-          else
-            python -m pip install pytest pyyaml
+          python -m pip install -r engine/requirements-dev.txt
+
+      - name: Run engine gates and record exit code
+        id: gates
+        shell: bash
+        run: |
+          set -u
+          mkdir -p "${AXL_TEST_OUTPUT_DIR}" "${AXL_ARTIFACTS_ROOT}"
+          gate_rc=0
+
+          python -m compileall -q engine || gate_rc=$?
+          if [[ $gate_rc -eq 0 ]]; then
+            python -m pytest -q engine/tests || gate_rc=$?
           fi
 
-      - name: Run engine gates
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p "${AXL_TEST_OUTPUT_DIR}" "${AXL_ARTIFACTS_ROOT}"
-          python -m compileall -q engine
-          python -m pytest -q engine/tests
-
-      - name: Remove stray drift directories before capture
-        shell: bash
-        run: |
-          set -euo pipefail
-          rm -rf engine/artifacts/release-test engine/artifacts/tmp-evidence-test artifacts/agent
-          mkdir -p "${AXL_TEST_OUTPUT_DIR}" "${AXL_ARTIFACTS_ROOT}"
+          echo "gate_rc=$gate_rc" >> "$GITHUB_OUTPUT"
+          exit 0
 
       - name: Capture workspace state
+        if: always()
+        id: capture
         shell: bash
         run: |
           set -euo pipefail
@@ -56,30 +55,27 @@ jobs:
           git status --porcelain | tee "${STATUS_FILE}"
           git diff --name-only | tee "${DIFF_FILE}"
 
-      - name: Fail on drift
+          if [[ -s "${STATUS_FILE}" || -s "${DIFF_FILE}" ]]; then
+            echo "drift_detected=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "drift_detected=0" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Finalize gate and drift status
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
-          STATUS_FILE="${RUNNER_TEMP}/drift-status.txt"
-          DIFF_FILE="${RUNNER_TEMP}/drift-diff.txt"
-          mapfile -t changed < <((awk '{print $2}' "${STATUS_FILE}"; cat "${DIFF_FILE}") | sed '/^$/d' | sort -u)
-          if [ "${#changed[@]}" -eq 0 ]; then
-            echo "No drift detected"
-            exit 0
-          fi
-          printf 'Changed paths after gates:\n%s\n' "${changed[*]}"
+          gate_rc='${{ steps.gates.outputs.gate_rc }}'
+          drift='${{ steps.capture.outputs.drift_detected }}'
 
-          for path in "${changed[@]}"; do
-            if [[ "$path" == build_proof/pr_engine_ci_hermetic/* ]]; then
-              continue
-            fi
-            if [[ "$path" == engine/artifacts/* ]] || \
-               [[ "$path" == artifacts/* ]] || \
-               [[ "$path" == engine/catalog/index.json ]] || \
-               [[ "$path" == engine/artifacts/titan9/inventory.json ]]; then
-              echo "Forbidden drift path changed: $path" >&2
-              exit 1
-            fi
-            echo "Unexpected post-test change: $path" >&2
+          if [[ "$drift" != "0" ]]; then
+            echo "Drift detected after gates." >&2
+          fi
+
+          if [[ "$gate_rc" != "0" || "$drift" != "0" ]]; then
+            echo "engine-drift-guard failed: gate_rc=$gate_rc drift_detected=$drift" >&2
             exit 1
-          done
+          fi
+
+          echo "engine-drift-guard passed: gate_rc=$gate_rc drift_detected=$drift"
