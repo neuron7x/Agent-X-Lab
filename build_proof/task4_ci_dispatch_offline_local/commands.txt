@@ -1,0 +1,5 @@
+python -m compileall -q tools/ci
+python tools/verify_action_pinning.py --workflows .github/workflows
+python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows
+python tools/ci/dispatch_ci_for_pr.py --pr 125 --dry-run true --changed-files-file /tmp/task4_changed_files.txt --head-ref work --head-sha c6855757dabcc6f0ca91b704aa1ba55cd253172f --repo neuron7x/Agent-X-Lab --out-dir /tmp/task4_offline_evidence
+GET/POST GitHub API calls: none (offline mode)

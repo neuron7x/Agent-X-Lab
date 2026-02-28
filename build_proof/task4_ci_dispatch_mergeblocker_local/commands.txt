@@ -1,0 +1,5 @@
+python -m compileall -q tools/ci
+python tools/verify_action_pinning.py --workflows .github/workflows
+python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows
+python tools/ci/dispatch_ci_for_pr.py --pr 125 --dry-run true --changed-files-file /tmp/task4_changed_files_mergeblocker.txt --head-ref work --head-sha <HEAD_SHA> --repo neuron7x/Agent-X-Lab --timeout-seconds 2700 --poll-interval-seconds 20 --out-dir /tmp/task4_offline_evidence_mergeblocker
+python - <<'PY' # inventory potential targets and workflow_dispatch support

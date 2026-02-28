@@ -1,0 +1,8 @@
+POTENTIAL_TARGETS
+action-pin-audit.yml	exists=True	workflow_dispatch=True
+engine-drift-guard.yml	exists=True	workflow_dispatch=True
+python-verify.yml	exists=True	workflow_dispatch=True
+ui-e2e.yml	exists=True	workflow_dispatch=True
+ui-perf.yml	exists=True	workflow_dispatch=True
+ui-verify.yml	exists=True	workflow_dispatch=True
+workflow-hygiene.yml	exists=True	workflow_dispatch=True
