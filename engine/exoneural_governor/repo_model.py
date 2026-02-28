@@ -22,7 +22,7 @@ sys.setrecursionlimit(max(5000, sys.getrecursionlimit()))
 
 EXCLUDED_TOP_LEVEL = {".git", "node_modules", "build_proof", "evidence", "archive", "dist", ".venv"}
 TEXT_SCAN_GLOBS = ["*.py", "*.md", "*.txt", "*.json", "*.yaml", "*.yml", "*.toml", "*.ini", "*.cfg", "*.sh", "Makefile"]
-RUN_SCRIPT_RE = re.compile(r"(?:^|\s)(?:python(?:3)?|node|bash|sh)\s+([./\w\-]+\.(?:py|js|sh))")
+RUN_SCRIPT_RE = re.compile(r"(?:^|\s)(?:python(?:3)?|node|bash|sh|tsx|ts-node|npm run)\s+([./\w\-]+\.(?:py|js|mjs|cjs|ts|sh))")
 
 
 @dataclass(frozen=True)
