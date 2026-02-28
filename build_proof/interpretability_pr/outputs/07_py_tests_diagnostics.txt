@@ -1,0 +1,26 @@
++ git rev-parse HEAD
+98fcb6af44efdae02f5b46d8e3eef30a0838ec66
+EXIT_CODE=0
++ git status --porcelain
+ M build_proof/interpretability_pr/commands.txt
+?? build_proof/interpretability_pr/outputs/
+EXIT_CODE=0
++ pwd
+/workspace/Agent-X-Lab
+EXIT_CODE=0
++ python -V
+Python 3.13.8
+EXIT_CODE=0
++ python -c import sys; print('\n'.join(sys.path))
+
+/root/.pyenv/versions/3.13.8/lib/python313.zip
+/root/.pyenv/versions/3.13.8/lib/python3.13
+/root/.pyenv/versions/3.13.8/lib/python3.13/lib-dynload
+/root/.pyenv/versions/3.13.8/lib/python3.13/site-packages
+EXIT_CODE=0
++ bash -lc find . -type d -name __pycache__ -prune -exec rm -rf {} + || true
+EXIT_CODE=0
++ bash -lc find . -type f -name '*.pyc' -delete || true
+EXIT_CODE=0
++ bash -lc find . -type d -name '.pytest_cache' -prune -exec rm -rf {} + || true
+EXIT_CODE=0
