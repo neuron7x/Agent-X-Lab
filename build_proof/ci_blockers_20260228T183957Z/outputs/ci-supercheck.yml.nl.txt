@@ -1,0 +1,211 @@
+     1	name: CI Supercheck
+     2	
+     3	on:
+     4	  pull_request:
+     5	  push:
+     6	    branches: [main]
+     7	  workflow_dispatch:
+     8	
+     9	permissions:
+    10	  checks: read
+    11	  contents: read
+    12	  pull-requests: read
+    13	
+    14	concurrency:
+    15	  group: ci-supercheck-${{ github.ref }}
+    16	  cancel-in-progress: true
+    17	
+    18	jobs:
+    19	  supercheck:
+    20	    name: CI Supercheck
+    21	    runs-on: ubuntu-latest
+    22	    timeout-minutes: 20
+    23	    steps:
+    24	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    25	      - name: Build expected check set and poll check-runs API
+    26	        env:
+    27	          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    28	          GITHUB_EVENT_NAME: ${{ github.event_name }}
+    29	          GITHUB_REPOSITORY: ${{ github.repository }}
+    30	          GITHUB_SHA: ${{ github.sha }}
+    31	          GITHUB_EVENT_PATH: ${{ github.event_path }}
+    32	        run: |
+    33	          set -euo pipefail
+    34	          python3 - <<'PY'
+    35	          import fnmatch, json, os, subprocess, sys, time, traceback, urllib.error, urllib.request
+    36	
+    37	          class GitHubClient:
+    38	              def __init__(self, token, repo):
+    39	                  self.base_url = f"https://api.github.com/repos/{repo}"
+    40	                  self.headers = {
+    41	                      'Authorization': f'Bearer {token}',
+    42	                      'Accept': 'application/vnd.github+json',
+    43	                      'User-Agent': 'ci-supercheck-orchestrator'
+    44	                  }
+    45	
+    46	              def get_paginated(self, endpoint, head_sha=None):
+    47	                  results, page = [], 1
+    48	                  while True:
+    49	                      url = f"{self.base_url}/{endpoint}?per_page=100&page={page}"
+    50	                      data = self._request(url)
+    51	                      items = data.get('check_runs', []) if 'check_runs' in data else data
+    52	                      if not items: break
+    53	
+    54	                      if head_sha:
+    55	                          items = [i for i in items if i.get('head_sha') == head_sha]
+    56	
+    57	                      results.extend(items)
+    58	                      if type(data) is list or len(items) < 100: break
+    59	                      page += 1
+    60	                  return results
+    61	
+    62	              def _request(self, url):
+    63	                  req = urllib.request.Request(url, headers=self.headers)
+    64	                  backoffs = [2, 4, 8]
+    65	                  for idx, delay in enumerate(backoffs, 1):
+    66	                      try:
+    67	                          with urllib.request.urlopen(req, timeout=30) as r:
+    68	                              return json.loads(r.read().decode('utf-8'))
+    69	                      except urllib.error.HTTPError as e:
+    70	                          if e.code in (403, 429):
+    71	                              wait = max(0, int(e.headers.get('Retry-After', 0))) or max(0, int(e.headers.get('x-ratelimit-reset', time.time())) - int(time.time()))
+    72	                              if wait:
+    73	                                  print(f"RATE LIMIT: Sleeping {wait}s.")
+    74	                                  time.sleep(wait)
+    75	                                  continue
+    76	                          if idx == len(backoffs): raise
+    77	                          time.sleep(delay)
+    78	                      except Exception as e:
+    79	                          if idx == len(backoffs): raise
+    80	                          print(f"NETWORK WARN: {e}. Retrying...")
+    81	                          time.sleep(delay)
+    82	
+    83	          class Telemetry:
+    84	              def __init__(self):
+    85	                  self.path = os.environ.get('GITHUB_STEP_SUMMARY')
+    86	                  self.start_tag, self.end_tag = '', ''
+    87	
+    88	              def publish(self, markdown, overwrite=False):
+    89	                  if not self.path: return
+    90	                  block = f"{self.start_tag}\n{markdown}\n{self.end_tag}\n"
+    91	                  try:
+    92	                      existing = open(self.path, 'r', encoding='utf-8').read() if os.path.exists(self.path) else ''
+    93	                      s, e = existing.find(self.start_tag), existing.find(self.end_tag)
+    94	                      if s != -1 and e != -1:
+    95	                          e += len(self.end_tag)
+    96	                          if e < len(existing) and existing[e] == '\n': e += 1
+    97	                          existing = existing[:s] + existing[e:]
+    98	
+    99	                      mode = 'w' if overwrite else 'a'
+   100	                      with open(self.path, mode, encoding='utf-8') as f:
+   101	                          if overwrite and existing.strip():
+   102	                              f.write(existing.rstrip('\n') + '\n\n')
+   103	                          f.write(block)
+   104	                  except Exception as e:
+   105	                      print(f"TELEMETRY WARN: Failed to write summary: {e}")
+   106	
+   107	          class RulesEngine:
+   108	              @staticmethod
+   109	              def get_changed_files(client, event, pr_number):
+   110	                  if event == 'pull_request':
+   111	                      data = client.get_paginated(f"pulls/{pr_number}/files")
+   112	                      return sorted(set(item['filename'] for item in data))
+   113	                  return sorted(line for line in subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', 'HEAD'], text=True).splitlines() if line)
+   114	
+   115	              @staticmethod
+   116	              def calculate_required(paths):
+   117	                  if all(p.startswith('docs/') or p.startswith('build_proof/') or p.endswith('.md') for p in paths):
+   118	                      return []
+   119	
+   120	                  req = set()
+   121	                  any_match = lambda preds: any(pred(p) for p in paths for pred in preds)
+   122	
+   123	                  if any_match([lambda p: p.startswith(('src/', 'workers/', 'e2e/', 'scripts/')), lambda p: p.endswith(('config.ts', 'config.js', '.json'))]):
+   124	                      req.update(['Lint + Typecheck + Unit Tests + Build', 'Worker TypeScript', 'Playwright E2E Smoke', 'Bundle Size Check', 'Lighthouse CI'])
+   125	                  if any_match([lambda p: p.startswith(('engine/', 'udgs_core/', 'tools/prod_spec/', 'artifacts/')), lambda p: p == '.github/workflows/prod-spec-gates.yml']):
+   126	                      req.update(['Schema Validation (G0/G3)', 'Full RRD Gate Check'])
+   127	                  if any_match([lambda p: p.startswith('.github/')]):
+   128	                      req.update(['Workflow Static Hygiene', 'Action Pin Verify', 'Workflow Tools + Actionlint'])
+   129	
+   130	                  req.update(['analyze', 'review', 'scan'])
+   131	                  return sorted(req)
+   132	
+   133	          class Orchestrator:
+   134	              def __init__(self, client, telemetry, sha, required):
+   135	                  self.api = client
+   136	                  self.telemetry = telemetry
+   137	                  self.sha = sha
+   138	                  self.required = set(required)
+   139	                  self.deadline = time.time() + 900
+   140	                  self.grace_period = time.time() + 60
+   141	
+   142	              def run(self):
+   143	                  print(f"ORCHESTRATOR START: SHA {self.sha[:8]} | EXPECTING: {len(self.required)} gates")
+   144	                  while time.time() < self.deadline:
+   145	                      runs = self.api.get_paginated(f"commits/{self.sha}/check-runs", head_sha=self.sha)
+   146	
+   147	                      grouped = {}
+   148	                      for r in runs:
+   149	                          name = r['name'].split(' / ', 1)[1] if ' / ' in r['name'] else r['name']
+   150	                          if name != 'CI Supercheck': grouped.setdefault(name, []).append(r)
+   151	
+   152	                      pending, blockers, failed_md = set(), [], []
+   153	
+   154	                      for req in list(self.required):
+   155	                          if req not in grouped:
+   156	                              if time.time() > self.grace_period:
+   157	                                  print(f"PRUNING: '{req}' inactive. Removing from matrix.")
+   158	                                  self.required.remove(req)
+   159	                              else: pending.add(req)
+   160	                              continue
+   161	
+   162	                          conclusions = [r.get('conclusion') for r in grouped[req]]
+   163	                          if any(c in ('failure', 'cancelled', 'timed_out', 'action_required') for c in conclusions):
+   164	                              bad = next(r for r in grouped[req] if r.get('conclusion') in ('failure', 'cancelled', 'timed_out', 'action_required'))
+   165	                              blockers.append(req)
+   166	                              failed_md.append(f"| ❌ **{req}** | {bad.get('conclusion').upper()} | [Logs]({bad.get('html_url')}) |")
+   167	                              continue
+   168	
+   169	                          if not all(r.get('status') == 'completed' for r in grouped[req]) or any(c not in ('success', 'neutral', 'skipped') for c in conclusions):
+   170	                              pending.add(req)
+   171	
+   172	                      if blockers:
+   173	                          self.telemetry.publish(f"### ❌ CI Integrity Violation\n**SHA:** `{self.sha}`\n| Gate | State | Trace |\n|---|---|---|\n" + '\n'.join(failed_md), overwrite=True)
+   174	                          print(f"BLOCKERS DETECTED: {blockers}")
+   175	                          return 1
+   176	
+   177	                      if not pending and self.required.issubset(grouped.keys()):
+   178	                          success_md = [f"| **{r}** | ✅ {grouped[r][0].get('conclusion', 'success').upper()} |" for r in sorted(self.required)]
+   179	                          self.telemetry.publish(f"### 🛡️ CI Integrity Verified\n**SHA:** `{self.sha}`\n| Gate | Status |\n|---|---|\n" + '\n'.join(success_md), overwrite=True)
+   180	                          print("SUCCESS: Matrix execution complete.")
+   181	                          return 0
+   182	
+   183	                      print(f"HEARTBEAT: {len(self.required) - len(pending)}/{len(self.required)} verified. Waiting...")
+   184	                      time.sleep(20)
+   185	
+   186	                  self.telemetry.publish(f"### ⚠️ CI Timeout\nGates failed to close: `{pending}`", overwrite=True)
+   187	                  return 1
+   188	
+   189	          if __name__ == '__main__':
+   190	              try:
+   191	                  event_path = os.environ['GITHUB_EVENT_PATH']
+   192	                  event_data = json.loads(open(event_path).read()) if os.path.exists(event_path) else {}
+   193	
+   194	                  client = GitHubClient(os.environ.get('GITHUB_TOKEN', ''), os.environ['GITHUB_REPOSITORY'])
+   195	                  telemetry = Telemetry()
+   196	
+   197	                  files = RulesEngine.get_changed_files(client, os.environ['GITHUB_EVENT_NAME'], event_data.get('pull_request', {}).get('number'))
+   198	                  required = RulesEngine.calculate_required(files)
+   199	
+   200	                  if not required:
+   201	                      print("FAST-PATH: No functional changes.")
+   202	                      telemetry.publish('### ⚡ Fast-Path: CI Skipped.', overwrite=True)
+   203	                      sys.exit(0)
+   204	
+   205	                  sys.exit(Orchestrator(client, telemetry, os.environ['GITHUB_SHA'], required).run())
+   206	
+   207	              except Exception:
+   208	                  crash = traceback.format_exc().replace(os.environ.get('GITHUB_TOKEN', 'missing_token'), '[REDACTED_TOKEN]')
+   209	                  print(f"FATAL SYSTEM ERROR:\n{crash}")
+   210	                  sys.exit(1)
+   211	          PY

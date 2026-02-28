@@ -1,0 +1,141 @@
+     1	name: Workflow Hygiene
+     2	
+     3	on:
+     4	  pull_request:
+     5	    paths:
+     6	      - '.github/workflows/**'
+     7	      - '.github/actions/**'
+     8	      - 'engine/tools/verify_action_pinning.py'
+     9	      - 'engine/tools/verify_workflow_hygiene.py'
+    10	      - 'tools/verify_action_pinning.py'
+    11	      - 'tools/verify_workflow_hygiene.py'
+    12	      - 'engine/tests/test_workflow_guards.py'
+    13	  push:
+    14	    branches: [main]
+    15	  workflow_dispatch:
+    16	
+    17	permissions:
+    18	  contents: read
+    19	
+    20	concurrency:
+    21	  group: workflow-hygiene-${{ github.ref }}
+    22	  cancel-in-progress: true
+    23	
+    24	env:
+    25	  PYTHON_VERSION: '3.13.8'
+    26	  PIP_VERSION: '24.3.1'
+    27	
+    28	jobs:
+    29	  static-pin-audit:
+    30	    name: Workflow Static Hygiene
+    31	    runs-on: ubuntu-latest
+    32	    timeout-minutes: 5
+    33	    steps:
+    34	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    35	      - uses: ./.github/actions/setup-python-pip
+    36	        with:
+    37	          "python-version": ${{ env.PYTHON_VERSION }}
+    38	          "pip-version": ${{ env.PIP_VERSION }}
+    39	      - name: Static action pin audit
+    40	        run: |
+    41	          set -euo pipefail
+    42	          python3 tools/ci/action_pin_audit.py --fail
+    43	
+    44	  action-pin-verify:
+    45	    name: Action Pin Verify
+    46	    runs-on: ubuntu-latest
+    47	    timeout-minutes: 10
+    48	    steps:
+    49	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    50	      - uses: ./.github/actions/setup-python-pip
+    51	        with:
+    52	          "python-version": ${{ env.PYTHON_VERSION }}
+    53	          "pip-version": ${{ env.PIP_VERSION }}
+    54	      - name: Verify pinned action SHAs through GitHub API
+    55	        env:
+    56	          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    57	        run: |
+    58	          set -euo pipefail
+    59	          python3 - <<'PY'
+    60	          import os
+    61	          import pathlib
+    62	          import re
+    63	          import subprocess
+    64	          import sys
+    65	
+    66	          pattern = re.compile(r"^\s*-?\s*uses:\s*([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)@([0-9a-f]{40})\s*(?:#.*)?$")
+    67	          entries = []
+    68	          for wf in sorted(pathlib.Path('.github/workflows').glob('*.yml')):
+    69	              for idx, line in enumerate(wf.read_text(encoding='utf-8').splitlines(), start=1):
+    70	                  match = pattern.match(line)
+    71	                  if match:
+    72	                      owner_repo, sha = match.groups()
+    73	                      owner, repo = owner_repo.split('/', 1)
+    74	                      entries.append((str(wf), idx, owner, repo, sha))
+    75	
+    76	          if not entries:
+    77	              print('No pinned third-party action entries found')
+    78	              raise SystemExit(0)
+    79	
+    80	          failures = []
+    81	          for wf, line_no, owner, repo, sha in entries:
+    82	              commit_url = f"https://api.github.com/repos/{owner}/{repo}/commits/{sha}"
+    83	              tar_url = f"https://api.github.com/repos/{owner}/{repo}/tarball/{sha}"
+    84	
+    85	              r1 = subprocess.run([
+    86	                  'curl', '--silent', '--show-error', '--location', '--output', '/dev/null',
+    87	                  '--write-out', '%{http_code}',
+    88	                  '-H', 'Authorization: Bearer ' + os.environ['GITHUB_TOKEN'],
+    89	                  '-H', 'Accept: application/vnd.github+json',
+    90	                  commit_url,
+    91	              ], capture_output=True, text=True, check=False)
+    92	              code1 = r1.stdout.strip()
+    93	
+    94	              r2 = subprocess.run([
+    95	                  'curl', '--silent', '--show-error', '--location', '--head', '--output', '/dev/null',
+    96	                  '--write-out', '%{http_code}',
+    97	                  '-H', 'Authorization: Bearer ' + os.environ['GITHUB_TOKEN'],
+    98	                  '-H', 'Accept: application/vnd.github+json',
+    99	                  tar_url,
+   100	              ], capture_output=True, text=True, check=False)
+   101	              code2 = r2.stdout.strip()
+   102	
+   103	              ok1 = code1 == '200'
+   104	              ok2 = code2 in {'200', '302'}
+   105	              status = 'PASS' if ok1 and ok2 else 'FAIL'
+   106	              print(f"{status} {wf}:{line_no} {owner}/{repo}@{sha} commit={code1} tarball={code2}")
+   107	              if status == 'FAIL':
+   108	                  failures.append((wf, line_no, owner, repo, sha, code1, code2))
+   109	
+   110	          if failures:
+   111	              print('Action pin API verification failures detected')
+   112	              raise SystemExit(1)
+   113	
+   114	          print('Action pin API verification PASS')
+   115	          PY
+   116	
+   117	  workflow-tools-and-actionlint:
+   118	    name: Workflow Tools + Actionlint
+   119	    runs-on: ubuntu-latest
+   120	    timeout-minutes: 10
+   121	    steps:
+   122	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+   123	      - uses: ./.github/actions/setup-python-pip
+   124	        with:
+   125	          "python-version": ${{ env.PYTHON_VERSION }}
+   126	          "pip-version": ${{ env.PIP_VERSION }}
+   127	      - name: Install workflow tool dependencies
+   128	        run: |
+   129	          set -euo pipefail
+   130	          python -m pip --version
+   131	          python -m pip install pyyaml==6.0.2
+   132	      - name: Verify action pinning tool
+   133	        run: |
+   134	          set -euo pipefail
+   135	          python tools/verify_action_pinning.py --workflows .github/workflows
+   136	      - name: Verify workflow hygiene tool
+   137	        run: |
+   138	          set -euo pipefail
+   139	          python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows
+   140	      - name: Run actionlint
+   141	        uses: devops-actions/actionlint@469810fd82c015d3c43815cd2b0e4d02eecc4819 # v0.1.11
