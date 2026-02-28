@@ -43,6 +43,7 @@ jobs:
           set -euo pipefail
           python -m pip --version
           python -m pip install -r engine/requirements-dev.txt
+          python -m pip install -e ./engine
 
       - name: Run engine gates and record exit code
         id: gates
@@ -85,17 +86,19 @@ jobs:
             fi
           done
 
-          if [[ -s "${STATUS_FILE}" || -s "${DIFF_FILE}" ]]; then
-            echo "drift_detected=1" >> "$GITHUB_OUTPUT"
-          else
-            echo "drift_detected=0" >> "$GITHUB_OUTPUT"
-          fi
+          {
+            if [[ -s "${STATUS_FILE}" || -s "${DIFF_FILE}" ]]; then
+              echo "drift_detected=1"
+            else
+              echo "drift_detected=0"
+            fi
 
-          if [[ -s "${FORBIDDEN_FILE}" ]]; then
-            echo "forbidden_detected=1" >> "$GITHUB_OUTPUT"
-          else
-            echo "forbidden_detected=0" >> "$GITHUB_OUTPUT"
-          fi
+            if [[ -s "${FORBIDDEN_FILE}" ]]; then
+              echo "forbidden_detected=1"
+            else
+              echo "forbidden_detected=0"
+            fi
+          } >> "$GITHUB_OUTPUT"
 
       - name: Finalize gate and drift status
         if: always()

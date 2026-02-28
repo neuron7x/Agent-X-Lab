@@ -1,0 +1,121 @@
+     1	name: engine-drift-guard
+     2	
+     3	on:
+     4	  pull_request:
+     5	    paths:
+     6	      - 'engine/**'
+     7	      - '.github/workflows/engine-drift-guard.yml'
+     8	
+     9	permissions:
+    10	  contents: read
+    11	
+    12	concurrency:
+    13	  group: engine-drift-guard-${{ github.ref }}
+    14	  cancel-in-progress: true
+    15	
+    16	jobs:
+    17	  drift-guard:
+    18	    runs-on: ubuntu-latest
+    19	    timeout-minutes: 20
+    20	    env:
+    21	      PYTHONDONTWRITEBYTECODE: "1"
+    22	      PYTHONHASHSEED: "0"
+    23	    steps:
+    24	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+    25	
+    26	      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d
+    27	        with:
+    28	          python-version: '3.13'
+    29	
+    30	      - name: Init hermetic temp dirs
+    31	        shell: bash
+    32	        run: |
+    33	          set -euo pipefail
+    34	          {
+    35	            echo "AXL_TEST_OUTPUT_DIR=${RUNNER_TEMP}/axl_test_output"
+    36	            echo "AXL_ARTIFACTS_ROOT=${RUNNER_TEMP}/axl_artifacts"
+    37	          } >> "$GITHUB_ENV"
+    38	          mkdir -p "${RUNNER_TEMP}/axl_test_output" "${RUNNER_TEMP}/axl_artifacts"
+    39	
+    40	      - name: Install engine test dependencies (deterministic)
+    41	        shell: bash
+    42	        run: |
+    43	          set -euo pipefail
+    44	          python -m pip --version
+    45	          python -m pip install -r engine/requirements-dev.txt
+    46	
+    47	      - name: Run engine gates and record exit code
+    48	        id: gates
+    49	        shell: bash
+    50	        run: |
+    51	          set -u
+    52	          mkdir -p "${AXL_TEST_OUTPUT_DIR}" "${AXL_ARTIFACTS_ROOT}"
+    53	          gate_rc=0
+    54	
+    55	          python -m compileall -q engine || gate_rc=$?
+    56	          if [[ $gate_rc -eq 0 ]]; then
+    57	            python -m pytest -q engine/tests || gate_rc=$?
+    58	          fi
+    59	
+    60	          echo "gate_rc=$gate_rc" >> "$GITHUB_OUTPUT"
+    61	          exit 0
+    62	
+    63	      - name: Capture workspace state
+    64	        if: always()
+    65	        id: capture
+    66	        shell: bash
+    67	        run: |
+    68	          set -euo pipefail
+    69	          STATUS_FILE="${RUNNER_TEMP}/drift-status.txt"
+    70	          DIFF_FILE="${RUNNER_TEMP}/drift-diff.txt"
+    71	          FORBIDDEN_FILE="${RUNNER_TEMP}/forbidden-paths.txt"
+    72	
+    73	          git status --porcelain | tee "${STATUS_FILE}"
+    74	          git diff --name-only | tee "${DIFF_FILE}"
+    75	
+    76	          forbidden_paths=(
+    77	            "engine/artifacts/release-test"
+    78	            "engine/artifacts/tmp-evidence-test"
+    79	            "artifacts/agent"
+    80	          )
+    81	          : > "${FORBIDDEN_FILE}"
+    82	          for path in "${forbidden_paths[@]}"; do
+    83	            if [[ -e "${path}" ]]; then
+    84	              echo "${path}" | tee -a "${FORBIDDEN_FILE}"
+    85	            fi
+    86	          done
+    87	
+    88	          if [[ -s "${STATUS_FILE}" || -s "${DIFF_FILE}" ]]; then
+    89	            echo "drift_detected=1" >> "$GITHUB_OUTPUT"
+    90	          else
+    91	            echo "drift_detected=0" >> "$GITHUB_OUTPUT"
+    92	          fi
+    93	
+    94	          if [[ -s "${FORBIDDEN_FILE}" ]]; then
+    95	            echo "forbidden_detected=1" >> "$GITHUB_OUTPUT"
+    96	          else
+    97	            echo "forbidden_detected=0" >> "$GITHUB_OUTPUT"
+    98	          fi
+    99	
+   100	      - name: Finalize gate and drift status
+   101	        if: always()
+   102	        shell: bash
+   103	        run: |
+   104	          set -euo pipefail
+   105	          gate_rc='${{ steps.gates.outputs.gate_rc }}'
+   106	          drift='${{ steps.capture.outputs.drift_detected }}'
+   107	          forbidden='${{ steps.capture.outputs.forbidden_detected }}'
+   108	
+   109	          if [[ "$drift" != "0" ]]; then
+   110	            echo "Drift detected after gates." >&2
+   111	          fi
+   112	          if [[ "$forbidden" != "0" ]]; then
+   113	            echo "Forbidden paths detected after gates." >&2
+   114	          fi
+   115	
+   116	          if [[ "$gate_rc" != "0" || "$drift" != "0" || "$forbidden" != "0" ]]; then
+   117	            echo "engine-drift-guard failed: gate_rc=$gate_rc drift_detected=$drift forbidden_detected=$forbidden" >&2
+   118	            exit 1
+   119	          fi
+   120	
+   121	          echo "engine-drift-guard passed: gate_rc=$gate_rc drift_detected=$drift forbidden_detected=$forbidden"

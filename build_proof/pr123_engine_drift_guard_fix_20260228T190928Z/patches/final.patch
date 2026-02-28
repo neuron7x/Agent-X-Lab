@@ -1,0 +1,12 @@
+diff --git a/.github/workflows/engine-drift-guard.yml b/.github/workflows/engine-drift-guard.yml
+index f0da238..eba93c2 100644
+--- a/.github/workflows/engine-drift-guard.yml
++++ b/.github/workflows/engine-drift-guard.yml
+@@ -43,6 +43,7 @@ jobs:
+           set -euo pipefail
+           python -m pip --version
+           python -m pip install -r engine/requirements-dev.txt
++          python -m pip install -e ./engine
+ 
+       - name: Run engine gates and record exit code
+         id: gates

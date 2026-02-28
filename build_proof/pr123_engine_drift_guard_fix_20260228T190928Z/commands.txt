@@ -1,0 +1,30 @@
+bash -lc { echo "uname -a:"; uname -a; echo "python --version:"; python --version 2>&1; echo "python -m pip --version:"; python -m pip --version 2>&1; echo "git rev-parse HEAD:"; git rev-parse HEAD; echo "git status --porcelain:"; git status --porcelain; } > "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/outputs/env.txt"
+rm -rf .venv
+python -m venv .venv
+bash -lc source .venv/bin/activate && python -m pip install -U pip
+bash -lc source .venv/bin/activate && python -m pip install -r engine/requirements-dev.txt
+bash -lc export PYTHONHASHSEED=0; export PYTHONDONTWRITEBYTECODE=1; export LC_ALL=C.UTF-8; export TZ=UTC
+bash -lc mkdir -p "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/outputs" "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/patches" "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/tmp"
+bash -lc curl -iL -o "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/outputs/github_job_logs.txt" -w "%{http_code}\n" https://api.github.com/repos/neuron7x/Agent-X-Lab/actions/jobs/65260333868/logs > "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/outputs/github_job_logs_http_code.txt" 2> "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/outputs/github_job_logs_stderr.txt" || true
+bash -lc mkdir -p "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/tmp/yaml_block" && cat > "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/tmp/yaml_block/yaml.py" <<"PY"
+raise ModuleNotFoundError("No module named yaml (simulated missing runtime dependency)")
+PY
+bash -lc PYTHONPATH="build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/tmp/yaml_block" python -m compileall -q engine
+bash -lc PYTHONPATH="build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/tmp/yaml_block" python -m pytest -q engine/tests
+bash -lc cat > "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/outputs/hypothesis.txt" <<"TXT"
+Exit code 2 came from pytest, not compileall: under a controlled reproduction where YAML import is unavailable during test collection, `python -m compileall -q engine` exits with rc=0 because it only byte-compiles source files, while `python -m pytest -q engine/tests` exits with rc=2 and reports collection import errors from `import yaml`; this matches CI finalize output (`gate_rc=2`) and points to missing runtime dependency installation in the gate environment.
+TXT
+bash -lc python tools/verify_action_pinning.py --workflows .github/workflows > "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/outputs/verify_action_pinning.txt" 2>&1
+bash -lc python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows > "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/outputs/verify_workflow_hygiene.txt" 2>&1
+bash -lc git diff > "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/patches/final.patch"
+bash -lc cd "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z" && find . -type f -print0 | sort -z | xargs -0 sha256sum > sha256sum.txt
+bash -lc python -m compileall -q engine && python -m pytest -q engine/tests
+bash -lc git diff > "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/patches/final.patch"
+bash -lc cd "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z" && find . -type f -print0 | sort -z | xargs -0 sha256sum > sha256sum.txt
+bash -lc rm -rf "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/tmp/yaml_block/__pycache__"
+bash -lc PYTHONPATH="build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/tmp/yaml_block" PYTEST_ADDOPTS="--maxfail=1" python -m pytest -q engine/tests
+bash -lc git diff > "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/patches/final.patch"
+bash -lc cd "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z" && find . -type f -print0 | sort -z | xargs -0 sha256sum > sha256sum.txt
+bash -lc PYTHONPATH="build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/tmp/yaml_block" python -m pytest -q engine/tests
+bash -lc git diff HEAD~1 HEAD -- .github/workflows/engine-drift-guard.yml > "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/patches/final.patch"
+bash -lc cd "build_proof/pr123_engine_drift_guard_fix_20260228T190928Z" && find . -type f -print0 | sort -z | xargs -0 sha256sum > sha256sum.txt

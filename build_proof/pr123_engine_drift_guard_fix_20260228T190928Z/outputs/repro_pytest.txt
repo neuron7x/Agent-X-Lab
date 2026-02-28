@@ -1,0 +1,57 @@
+
+==================================== ERRORS ====================================
+______________ ERROR collecting tests/test_protocol_step_paths.py ______________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_protocol_step_paths.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_protocol_step_paths.py:5: in <module>
+    import yaml
+build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/tmp/yaml_block/yaml.py:1: in <module>
+    raise ModuleNotFoundError("No module named yaml (simulated missing runtime dependency)")
+E   ModuleNotFoundError: No module named yaml (simulated missing runtime dependency)
+________________ ERROR collecting tests/test_readme_contract.py ________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_readme_contract.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_readme_contract.py:9: in <module>
+    from tools.verify_readme_contract import E_README_QUICKSTART_MAKE_ONLY
+engine/tools/verify_readme_contract.py:8: in <module>
+    import yaml
+build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/tmp/yaml_block/yaml.py:1: in <module>
+    raise ModuleNotFoundError("No module named yaml (simulated missing runtime dependency)")
+E   ModuleNotFoundError: No module named yaml (simulated missing runtime dependency)
+___________________ ERROR collecting tests/test_redaction.py ___________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_redaction.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_redaction.py:8: in <module>
+    from exoneural_governor.redaction import redact_tree
+engine/exoneural_governor/redaction.py:6: in <module>
+    import yaml
+build_proof/pr123_engine_drift_guard_fix_20260228T190928Z/tmp/yaml_block/yaml.py:1: in <module>
+    raise ModuleNotFoundError("No module named yaml (simulated missing runtime dependency)")
+E   ModuleNotFoundError: No module named yaml (simulated missing runtime dependency)
+_____________________ ERROR collecting tests/test_stack.py _____________________
+ImportError while importing test module '/workspace/Agent-X-Lab/engine/tests/test_stack.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/root/.pyenv/versions/3.13.8/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+engine/tests/test_stack.py:14: in <module>
+=========================== short test summary info ============================
+ERROR engine/tests/test_protocol_step_paths.py
+ERROR engine/tests/test_readme_contract.py
+ERROR engine/tests/test_redaction.py
+ERROR engine/tests/test_stack.py
+ERROR engine/tests/test_titan9_inventory.py
+rc=2
