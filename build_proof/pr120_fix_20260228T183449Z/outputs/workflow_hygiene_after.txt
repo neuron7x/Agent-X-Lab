@@ -1,0 +1,32 @@
+   110	          if failures:
+   111	              print('Action pin API verification failures detected')
+   112	              raise SystemExit(1)
+   113	
+   114	          print('Action pin API verification PASS')
+   115	          PY
+   116	
+   117	  workflow-tools-and-actionlint:
+   118	    name: Workflow Tools + Actionlint
+   119	    runs-on: ubuntu-latest
+   120	    timeout-minutes: 10
+   121	    steps:
+   122	      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+   123	      - uses: ./.github/actions/setup-python-pip
+   124	        with:
+   125	          "python-version": ${{ env.PYTHON_VERSION }}
+   126	          "pip-version": ${{ env.PIP_VERSION }}
+   127	      - name: Install workflow tool dependencies
+   128	        run: |
+   129	          set -euo pipefail
+   130	          python -m pip --version
+   131	          python -m pip install pyyaml==6.0.2
+   132	      - name: Verify action pinning tool
+   133	        run: |
+   134	          set -euo pipefail
+   135	          python tools/verify_action_pinning.py --workflows .github/workflows
+   136	      - name: Verify workflow hygiene tool
+   137	        run: |
+   138	          set -euo pipefail
+   139	          python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows
+   140	      - name: Run actionlint
+   141	        uses: devops-actions/actionlint@469810fd82c015d3c43815cd2b0e4d02eecc4819 # v0.1.11
