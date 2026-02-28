@@ -1,0 +1,56 @@
+=== .github/actions/pin-pip/action.yml
+name: Pin pip
+description: Deterministically pin pip version (CI-safe, evidence-friendly)
+inputs:
+  pip-version:
+    description: Exact pip version
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Pin pip version
+      shell: bash
+      run: |
+        set -euo pipefail
+        python -m pip install --upgrade "pip==${{ inputs.pip-version }}"
+        python -m pip --version
+=== .github/actions/setup-python-pip/action.yml
+name: Setup Python + pinned pip
+description: Install Python and pin pip to a required version.
+inputs:
+  python-version:
+    required: true
+  pip-version:
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: Pin pip
+      uses: ./.github/actions/pin-pip
+      with:
+        pip-version: ${{ inputs.pip-version }}
+=== .github/actions/setup-node-npm/action.yml
+name: Setup Node + npm ci
+description: Install Node.js and project dependencies with npm ci.
+inputs:
+  node-version:
+    required: true
+  cache-dependency-path:
+    required: false
+    default: package-lock.json
+runs:
+  using: composite
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+        cache-dependency-path: ${{ inputs.cache-dependency-path }}
+    - name: npm ci
+      shell: bash
+      run: |
