@@ -32,169 +32,170 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
-import fnmatch
-import json
-import os
-import subprocess
-import sys
-import time
-import urllib.request
-
-
-def api(url):
-    req = urllib.request.Request(
-        url,
-        headers={
-            'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN'],
-            'Accept': 'application/vnd.github+json',
-            'User-Agent': 'ci-supercheck',
-        },
-    )
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return json.loads(resp.read().decode('utf-8'))
-
-
-def changed_files(event_name, repo, event_path):
-    event = json.loads(open(event_path, encoding='utf-8').read())
-    if event_name == 'pull_request':
-        pr = event['pull_request']['number']
-        files = []
-        page = 1
-        while True:
-            data = api(f'https://api.github.com/repos/{repo}/pulls/{pr}/files?per_page=100&page={page}')
-            if not data:
-                break
-            files.extend(item['filename'] for item in data)
-            page += 1
-        return sorted(set(files))
-
-    data = subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', 'HEAD'], text=True)
-    return sorted(line for line in data.splitlines() if line)
-
-
-def is_docs_only(paths):
-    allowed = (
-        lambda p: p.startswith('docs/')
-        or p.startswith('build_proof/')
-        or p.endswith('.md')
-    )
-    return all(allowed(p) for p in paths)
-
-
-def any_match(paths, predicates):
-    for p in paths:
-        for pred in predicates:
-            if pred(p):
-                return True
-    return False
-
-
-def required_patterns(paths):
-    req = []
-
-    ui_preds = [
-        lambda p: p.startswith('src/'),
-        lambda p: p.startswith('workers/'),
-        lambda p: p.startswith('e2e/'),
-        lambda p: p == 'playwright.config.ts',
-        lambda p: p == 'vite.config.ts',
-        lambda p: p == 'vitest.config.ts',
-        lambda p: p == 'eslint.config.js',
-        lambda p: fnmatch.fnmatch(p, 'tsconfig*.json'),
-        lambda p: fnmatch.fnmatch(p, 'package*.json'),
-        lambda p: p.startswith('scripts/'),
-    ]
-    if any_match(paths, ui_preds):
-        req.extend([
-            'Lint + Typecheck + Unit Tests + Build',
-            'Worker TypeScript',
-            'Playwright E2E Smoke',
-            'Bundle Size Check',
-            'Lighthouse CI',
-        ])
-
-    prod_preds = [
-        lambda p: p.startswith('engine/'),
-        lambda p: p.startswith('udgs_core/'),
-        lambda p: p.startswith('tools/prod_spec/'),
-        lambda p: p.startswith('artifacts/'),
-        lambda p: p == '.github/workflows/prod-spec-gates.yml',
-    ]
-    if any_match(paths, prod_preds):
-        req.extend([
-            'Schema Validation (G0/G3)',
-            'Full RRD Gate Check',
-        ])
-
-    wf_preds = [
-        lambda p: p.startswith('.github/workflows/'),
-        lambda p: p.startswith('.github/actions/'),
-    ]
-    if any_match(paths, wf_preds):
-        req.extend([
-            'Workflow Static Hygiene',
-            'Action Pin Verify',
-        ])
-
-    if not is_docs_only(paths):
-        req.extend([
-            'analyze',
-            'review',
-            'scan',
-        ])
-
-    return sorted(set(req))
-
-
-def normalize_check_name(name):
-    if ' / ' in name:
-        return name.split(' / ', 1)[1]
-    return name
-
-
-def poll(repo, sha, required):
-    deadline = time.time() + 900
-    while time.time() < deadline:
-        data = api(f'https://api.github.com/repos/{repo}/commits/{sha}/check-runs?per_page=100')
-        runs = data.get('check_runs', [])
-        seen = {}
-        for r in runs:
-            base = normalize_check_name(r['name'])
-            if base == 'CI Supercheck':
-                continue
-            seen[base] = (r['status'], r.get('conclusion'), r['name'])
-
-        missing = [n for n in required if n not in seen]
-        failed = [
-            (n, *seen[n])
-            for n in required
-            if n in seen and not (seen[n][0] == 'completed' and seen[n][1] == 'success')
-        ]
-        if not missing and not failed:
-            print('CI Supercheck PASS')
-            return 0
-
-        print('Waiting for required checks...')
-        print('MISSING:', ', '.join(missing) if missing else 'none')
-        if failed:
-            for n, status, conclusion, raw in failed:
-                print(f'FAILED {n} raw={raw} status={status} conclusion={conclusion}')
-        time.sleep(20)
-
-    print('CI Supercheck timeout')
-    print('Required:', ', '.join(required) if required else 'none')
-    return 1
-
-
-repo = os.environ['GITHUB_REPOSITORY']
-sha = os.environ['GITHUB_SHA']
-files = changed_files(os.environ['GITHUB_EVENT_NAME'], repo, os.environ['GITHUB_EVENT_PATH'])
-required = required_patterns(files)
-print('Changed files count:', len(files))
-print('Required checks:', ', '.join(required) if required else 'none')
-if not required:
-    print('No required checks for this change-set; PASS')
-    sys.exit(0)
-
-sys.exit(poll(repo, sha, required))
-PY
+          import fnmatch
+          import json
+          import os
+          import subprocess
+          import sys
+          import time
+          import urllib.request
+          
+          
+          def api(url):
+              req = urllib.request.Request(
+                  url,
+                  headers={
+                      'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN'],
+                      'Accept': 'application/vnd.github+json',
+                      'User-Agent': 'ci-supercheck',
+                  },
+              )
+              with urllib.request.urlopen(req, timeout=30) as resp:
+                  return json.loads(resp.read().decode('utf-8'))
+          
+          
+          def changed_files(event_name, repo, event_path):
+              event = json.loads(open(event_path, encoding='utf-8').read())
+              if event_name == 'pull_request':
+                  pr = event['pull_request']['number']
+                  files = []
+                  page = 1
+                  while True:
+                      data = api(f'https://api.github.com/repos/{repo}/pulls/{pr}/files?per_page=100&page={page}')
+                      if not data:
+                          break
+                      files.extend(item['filename'] for item in data)
+                      page += 1
+                  return sorted(set(files))
+          
+              data = subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', 'HEAD'], text=True)
+              return sorted(line for line in data.splitlines() if line)
+          
+          
+          def is_docs_only(paths):
+              allowed = (
+                  lambda p: p.startswith('docs/')
+                  or p.startswith('build_proof/')
+                  or p.endswith('.md')
+              )
+              return all(allowed(p) for p in paths)
+          
+          
+          def any_match(paths, predicates):
+              for p in paths:
+                  for pred in predicates:
+                      if pred(p):
+                          return True
+              return False
+          
+          
+          def required_patterns(paths):
+              req = []
+          
+              ui_preds = [
+                  lambda p: p.startswith('src/'),
+                  lambda p: p.startswith('workers/'),
+                  lambda p: p.startswith('e2e/'),
+                  lambda p: p == 'playwright.config.ts',
+                  lambda p: p == 'vite.config.ts',
+                  lambda p: p == 'vitest.config.ts',
+                  lambda p: p == 'eslint.config.js',
+                  lambda p: fnmatch.fnmatch(p, 'tsconfig*.json'),
+                  lambda p: fnmatch.fnmatch(p, 'package*.json'),
+                  lambda p: p.startswith('scripts/'),
+              ]
+              if any_match(paths, ui_preds):
+                  req.extend([
+                      'Lint + Typecheck + Unit Tests + Build',
+                      'Worker TypeScript',
+                      'Playwright E2E Smoke',
+                      'Bundle Size Check',
+                      'Lighthouse CI',
+                  ])
+          
+              prod_preds = [
+                  lambda p: p.startswith('engine/'),
+                  lambda p: p.startswith('udgs_core/'),
+                  lambda p: p.startswith('tools/prod_spec/'),
+                  lambda p: p.startswith('artifacts/'),
+                  lambda p: p == '.github/workflows/prod-spec-gates.yml',
+              ]
+              if any_match(paths, prod_preds):
+                  req.extend([
+                      'Schema Validation (G0/G3)',
+                      'Full RRD Gate Check',
+                  ])
+          
+              wf_preds = [
+                  lambda p: p.startswith('.github/workflows/'),
+                  lambda p: p.startswith('.github/actions/'),
+              ]
+              if any_match(paths, wf_preds):
+                  req.extend([
+                      'Workflow Static Hygiene',
+                      'Action Pin Verify',
+                      'Workflow Tools + Actionlint',
+                  ])
+          
+              if not is_docs_only(paths):
+                  req.extend([
+                      'analyze',
+                      'review',
+                      'scan',
+                  ])
+          
+              return sorted(set(req))
+          
+          
+          def normalize_check_name(name):
+              if ' / ' in name:
+                  return name.split(' / ', 1)[1]
+              return name
+          
+          
+          def poll(repo, sha, required):
+              deadline = time.time() + 900
+              while time.time() < deadline:
+                  data = api(f'https://api.github.com/repos/{repo}/commits/{sha}/check-runs?per_page=100')
+                  runs = data.get('check_runs', [])
+                  seen = {}
+                  for r in runs:
+                      base = normalize_check_name(r['name'])
+                      if base == 'CI Supercheck':
+                          continue
+                      seen[base] = (r['status'], r.get('conclusion'), r['name'])
+          
+                  missing = [n for n in required if n not in seen]
+                  failed = [
+                      (n, *seen[n])
+                      for n in required
+                      if n in seen and not (seen[n][0] == 'completed' and seen[n][1] == 'success')
+                  ]
+                  if not missing and not failed:
+                      print('CI Supercheck PASS')
+                      return 0
+          
+                  print('Waiting for required checks...')
+                  print('MISSING:', ', '.join(missing) if missing else 'none')
+                  if failed:
+                      for n, status, conclusion, raw in failed:
+                          print(f'FAILED {n} raw={raw} status={status} conclusion={conclusion}')
+                  time.sleep(20)
+          
+              print('CI Supercheck timeout')
+              print('Required:', ', '.join(required) if required else 'none')
+              return 1
+          
+          
+          repo = os.environ['GITHUB_REPOSITORY']
+          sha = os.environ['GITHUB_SHA']
+          files = changed_files(os.environ['GITHUB_EVENT_NAME'], repo, os.environ['GITHUB_EVENT_PATH'])
+          required = required_patterns(files)
+          print('Changed files count:', len(files))
+          print('Required checks:', ', '.join(required) if required else 'none')
+          if not required:
+              print('No required checks for this change-set; PASS')
+              sys.exit(0)
+          
+          sys.exit(poll(repo, sha, required))
+          PY

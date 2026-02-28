@@ -18,12 +18,49 @@ def _merged_env(*env_maps: object) -> dict[str, str]:
 
 def main() -> int:
     p = argparse.ArgumentParser()
-    p.add_argument("--workflows", type=Path, default=Path(".github/workflows"))
+    p.add_argument("--workflows", type=Path)
     args = p.parse_args()
 
+    if args.workflows is None:
+        workflows_dir = None
+        for candidate in (Path.cwd(), *Path.cwd().parents):
+            discovered = candidate / ".github" / "workflows"
+            if discovered.is_dir():
+                workflows_dir = discovered
+                break
+        if workflows_dir is None:
+            print("FAIL: workflow hygiene validation setup failed")
+            print("workflows directory not found; pass --workflows or run within a repository containing .github/workflows")
+            return 2
+    else:
+        workflows_dir = args.workflows.resolve()
+
+    if not workflows_dir.exists():
+        print("FAIL: workflow hygiene validation setup failed")
+        print(f"workflows directory does not exist: {workflows_dir}")
+        return 2
+    if not workflows_dir.is_dir():
+        print("FAIL: workflow hygiene validation setup failed")
+        print(f"workflows path is not a directory: {workflows_dir}")
+        return 2
+
+    workflow_files = sorted(set(workflows_dir.glob("*.yml")).union(workflows_dir.glob("*.yaml")))
+    if not workflow_files:
+        print("FAIL: workflow hygiene validation setup failed")
+        print(f"no workflow files found in: {workflows_dir}")
+        return 2
+
     errs: list[str] = []
-    for wf in sorted(args.workflows.glob("*.yml")):
-        data = yaml.safe_load(wf.read_text(encoding="utf-8")) or {}
+    parse_errors: list[str] = []
+    for wf in workflow_files:
+        try:
+            data = yaml.safe_load(wf.read_text(encoding="utf-8")) or {}
+        except yaml.YAMLError as exc:
+            parse_errors.append(f"{wf.name}: {exc}")
+            continue
+        except OSError as exc:
+            parse_errors.append(f"{wf.name}: {exc}")
+            continue
         if not isinstance(data, dict):
             errs.append(f"{wf.name}:invalid_yaml")
             continue
@@ -52,6 +89,11 @@ def main() -> int:
                         errs.append(
                             f"{wf.name}:{job_name}:step_{idx}:missing_pip_version_for_pin_pip"
                         )
+    if parse_errors:
+        print("FAIL: invalid workflow YAML detected")
+        print("\n".join(parse_errors))
+        return 2
+
     if errs:
         print("FAIL: workflow hygiene violations")
         print("\n".join(errs))

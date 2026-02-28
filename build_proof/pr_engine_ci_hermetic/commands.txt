@@ -1,6 +1,29 @@
-git -C /tmp/axl-wt-363FBw status --porcelain
-python /tmp/axl-wt-363FBw/tools/verify_action_pinning.py --workflows /tmp/axl-wt-363FBw/.github/workflows
-python -m compileall -q /tmp/axl-wt-363FBw/engine
-python -m pytest -q /tmp/axl-wt-363FBw/engine/tests
-git -C /tmp/axl-wt-363FBw status --porcelain
-git -C /tmp/axl-wt-363FBw diff --name-only
+git worktree add /tmp/axl-clean HEAD
+git -C /tmp/axl-clean status --porcelain
+python -m pip --version
+python -m pip install actionlint-py==1.7.7.23
+actionlint --version
+python tools/verify_action_pinning.py --workflows .github/workflows
+python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows
+actionlint -color -oneline .github/workflows/*.yml
+python -m compileall -q engine
+python -m pytest -q engine/tests
+git status --porcelain
+git diff --name-only
+python - <<'PY'
+from pathlib import Path
+forbidden = [
+    Path('engine/artifacts/release-test'),
+    Path('engine/artifacts/tmp-evidence-test'),
+    Path('artifacts/agent'),
+]
+found = [str(p) for p in forbidden if p.exists()]
+if found:
+    print('FOUND')
+    for p in found:
+        print(p)
+    raise SystemExit(1)
+print('OK: forbidden paths absent')
+for p in forbidden:
+    print(p)
+PY
