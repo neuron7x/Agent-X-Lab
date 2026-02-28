@@ -1,0 +1,10 @@
+git --version
+python --version
+python -m pip --version
+git status --porcelain
+actionlint -color -oneline .github/workflows/*.yml
+python tools/verify_action_pinning.py --workflows .github/workflows
+python tools/verify_workflow_hygiene.py --workflows .github/workflows
+python -m pytest -q engine/tests
+git status --porcelain
+git diff

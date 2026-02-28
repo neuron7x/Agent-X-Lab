@@ -1,4 +1,5 @@
 name: Setup Node + npm ci
+description: Install Node.js and project dependencies with npm ci.
 inputs:
   node-version:
     required: true

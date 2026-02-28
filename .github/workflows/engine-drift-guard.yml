@@ -20,14 +20,22 @@ jobs:
     env:
       PYTHONDONTWRITEBYTECODE: "1"
       PYTHONHASHSEED: "0"
-      AXL_TEST_OUTPUT_DIR: ${{ runner.temp }}/axl_test_output
-      AXL_ARTIFACTS_ROOT: ${{ runner.temp }}/axl_artifacts
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
 
       - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d
         with:
           python-version: '3.13'
+
+      - name: Init temp dirs
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo "AXL_TEST_OUTPUT_DIR=${RUNNER_TEMP}/axl_test_output"
+            echo "AXL_ARTIFACTS_ROOT=${RUNNER_TEMP}/axl_artifacts"
+          } >> "$GITHUB_ENV"
+          mkdir -p "${RUNNER_TEMP}/axl_test_output" "${RUNNER_TEMP}/axl_artifacts"
 
       - name: Install engine test dependencies (deterministic)
         shell: bash

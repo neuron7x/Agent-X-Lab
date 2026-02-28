@@ -123,12 +123,11 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           pip-version: ${{ env.PIP_VERSION }}
-      - name: Install lint dependencies
+      - name: Install workflow tool dependencies
         run: |
           set -euo pipefail
           python -m pip --version
-          python -m pip install actionlint-py==1.7.7.23 pyyaml==6.0.2
-          actionlint --version
+          python -m pip install pyyaml==6.0.2
       - name: Verify action pinning tool
         run: |
           set -euo pipefail
@@ -138,6 +137,6 @@ jobs:
           set -euo pipefail
           python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows
       - name: Run actionlint
-        run: |
-          set -euo pipefail
-          actionlint -color -oneline .github/workflows/*.yml
+        uses: devops-actions/actionlint@469810fd82c015d3c43815cd2b0e4d02eecc4819 # v0.1.11
+        with:
+          args: -color -oneline .github/workflows/*.yml
