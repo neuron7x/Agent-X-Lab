@@ -8,6 +8,7 @@ on:
       - 'engine/tools/verify_action_pinning.py'
       - 'engine/tools/verify_workflow_hygiene.py'
       - 'tools/verify_action_pinning.py'
+      - 'tools/verify_workflow_hygiene.py'
       - 'engine/tests/test_workflow_guards.py'
   push:
     branches: [main]

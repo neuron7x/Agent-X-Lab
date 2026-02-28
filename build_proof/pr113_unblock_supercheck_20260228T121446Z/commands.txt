@@ -1,0 +1,14 @@
+git rev-parse HEAD
+git status --porcelain
+python --version
+python -m pip --version
+git --version
+git diff --name-only origin/main...HEAD
+python scripts: compute supercheck required
+python scripts: build workflow job index
+python tools/verify_action_pinning.py --workflows .github/workflows
+python tools/verify_workflow_hygiene.py --workflows .github/workflows
+python -m pytest -q engine/tests
+git diff
+sha256sum evidence
+git push

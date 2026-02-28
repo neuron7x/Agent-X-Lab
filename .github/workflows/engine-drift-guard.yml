@@ -27,7 +27,7 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Init temp dirs
+      - name: Init hermetic temp dirs
         shell: bash
         run: |
           set -euo pipefail

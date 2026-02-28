@@ -1,0 +1,43 @@
+diff --git a/.github/workflows/engine-drift-guard.yml b/.github/workflows/engine-drift-guard.yml
+index 20de392..fd62445 100644
+--- a/.github/workflows/engine-drift-guard.yml
++++ b/.github/workflows/engine-drift-guard.yml
+@@ -27,7 +27,7 @@ jobs:
+         with:
+           python-version: '3.13'
+ 
+-      - name: Init temp dirs
++      - name: Init hermetic temp dirs
+         shell: bash
+         run: |
+           set -euo pipefail
+diff --git a/.github/workflows/prod-spec-gates.yml b/.github/workflows/prod-spec-gates.yml
+index f9146a1..a5a4dd7 100644
+--- a/.github/workflows/prod-spec-gates.yml
++++ b/.github/workflows/prod-spec-gates.yml
+@@ -12,9 +12,11 @@ on:
+       - 'engine/policies/prod_spec_v2/**'
+   pull_request:
+     paths:
+-      - 'artifacts/AC_VERSION.json'
+-      - 'artifacts/SSDF.map'
+       - 'engine/**'
++      - 'udgs_core/**'
++      - 'tools/prod_spec/**'
++      - 'artifacts/**'
++      - '.github/workflows/prod-spec-gates.yml'
+   workflow_dispatch:
+ 
+ permissions:
+diff --git a/.github/workflows/workflow-hygiene.yml b/.github/workflows/workflow-hygiene.yml
+index 50179c3..03827dc 100644
+--- a/.github/workflows/workflow-hygiene.yml
++++ b/.github/workflows/workflow-hygiene.yml
+@@ -8,6 +8,7 @@ on:
+       - 'engine/tools/verify_action_pinning.py'
+       - 'engine/tools/verify_workflow_hygiene.py'
+       - 'tools/verify_action_pinning.py'
++      - 'tools/verify_workflow_hygiene.py'
+       - 'engine/tests/test_workflow_guards.py'
+   push:
+     branches: [main]

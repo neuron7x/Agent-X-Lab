@@ -12,9 +12,11 @@ on:
       - 'engine/policies/prod_spec_v2/**'
   pull_request:
     paths:
-      - 'artifacts/AC_VERSION.json'
-      - 'artifacts/SSDF.map'
       - 'engine/**'
+      - 'udgs_core/**'
+      - 'tools/prod_spec/**'
+      - 'artifacts/**'
+      - '.github/workflows/prod-spec-gates.yml'
   workflow_dispatch:
 
 permissions:

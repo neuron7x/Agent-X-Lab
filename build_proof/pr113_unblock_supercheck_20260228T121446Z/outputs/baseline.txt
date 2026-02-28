@@ -1,0 +1,18 @@
+d5582f825bf6546b734ce9cd159b8a77054e87ce
+ M .github/workflows/engine-drift-guard.yml
+ M .github/workflows/prod-spec-gates.yml
+ M .github/workflows/workflow-hygiene.yml
+?? build_proof/pr113_unblock_supercheck_20260228T121446Z/
+Python 3.13.8
+pip 25.3 from /root/.pyenv/versions/3.13.8/lib/python3.13/site-packages/pip (python 3.13)
+git version 2.43.0
+WARN: git diff --name-only origin/main...HEAD failed
+fatal: ambiguous argument 'origin/main...HEAD': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+Fallback used: git diff --name-only
+WARN: git diff --name-only origin/main...HEAD failed
+fatal: ambiguous argument 'origin/main...HEAD': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+Fallback used: git diff --name-only
