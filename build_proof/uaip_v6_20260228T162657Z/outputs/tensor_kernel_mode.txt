@@ -1,0 +1,5 @@
+NOT_APPLICABLE
+Evidence:
+- Scan source set: all *.py under repository excluding .git/node_modules/venv/third_party/build_proof.
+- Marker set searched: torch, tensorflow, jax, triton, cuda, cupy.
+- Command provenance: see commands.txt entry "python - <<PY (build dag, entropy, tensor mode)".

@@ -47,6 +47,18 @@ def _tracked_files(repo_root: Path) -> list[Path]:
     return [repo_root / line for line in p.stdout.splitlines() if line.strip()]
 
 
+def _resolve_output_path(repo_root: Path, out: Path) -> Path:
+    candidate = out if out.is_absolute() else (repo_root / out)
+    resolved = candidate.resolve()
+    artifact_root = (repo_root / "artifacts").resolve()
+    try:
+        resolved.relative_to(artifact_root)
+    except ValueError as exc:
+        raise ValueError(
+            f"output path must be under artifacts/: {resolved}"
+        ) from exc
+    return resolved
+
 def _scan_file(path: Path, repo_root: Path) -> list[dict[str, object]]:
     try:
         text = path.read_text(encoding="utf-8")
@@ -84,12 +96,18 @@ def main() -> int:
             continue
         all_findings.extend(_scan_file(file_path, repo_root))
 
-    args.out.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        out_path = _resolve_output_path(repo_root, args.out)
+    except ValueError as exc:
+        print(f"FAIL: {exc}")
+        return 2
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "status": "pass" if not all_findings else "fail",
         "findings": all_findings,
     }
-    args.out.write_text(
+    out_path.write_text(
         json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
 

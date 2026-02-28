@@ -99,8 +99,6 @@ jobs:
     assert "nested/bad.yaml:t:step_0:actions/setup-python@v5" in p.stdout
 
 
-
-
 def test_verify_action_pinning_fails_closed_for_missing_workflows(tmp_path: Path) -> None:
     missing = tmp_path / "does-not-exist"
     p = _run([
@@ -161,6 +159,19 @@ def test_verify_workflow_hygiene_fails_closed_for_empty_workflows(tmp_path: Path
     assert p.returncode == 2
     assert "no workflow files found" in p.stdout
 
+
+def test_verify_workflow_hygiene_fails_closed_for_invalid_yaml(tmp_path: Path) -> None:
+    workflows_dir = tmp_path / "workflows"
+    workflows_dir.mkdir()
+    (workflows_dir / "bad.yml").write_text("jobs: [", encoding="utf-8")
+    p = _run([
+        "python",
+        "tools/verify_workflow_hygiene.py",
+        "--workflows",
+        str(workflows_dir),
+    ])
+    assert p.returncode == 2
+    assert "FAIL: invalid workflow YAML detected" in p.stdout
 
 def test_verify_workflow_hygiene_autodetects_repo_root_from_subdir() -> None:
     nested_dir = REPO_ROOT / "tests"

@@ -1,0 +1,1142 @@
+F401 [*] `os` imported but unused
+  --> engine/scripts/check_prod_spec_gates.py:27:8
+   |
+25 | import hashlib
+26 | import json
+27 | import os
+   |        ^^
+28 | import re
+29 | import sys
+   |
+help: Remove unused import: `os`
+
+F841 Local variable `statuses` is assigned to but never used
+   --> engine/scripts/check_prod_spec_gates.py:681:5
+    |
+680 |     # RRD
+681 |     statuses = {g.gate_id: g.status for g in report.gates}
+    |     ^^^^^^^^
+682 |     hard_fail = any(g.status == "FAIL" and g.enforcement == "HARD" for g in report.gates)
+683 |     report.rrd_status = "NO_RELEASE" if hard_fail else "PRODUCTION_SPEC_V2.1"
+    |
+help: Remove assignment to unused variable `statuses`
+
+F401 [*] `os` imported but unused
+  --> evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py:27:8
+   |
+25 | import hashlib
+26 | import json
+27 | import os
+   |        ^^
+28 | import re
+29 | import sys
+   |
+help: Remove unused import: `os`
+
+F841 Local variable `statuses` is assigned to but never used
+   --> evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py:670:5
+    |
+669 |     # RRD
+670 |     statuses = {g.gate_id: g.status for g in report.gates}
+    |     ^^^^^^^^
+671 |     hard_fail = any(g.status == "FAIL" and g.enforcement == "HARD" for g in report.gates)
+672 |     report.rrd_status = "NO_RELEASE" if hard_fail else "PRODUCTION_SPEC_V2.1"
+    |
+help: Remove assignment to unused variable `statuses`
+
+F401 [*] `os` imported but unused
+  --> evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py:27:8
+   |
+25 | import hashlib
+26 | import json
+27 | import os
+   |        ^^
+28 | import re
+29 | import sys
+   |
+help: Remove unused import: `os`
+
+F841 Local variable `statuses` is assigned to but never used
+   --> evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py:670:5
+    |
+669 |     # RRD
+670 |     statuses = {g.gate_id: g.status for g in report.gates}
+    |     ^^^^^^^^
+671 |     hard_fail = any(g.status == "FAIL" and g.enforcement == "HARD" for g in report.gates)
+672 |     report.rrd_status = "NO_RELEASE" if hard_fail else "PRODUCTION_SPEC_V2.1"
+    |
+help: Remove assignment to unused variable `statuses`
+
+F401 [*] `sys` imported but unused
+  --> sources/legacy/E-legacy_snapshot/cli.py:13:8
+   |
+11 | import logging
+12 | import os
+13 | import sys
+   |        ^^^
+14 | from pathlib import Path
+   |
+help: Remove unused import: `sys`
+
+F401 [*] `.models.AuditVerdict` imported but unused
+  --> sources/legacy/E-legacy_snapshot/cli.py:24:5
+   |
+23 | from .models import (
+24 |     AuditVerdict,
+   |     ^^^^^^^^^^^^
+25 |     CheckStatus,
+26 |     Constraints,
+   |
+help: Remove unused import
+
+F401 [*] `.models.Phase` imported but unused
+  --> sources/legacy/E-legacy_snapshot/cli.py:28:5
+   |
+26 |     Constraints,
+27 |     DiffBudget,
+28 |     Phase,
+   |     ^^^^^
+29 |     RefactorPolicy,
+30 |     SecurityPolicy,
+   |
+help: Remove unused import
+
+F401 [*] `.models.ProofBundle` imported but unused
+  --> sources/legacy/E-legacy_snapshot/engine.py:25:5
+   |
+23 |     LoopState,
+24 |     Phase,
+25 |     ProofBundle,
+   |     ^^^^^^^^^^^
+26 |     Spec,
+27 |     TargetState,
+   |
+help: Remove unused import: `.models.ProofBundle`
+
+F401 [*] `typing.Any` imported but unused
+  --> sources/legacy/E-legacy_snapshot/evidence.py:15:20
+   |
+13 | from datetime import datetime, timezone
+14 | from pathlib import Path
+15 | from typing import Any
+   |                    ^^^
+16 |
+17 | from .models import (
+   |
+help: Remove unused import: `typing.Any`
+
+F401 [*] `.models.Phase` imported but unused
+  --> sources/legacy/E-legacy_snapshot/evidence.py:23:5
+   |
+21 |     LocalGateResult,
+22 |     LoopState,
+23 |     Phase,
+   |     ^^^^^
+24 |     ProofBundle,
+25 |     TimeSpan,
+   |
+help: Remove unused import: `.models.Phase`
+
+F401 [*] `.models.ProofBundle` imported but unused
+  --> sources/legacy/E-legacy_snapshot/roles.py:22:5
+   |
+20 |     FailPacket,
+21 |     LoopState,
+22 |     ProofBundle,
+   |     ^^^^^^^^^^^
+23 |     Spec,
+24 |     TargetState,
+   |
+help: Remove unused import
+
+F401 [*] `.models.TargetState` imported but unused
+  --> sources/legacy/E-legacy_snapshot/roles.py:24:5
+   |
+22 |     ProofBundle,
+23 |     Spec,
+24 |     TargetState,
+   |     ^^^^^^^^^^^
+25 |     EditInstruction,
+26 |     CommandExpectation,
+   |
+help: Remove unused import
+
+F401 [*] `.constraints.Violation` imported but unused
+  --> sources/legacy/E-legacy_snapshot/roles.py:29:46
+   |
+27 |     Acceptance,
+28 | )
+29 | from .constraints import ConstraintEnforcer, Violation
+   |                                              ^^^^^^^^^
+30 |
+31 | logger = logging.getLogger("dao.roles")
+   |
+help: Remove unused import: `.constraints.Violation`
+
+F401 [*] `json` imported but unused
+  --> sources/legacy/E-legacy_snapshot/tests.py:10:8
+   |
+ 8 | from __future__ import annotations
+ 9 |
+10 | import json
+   |        ^^^^
+11 | import tempfile
+12 | from datetime import datetime, timezone, timedelta
+   |
+help: Remove unused import: `json`
+
+F401 [*] `tempfile` imported but unused
+  --> sources/legacy/E-legacy_snapshot/tests.py:11:8
+   |
+10 | import json
+11 | import tempfile
+   |        ^^^^^^^^
+12 | from datetime import datetime, timezone, timedelta
+13 | from pathlib import Path
+   |
+help: Remove unused import: `tempfile`
+
+F401 [*] `datetime.timedelta` imported but unused
+  --> sources/legacy/E-legacy_snapshot/tests.py:12:42
+   |
+10 | import json
+11 | import tempfile
+12 | from datetime import datetime, timezone, timedelta
+   |                                          ^^^^^^^^^
+13 | from pathlib import Path
+   |
+help: Remove unused import: `datetime.timedelta`
+
+F401 [*] `pathlib.Path` imported but unused
+  --> sources/legacy/E-legacy_snapshot/tests.py:13:21
+   |
+11 | import tempfile
+12 | from datetime import datetime, timezone, timedelta
+13 | from pathlib import Path
+   |                     ^^^^
+14 |
+15 | import pytest
+   |
+help: Remove unused import: `pathlib.Path`
+
+F401 [*] `dao_lifebook.models.EditInstruction` imported but unused
+  --> sources/legacy/E-legacy_snapshot/tests.py:27:5
+   |
+25 |     DiffBudget,
+26 |     DiffSummary,
+27 |     EditInstruction,
+   |     ^^^^^^^^^^^^^^^
+28 |     EvidencePointer,
+29 |     FailPacket,
+   |
+help: Remove unused import
+
+F401 [*] `dao_lifebook.models.EvidencePointer` imported but unused
+  --> sources/legacy/E-legacy_snapshot/tests.py:28:5
+   |
+26 |     DiffSummary,
+27 |     EditInstruction,
+28 |     EvidencePointer,
+   |     ^^^^^^^^^^^^^^^
+29 |     FailPacket,
+30 |     LocalGateResult,
+   |
+help: Remove unused import
+
+F401 [*] `dao_lifebook.models.LocalGateResult` imported but unused
+  --> sources/legacy/E-legacy_snapshot/tests.py:30:5
+   |
+28 |     EvidencePointer,
+29 |     FailPacket,
+30 |     LocalGateResult,
+   |     ^^^^^^^^^^^^^^^
+31 |     LoopState,
+32 |     Phase,
+   |
+help: Remove unused import
+
+F401 [*] `dao_lifebook.models.SecurityPolicy` imported but unused
+  --> sources/legacy/E-legacy_snapshot/tests.py:35:5
+   |
+33 |     ProofBundle,
+34 |     RefactorPolicy,
+35 |     SecurityPolicy,
+   |     ^^^^^^^^^^^^^^
+36 |     Spec,
+37 |     TargetState,
+   |
+help: Remove unused import
+
+F401 [*] `dao_lifebook.models.Spec` imported but unused
+  --> sources/legacy/E-legacy_snapshot/tests.py:36:5
+   |
+34 |     RefactorPolicy,
+35 |     SecurityPolicy,
+36 |     Spec,
+   |     ^^^^
+37 |     TargetState,
+38 |     TimeSpan,
+   |
+help: Remove unused import
+
+F401 [*] `dao_lifebook.constraints.Violation` imported but unused
+   --> sources/legacy/E-legacy_snapshot/tests.py:191:58
+    |
+189 | # ─── Constraint Tests ─────────────────────────────────────────────────────────
+190 |
+191 | from dao_lifebook.constraints import ConstraintEnforcer, Violation
+    |                                                          ^^^^^^^^^
+    |
+help: Remove unused import: `dao_lifebook.constraints.Violation`
+
+F401 [*] `dao_lifebook.roles.Specifier` imported but unused
+   --> sources/legacy/E-legacy_snapshot/tests.py:406:48
+    |
+404 | # ─── Role Tests ───────────────────────────────────────────────────────────────
+405 |
+406 | from dao_lifebook.roles import Scout, Planner, Specifier, Executor, Auditor
+    |                                                ^^^^^^^^^
+    |
+help: Remove unused import
+
+F401 [*] `dao_lifebook.roles.Executor` imported but unused
+   --> sources/legacy/E-legacy_snapshot/tests.py:406:59
+    |
+404 | # ─── Role Tests ───────────────────────────────────────────────────────────────
+405 |
+406 | from dao_lifebook.roles import Scout, Planner, Specifier, Executor, Auditor
+    |                                                           ^^^^^^^^
+    |
+help: Remove unused import
+
+F811 [*] Redefinition of unused `Specifier` from line 406
+   --> sources/legacy/E-legacy_snapshot/tests.py:646:40
+    |
+644 |         )
+645 |
+646 |         from dao_lifebook.roles import Specifier
+    |                                        ^^^^^^^^^ `Specifier` redefined here
+647 |         spec = Specifier().execute(state, task={"rollback": "revert"}, packet=packet)
+    |
+   ::: sources/legacy/E-legacy_snapshot/tests.py:406:48
+    |
+404 | # ─── Role Tests ───────────────────────────────────────────────────────────────
+405 |
+406 | from dao_lifebook.roles import Scout, Planner, Specifier, Executor, Auditor
+    |                                                --------- previous definition of `Specifier` here
+    |
+help: Remove definition: `Specifier`
+
+F401 [*] `sys` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/cli.py:15:8
+   |
+13 | import logging
+14 | import os
+15 | import sys
+   |        ^^^
+16 | from pathlib import Path
+   |
+help: Remove unused import: `sys`
+
+F401 [*] `.models.AuditVerdict` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/cli.py:26:5
+   |
+25 | from .models import (
+26 |     AuditVerdict,
+   |     ^^^^^^^^^^^^
+27 |     CheckStatus,
+28 |     Constraints,
+   |
+help: Remove unused import
+
+F401 [*] `.models.Phase` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/cli.py:31:5
+   |
+29 |     DiffBudget,
+30 |     GovernorAction,
+31 |     Phase,
+   |     ^^^^^
+32 |     RefactorPolicy,
+33 |     SecurityPolicy,
+   |
+help: Remove unused import
+
+F401 [*] `._types.Result` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/engine.py:23:21
+   |
+21 | from typing import Any, Callable
+22 |
+23 | from ._types import Result, Ok, Err, DAOError, ErrorSeverity, EC
+   |                     ^^^^^^
+24 | from .models import (
+25 |     AuditVerdict,
+   |
+help: Remove unused import
+
+F401 [*] `._types.Ok` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/engine.py:23:29
+   |
+21 | from typing import Any, Callable
+22 |
+23 | from ._types import Result, Ok, Err, DAOError, ErrorSeverity, EC
+   |                             ^^
+24 | from .models import (
+25 |     AuditVerdict,
+   |
+help: Remove unused import
+
+F401 [*] `._types.Err` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/engine.py:23:33
+   |
+21 | from typing import Any, Callable
+22 |
+23 | from ._types import Result, Ok, Err, DAOError, ErrorSeverity, EC
+   |                                 ^^^
+24 | from .models import (
+25 |     AuditVerdict,
+   |
+help: Remove unused import
+
+F401 [*] `._types.DAOError` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/engine.py:23:38
+   |
+21 | from typing import Any, Callable
+22 |
+23 | from ._types import Result, Ok, Err, DAOError, ErrorSeverity, EC
+   |                                      ^^^^^^^^
+24 | from .models import (
+25 |     AuditVerdict,
+   |
+help: Remove unused import
+
+F401 [*] `._types.ErrorSeverity` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/engine.py:23:48
+   |
+21 | from typing import Any, Callable
+22 |
+23 | from ._types import Result, Ok, Err, DAOError, ErrorSeverity, EC
+   |                                                ^^^^^^^^^^^^^
+24 | from .models import (
+25 |     AuditVerdict,
+   |
+help: Remove unused import
+
+F401 [*] `._types.EC` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/engine.py:23:63
+   |
+21 | from typing import Any, Callable
+22 |
+23 | from ._types import Result, Ok, Err, DAOError, ErrorSeverity, EC
+   |                                                               ^^
+24 | from .models import (
+25 |     AuditVerdict,
+   |
+help: Remove unused import
+
+F841 Local variable `current_failing` is assigned to but never used
+   --> tools/dao-arbiter/dao_lifebook/engine.py:346:9
+    |
+345 |         # Snapshot current failing names BEFORE this iteration
+346 |         current_failing = {p.check_name for p in self._state.active_packets}
+    |         ^^^^^^^^^^^^^^^
+347 |
+348 |         # A: Observe
+    |
+help: Remove assignment to unused variable `current_failing`
+
+F401 [*] `typing.Any` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/evidence.py:24:20
+   |
+22 | from datetime import datetime, timezone
+23 | from pathlib import Path
+24 | from typing import Any
+   |                    ^^^
+25 |
+26 | from ._types import Result, Ok, Err, DAOError, ErrorSeverity, EC
+   |
+help: Remove unused import: `typing.Any`
+
+F401 [*] `.models.LocalGateResult` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/roles.py:30:5
+   |
+28 |     EditInstruction,
+29 |     FailPacket,
+30 |     LocalGateResult,
+   |     ^^^^^^^^^^^^^^^
+31 |     LoopState,
+32 |     Spec,
+   |
+help: Remove unused import: `.models.LocalGateResult`
+
+F401 [*] `.constraints.Violation` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/roles.py:34:46
+   |
+32 |     Spec,
+33 | )
+34 | from .constraints import ConstraintEnforcer, Violation
+   |                                              ^^^^^^^^^
+35 |
+36 | logger = logging.getLogger("dao.roles")
+   |
+help: Remove unused import: `.constraints.Violation`
+
+F401 [*] `datetime.timedelta` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/tests.py:19:42
+   |
+17 | import time
+18 | import hashlib
+19 | from datetime import datetime, timezone, timedelta
+   |                                          ^^^^^^^^^
+20 | from pathlib import Path
+21 | from typing import Any
+   |
+help: Remove unused import: `datetime.timedelta`
+
+F401 [*] `pathlib.Path` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/tests.py:20:21
+   |
+18 | import hashlib
+19 | from datetime import datetime, timezone, timedelta
+20 | from pathlib import Path
+   |                     ^^^^
+21 | from typing import Any
+   |
+help: Remove unused import: `pathlib.Path`
+
+F401 [*] `typing.Any` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/tests.py:21:20
+   |
+19 | from datetime import datetime, timezone, timedelta
+20 | from pathlib import Path
+21 | from typing import Any
+   |                    ^^^
+22 |
+23 | import pytest
+   |
+help: Remove unused import: `typing.Any`
+
+F401 [*] `dao_lifebook._types.ErrorSeverity` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/tests.py:32:52
+   |
+30 | # ════════════════════════════════════════════════════════════════════════════════
+31 |
+32 | from dao_lifebook._types import Ok, Err, DAOError, ErrorSeverity, EC
+   |                                                    ^^^^^^^^^^^^^
+   |
+help: Remove unused import: `dao_lifebook._types.ErrorSeverity`
+
+F401 [*] `dao_lifebook.models.EditInstruction` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/tests.py:77:43
+   |
+75 | from dao_lifebook.models import (
+76 |     ArtifactRef, AuditVerdict, CheckResult, CheckStatus,
+77 |     Constraints, DiffBudget, DiffSummary, EditInstruction,
+   |                                           ^^^^^^^^^^^^^^^
+78 |     EvidencePointer, FailPacket, GovernorAction, GovernorDecision,
+79 |     HistoryEvent, LocalGateResult, LoopState, Phase, ProofBundle,
+   |
+help: Remove unused import
+
+F401 [*] `dao_lifebook.models.EvidencePointer` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/tests.py:78:5
+   |
+76 |     ArtifactRef, AuditVerdict, CheckResult, CheckStatus,
+77 |     Constraints, DiffBudget, DiffSummary, EditInstruction,
+78 |     EvidencePointer, FailPacket, GovernorAction, GovernorDecision,
+   |     ^^^^^^^^^^^^^^^
+79 |     HistoryEvent, LocalGateResult, LoopState, Phase, ProofBundle,
+80 |     RefactorPolicy, SecurityPolicy, Spec, TargetState, TimeSpan,
+   |
+help: Remove unused import
+
+F401 [*] `dao_lifebook.models.SecurityPolicy` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/tests.py:80:21
+   |
+78 |     EvidencePointer, FailPacket, GovernorAction, GovernorDecision,
+79 |     HistoryEvent, LocalGateResult, LoopState, Phase, ProofBundle,
+80 |     RefactorPolicy, SecurityPolicy, Spec, TargetState, TimeSpan,
+   |                     ^^^^^^^^^^^^^^
+81 |     SCHEMA_VERSION,
+82 | )
+   |
+help: Remove unused import
+
+F401 [*] `dao_lifebook.models.Spec` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/tests.py:80:37
+   |
+78 |     EvidencePointer, FailPacket, GovernorAction, GovernorDecision,
+79 |     HistoryEvent, LocalGateResult, LoopState, Phase, ProofBundle,
+80 |     RefactorPolicy, SecurityPolicy, Spec, TargetState, TimeSpan,
+   |                                     ^^^^
+81 |     SCHEMA_VERSION,
+82 | )
+   |
+help: Remove unused import
+
+F401 [*] `dao_lifebook.roles.Executor` imported but unused
+   --> tools/dao-arbiter/dao_lifebook/tests.py:658:59
+    |
+656 | # ════════════════════════════════════════════════════════════════════════════════
+657 |
+658 | from dao_lifebook.roles import Scout, Planner, Specifier, Executor, Auditor
+    |                                                           ^^^^^^^^
+    |
+help: Remove unused import: `dao_lifebook.roles.Executor`
+
+F401 [*] `._types.ErrorSeverity` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/truth_plane.py:27:48
+   |
+25 | import httpx
+26 |
+27 | from ._types import Result, Ok, Err, DAOError, ErrorSeverity, EC
+   |                                                ^^^^^^^^^^^^^
+28 | from ._retry import RetryConfig, CircuitBreaker, retry_with_backoff
+29 | from .models import (
+   |
+help: Remove unused import
+
+F401 [*] `._types.EC` imported but unused
+  --> tools/dao-arbiter/dao_lifebook/truth_plane.py:27:63
+   |
+25 | import httpx
+26 |
+27 | from ._types import Result, Ok, Err, DAOError, ErrorSeverity, EC
+   |                                                               ^^
+28 | from ._retry import RetryConfig, CircuitBreaker, retry_with_backoff
+29 | from .models import (
+   |
+help: Remove unused import
+
+F841 [*] Local variable `e` is assigned to but never used
+  --> tools/dao-arbiter/scripts/verify_repo.py:20:21
+   |
+18 | try:
+19 |     import jsonschema
+20 | except Exception as e:  # pragma: no cover
+   |                     ^
+21 |     print("ERROR: missing dependency 'jsonschema'. Install with: pip install jsonschema", file=sys.stderr)
+22 |     raise
+   |
+help: Remove assignment to unused variable `e`
+
+F401 [*] `os` imported but unused
+  --> tools/prod_spec/generate_build_artifacts.py:24:8
+   |
+22 | import hashlib
+23 | import json
+24 | import os
+   |        ^^
+25 | import platform
+26 | import shutil
+   |
+help: Remove unused import: `os`
+
+F401 [*] `os` imported but unused
+  --> tools/prod_spec/generate_formal_artifacts.py:27:8
+   |
+25 | import hashlib
+26 | import json
+27 | import os
+   |        ^^
+28 | import re
+29 | from dataclasses import dataclass
+   |
+help: Remove unused import: `os`
+
+F401 [*] `dataclasses.dataclass` imported but unused
+  --> tools/prod_spec/generate_formal_artifacts.py:29:25
+   |
+27 | import os
+28 | import re
+29 | from dataclasses import dataclass
+   |                         ^^^^^^^^^
+30 | from datetime import datetime, timezone
+31 | from pathlib import Path
+   |
+help: Remove unused import: `dataclasses.dataclass`
+
+F401 [*] `os` imported but unused
+  --> tools/prod_spec/make_ac_package.py:17:8
+   |
+15 | import argparse
+16 | import fnmatch
+17 | import os
+   |        ^^
+18 | from pathlib import Path
+19 | import zipfile
+   |
+help: Remove unused import: `os`
+
+F401 [*] `re` imported but unused
+  --> tools/prod_spec/run_replay_harness.py:24:8
+   |
+22 | import os
+23 | import platform
+24 | import re
+   |        ^^
+25 | import sys
+26 | from datetime import datetime, timezone
+   |
+help: Remove unused import: `re`
+
+F401 [*] `sys` imported but unused
+  --> tools/prod_spec/run_replay_harness.py:25:8
+   |
+23 | import platform
+24 | import re
+25 | import sys
+   |        ^^^
+26 | from datetime import datetime, timezone
+27 | from pathlib import Path
+   |
+help: Remove unused import: `sys`
+
+F401 [*] `typing.Dict` imported but unused
+  --> tools/prod_spec/run_replay_harness.py:28:25
+   |
+26 | from datetime import datetime, timezone
+27 | from pathlib import Path
+28 | from typing import Any, Dict
+   |                         ^^^^
+29 |
+30 | REPO_ROOT = Path(__file__).resolve().parents[2]
+   |
+help: Remove unused import: `typing.Dict`
+
+F401 [*] `cryptography.hazmat.primitives.asymmetric.ed25519.Ed25519PrivateKey` imported but unused
+  --> tools/prod_spec/sign_ac_package.py:35:63
+   |
+33 | sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+34 |
+35 | from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+   |                                                               ^^^^^^^^^^^^^^^^^
+36 |
+37 | from tools.prod_spec._jws_ed25519 import jws_sign_ed25519, priv_from_seed, pub_bytes_raw, b64url_encode
+   |
+help: Remove unused import: `cryptography.hazmat.primitives.asymmetric.ed25519.Ed25519PrivateKey`
+
+F401 [*] `.gates.GateRunResult` imported but unused
+  --> udgs_core/ad2026/cognitive.py:21:49
+   |
+19 | from typing import Any, Callable, Deque, Dict, List, Optional, Tuple
+20 |
+21 | from .gates import CIL9Snapshot, CIL10Snapshot, GateRunResult, GateStatus
+   |                                                 ^^^^^^^^^^^^^
+22 | from .typed_plan import SPS
+   |
+help: Remove unused import
+
+F401 [*] `.gates.GateStatus` imported but unused
+  --> udgs_core/ad2026/cognitive.py:21:64
+   |
+19 | from typing import Any, Callable, Deque, Dict, List, Optional, Tuple
+20 |
+21 | from .gates import CIL9Snapshot, CIL10Snapshot, GateRunResult, GateStatus
+   |                                                                ^^^^^^^^^^
+22 | from .typed_plan import SPS
+   |
+help: Remove unused import
+
+F401 [*] `uuid` imported but unused
+   --> udgs_core/ad2026/cognitive.py:166:16
+    |
+165 |         from .typed_plan import TypedAction, ActionType
+166 |         import uuid
+    |                ^^^^
+167 |
+168 |         # Deterministic SPS construction
+    |
+help: Remove unused import: `uuid`
+
+F401 [*] `json` imported but unused
+  --> udgs_core/ad2026/compliance.py:22:8
+   |
+21 | import hashlib
+22 | import json
+   |        ^^^^
+23 | from dataclasses import dataclass, field, asdict
+24 | from enum import Enum
+   |
+help: Remove unused import: `json`
+
+F401 [*] `dataclasses.field` imported but unused
+  --> udgs_core/ad2026/compliance.py:23:36
+   |
+21 | import hashlib
+22 | import json
+23 | from dataclasses import dataclass, field, asdict
+   |                                    ^^^^^
+24 | from enum import Enum
+25 | from typing import Any, Callable, Dict, List, Optional, Tuple
+   |
+help: Remove unused import: `dataclasses.field`
+
+F401 [*] `.identity.jws_verify` imported but unused
+  --> udgs_core/ad2026/gates.py:23:51
+   |
+21 | from typing import Any, Dict, List, Optional, Tuple
+22 |
+23 | from .identity import AAID, ACRootKey, APBHeader, jws_verify, zto_verify
+   |                                                   ^^^^^^^^^^
+24 | from .typed_plan import GateResult, SPS, SMTGate, build_ac_baseline_invariants
+   |
+help: Remove unused import: `.identity.jws_verify`
+
+F401 [*] `.typed_plan.GateResult` imported but unused
+  --> udgs_core/ad2026/gates.py:24:25
+   |
+23 | from .identity import AAID, ACRootKey, APBHeader, jws_verify, zto_verify
+24 | from .typed_plan import GateResult, SPS, SMTGate, build_ac_baseline_invariants
+   |                         ^^^^^^^^^^
+   |
+help: Remove unused import: `.typed_plan.GateResult`
+
+F401 [*] `time` imported but unused
+  --> udgs_core/ad2026/identity.py:26:8
+   |
+24 | import os
+25 | import secrets
+26 | import time
+   |        ^^^^
+27 | from dataclasses import dataclass, field, asdict
+28 | from datetime import datetime, timezone
+   |
+help: Remove unused import: `time`
+
+F401 [*] `hashlib` imported but unused
+  --> udgs_core/ad2026/runtime.py:15:8
+   |
+13 | from __future__ import annotations
+14 |
+15 | import hashlib
+   |        ^^^^^^^
+16 | import json
+17 | import os
+   |
+help: Remove unused import: `hashlib`
+
+F401 [*] `.typed_plan.SPSValidator` imported but unused
+  --> udgs_core/ad2026/runtime.py:28:10
+   |
+26 | )
+27 | from .typed_plan import (
+28 |     SPS, SPSValidator, SMTGate, build_ac_baseline_invariants,
+   |          ^^^^^^^^^^^^
+29 |     TypedAction, ActionType,
+30 | )
+   |
+help: Remove unused import
+
+F401 [*] `.typed_plan.TypedAction` imported but unused
+  --> udgs_core/ad2026/runtime.py:29:5
+   |
+27 | from .typed_plan import (
+28 |     SPS, SPSValidator, SMTGate, build_ac_baseline_invariants,
+29 |     TypedAction, ActionType,
+   |     ^^^^^^^^^^^
+30 | )
+31 | from .gates import (
+   |
+help: Remove unused import
+
+F401 [*] `.typed_plan.ActionType` imported but unused
+  --> udgs_core/ad2026/runtime.py:29:18
+   |
+27 | from .typed_plan import (
+28 |     SPS, SPSValidator, SMTGate, build_ac_baseline_invariants,
+29 |     TypedAction, ActionType,
+   |                  ^^^^^^^^^^
+30 | )
+31 | from .gates import (
+   |
+help: Remove unused import
+
+F401 [*] `.gates.GateStatus` imported but unused
+  --> udgs_core/ad2026/runtime.py:33:38
+   |
+31 | from .gates import (
+32 |     G6Auth, G7Formal, G8Sandbox, G9MCP, G10Sync, G11InvariantFixation,
+33 |     GateRunnerResult, GateRunResult, GateStatus,
+   |                                      ^^^^^^^^^^
+34 |     EnvironmentProfile, MCPPolicy, RCToken, CIL9Snapshot, CIL10Snapshot,
+35 |     MCPCallRecord,
+   |
+help: Remove unused import
+
+F401 [*] `.gates.CIL9Snapshot` imported but unused
+  --> udgs_core/ad2026/runtime.py:34:45
+   |
+32 |     G6Auth, G7Formal, G8Sandbox, G9MCP, G10Sync, G11InvariantFixation,
+33 |     GateRunnerResult, GateRunResult, GateStatus,
+34 |     EnvironmentProfile, MCPPolicy, RCToken, CIL9Snapshot, CIL10Snapshot,
+   |                                             ^^^^^^^^^^^^
+35 |     MCPCallRecord,
+36 | )
+   |
+help: Remove unused import
+
+F401 [*] `.cognitive.CRSMEpoch` imported but unused
+  --> udgs_core/ad2026/runtime.py:37:50
+   |
+35 |     MCPCallRecord,
+36 | )
+37 | from .cognitive import BSSPlanner, CRSMBoundary, CRSMEpoch, CIL9Metrics, UDSInput
+   |                                                  ^^^^^^^^^
+38 | from .compliance import (
+39 |     SSdfControlMap, PhaseGContract, TelemetryInitializer,
+   |
+help: Remove unused import: `.cognitive.CRSMEpoch`
+
+F401 [*] `.compliance.PhaseGContract` imported but unused
+  --> udgs_core/ad2026/runtime.py:39:21
+   |
+37 | from .cognitive import BSSPlanner, CRSMBoundary, CRSMEpoch, CIL9Metrics, UDSInput
+38 | from .compliance import (
+39 |     SSdfControlMap, PhaseGContract, TelemetryInitializer,
+   |                     ^^^^^^^^^^^^^^
+40 |     build_default_phase_g_contract,
+41 | )
+   |
+help: Remove unused import: `.compliance.PhaseGContract`
+
+F811 [*] Redefinition of unused `TypedAction` from line 29
+   --> udgs_core/ad2026/runtime.py:275:38
+    |
+274 |         # Build sample SPS for T4/T5
+275 |         from .typed_plan import SPS, TypedAction, ActionType
+    |                                      ^^^^^^^^^^^ `TypedAction` redefined here
+276 |         sample_sps = SPS(sps_id="T4-SAMPLE", agent_id=self.agent_id, utc=_utc())
+277 |         sample_sps.add(TypedAction(
+    |
+   ::: udgs_core/ad2026/runtime.py:29:5
+    |
+ 27 | from .typed_plan import (
+ 28 |     SPS, SPSValidator, SMTGate, build_ac_baseline_invariants,
+ 29 |     TypedAction, ActionType,
+    |     ----------- previous definition of `TypedAction` here
+ 30 | )
+ 31 | from .gates import (
+    |
+help: Remove definition: `TypedAction`
+
+F811 [*] Redefinition of unused `ActionType` from line 29
+   --> udgs_core/ad2026/runtime.py:275:51
+    |
+274 |         # Build sample SPS for T4/T5
+275 |         from .typed_plan import SPS, TypedAction, ActionType
+    |                                                   ^^^^^^^^^^ `ActionType` redefined here
+276 |         sample_sps = SPS(sps_id="T4-SAMPLE", agent_id=self.agent_id, utc=_utc())
+277 |         sample_sps.add(TypedAction(
+    |
+   ::: udgs_core/ad2026/runtime.py:29:18
+    |
+ 27 | from .typed_plan import (
+ 28 |     SPS, SPSValidator, SMTGate, build_ac_baseline_invariants,
+ 29 |     TypedAction, ActionType,
+    |                  ---------- previous definition of `ActionType` here
+ 30 | )
+ 31 | from .gates import (
+    |
+help: Remove definition: `ActionType`
+
+F401 [*] `dataclasses.dataclass` imported but unused
+ --> udgs_core/anchors.py:6:25
+  |
+4 | import json
+5 | import os
+6 | from dataclasses import dataclass
+  |                         ^^^^^^^^^
+7 | from typing import Any, Dict, Iterable, Tuple, Optional, Set
+  |
+help: Remove unused import: `dataclasses.dataclass`
+
+F401 [*] `hashlib` imported but unused
+  --> udgs_core/autonomous_audit.py:27:8
+   |
+25 | from __future__ import annotations
+26 |
+27 | import hashlib
+   |        ^^^^^^^
+28 | import json
+29 | import os
+   |
+help: Remove unused import: `hashlib`
+
+F841 Local variable `baseline_comps` is assigned to but never used
+   --> udgs_core/autonomous_audit.py:445:9
+    |
+444 |         # Compute live system anchor for status
+445 |         baseline_comps = self._baseline.get("components", {})  # type: ignore[union-attr]
+    |         ^^^^^^^^^^^^^^
+446 |         config_hash = sha256_file(self.config_path)
+447 |         anchor_payload = {
+    |
+help: Remove assignment to unused variable `baseline_comps`
+
+F401 [*] `tempfile` imported but unused
+  --> udgs_core/tests/test_ad2026.py:20:8
+   |
+18 | import os
+19 | import sys
+20 | import tempfile
+   |        ^^^^^^^^
+21 | from unittest.mock import patch
+   |
+help: Remove unused import: `tempfile`
+
+F401 [*] `udgs_core.ad2026.identity.JWS_ALG` imported but unused
+  --> udgs_core/tests/test_ad2026.py:31:5
+   |
+29 | from udgs_core.ad2026.identity import (
+30 |     AAID, ACRootKey, APBChain, EvidenceKind, EvidenceRef,
+31 |     JWS_ALG, ENV_CLASS_NO_TEE,
+   |     ^^^^^^^
+32 |     _canonical_json, _sha256hex,
+33 |     jws_sign, jws_verify, zto_verify,
+   |
+help: Remove unused import
+
+F401 [*] `udgs_core.ad2026.identity._canonical_json` imported but unused
+  --> udgs_core/tests/test_ad2026.py:32:5
+   |
+30 |     AAID, ACRootKey, APBChain, EvidenceKind, EvidenceRef,
+31 |     JWS_ALG, ENV_CLASS_NO_TEE,
+32 |     _canonical_json, _sha256hex,
+   |     ^^^^^^^^^^^^^^^
+33 |     jws_sign, jws_verify, zto_verify,
+34 | )
+   |
+help: Remove unused import
+
+F401 [*] `udgs_core.ad2026.identity._sha256hex` imported but unused
+  --> udgs_core/tests/test_ad2026.py:32:22
+   |
+30 |     AAID, ACRootKey, APBChain, EvidenceKind, EvidenceRef,
+31 |     JWS_ALG, ENV_CLASS_NO_TEE,
+32 |     _canonical_json, _sha256hex,
+   |                      ^^^^^^^^^^
+33 |     jws_sign, jws_verify, zto_verify,
+34 | )
+   |
+help: Remove unused import
+
+F401 [*] `udgs_core.ad2026.typed_plan.GateResult` imported but unused
+  --> udgs_core/tests/test_ad2026.py:38:35
+   |
+36 |     TypedAction, ActionType, SPS, Invariant,
+37 |     InvariantSet, SMTGate, SPSValidator,
+38 |     build_ac_baseline_invariants, GateResult,
+   |                                   ^^^^^^^^^^
+39 | )
+40 | from udgs_core.ad2026.gates import (
+   |
+help: Remove unused import: `udgs_core.ad2026.typed_plan.GateResult`
+
+F401 [*] `udgs_core.ad2026.gates.GateRunResult` imported but unused
+  --> udgs_core/tests/test_ad2026.py:42:17
+   |
+40 | from udgs_core.ad2026.gates import (
+41 |     G6Auth, G7Formal, G8Sandbox, G9MCP, G10Sync, G11InvariantFixation,
+42 |     GateStatus, GateRunResult, GateRunnerResult,
+   |                 ^^^^^^^^^^^^^
+43 |     EnvironmentProfile, MCPPolicy, MCPCallRecord, RCToken,
+44 |     CIL9Snapshot, CIL10Snapshot,
+   |
+help: Remove unused import
+
+F401 [*] `udgs_core.ad2026.gates.GateRunnerResult` imported but unused
+  --> udgs_core/tests/test_ad2026.py:42:32
+   |
+40 | from udgs_core.ad2026.gates import (
+41 |     G6Auth, G7Formal, G8Sandbox, G9MCP, G10Sync, G11InvariantFixation,
+42 |     GateStatus, GateRunResult, GateRunnerResult,
+   |                                ^^^^^^^^^^^^^^^^
+43 |     EnvironmentProfile, MCPPolicy, MCPCallRecord, RCToken,
+44 |     CIL9Snapshot, CIL10Snapshot,
+   |
+help: Remove unused import
+
+F401 [*] `udgs_core.ad2026.compliance.SSdfPhase` imported but unused
+  --> udgs_core/tests/test_ad2026.py:51:21
+   |
+49 | )
+50 | from udgs_core.ad2026.compliance import (
+51 |     SSdfControlMap, SSdfPhase, PhaseGContract,
+   |                     ^^^^^^^^^
+52 |     TelemetryInitializer, build_default_phase_g_contract,
+53 | )
+   |
+help: Remove unused import: `udgs_core.ad2026.compliance.SSdfPhase`
+
+F401 [*] `udgs_core.ad2026.runtime.ArchitectureConstitution` imported but unused
+  --> udgs_core/tests/test_ad2026.py:55:20
+   |
+53 | )
+54 | from udgs_core.ad2026.runtime import (
+55 |     AD2026Runtime, ArchitectureConstitution, build_default_ac,
+   |                    ^^^^^^^^^^^^^^^^^^^^^^^^
+56 | )
+   |
+help: Remove unused import: `udgs_core.ad2026.runtime.ArchitectureConstitution`
+
+F841 Local variable `rt` is assigned to but never used
+   --> udgs_core/tests/test_ad2026.py:906:9
+    |
+904 | class TestAD2026Runtime:
+905 |     def test_bootstrap_creates_state_dir(self, tmp_path):
+906 |         rt = AD2026Runtime.bootstrap(root=str(tmp_path))
+    |         ^^
+907 |         assert os.path.isdir(str(tmp_path / "ad2026_state"))
+    |
+help: Remove assignment to unused variable `rt`
+
+F401 [*] `hashlib` imported but unused
+ --> udgs_core/tests/test_udgs_core.py:7:8
+  |
+5 | from __future__ import annotations
+6 |
+7 | import hashlib
+  |        ^^^^^^^
+8 | import json
+9 | import os
+  |
+help: Remove unused import: `hashlib`
+
+F401 [*] `shutil` imported but unused
+  --> udgs_core/tests/test_udgs_core.py:10:8
+   |
+ 8 | import json
+ 9 | import os
+10 | import shutil
+   |        ^^^^^^
+11 | import subprocess
+12 | import sys
+   |
+help: Remove unused import: `shutil`
+
+F401 [*] `tempfile` imported but unused
+  --> udgs_core/tests/test_udgs_core.py:13:8
+   |
+11 | import subprocess
+12 | import sys
+13 | import tempfile
+   |        ^^^^^^^^
+14 | import threading
+15 | from typing import Any, Dict
+   |
+help: Remove unused import: `tempfile`
+
+F401 [*] `udgs_core.autonomous_audit.ComponentDrift` imported but unused
+   --> udgs_core/tests/test_udgs_core.py:350:5
+    |
+348 | from udgs_core.autonomous_audit import (
+349 |     AutonomousAuditEngine,
+350 |     ComponentDrift,
+    |     ^^^^^^^^^^^^^^
+351 |     Qa8Mode,
+352 |     QA8_GRADE,
+    |
+help: Remove unused import: `udgs_core.autonomous_audit.ComponentDrift`
+
+Found 96 errors.
+[*] 90 fixable with the `--fix` option (6 hidden fixes can be enabled with the `--unsafe-fixes` option).

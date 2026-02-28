@@ -30,25 +30,30 @@ jobs:
       - name: Discover python test contract
         run: |
           set -euo pipefail
+          ROOT_VALUE=""
           if [ -f pyproject.toml ]; then
-            echo "ROOT=." >> "$GITHUB_ENV"
+            ROOT_VALUE="."
             python -m pip install -e .
           elif [ -f engine/pyproject.toml ]; then
-            echo "ROOT=engine" >> "$GITHUB_ENV"
+            ROOT_VALUE="engine"
             python -m pip install -e ./engine
             if [ -f engine/requirements-dev.txt ]; then
               python -m pip install -r engine/requirements-dev.txt
             fi
           elif [ -f requirements-dev.txt ]; then
-            echo "ROOT=." >> "$GITHUB_ENV"
+            ROOT_VALUE="."
             python -m pip install -r requirements-dev.txt
           elif [ -f engine/requirements-dev.txt ]; then
-            echo "ROOT=engine" >> "$GITHUB_ENV"
+            ROOT_VALUE="engine"
             python -m pip install -r engine/requirements-dev.txt
           else
             echo "missing Python test contract" >&2
             exit 1
           fi
+
+          {
+            echo "ROOT=${ROOT_VALUE}"
+          } >> "$GITHUB_ENV"
       - run: |
           set -euo pipefail
           python -m compileall "$ROOT"

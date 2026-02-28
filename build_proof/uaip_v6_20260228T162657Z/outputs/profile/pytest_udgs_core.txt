@@ -1,0 +1,25 @@
+........................................................................ [ 41%]
+........................................................................ [ 83%]
+.............................                                            [100%]
+============================= slowest 20 durations =============================
+9.09s call     udgs_core/tests/test_udgs_core.py::TestCLI::test_qa8_heal_nominal
+6.57s call     udgs_core/tests/test_udgs_core.py::TestCLI::test_build_system_object_deterministic
+3.40s call     udgs_core/tests/test_udgs_core.py::TestCLI::test_build_system_object
+0.18s call     udgs_core/tests/test_udgs_core.py::TestCLI::test_anchor_dir
+0.16s call     udgs_core/tests/test_udgs_core.py::TestCLI::test_loop_halt_on_no_evidence
+0.16s call     udgs_core/tests/test_udgs_core.py::TestCLI::test_anchor_file
+0.16s call     udgs_core/tests/test_udgs_core.py::TestCLI::test_qa8_status_file_readable
+0.16s call     udgs_core/tests/test_udgs_core.py::TestCLI::test_validate_packet_valid
+0.16s call     udgs_core/tests/test_udgs_core.py::TestCLI::test_loop_nominal
+0.15s call     udgs_core/tests/test_udgs_core.py::TestSha256Tree::test_idempotent_10x
+0.15s call     udgs_core/tests/test_udgs_core.py::TestCLI::test_validate_packet_invalid_extra_key
+0.15s call     udgs_core/tests/test_udgs_core.py::TestCLI::test_validate_packet_invalid_anchor
+0.01s call     udgs_core/tests/test_udgs_core.py::TestScoreSystem::test_thread_safety
+0.01s call     udgs_core/tests/test_ad2026.py::TestAD2026Runtime::test_apb_chain_grows_on_each_execute
+0.01s call     udgs_core/tests/test_ad2026.py::TestAD2026Runtime::test_execute_sps_writes_log
+0.01s call     udgs_core/tests/test_ad2026.py::TestAD2026Runtime::test_apb_chain_verifies
+0.01s call     udgs_core/tests/test_ad2026.py::TestAD2026Runtime::test_execute_invalid_sps_blocked
+0.01s call     udgs_core/tests/test_ad2026.py::TestAD2026Runtime::test_telemetry_checklist_all_pass
+0.01s call     udgs_core/tests/test_ad2026.py::TestAD2026Runtime::test_status_written_to_file
+0.01s call     udgs_core/tests/test_ad2026.py::TestAD2026Runtime::test_ssdf_coverage_after_init
+173 passed in 21.08s

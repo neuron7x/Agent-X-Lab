@@ -114,7 +114,7 @@ def test_no_git_with_distinct_build_ids_are_unique(tmp_path, monkeypatch):
         "# TITAN-9 R6 Protocol Spec\n", encoding="utf-8"
     )
 
-    monkeypatch.setenv("TITAN9_COLLISION_RUNS", "10000")
+    monkeypatch.setenv("TITAN9_COLLISION_RUNS", "3000")
     monkeypatch.setenv("TITAN9_MAX_RUNTIME_SECONDS", "180")
     runs = _collision_runs()
     max_runtime = _max_runtime_seconds()

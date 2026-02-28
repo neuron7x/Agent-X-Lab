@@ -11,13 +11,9 @@ from pathlib import Path
 from typing import Iterable, Mapping, Sequence
 
 
-def utc_now_iso() -> str:
-    return (
-        datetime.now(timezone.utc)
-        .replace(microsecond=0)
-        .isoformat()
-        .replace("+00:00", "Z")
-    )
+def utc_now_iso(*, now: datetime | None = None) -> str:
+    current = now or datetime.now(timezone.utc)
+    return current.replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def sha256_bytes(data: bytes) -> str:

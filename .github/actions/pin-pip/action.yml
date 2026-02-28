@@ -1,4 +1,5 @@
 name: Pin pip
+description: Pin pip to an exact deterministic version for workflow reproducibility.
 inputs:
   pip-version:
     description: Exact pip version

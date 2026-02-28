@@ -1,0 +1,530 @@
+[
+  {
+    "file": "engine/exoneural_governor/util.py",
+    "hazard": "nondet_datetime",
+    "line": 16,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "engine/objects/dse-fix-opt/eval/run_harness.py",
+    "hazard": "nondet_datetime",
+    "line": 37,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "engine/objects/dse-fix-opt/eval/run_harness.py",
+    "hazard": "nondet_datetime",
+    "line": 148,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "engine/objects/pr-orchestrator/eval/run_harness.py",
+    "hazard": "nondet_datetime",
+    "line": 37,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "engine/objects/pr-orchestrator/eval/run_harness.py",
+    "hazard": "nondet_datetime",
+    "line": 148,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "engine/scripts/check_prod_spec_gates.py",
+    "hazard": "fs_write",
+    "line": 739,
+    "symbol": "open(w)"
+  },
+  {
+    "file": "engine/scripts/check_prod_spec_gates.py",
+    "hazard": "nondet_datetime",
+    "line": 532,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "engine/scripts/check_prod_spec_gates.py",
+    "hazard": "nondet_datetime",
+    "line": 61,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "engine/scripts/check_prod_spec_gates.py",
+    "hazard": "nondet_datetime",
+    "line": 66,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "engine/scripts/rebuild_catalog_index.py",
+    "hazard": "nondet_datetime",
+    "line": 25,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "engine/tests/conftest.py",
+    "hazard": "env_mutation",
+    "line": 40,
+    "symbol": "os.environ[...]="
+  },
+  {
+    "file": "engine/tests/conftest.py",
+    "hazard": "env_mutation",
+    "line": 62,
+    "symbol": "os.environ[...]="
+  },
+  {
+    "file": "engine/tests/test_isolation_fixture.py",
+    "hazard": "env_mutation",
+    "line": 24,
+    "symbol": "os.environ[...]="
+  },
+  {
+    "file": "engine/tests/test_isolation_fixture.py",
+    "hazard": "env_mutation",
+    "line": 44,
+    "symbol": "os.environ[...]="
+  },
+  {
+    "file": "engine/tests/test_isolation_fixture.py",
+    "hazard": "env_mutation",
+    "line": 45,
+    "symbol": "os.environ[...]="
+  },
+  {
+    "file": "engine/tests/test_isolation_fixture.py",
+    "hazard": "env_mutation",
+    "line": 46,
+    "symbol": "os.environ[...]="
+  },
+  {
+    "file": "engine/tests/test_readme_contract.py",
+    "hazard": "fs_write",
+    "line": 20,
+    "symbol": "shutil.copytree"
+  },
+  {
+    "file": "engine/tests/test_rebuild_catalog_index.py",
+    "hazard": "fs_write",
+    "line": 30,
+    "symbol": "shutil.copytree"
+  },
+  {
+    "file": "engine/tests/test_stack.py",
+    "hazard": "fs_write",
+    "line": 33,
+    "symbol": "shutil.copytree"
+  },
+  {
+    "file": "engine/tools/agent/run_and_log.py",
+    "hazard": "nondet_datetime",
+    "line": 97,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "engine/tools/feg_r8_verify.py",
+    "hazard": "nondet_time",
+    "line": 16,
+    "symbol": "time.time"
+  },
+  {
+    "file": "engine/tools/feg_r8_verify.py",
+    "hazard": "nondet_time",
+    "line": 24,
+    "symbol": "time.time"
+  },
+  {
+    "file": "engine/tools/nongit_runner.py",
+    "hazard": "fs_write",
+    "line": 24,
+    "symbol": "shutil.copytree"
+  },
+  {
+    "file": "engine/tools/pip_audit_gate.py",
+    "hazard": "nondet_datetime",
+    "line": 156,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "engine/tools/run_gate.py",
+    "hazard": "nondet_datetime",
+    "line": 16,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/deadlock_fingerprint.py",
+    "hazard": "fs_write",
+    "line": 66,
+    "symbol": "os.makedirs"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/observe_meta_state.py",
+    "hazard": "fs_write",
+    "line": 112,
+    "symbol": "os.makedirs"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/prove_meta_validity.py",
+    "hazard": "fs_write",
+    "line": 97,
+    "symbol": "os.makedirs"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/validate_erm_ast.py",
+    "hazard": "fs_write",
+    "line": 51,
+    "symbol": "os.makedirs"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "hazard": "fs_write",
+    "line": 728,
+    "symbol": "open(w)"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "hazard": "nondet_datetime",
+    "line": 532,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "hazard": "nondet_datetime",
+    "line": 61,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "hazard": "nondet_datetime",
+    "line": 66,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "hazard": "fs_write",
+    "line": 728,
+    "symbol": "open(w)"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "hazard": "nondet_datetime",
+    "line": 532,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "hazard": "nondet_datetime",
+    "line": 61,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "hazard": "nondet_datetime",
+    "line": 66,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/engine.py",
+    "hazard": "nondet_datetime",
+    "line": 293,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/evidence.py",
+    "hazard": "fs_write",
+    "line": 193,
+    "symbol": "open(a)"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/evidence.py",
+    "hazard": "nondet_datetime",
+    "line": 188,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/metrics.py",
+    "hazard": "nondet_datetime",
+    "line": 38,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/metrics.py",
+    "hazard": "nondet_datetime",
+    "line": 35,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/models.py",
+    "hazard": "nondet_datetime",
+    "line": 311,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/tests.py",
+    "hazard": "nondet_datetime",
+    "line": 270,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/tests.py",
+    "hazard": "nondet_datetime",
+    "line": 271,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/tests.py",
+    "hazard": "nondet_datetime",
+    "line": 281,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/_retry.py",
+    "hazard": "nondet_random_unseeded",
+    "line": 129,
+    "symbol": "random.random"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/engine.py",
+    "hazard": "nondet_datetime",
+    "line": 272,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/evidence.py",
+    "hazard": "fs_write",
+    "line": 254,
+    "symbol": "open(a)"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/evidence.py",
+    "hazard": "nondet_datetime",
+    "line": 247,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/metrics.py",
+    "hazard": "nondet_datetime",
+    "line": 35,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/metrics.py",
+    "hazard": "nondet_datetime",
+    "line": 39,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/metrics.py",
+    "hazard": "nondet_datetime",
+    "line": 123,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/models.py",
+    "hazard": "nondet_datetime",
+    "line": 366,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/tests.py",
+    "hazard": "nondet_datetime",
+    "line": 443,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/tests.py",
+    "hazard": "nondet_datetime",
+    "line": 444,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/tests.py",
+    "hazard": "nondet_datetime",
+    "line": 454,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/tests.py",
+    "hazard": "nondet_datetime",
+    "line": 465,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "tools/prod_spec/generate_build_artifacts.py",
+    "hazard": "fs_write",
+    "line": 93,
+    "symbol": "shutil.copytree"
+  },
+  {
+    "file": "tools/prod_spec/generate_build_artifacts.py",
+    "hazard": "nondet_datetime",
+    "line": 51,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "tools/prod_spec/generate_formal_artifacts.py",
+    "hazard": "nondet_datetime",
+    "line": 44,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "tools/prod_spec/run_replay_harness.py",
+    "hazard": "nondet_datetime",
+    "line": 34,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "tools/prod_spec/sign_ac_package.py",
+    "hazard": "nondet_entropy",
+    "line": 96,
+    "symbol": "os.urandom"
+  },
+  {
+    "file": "tools/prod_spec/sign_ac_package.py",
+    "hazard": "nondet_datetime",
+    "line": 43,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "udgs_core/ad2026/cognitive.py",
+    "hazard": "nondet_datetime",
+    "line": 30,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "udgs_core/ad2026/identity.py",
+    "hazard": "fs_write",
+    "line": 186,
+    "symbol": "os.makedirs"
+  },
+  {
+    "file": "udgs_core/ad2026/identity.py",
+    "hazard": "nondet_datetime",
+    "line": 49,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "udgs_core/ad2026/runtime.py",
+    "hazard": "fs_write",
+    "line": 338,
+    "symbol": "open(w)"
+  },
+  {
+    "file": "udgs_core/ad2026/runtime.py",
+    "hazard": "fs_write",
+    "line": 464,
+    "symbol": "open(a)"
+  },
+  {
+    "file": "udgs_core/ad2026/runtime.py",
+    "hazard": "fs_write",
+    "line": 503,
+    "symbol": "open(w)"
+  },
+  {
+    "file": "udgs_core/ad2026/runtime.py",
+    "hazard": "fs_write",
+    "line": 159,
+    "symbol": "os.makedirs"
+  },
+  {
+    "file": "udgs_core/ad2026/runtime.py",
+    "hazard": "nondet_datetime",
+    "line": 45,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "udgs_core/ad2026/runtime.py",
+    "hazard": "fs_write",
+    "line": 215,
+    "symbol": "os.makedirs"
+  },
+  {
+    "file": "udgs_core/autonomous_audit.py",
+    "hazard": "fs_write",
+    "line": 537,
+    "symbol": "open(w)"
+  },
+  {
+    "file": "udgs_core/autonomous_audit.py",
+    "hazard": "fs_write",
+    "line": 542,
+    "symbol": "open(a)"
+  },
+  {
+    "file": "udgs_core/autonomous_audit.py",
+    "hazard": "fs_write",
+    "line": 201,
+    "symbol": "os.makedirs"
+  },
+  {
+    "file": "udgs_core/autonomous_audit.py",
+    "hazard": "nondet_datetime",
+    "line": 551,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "udgs_core/autonomous_audit.py",
+    "hazard": "nondet_uuid",
+    "line": 556,
+    "symbol": "uuid.uuid4"
+  },
+  {
+    "file": "udgs_core/cli.py",
+    "hazard": "nondet_uuid",
+    "line": 151,
+    "symbol": "uuid.uuid4"
+  },
+  {
+    "file": "udgs_core/system_object.py",
+    "hazard": "fs_write",
+    "line": 84,
+    "symbol": "open(w)"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "hazard": "nondet_datetime",
+    "line": 89,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "hazard": "nondet_datetime",
+    "line": 368,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "hazard": "nondet_datetime",
+    "line": 376,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "hazard": "nondet_datetime",
+    "line": 390,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "hazard": "nondet_datetime",
+    "line": 418,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "hazard": "nondet_datetime",
+    "line": 431,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "hazard": "nondet_datetime",
+    "line": 478,
+    "symbol": "datetime.now"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "hazard": "nondet_datetime",
+    "line": 954,
+    "symbol": "datetime.now"
+  }
+]

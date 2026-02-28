@@ -86,16 +86,21 @@ jobs:
           done
 
           if [[ -s "${STATUS_FILE}" || -s "${DIFF_FILE}" ]]; then
-            echo "drift_detected=1" >> "$GITHUB_OUTPUT"
+            drift_detected=1
           else
-            echo "drift_detected=0" >> "$GITHUB_OUTPUT"
+            drift_detected=0
           fi
 
           if [[ -s "${FORBIDDEN_FILE}" ]]; then
-            echo "forbidden_detected=1" >> "$GITHUB_OUTPUT"
+            forbidden_detected=1
           else
-            echo "forbidden_detected=0" >> "$GITHUB_OUTPUT"
+            forbidden_detected=0
           fi
+
+          {
+            echo "drift_detected=${drift_detected}"
+            echo "forbidden_detected=${forbidden_detected}"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Finalize gate and drift status
         if: always()
