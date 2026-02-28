@@ -1,2 +1,1 @@
 OK: all workflow actions are SHA-pinned (or local/docker references)
-EXIT_CODE=0

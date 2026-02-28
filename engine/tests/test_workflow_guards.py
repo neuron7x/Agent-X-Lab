@@ -7,6 +7,7 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW_ROOT = REPO_ROOT if (REPO_ROOT / ".github/workflows").exists() else REPO_ROOT.parent
+WORKFLOWS_DIR = WORKFLOW_ROOT / ".github/workflows"
 
 
 def _run(cmd: list[str]) -> subprocess.CompletedProcess[str]:
@@ -14,12 +15,22 @@ def _run(cmd: list[str]) -> subprocess.CompletedProcess[str]:
 
 
 def test_verify_workflow_hygiene_passes() -> None:
-    p = _run(["python", "tools/verify_workflow_hygiene.py"])
+    p = _run([
+        "python",
+        "tools/verify_workflow_hygiene.py",
+        "--workflows",
+        str(WORKFLOWS_DIR),
+    ])
     assert p.returncode == 0, p.stdout + "\n" + p.stderr
 
 
 def test_verify_action_pinning_passes() -> None:
-    p = _run(["python", "tools/verify_action_pinning.py"])
+    p = _run([
+        "python",
+        "tools/verify_action_pinning.py",
+        "--workflows",
+        str(WORKFLOWS_DIR),
+    ])
     assert p.returncode == 0, p.stdout + "\n" + p.stderr
 
 
@@ -27,8 +38,7 @@ def test_verify_action_pinning_scans_yaml_files(tmp_path: Path) -> None:
     workflows_dir = tmp_path / "workflows"
     workflows_dir.mkdir()
 
-    pinned = workflows_dir / "ok.yml"
-    pinned.write_text(
+    (workflows_dir / "ok.yml").write_text(
         """
 name: pinned
 jobs:
@@ -41,8 +51,7 @@ jobs:
         encoding="utf-8",
     )
 
-    unpinned_yaml = workflows_dir / "bad.yaml"
-    unpinned_yaml.write_text(
+    (workflows_dir / "bad.yaml").write_text(
         """
 name: unpinned
 jobs:
@@ -55,16 +64,14 @@ jobs:
         encoding="utf-8",
     )
 
-    p = _run(
-        [
-            "python",
-            "tools/verify_action_pinning.py",
-            "--workflows",
-            str(workflows_dir),
-        ]
-    )
+    p = _run([
+        "python",
+        "tools/verify_action_pinning.py",
+        "--workflows",
+        str(workflows_dir),
+    ])
 
-    assert p.returncode != 0
+    assert p.returncode == 1
     assert "bad.yaml:t:step_0:actions/setup-python@v5" in p.stdout
 
 
@@ -72,8 +79,7 @@ def test_verify_action_pinning_reports_relative_workflow_path(tmp_path: Path) ->
     workflows_dir = tmp_path / "workflows"
     nested_dir = workflows_dir / "nested"
     nested_dir.mkdir(parents=True)
-    bad = nested_dir / "bad.yaml"
-    bad.write_text(
+    (nested_dir / "bad.yaml").write_text(
         """
 name: unpinned
 jobs:
@@ -86,19 +92,51 @@ jobs:
         encoding="utf-8",
     )
 
-    p = _run(
-        [
-            "python",
-            "tools/verify_action_pinning.py",
-            "--workflows",
-            str(workflows_dir),
-        ]
-    )
+    p = _run([
+        "python",
+        "tools/verify_action_pinning.py",
+        "--workflows",
+        str(workflows_dir),
+    ])
 
-    assert p.returncode != 0
+    assert p.returncode == 1
     assert "nested/bad.yaml:t:step_0:actions/setup-python@v5" in p.stdout
 
 
+def test_verify_tools_fail_closed_on_missing_or_empty_workflows_dir(tmp_path: Path) -> None:
+    missing = tmp_path / "missing"
+    for cmd in (
+        ["python", "tools/verify_action_pinning.py", "--workflows", str(missing)],
+        ["python", "tools/verify_workflow_hygiene.py", "--workflows", str(missing)],
+    ):
+        p = _run(cmd)
+        assert p.returncode == 2
+        assert "workflows directory not found" in p.stdout
+
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    for cmd in (
+        ["python", "tools/verify_action_pinning.py", "--workflows", str(empty)],
+        ["python", "tools/verify_workflow_hygiene.py", "--workflows", str(empty)],
+    ):
+        p = _run(cmd)
+        assert p.returncode == 2
+        assert "no workflow files found" in p.stdout
+
+
+def test_verify_tools_support_subdirectory_execution() -> None:
+    for cmd in (
+        ["python", "../tools/verify_action_pinning.py"],
+        ["python", "../tools/verify_workflow_hygiene.py"],
+    ):
+        p = subprocess.run(
+            cmd,
+            cwd=REPO_ROOT / "tests",
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert p.returncode == 0, p.stdout + "\n" + p.stderr
 
 def test_scorecard_workflow_has_fail_closed_sarif_contract() -> None:
     workflow_path = WORKFLOW_ROOT / ".github/workflows/scorecard.yml"

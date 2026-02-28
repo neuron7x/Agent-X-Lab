@@ -1,17 +1,24 @@
-git switch -c pr/engine-ci-hermetic
-git restore --staged --worktree .
-git clean -fd
-mkdir -p build_proof/pr_engine_ci_hermetic/outputs
-python tools/verify_action_pinning.py --workflows .github/workflows > build_proof/pr_engine_ci_hermetic/outputs/01_action_pinning_before.txt 2>&1
-python -m compileall -q engine > build_proof/pr_engine_ci_hermetic/outputs/10_compile_engine.txt 2>&1
-python -m pytest -q engine/tests > build_proof/pr_engine_ci_hermetic/outputs/11_pytest_engine.txt 2>&1
-python tools/verify_action_pinning.py --workflows .github/workflows > /tmp/20_action_pinning_after.txt 2>&1
-python -m compileall -q engine > /tmp/10_compile_engine.txt 2>&1
-python -m pytest -q engine/tests > /tmp/11_pytest_engine.txt 2>&1
-git status --porcelain > /tmp/12_git_status_after_gates.txt 2>&1
-git diff --name-only > /tmp/13_git_diff_names_after_gates.txt 2>&1
-cp /tmp/20_action_pinning_after.txt build_proof/pr_engine_ci_hermetic/outputs/20_action_pinning_after.txt
-cp /tmp/10_compile_engine.txt build_proof/pr_engine_ci_hermetic/outputs/10_compile_engine.txt
-cp /tmp/11_pytest_engine.txt build_proof/pr_engine_ci_hermetic/outputs/11_pytest_engine.txt
-cp /tmp/12_git_status_after_gates.txt build_proof/pr_engine_ci_hermetic/outputs/12_git_status_after_gates.txt
-cp /tmp/13_git_diff_names_after_gates.txt build_proof/pr_engine_ci_hermetic/outputs/13_git_diff_names_after_gates.txt
+git worktree add /tmp/axl-wt-rmYOOH HEAD
+python /tmp/axl-wt-rmYOOH/tools/verify_action_pinning.py --workflows /tmp/axl-wt-rmYOOH/.github/workflows
+python /tmp/axl-wt-rmYOOH/engine/tools/verify_workflow_hygiene.py --workflows /tmp/axl-wt-rmYOOH/.github/workflows
+python -m pip --version
+python -m pip install actionlint-py==1.7.7.25 pyyaml==6.0.3
+actionlint --version
+actionlint /tmp/axl-wt-rmYOOH/.github/workflows/*.yml
+python -m compileall -q /tmp/axl-wt-rmYOOH/engine
+python -m pytest -q /tmp/axl-wt-rmYOOH/engine/tests
+git -C /tmp/axl-wt-rmYOOH status --porcelain
+git -C /tmp/axl-wt-rmYOOH diff --name-only
+python - <<'PY'
+from pathlib import Path
+root=Path(r"/tmp/axl-wt-rmYOOH")
+forbidden=[
+    Path('engine/artifacts/release-test'),
+    Path('engine/artifacts/tmp-evidence-test'),
+    Path('artifacts/agent'),
+]
+for p in forbidden:
+    q=root/p
+    print(f"{p.as_posix()}: {'EXISTS' if q.exists() else 'ABSENT'}")
+PY
+git worktree remove /tmp/axl-wt-rmYOOH --force
