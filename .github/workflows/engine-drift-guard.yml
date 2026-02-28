@@ -10,26 +10,62 @@ jobs:
   drift-guard:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d
         with:
           python-version: '3.13'
 
-      - name: Run engine gates
+      - name: Install engine test dependencies (fail-closed)
+        shell: bash
         run: |
+          set -euo pipefail
+          python -m pip --version
+
+          # Prefer repo canonical dev requirements if present.
+          if [[ -f requirements-dev.txt ]]; then
+            python -m pip install -r requirements-dev.txt
+          elif [[ -f engine/requirements-dev.txt ]]; then
+            python -m pip install -r engine/requirements-dev.txt
+          elif [[ -f engine/pyproject.toml ]]; then
+            python -m pip install -e ./engine
+          else
+            echo "No dependency manifest found (requirements-dev.txt | engine/requirements-dev.txt | engine/pyproject.toml)" >&2
+            exit 1
+          fi
+
+          # Ensure pytest exists; install only if missing (keeps noise minimal).
+          python - <<'PY'
+          import importlib.util, sys
+          sys.exit(0 if importlib.util.find_spec("pytest") else 1)
+          PY
+          if [[ $? -ne 0 ]]; then
+            python -m pip install pytest
+          fi
+
+      - name: Run engine gates
+        shell: bash
+        run: |
+          set -euo pipefail
           python -m compileall -q engine
           python -m pytest -q engine/tests
 
       - name: Capture workspace state
-        run: |
-          git status --porcelain | tee drift-status.txt
-          git diff --name-only | tee drift-diff.txt
-
-      - name: Fail on drift
+        shell: bash
         run: |
           set -euo pipefail
-          mapfile -t changed < <((awk '{print $2}' drift-status.txt; cat drift-diff.txt) | sed '/^$/d' | sort -u)
+          STATUS_FILE="${RUNNER_TEMP}/drift-status.txt"
+          DIFF_FILE="${RUNNER_TEMP}/drift-diff.txt"
+          git status --porcelain | tee "${STATUS_FILE}"
+          git diff --name-only | tee "${DIFF_FILE}"
+
+      - name: Fail on drift
+        shell: bash
+        run: |
+          set -euo pipefail
+          STATUS_FILE="${RUNNER_TEMP}/drift-status.txt"
+          DIFF_FILE="${RUNNER_TEMP}/drift-diff.txt"
+          mapfile -t changed < <((awk '{print $2}' "${STATUS_FILE}"; cat "${DIFF_FILE}") | sed '/^$/d' | sort -u)
           if [ "${#changed[@]}" -eq 0 ]; then
             echo "No drift detected"
             exit 0
@@ -40,7 +76,10 @@ jobs:
             if [[ "$path" == build_proof/pr_drift_guard/* ]]; then
               continue
             fi
-            if [[ "$path" == engine/artifacts/* ]] || [[ "$path" == artifacts/* ]] || [[ "$path" == engine/catalog/index.json ]]; then
+            if [[ "$path" == engine/artifacts/* ]] || \
+               [[ "$path" == artifacts/* ]] || \
+               [[ "$path" == engine/catalog/index.json ]] || \
+               [[ "$path" == engine/artifacts/titan9/inventory.json ]]; then
               echo "Forbidden drift path changed: $path" >&2
               exit 1
             fi
