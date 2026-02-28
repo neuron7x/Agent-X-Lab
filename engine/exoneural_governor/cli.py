@@ -11,6 +11,7 @@ from .catalog import validate_catalog
 from .vr import run_vr
 from .release import build_release
 from .util import ensure_dir
+from .repo_model import cmd_repo_model, build_repo_model_parser
 
 
 def _default_config_path() -> Path:
@@ -122,6 +123,7 @@ def main(argv: list[str] | None = None) -> None:
         help="Directory for release bundle outputs.",
     )
     sub.add_parser("selftest", help="Lightweight CI self-test (catalog validation).")
+    build_repo_model_parser(sub)
 
     args = p.parse_args(argv)
     cfg_path = Path(args.config)
@@ -140,6 +142,8 @@ def main(argv: list[str] | None = None) -> None:
         )
     elif args.cmd == "selftest":
         rc = cmd_selftest(cfg_path)
+    elif args.cmd == "repo-model":
+        rc = cmd_repo_model(out=Path(args.out))
     else:
         raise RuntimeError("unreachable")
 

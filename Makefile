@@ -1,4 +1,4 @@
-.PHONY: setup bootstrap lint test test-all test-integration test-e2e test-property dev-ui dev-worker gates reproduce
+.PHONY: setup bootstrap lint test test-all test-integration test-e2e test-property dev-ui dev-worker gates reproduce repo-model
 
 PYTHON ?= python
 VENV ?= .venv
@@ -50,3 +50,6 @@ gates:
 reproduce: test
 	mkdir -p artifacts/proof_bundle
 	$(PYTHON_RUN) scripts/generate_manifest.py
+
+repo-model:
+	cd engine && $(PYTHON_RUN) -m exoneural_governor repo-model
