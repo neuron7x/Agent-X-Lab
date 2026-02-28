@@ -1,0 +1,1126 @@
+{
+  "top20_cyclomatic": [
+    {
+      "complexity": 43,
+      "file": "udgs_core/strict_json.py",
+      "function": "validate_packet",
+      "lineno": 74
+    },
+    {
+      "complexity": 39,
+      "file": "engine/scripts/validate_arsenal.py",
+      "function": "main",
+      "lineno": 110
+    },
+    {
+      "complexity": 27,
+      "file": "engine/tools/verify_workflow_hygiene.py",
+      "function": "main",
+      "lineno": 19
+    },
+    {
+      "complexity": 23,
+      "file": "engine/exoneural_governor/release.py",
+      "function": "build_release",
+      "lineno": 26
+    },
+    {
+      "complexity": 23,
+      "file": "engine/scripts/check_prod_spec_gates.py",
+      "function": "check_g2_evidence_chain",
+      "lineno": 187
+    },
+    {
+      "complexity": 23,
+      "file": "evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+      "function": "check_g2_evidence_chain",
+      "lineno": 187
+    },
+    {
+      "complexity": 23,
+      "file": "evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+      "function": "check_g2_evidence_chain",
+      "lineno": 187
+    },
+    {
+      "complexity": 22,
+      "file": "tools/prod_spec/make_ac_package.py",
+      "function": "iter_files",
+      "lineno": 89
+    },
+    {
+      "complexity": 19,
+      "file": "engine/scripts/schema_validate.py",
+      "function": "main",
+      "lineno": 56
+    },
+    {
+      "complexity": 18,
+      "file": "engine/scripts/arsenal.py",
+      "function": "main",
+      "lineno": 19
+    },
+    {
+      "complexity": 18,
+      "file": "engine/tools/verify_readme_contract.py",
+      "function": "_workflow_seed_violations",
+      "lineno": 85
+    },
+    {
+      "complexity": 17,
+      "file": "engine/scripts/check_prod_spec_gates.py",
+      "function": "check_g5_release_pack",
+      "lineno": 379
+    },
+    {
+      "complexity": 17,
+      "file": "engine/tools/pip_audit_gate.py",
+      "function": "main",
+      "lineno": 133
+    },
+    {
+      "complexity": 17,
+      "file": "evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+      "function": "check_g5_release_pack",
+      "lineno": 379
+    },
+    {
+      "complexity": 17,
+      "file": "evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+      "function": "check_g5_release_pack",
+      "lineno": 379
+    },
+    {
+      "complexity": 16,
+      "file": "engine/exoneural_governor/catalog.py",
+      "function": "validate_catalog",
+      "lineno": 9
+    },
+    {
+      "complexity": 16,
+      "file": "engine/scripts/check_prod_spec_gates.py",
+      "function": "print_report",
+      "lineno": 689
+    },
+    {
+      "complexity": 16,
+      "file": "evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+      "function": "print_report",
+      "lineno": 678
+    },
+    {
+      "complexity": 16,
+      "file": "evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+      "function": "print_report",
+      "lineno": 678
+    },
+    {
+      "complexity": 15,
+      "file": "engine/scripts/check_prod_spec_gates.py",
+      "function": "check_g7_formal",
+      "lineno": 444
+    }
+  ],
+  "unused_import_candidates": [
+    {
+      "file": "engine/exoneural_governor/backend.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/exoneural_governor/catalog.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/exoneural_governor/cli.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/exoneural_governor/config.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/exoneural_governor/inventory.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/exoneural_governor/manifest.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/exoneural_governor/network.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/exoneural_governor/network.py",
+      "lineno": 6,
+      "name": "_torch"
+    },
+    {
+      "file": "engine/exoneural_governor/redaction.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/exoneural_governor/release.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/exoneural_governor/util.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/exoneural_governor/vr.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/objects/dse-fix-opt/eval/graders.py",
+      "lineno": 7,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/objects/dse-fix-opt/eval/run_harness.py",
+      "lineno": 18,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/objects/pr-orchestrator/eval/graders.py",
+      "lineno": 7,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/objects/pr-orchestrator/eval/run_harness.py",
+      "lineno": 18,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/scripts/arsenal.py",
+      "lineno": 12,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/scripts/bootstrap_env.py",
+      "lineno": 2,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/scripts/check_agent_duplicate_content.py",
+      "lineno": 4,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/scripts/check_prod_spec_gates.py",
+      "lineno": 22,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/scripts/check_prod_spec_gates.py",
+      "lineno": 27,
+      "name": "os"
+    },
+    {
+      "file": "engine/scripts/generate_proof_bundle.py",
+      "lineno": 4,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/scripts/rebuild_catalog_index.py",
+      "lineno": 4,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/scripts/rebuild_checksums.py",
+      "lineno": 14,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/scripts/run_object_evals.py",
+      "lineno": 13,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/scripts/schema_validate.py",
+      "lineno": 14,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/scripts/validate_arsenal.py",
+      "lineno": 14,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/conftest.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_agent_catalog_duplicates.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_backend.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_config.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_dependency_review_gate.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_doctor.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_feg_r8_verify.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_generate_proof_bundle.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_isolation_fixture.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_network_backend.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_nongit_runner.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_pip_audit_gate.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_protocol_step_paths.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_readme_contract.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_rebuild_catalog_index.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_rebuild_checksums.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_redaction.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_repo_invariants.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_run_gate.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_secret_scan_gate.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_stack.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_titan9_inventory.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_vendor_scpe_syntax.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_verify_protocol_consistency.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_vr_provenance_id.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_witness.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tests/test_workflow_guards.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/agent/run_and_log.py",
+      "lineno": 2,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/dependency_review_gate.py",
+      "lineno": 2,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/derive_proof.py",
+      "lineno": 2,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/doctor.py",
+      "lineno": 2,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/feg_r8_verify.py",
+      "lineno": 2,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/generate_titan9_proof.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/nongit_runner.py",
+      "lineno": 2,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/pip_audit_gate.py",
+      "lineno": 2,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/run_gate.py",
+      "lineno": 2,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/scorecard_failure_envelope.py",
+      "lineno": 2,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/secret_scan_gate.py",
+      "lineno": 2,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/titan9_inventory.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/verify_action_pinning.py",
+      "lineno": 2,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/verify_protocol_consistency.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/verify_readme_contract.py",
+      "lineno": 1,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/verify_workflow_hygiene.py",
+      "lineno": 2,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/tools/witness.py",
+      "lineno": 2,
+      "name": "annotations"
+    },
+    {
+      "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/make_manifest.py",
+      "lineno": 2,
+      "name": "os"
+    },
+    {
+      "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/observe_inventory.py",
+      "lineno": 2,
+      "name": "os"
+    },
+    {
+      "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/run_quality_suite.py",
+      "lineno": 2,
+      "name": "os"
+    },
+    {
+      "file": "evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+      "lineno": 22,
+      "name": "annotations"
+    },
+    {
+      "file": "evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+      "lineno": 27,
+      "name": "os"
+    },
+    {
+      "file": "evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+      "lineno": 22,
+      "name": "annotations"
+    },
+    {
+      "file": "evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+      "lineno": 27,
+      "name": "os"
+    },
+    {
+      "file": "scripts/generate_manifest.py",
+      "lineno": 2,
+      "name": "annotations"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "ArtifactRef"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "AuditVerdict"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "CheckResult"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "CheckStatus"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "Constraints"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "DiffBudget"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "DiffSummary"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "EditInstruction"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "EvidencePointer"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "FailPacket"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "LocalGateResult"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "LoopState"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "Phase"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "ProofBundle"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "RefactorPolicy"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "SecurityPolicy"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "Spec"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "TargetState"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 10,
+      "name": "TimeSpan"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 31,
+      "name": "ConstraintEnforcer"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 31,
+      "name": "Violation"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 32,
+      "name": "CanonicalLoop"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 32,
+      "name": "EngineConfig"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 32,
+      "name": "GovernorDecision"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 33,
+      "name": "CheckpointStore"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 33,
+      "name": "ProofAssembler"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 34,
+      "name": "Ledger"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 34,
+      "name": "LoopMetrics"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 35,
+      "name": "Auditor"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 35,
+      "name": "Executor"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 35,
+      "name": "Planner"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 35,
+      "name": "Scout"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 35,
+      "name": "Specifier"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 36,
+      "name": "CIOracle"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 36,
+      "name": "LocalGate"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/__init__.py",
+      "lineno": 36,
+      "name": "PRRef"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/cli.py",
+      "lineno": 8,
+      "name": "annotations"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/cli.py",
+      "lineno": 13,
+      "name": "sys"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/cli.py",
+      "lineno": 23,
+      "name": "AuditVerdict"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/cli.py",
+      "lineno": 23,
+      "name": "Phase"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/constraints.py",
+      "lineno": 7,
+      "name": "annotations"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/engine.py",
+      "lineno": 10,
+      "name": "annotations"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/engine.py",
+      "lineno": 16,
+      "name": "ProofBundle"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/evidence.py",
+      "lineno": 8,
+      "name": "annotations"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/evidence.py",
+      "lineno": 15,
+      "name": "Any"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/evidence.py",
+      "lineno": 17,
+      "name": "Phase"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/metrics.py",
+      "lineno": 7,
+      "name": "annotations"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/models.py",
+      "lineno": 9,
+      "name": "annotations"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/roles.py",
+      "lineno": 8,
+      "name": "annotations"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/roles.py",
+      "lineno": 14,
+      "name": "ProofBundle"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/roles.py",
+      "lineno": 14,
+      "name": "TargetState"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/roles.py",
+      "lineno": 29,
+      "name": "Violation"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/tests.py",
+      "lineno": 8,
+      "name": "annotations"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/tests.py",
+      "lineno": 10,
+      "name": "json"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/tests.py",
+      "lineno": 11,
+      "name": "tempfile"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/tests.py",
+      "lineno": 12,
+      "name": "timedelta"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/tests.py",
+      "lineno": 13,
+      "name": "Path"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/tests.py",
+      "lineno": 19,
+      "name": "EditInstruction"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/tests.py",
+      "lineno": 19,
+      "name": "EvidencePointer"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/tests.py",
+      "lineno": 19,
+      "name": "LocalGateResult"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/tests.py",
+      "lineno": 19,
+      "name": "SecurityPolicy"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/tests.py",
+      "lineno": 19,
+      "name": "Spec"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/tests.py",
+      "lineno": 191,
+      "name": "Violation"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/tests.py",
+      "lineno": 406,
+      "name": "Executor"
+    },
+    {
+      "file": "sources/legacy/E-legacy_snapshot/truth_plane.py",
+      "lineno": 8,
+      "name": "annotations"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "SCHEMA_VERSION"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "ArtifactRef"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "AuditVerdict"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "CheckResult"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "CheckStatus"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "Constraints"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "DiffBudget"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "DiffSummary"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "EditInstruction"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "EvidencePointer"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "FailPacket"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "GovernorAction"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "GovernorDecision"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "HistoryEvent"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "LocalGateResult"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "LoopState"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "Phase"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "ProofBundle"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "RefactorPolicy"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "SecurityPolicy"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "Spec"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "TargetState"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 10,
+      "name": "TimeSpan"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 35,
+      "name": "Result"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 35,
+      "name": "Ok"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 35,
+      "name": "Err"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 35,
+      "name": "DAOError"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 35,
+      "name": "ErrorSeverity"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 35,
+      "name": "EC"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 43,
+      "name": "ConstraintEnforcer"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 43,
+      "name": "Violation"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 44,
+      "name": "CanonicalLoop"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 44,
+      "name": "EngineConfig"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 45,
+      "name": "CheckpointStore"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 45,
+      "name": "ProofAssembler"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 46,
+      "name": "Ledger"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 46,
+      "name": "LoopMetrics"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 47,
+      "name": "Auditor"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 47,
+      "name": "Executor"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 47,
+      "name": "Planner"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 47,
+      "name": "Scout"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 47,
+      "name": "Specifier"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 48,
+      "name": "CIOracle"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 48,
+      "name": "LocalGate"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/__init__.py",
+      "lineno": 48,
+      "name": "PRRef"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/_retry.py",
+      "lineno": 8,
+      "name": "annotations"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/_types.py",
+      "lineno": 13,
+      "name": "annotations"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/cli.py",
+      "lineno": 10,
+      "name": "annotations"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/cli.py",
+      "lineno": 15,
+      "name": "sys"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/cli.py",
+      "lineno": 25,
+      "name": "AuditVerdict"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/cli.py",
+      "lineno": 25,
+      "name": "Phase"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/constraints.py",
+      "lineno": 10,
+      "name": "annotations"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/engine.py",
+      "lineno": 17,
+      "name": "annotations"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/engine.py",
+      "lineno": 23,
+      "name": "Result"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/engine.py",
+      "lineno": 23,
+      "name": "Ok"
+    },
+    {
+      "file": "tools/dao-arbiter/dao_lifebook/engine.py",
+      "lineno": 23,
+      "name": "Err"
+    }
+  ]
+}

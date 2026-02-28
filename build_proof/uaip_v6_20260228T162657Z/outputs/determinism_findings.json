@@ -1,0 +1,662 @@
+[
+  {
+    "file": "engine/exoneural_governor/util.py",
+    "line": 16,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "engine/objects/dse-fix-opt/eval/run_harness.py",
+    "line": 37,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "engine/objects/dse-fix-opt/eval/run_harness.py",
+    "line": 148,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "engine/objects/pr-orchestrator/eval/run_harness.py",
+    "line": 37,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "engine/objects/pr-orchestrator/eval/run_harness.py",
+    "line": 148,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "engine/scripts/check_prod_spec_gates.py",
+    "line": 75,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "engine/scripts/check_prod_spec_gates.py",
+    "line": 81,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "engine/scripts/check_prod_spec_gates.py",
+    "line": 739,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "engine/scripts/check_prod_spec_gates.py",
+    "line": 740,
+    "hazard": "filesystem_write_candidate:json.dump"
+  },
+  {
+    "file": "engine/scripts/check_prod_spec_gates.py",
+    "line": 532,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "engine/scripts/check_prod_spec_gates.py",
+    "line": 61,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "engine/scripts/check_prod_spec_gates.py",
+    "line": 66,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "engine/scripts/rebuild_catalog_index.py",
+    "line": 25,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "engine/tests/test_vr_provenance_id.py",
+    "line": 122,
+    "hazard": "time.monotonic"
+  },
+  {
+    "file": "engine/tests/test_vr_provenance_id.py",
+    "line": 128,
+    "hazard": "time.monotonic"
+  },
+  {
+    "file": "engine/tools/agent/run_and_log.py",
+    "line": 61,
+    "hazard": "time.monotonic"
+  },
+  {
+    "file": "engine/tools/agent/run_and_log.py",
+    "line": 82,
+    "hazard": "time.monotonic"
+  },
+  {
+    "file": "engine/tools/agent/run_and_log.py",
+    "line": 92,
+    "hazard": "Path.cwd"
+  },
+  {
+    "file": "engine/tools/agent/run_and_log.py",
+    "line": 97,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "engine/tools/feg_r8_verify.py",
+    "line": 16,
+    "hazard": "time.time"
+  },
+  {
+    "file": "engine/tools/feg_r8_verify.py",
+    "line": 207,
+    "hazard": "Path.cwd"
+  },
+  {
+    "file": "engine/tools/feg_r8_verify.py",
+    "line": 24,
+    "hazard": "time.time"
+  },
+  {
+    "file": "engine/tools/pip_audit_gate.py",
+    "line": 156,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "engine/tools/run_gate.py",
+    "line": 89,
+    "hazard": "time.monotonic"
+  },
+  {
+    "file": "engine/tools/run_gate.py",
+    "line": 91,
+    "hazard": "time.monotonic"
+  },
+  {
+    "file": "engine/tools/run_gate.py",
+    "line": 16,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "engine/tools/verify_action_pinning.py",
+    "line": 15,
+    "hazard": "Path.cwd"
+  },
+  {
+    "file": "engine/tools/verify_action_pinning.py",
+    "line": 15,
+    "hazard": "Path.cwd"
+  },
+  {
+    "file": "engine/tools/verify_readme_contract.py",
+    "line": 131,
+    "hazard": "Path.cwd"
+  },
+  {
+    "file": "engine/tools/verify_workflow_hygiene.py",
+    "line": 26,
+    "hazard": "Path.cwd"
+  },
+  {
+    "file": "engine/tools/verify_workflow_hygiene.py",
+    "line": 26,
+    "hazard": "Path.cwd"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/deadlock_fingerprint.py",
+    "line": 67,
+    "hazard": "filesystem_write_candidate:json.dump"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/deadlock_fingerprint.py",
+    "line": 67,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/deadlock_fingerprint.py",
+    "line": 8,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/make_manifest_meta.py",
+    "line": 33,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/make_manifest_meta.py",
+    "line": 60,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/prove_meta_validity.py",
+    "line": 98,
+    "hazard": "filesystem_write_candidate:json.dump"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/prove_meta_validity.py",
+    "line": 88,
+    "hazard": "filesystem_write_candidate:json.dump"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/prove_meta_validity.py",
+    "line": 91,
+    "hazard": "filesystem_write_candidate:json.dump"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/prove_meta_validity.py",
+    "line": 98,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/prove_meta_validity.py",
+    "line": 79,
+    "hazard": "filesystem_write_candidate:json.dump"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/prove_meta_validity.py",
+    "line": 88,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/prove_meta_validity.py",
+    "line": 91,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/prove_meta_validity.py",
+    "line": 95,
+    "hazard": "filesystem_write_candidate:json.dump"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/prove_meta_validity.py",
+    "line": 80,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/prove_meta_validity.py",
+    "line": 95,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/prove_meta_validity.py",
+    "line": 40,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/render_oh_output.py",
+    "line": 141,
+    "hazard": "filesystem_write_candidate:yaml.safe_dump"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/select_erm_txn.py",
+    "line": 97,
+    "hazard": "filesystem_write_candidate:yaml.safe_dump"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/validate_erm_ast.py",
+    "line": 52,
+    "hazard": "filesystem_write_candidate:json.dump"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/validate_erm_ast.py",
+    "line": 17,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/validate_erm_ast.py",
+    "line": 18,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "engine/vendor/scpe-cimqa-2026.3.0/tools/validate_erm_ast.py",
+    "line": 52,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "line": 75,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "line": 81,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "line": 728,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "line": 729,
+    "hazard": "filesystem_write_candidate:json.dump"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "line": 532,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "line": 61,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_artifacts_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "line": 66,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "line": 75,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "line": 81,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "line": 728,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "line": 729,
+    "hazard": "filesystem_write_candidate:json.dump"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "line": 532,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "line": 61,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "evidence/release_wrapper/promoted_bundle_2026-02-26/engine/scripts/check_prod_spec_gates.py",
+    "line": 66,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/engine.py",
+    "line": 293,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/evidence.py",
+    "line": 193,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/evidence.py",
+    "line": 188,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/metrics.py",
+    "line": 38,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/metrics.py",
+    "line": 35,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/models.py",
+    "line": 311,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/tests.py",
+    "line": 270,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/tests.py",
+    "line": 271,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "sources/legacy/E-legacy_snapshot/tests.py",
+    "line": 281,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/_retry.py",
+    "line": 64,
+    "hazard": "time.monotonic"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/_retry.py",
+    "line": 54,
+    "hazard": "time.monotonic"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/_retry.py",
+    "line": 129,
+    "hazard": "random.random"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/engine.py",
+    "line": 272,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/evidence.py",
+    "line": 46,
+    "hazard": "tempfile.mkstemp"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/evidence.py",
+    "line": 254,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/evidence.py",
+    "line": 247,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/metrics.py",
+    "line": 35,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/metrics.py",
+    "line": 39,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/metrics.py",
+    "line": 123,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/models.py",
+    "line": 366,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/tests.py",
+    "line": 443,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/tests.py",
+    "line": 444,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/tests.py",
+    "line": 454,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "tools/dao-arbiter/dao_lifebook/tests.py",
+    "line": 465,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "tools/prod_spec/generate_build_artifacts.py",
+    "line": 51,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "tools/prod_spec/generate_formal_artifacts.py",
+    "line": 44,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "tools/prod_spec/run_replay_harness.py",
+    "line": 34,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "tools/prod_spec/sign_ac_package.py",
+    "line": 43,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "udgs_core/ad2026/cognitive.py",
+    "line": 163,
+    "hazard": "time.monotonic"
+  },
+  {
+    "file": "udgs_core/ad2026/cognitive.py",
+    "line": 30,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "udgs_core/ad2026/cognitive.py",
+    "line": 201,
+    "hazard": "time.monotonic"
+  },
+  {
+    "file": "udgs_core/ad2026/identity.py",
+    "line": 49,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "udgs_core/ad2026/identity.py",
+    "line": 177,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/ad2026/identity.py",
+    "line": 187,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/ad2026/runtime.py",
+    "line": 45,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "udgs_core/ad2026/runtime.py",
+    "line": 54,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/ad2026/runtime.py",
+    "line": 338,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/ad2026/runtime.py",
+    "line": 339,
+    "hazard": "filesystem_write_candidate:json.dump"
+  },
+  {
+    "file": "udgs_core/ad2026/runtime.py",
+    "line": 464,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/ad2026/runtime.py",
+    "line": 503,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/ad2026/runtime.py",
+    "line": 504,
+    "hazard": "filesystem_write_candidate:json.dump"
+  },
+  {
+    "file": "udgs_core/anchors.py",
+    "line": 16,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/autonomous_audit.py",
+    "line": 127,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/autonomous_audit.py",
+    "line": 537,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/autonomous_audit.py",
+    "line": 538,
+    "hazard": "filesystem_write_candidate:json.dump"
+  },
+  {
+    "file": "udgs_core/autonomous_audit.py",
+    "line": 542,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/autonomous_audit.py",
+    "line": 551,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "udgs_core/autonomous_audit.py",
+    "line": 580,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/cli.py",
+    "line": 71,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/cli.py",
+    "line": 110,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/cli.py",
+    "line": 138,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/cli.py",
+    "line": 44,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/strict_json.py",
+    "line": 149,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/system_object.py",
+    "line": 34,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/system_object.py",
+    "line": 84,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/system_object.py",
+    "line": 85,
+    "hazard": "filesystem_write_candidate:json.dump"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "line": 946,
+    "hazard": "filesystem_write_candidate:open"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "line": 89,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "line": 368,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "line": 376,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "line": 390,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "line": 418,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "line": 431,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "line": 478,
+    "hazard": "datetime.now"
+  },
+  {
+    "file": "udgs_core/tests/test_ad2026.py",
+    "line": 954,
+    "hazard": "datetime.now"
+  }
+]

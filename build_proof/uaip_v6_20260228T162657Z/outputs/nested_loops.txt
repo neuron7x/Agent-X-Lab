@@ -1,0 +1,12 @@
+tools/prod_spec/generate_formal_artifacts.py:149:    for a in sps.actions:
+tools/prod_spec/generate_formal_artifacts.py:150:        for pc in a.preconditions:
+tools/prod_spec/generate_formal_artifacts.py:191:        for name, rx in patterns.items():
+tools/prod_spec/generate_formal_artifacts.py:192:            for m in rx.finditer(txt):
+tools/ci/action_pin_audit.py:18:    for path in sorted(pathlib.Path(".github/workflows").glob("*.yml")):
+tools/ci/action_pin_audit.py:19:        for line_no, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+engine/tools/verify_protocol_consistency.py:30:    for fixes in step_fixes.values():
+engine/tools/verify_protocol_consistency.py:31:        for deficit in fixes:
+engine/tools/secret_scan_gate.py:57:    for idx, line in enumerate(text.splitlines(), start=1):
+engine/tools/secret_scan_gate.py:58:        for name, pattern in PATTERNS:
+engine/vendor/scpe-cimqa-2026.3.0/tools/run_interpreter.py:20:    for m in modalities:
+engine/vendor/scpe-cimqa-2026.3.0/tools/run_interpreter.py:21:        for r in (m.get("required_reports") or []):

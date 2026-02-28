@@ -1,0 +1,6 @@
+candidate1_current_s 14.583156
+candidate1_proposed_s 0.003181
+candidate1_equal True
+candidate2_current_s 0.041144
+candidate2_proposed_s 0.007702
+candidate2_counts 0 0
