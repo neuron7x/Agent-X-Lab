@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from engine.exoneural_governor.repo_model import generate_repo_model
+from exoneural_governor.repo_model import generate_repo_model
 
 
 def test_smoke_repo_model_current_repo() -> None:

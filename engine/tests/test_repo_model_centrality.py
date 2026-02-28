@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from engine.exoneural_governor.repo_model import (
+from exoneural_governor.repo_model import (
     betweenness_centrality_brandes,
     pagerank,
 )

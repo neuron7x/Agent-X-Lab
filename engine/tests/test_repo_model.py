@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from engine.exoneural_governor.repo_model import (
+from exoneural_governor.repo_model import (
     betweenness_centrality_brandes,
     generate_repo_model,
     pagerank,
@@ -38,3 +38,15 @@ def test_repo_model_smoke_and_local_action_edges() -> None:
         "USES_ACTION_IN_ACTION",
         "USES_REUSABLE_WORKFLOW",
     } & edge_types
+
+
+def test_repo_model_import_edges_and_nonzero_bc() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    model = generate_repo_model(repo_root)
+
+    edges = model["wiring"]["edges"]
+    import_edges = [edge for edge in edges if edge["edge_type"] == "IMPORTS_PY"]
+    assert import_edges
+
+    bc_values = list(model["centrality"]["betweenness"].values())
+    assert max(bc_values) > 0.0

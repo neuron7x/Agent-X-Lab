@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 import shlex
@@ -96,9 +97,11 @@ def _kind_for_path(repo_root: Path, path: Path) -> str:
         rel.startswith("scripts/")
         or rel.startswith("tools/")
         or rel.startswith("engine/scripts/")
+        or rel.startswith("engine/tools/")
     ):
         if path.name == "__init__.py" and not (
-            rel.startswith("scripts/") or rel.startswith("engine/scripts/")
+            rel.startswith("scripts/")
+            or rel.startswith("engine/scripts/")
         ):
             return Kind.OTHER
         return Kind.CLI_SCRIPT
@@ -120,8 +123,14 @@ def discover_agents(repo_root: Path) -> list[dict[str, Any]]:
         repo_root / "scripts",
         repo_root / "tools",
         repo_root / "engine" / "scripts",
+        repo_root / "engine" / "tools",
+        repo_root / "engine" / "exoneural_governor",
+        repo_root / "tools" / "dao-arbiter" / "dao_lifebook",
     ):
         for p in _iter_files(sub):
+            if p.suffix == ".py" and p.name == "__init__.py":
+                if _rel(repo_root, p).startswith("engine/tools/"):
+                    continue
             if p.suffix in SCRIPT_SUFFIXES:
                 paths.add(p)
 
@@ -303,6 +312,123 @@ def _extract_makefile_run_edges(repo_root: Path, makefile: Path) -> list[tuple[s
     return sorted(edges)
 
 
+def _resolve_relative_import(
+    current_file: Path,
+    module: str | None,
+    level: int,
+    name: str,
+) -> Path | None:
+    base_dir = current_file.parent
+    parent = base_dir
+    for _ in range(max(0, level - 1)):
+        parent = parent.parent
+
+    module_parts = [part for part in (module.split(".") if module else []) if part]
+    name_parts = [part for part in name.split(".") if part]
+
+    if module_parts or name_parts:
+        candidate = parent.joinpath(*(module_parts + name_parts))
+        py_candidate = candidate.with_suffix(".py")
+        if py_candidate.exists() and py_candidate.is_file():
+            return py_candidate
+    return None
+
+
+def _resolve_same_root_absolute_import(
+    root_dir: Path,
+    module_name: str,
+) -> Path | None:
+    parts = [part for part in module_name.split(".") if part]
+    if not parts:
+        return None
+    candidate = root_dir.joinpath(*parts).with_suffix(".py")
+    if candidate.exists() and candidate.is_file():
+        return candidate
+    return None
+
+
+def _extract_python_import_edges(
+    repo_root: Path,
+    bounded_paths: set[str],
+) -> list[tuple[str, str, str]]:
+    edges: set[tuple[str, str, str]] = set()
+    bounded_files = sorted(repo_root / rel for rel in bounded_paths)
+
+    group_roots = [
+        repo_root / "tools" / "dao-arbiter" / "dao_lifebook",
+        repo_root / "engine" / "exoneural_governor",
+    ]
+
+    for src_file in bounded_files:
+        if src_file.suffix != ".py" or not src_file.exists():
+            continue
+        src_rel = _rel(repo_root, src_file)
+
+        root_dir: Path | None = None
+        for grp in group_roots:
+            try:
+                src_file.relative_to(grp)
+                root_dir = grp
+                break
+            except ValueError:
+                continue
+        if root_dir is None:
+            continue
+
+        try:
+            tree = ast.parse(src_file.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ImportFrom):
+                level = int(node.level or 0)
+                module = node.module
+                for alias in node.names:
+                    alias_name = alias.name
+                    dst_file: Path | None = None
+                    if level > 0:
+                        dst_file = _resolve_relative_import(
+                            src_file,
+                            module,
+                            level,
+                            alias_name,
+                        )
+                        if dst_file is None and module:
+                            dst_file = _resolve_relative_import(
+                                src_file,
+                                module,
+                                level,
+                                "",
+                            )
+                    elif module:
+                        full = module if alias_name == "*" else f"{module}.{alias_name}"
+                        dst_file = _resolve_same_root_absolute_import(root_dir, full)
+                        if dst_file is None:
+                            dst_file = _resolve_same_root_absolute_import(root_dir, module)
+                    elif alias_name != "*":
+                        dst_file = _resolve_same_root_absolute_import(root_dir, alias_name)
+
+                    if dst_file is None or not dst_file.exists():
+                        continue
+                    dst_rel = _rel(repo_root, dst_file)
+                    if dst_rel == src_rel or dst_rel not in bounded_paths:
+                        continue
+                    edges.add((src_rel, dst_rel, "IMPORTS_PY"))
+
+            elif isinstance(node, ast.Import):
+                for alias in node.names:
+                    dst_file = _resolve_same_root_absolute_import(root_dir, alias.name)
+                    if dst_file is None or not dst_file.exists():
+                        continue
+                    dst_rel = _rel(repo_root, dst_file)
+                    if dst_rel == src_rel or dst_rel not in bounded_paths:
+                        continue
+                    edges.add((src_rel, dst_rel, "IMPORTS_PY"))
+
+    return sorted(edges)
+
+
 def extract_wiring_edges(
     repo_root: Path, agents: list[dict[str, Any]]
 ) -> tuple[list[dict[str, str]], dict[str, Any]]:
@@ -410,6 +536,14 @@ def extract_wiring_edges(
     makefile = repo_root / "Makefile"
     if makefile.exists():
         edge_rows.update(_extract_makefile_run_edges(repo_root, makefile))
+
+    bounded_import_paths = {
+        path
+        for path in known_paths
+        if path.startswith("tools/dao-arbiter/dao_lifebook/")
+        or path.startswith("engine/exoneural_governor/")
+    }
+    edge_rows.update(_extract_python_import_edges(repo_root, bounded_import_paths))
 
     resolved_edges: list[dict[str, str]] = []
     for src_path, dst_path, edge_type in sorted(edge_rows, key=lambda x: (x[0], x[1], x[2])):
@@ -656,18 +790,15 @@ def cli(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     repo_root = discover_repo_root(Path.cwd())
-    out_path = Path(args.out)
+    out_arg = Path(args.out)
+    out_path = out_arg if out_arg.is_absolute() else (repo_root / out_arg)
     model = generate_repo_model(repo_root)
     write_repo_model(out_path, model)
 
     if args.stdout:
         print(json.dumps(model, indent=2, sort_keys=True))
     else:
-        try:
-            rel = out_path.resolve().relative_to(Path.cwd().resolve()).as_posix()
-        except ValueError:
-            rel = out_path.as_posix()
-        print(f"WROTE:{rel}")
+        print(f"WROTE:{out_path.relative_to(repo_root).as_posix()}")
     return 0
 
 
