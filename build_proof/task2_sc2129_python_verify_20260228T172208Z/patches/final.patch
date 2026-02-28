@@ -1,0 +1,37 @@
+diff --git a/.github/workflows/python-verify.yml b/.github/workflows/python-verify.yml
+index 842e0b9..b5e6ed9 100644
+--- a/.github/workflows/python-verify.yml
++++ b/.github/workflows/python-verify.yml
+@@ -30,25 +30,28 @@ jobs:
+       - name: Discover python test contract
+         run: |
+           set -euo pipefail
++          root=""
+           if [ -f pyproject.toml ]; then
+-            echo "ROOT=." >> "$GITHUB_ENV"
++            root="."
+             python -m pip install -e .
+           elif [ -f engine/pyproject.toml ]; then
+-            echo "ROOT=engine" >> "$GITHUB_ENV"
++            root="engine"
+             python -m pip install -e ./engine
+             if [ -f engine/requirements-dev.txt ]; then
+               python -m pip install -r engine/requirements-dev.txt
+             fi
+           elif [ -f requirements-dev.txt ]; then
+-            echo "ROOT=." >> "$GITHUB_ENV"
++            root="."
+             python -m pip install -r requirements-dev.txt
+           elif [ -f engine/requirements-dev.txt ]; then
+-            echo "ROOT=engine" >> "$GITHUB_ENV"
++            root="engine"
+             python -m pip install -r engine/requirements-dev.txt
+           else
+             echo "missing Python test contract" >&2
+             exit 1
+           fi
++          if [ -z "${root}" ]; then echo "missing Python test contract" >&2; exit 1; fi
++          echo "ROOT=${root}" >> "$GITHUB_ENV"
+       - run: |
+           set -euo pipefail
+           python -m compileall "$ROOT"
