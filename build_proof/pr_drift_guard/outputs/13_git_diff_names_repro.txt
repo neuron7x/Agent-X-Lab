@@ -1,0 +1,3 @@
+engine/artifacts/titan9/inventory.json
+engine/catalog/index.json
+EXIT_CODE=0

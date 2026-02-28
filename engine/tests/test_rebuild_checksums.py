@@ -6,11 +6,14 @@ import sys
 from pathlib import Path
 
 
+ENGINE_ROOT = Path(__file__).resolve().parents[1]
+
+
 def run_rebuild(repo_root: Path) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [
             sys.executable,
-            "scripts/rebuild_checksums.py",
+            str(ENGINE_ROOT / "scripts/rebuild_checksums.py"),
             "--repo-root",
             str(repo_root),
         ],

@@ -1,0 +1,18 @@
+ M engine/artifacts/titan9/inventory.json
+ M engine/catalog/index.json
+ M engine/tests/test_config.py
+ M engine/tests/test_doctor.py
+ M engine/tests/test_readme_contract.py
+ M engine/tests/test_rebuild_catalog_index.py
+ M engine/tests/test_rebuild_checksums.py
+ M engine/tests/test_repo_invariants.py
+ M engine/tests/test_run_gate.py
+ M engine/tests/test_workflow_guards.py
+ M engine/vendor/scpe-cimqa-2026.3.0/tools/run_interpreter.py
+?? .github/workflows/engine-drift-guard.yml
+?? artifacts/agent/
+?? build_proof/pr_drift_guard/
+?? engine/artifacts/release-test/
+?? engine/artifacts/tmp-evidence-test/
+?? engine/tests/test_vendor_scpe_syntax.py
+EXIT_CODE=0

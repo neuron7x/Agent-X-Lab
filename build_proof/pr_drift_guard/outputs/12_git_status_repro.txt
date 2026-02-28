@@ -1,0 +1,7 @@
+ M engine/artifacts/titan9/inventory.json
+ M engine/catalog/index.json
+?? artifacts/agent/
+?? build_proof/pr_drift_guard/
+?? engine/artifacts/release-test/
+?? engine/artifacts/tmp-evidence-test/
+EXIT_CODE=0

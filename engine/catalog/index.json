@@ -91,7 +91,7 @@
     {
       "name": "Agent-X-Lab_Integrated_Deterministic_PR_Orchestrator_v2026.03-kernel",
       "path": "catalog/agents/Agent-X-Lab_Integrated_Deterministic_PR_Orchestrator_v2026.03-kernel.md",
-      "sha256": "1b6de7487ab270e6e4ce252d6cc042b47a8bc23b325dd87e424aaa0e0985532c",
+      "sha256": "59372d32e9ea67162843768afcbee3a0db62a97ea7d098901848ee1660073646",
       "type": "agent"
     },
     {
@@ -103,13 +103,13 @@
     {
       "name": "CA-ERG_v2026.4_SYSTEM_PROMPT",
       "path": "catalog/agents/CA-ERG_v2026.4_SYSTEM_PROMPT.md",
-      "sha256": "9c2aa83b80bb94154e5c2d431d6657b326263ecca09b63369a7ab4d159f8c55d",
+      "sha256": "8d354ecc5a17a192ed1e8460a0277c6b56ded69a9c9526f99cf8390688fd6ba6",
       "type": "agent"
     },
     {
       "name": "CODEX_PFRI_v2026.5.0",
       "path": "catalog/agents/CODEX_PFRI_v2026.5.0.md",
-      "sha256": "47b1ee88bf4a5f3a427e91ea78433ae9c2c17a78a66c6eae1c403b25c6bf2ab5",
+      "sha256": "b42c0277c737196066b5a6946238499ffc3608cfa2d6eba45071b12f18c7acc6",
       "type": "agent"
     },
     {
@@ -127,7 +127,7 @@
     {
       "name": "VSMO_v2026.1.0",
       "path": "catalog/agents/VSMO_v2026.1.0.md",
-      "sha256": "57238462f884e337c1d2dfeee0f3cf966547056828a89f4072ee4690d6d2f6b5",
+      "sha256": "ceed4d2351d885c9fe5212be2ca2ec382e4a75ae6249bb14ef91b6cd04405552",
       "type": "agent"
     },
     {

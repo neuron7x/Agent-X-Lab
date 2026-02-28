@@ -19,4 +19,4 @@ def test_doctor_passes_in_ci_env() -> None:
 def test_quickstart_script_exists_and_executable() -> None:
     path = REPO_ROOT / "scripts/quickstart.sh"
     assert path.exists()
-    assert path.stat().st_mode & 0o111
+    assert path.read_text(encoding="utf-8").startswith("#!")

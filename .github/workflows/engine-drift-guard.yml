@@ -1,0 +1,49 @@
+name: engine-drift-guard
+
+on:
+  pull_request:
+    paths:
+      - 'engine/**'
+      - '.github/workflows/engine-drift-guard.yml'
+
+jobs:
+  drift-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Run engine gates
+        run: |
+          python -m compileall -q engine
+          python -m pytest -q engine/tests
+
+      - name: Capture workspace state
+        run: |
+          git status --porcelain | tee drift-status.txt
+          git diff --name-only | tee drift-diff.txt
+
+      - name: Fail on drift
+        run: |
+          set -euo pipefail
+          mapfile -t changed < <((awk '{print $2}' drift-status.txt; cat drift-diff.txt) | sed '/^$/d' | sort -u)
+          if [ "${#changed[@]}" -eq 0 ]; then
+            echo "No drift detected"
+            exit 0
+          fi
+          printf 'Changed paths after gates:\n%s\n' "${changed[*]}"
+
+          for path in "${changed[@]}"; do
+            if [[ "$path" == build_proof/pr_drift_guard/* ]]; then
+              continue
+            fi
+            if [[ "$path" == engine/artifacts/* ]] || [[ "$path" == artifacts/* ]] || [[ "$path" == engine/catalog/index.json ]]; then
+              echo "Forbidden drift path changed: $path" >&2
+              exit 1
+            fi
+            echo "Unexpected post-test change: $path" >&2
+            exit 1
+          done

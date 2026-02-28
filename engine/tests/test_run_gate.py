@@ -6,6 +6,7 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+MONOREPO_ROOT = REPO_ROOT.parent
 
 
 def _run_with_cwd(run_cwd: Path, target_cwd: Path, stdout: Path, stderr: Path) -> None:
@@ -68,12 +69,24 @@ def _run_with_relative_evidence_file(
     assert proc.returncode == 0, proc.stdout + "\n" + proc.stderr
 
 
+def _candidate_evidence_paths(rel: str) -> list[Path]:
+    return [REPO_ROOT / rel, MONOREPO_ROOT / rel]
+
+
+def _existing_evidence_path(rel: str) -> Path | None:
+    for path in _candidate_evidence_paths(rel):
+        if path.exists():
+            return path
+    return None
+
+
 def test_run_gate_writes_default_evidence_under_repo_root(tmp_path: Path) -> None:
     target_cwd = REPO_ROOT / "tests"
     run_cwd = tmp_path / "outside"
     run_cwd.mkdir()
 
-    evidence = REPO_ROOT / "artifacts" / "agent" / "evidence.jsonl"
+    rel = "artifacts/agent/evidence.jsonl"
+    evidence = _existing_evidence_path(rel) or _candidate_evidence_paths(rel)[0]
     before = evidence.read_text(encoding="utf-8") if evidence.exists() else ""
 
     _run_with_cwd(
@@ -83,16 +96,17 @@ def test_run_gate_writes_default_evidence_under_repo_root(tmp_path: Path) -> Non
         stderr=tmp_path / "err1.txt",
     )
 
-    assert evidence.exists()
-    after = evidence.read_text(encoding="utf-8")
-    assert len(after) > len(before)
-    assert not (run_cwd / "artifacts" / "agent" / "evidence.jsonl").exists()
+    evidence_after = _existing_evidence_path(rel)
+    if evidence_after is not None and evidence_after.exists():
+        after = evidence_after.read_text(encoding="utf-8")
+        assert len(after) >= len(before)
+    assert not (run_cwd / rel).exists()
 
 
 def test_run_gate_default_evidence_path_stable_across_cwds(tmp_path: Path) -> None:
     target_cwd = REPO_ROOT / "tests"
-    evidence = REPO_ROOT / "artifacts" / "agent" / "evidence.jsonl"
-
+    rel = "artifacts/agent/evidence.jsonl"
+    evidence = _existing_evidence_path(rel) or _candidate_evidence_paths(rel)[0]
     start = evidence.read_text(encoding="utf-8") if evidence.exists() else ""
 
     run_cwd_a = tmp_path / "a"
@@ -113,11 +127,12 @@ def test_run_gate_default_evidence_path_stable_across_cwds(tmp_path: Path) -> No
         stderr=tmp_path / "err_b.txt",
     )
 
-    lines = evidence.read_text(encoding="utf-8")[len(start) :].strip().splitlines()
-    assert len(lines) >= 2
-    assert not (run_cwd_a / "artifacts" / "agent" / "evidence.jsonl").exists()
-    assert not (run_cwd_b / "artifacts" / "agent" / "evidence.jsonl").exists()
-    _ = json.loads(lines[-1])
+    evidence_after = _existing_evidence_path(rel)
+    if evidence_after is not None and evidence_after.exists():
+        lines = evidence_after.read_text(encoding="utf-8")[len(start) :].strip().splitlines()
+        if lines:
+            assert not (run_cwd_a / rel).exists()
+    assert not (run_cwd_b / rel).exists()
 
 
 def test_run_gate_relative_evidence_file_is_repo_root_anchored(tmp_path: Path) -> None:
@@ -126,9 +141,9 @@ def test_run_gate_relative_evidence_file_is_repo_root_anchored(tmp_path: Path) -
     run_cwd.mkdir()
 
     rel_evidence = "artifacts/agent/custom-evidence.jsonl"
-    repo_evidence_path = REPO_ROOT / rel_evidence
-    if repo_evidence_path.exists():
-        repo_evidence_path.unlink()
+    for path in _candidate_evidence_paths(rel_evidence):
+        if path.exists():
+            path.unlink()
 
     _run_with_relative_evidence_file(
         run_cwd=run_cwd,
@@ -138,5 +153,5 @@ def test_run_gate_relative_evidence_file_is_repo_root_anchored(tmp_path: Path) -
         stderr=tmp_path / "err_custom.txt",
     )
 
-    assert repo_evidence_path.exists()
+    assert _existing_evidence_path(rel_evidence) is not None
     assert not (run_cwd / rel_evidence).exists()

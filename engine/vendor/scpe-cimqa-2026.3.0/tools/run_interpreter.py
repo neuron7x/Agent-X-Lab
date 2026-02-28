@@ -66,7 +66,7 @@ trace_lines = []
 step = 0
 
 def trace(rule_id, decision, outputs):
-    nonlocal step
+    global step
     step += 1
     snap = sha256_text(json.dumps({"facts": facts, "thresholds": thr}, sort_keys=True, separators=(",", ":")))
     rec = {"step": step, "rule_id": rule_id, "decision": decision, "facts_snapshot_sha256": snap, "outputs": outputs}

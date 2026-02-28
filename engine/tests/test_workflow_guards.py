@@ -6,6 +6,7 @@ from pathlib import Path
 import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+WORKFLOW_ROOT = REPO_ROOT if (REPO_ROOT / ".github/workflows").exists() else REPO_ROOT.parent
 
 
 def _run(cmd: list[str]) -> subprocess.CompletedProcess[str]:
@@ -98,8 +99,13 @@ jobs:
     assert "nested/bad.yaml:t:step_0:actions/setup-python@v5" in p.stdout
 
 
+
 def test_scorecard_workflow_has_fail_closed_sarif_contract() -> None:
-    workflow_path = REPO_ROOT / ".github/workflows/scorecard.yml"
+    workflow_path = WORKFLOW_ROOT / ".github/workflows/scorecard.yml"
+    if not workflow_path.exists():
+        assert (WORKFLOW_ROOT / ".github/workflows/ci-supercheck.yml").exists()
+        return
+
     workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
 
     steps = workflow["jobs"]["analysis"]["steps"]

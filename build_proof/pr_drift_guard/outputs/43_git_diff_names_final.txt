@@ -1,0 +1,12 @@
+engine/artifacts/titan9/inventory.json
+engine/catalog/index.json
+engine/tests/test_config.py
+engine/tests/test_doctor.py
+engine/tests/test_readme_contract.py
+engine/tests/test_rebuild_catalog_index.py
+engine/tests/test_rebuild_checksums.py
+engine/tests/test_repo_invariants.py
+engine/tests/test_run_gate.py
+engine/tests/test_workflow_guards.py
+engine/vendor/scpe-cimqa-2026.3.0/tools/run_interpreter.py
+EXIT_CODE=0
