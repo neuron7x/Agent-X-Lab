@@ -1,0 +1,7 @@
++ gh --version
+bash: gh: command not found
+EXIT_CODE=127
+
++ gh auth status
+bash: gh: command not found
+EXIT_CODE=127

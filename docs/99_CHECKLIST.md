@@ -19,7 +19,7 @@
 
 | ItemID | Requirement | Doc section anchor | Evidence anchors | Status |
 |---|---|---|---|---|
-| CHK-CI-G0 | Inventory JSON exists with workflows/docs/evidence lists. | docs/08_SECURITY_GATES.md#security-workflow-inventory | build_proof/ci_hardening/INVENTORY.json:L1-L35 | PASS |
+| CHK-CI-G0 | Inventory JSON exists with workflows/docs/evidence lists. | docs/08_SECURITY_GATES.md#security-workflow-inventory | build_proof/ci_hardening/INVENTORY.json:L1-L34 | PASS |
 | CHK-CI-G1A | Workflow Hygiene uses correct action repo (`reviewdog/action-actionlint`). | docs/08_SECURITY_GATES.md#security-correctness | .github/workflows/workflow-hygiene.yml:L32-L35 | PASS |
 | CHK-CI-G1B | Dependency Review permission/input alignment is low-noise (`comment-summary-in-pr: never`, PR read-only). | docs/08_SECURITY_GATES.md#security-correctness | .github/workflows/dependency-review.yml:L19-L24 | PASS |
 | CHK-CI-G1C | Secret scan output strategy is deterministic, no PR comment noise, SARIF upload permitted. | docs/08_SECURITY_GATES.md#security-correctness | .github/workflows/secret-scan.yml:L21-L42 | PASS |
@@ -33,3 +33,12 @@
 | CHK-CI-G6C | Required CI run URLs captured in evidence bundle. | docs/06_CI_AND_RELEASE.md#security-gates-hardening | build_proof/ci_hardening/ci_links.txt:L1-L2 | PASS |
 | CHK-CI-G7 | README quality-gates names match workflow `name:` values exactly. | docs/08_SECURITY_GATES.md#security-workflow-inventory | README.md:L33-L40; .github/workflows/codeql-analysis.yml:L1; .github/workflows/dependency-review.yml:L1; .github/workflows/secret-scan.yml:L1; .github/workflows/workflow-hygiene.yml:L1 | PASS |
 | CHK-CI-G8 | PR addendum present with WHAT/WHY/EVIDENCE/SCOPE. | docs/08_SECURITY_GATES.md#security-gates | build_proof/ci_hardening/PR_DESCRIPTION_ADDENDUM.md:L1-L27 | PASS |
+
+
+## Blocking constraints (fail-closed)
+
+| ItemID | Requirement | Doc section anchor | Evidence anchors | Status |
+|---|---|---|---|---|
+| CHK-CI-BLOCK-LOGS | Decisive per-job error excerpts captured from failing GitHub Actions runs. | docs/08_SECURITY_GATES.md#security-evidence-limitations | build_proof/ci_hardening/outputs/00_ci_failures_root_cause.txt:L1-L24 | FAIL (github.com log retrieval blocked by CONNECT tunnel 403; `gh` CLI unavailable). |
+| CHK-CI-BLOCK-ACTIONLINT-INSTALL | Local actionlint install/execution for CHK-CI-G6B. | docs/08_SECURITY_GATES.md#security-evidence-limitations | build_proof/ci_hardening/outputs/08_blocker_network_and_actionlint_install.txt:L1-L8 | FAIL (Go module fetch forbidden; no local binary). |
+| CHK-CI-BLOCK-CI-PASS | Proof that all required PR checks are green for PR #97 branch. | docs/08_SECURITY_GATES.md#security-evidence-limitations | build_proof/ci_hardening/ci_links.txt:L1-L2; build_proof/ci_hardening/outputs/00_ci_failures_root_cause.txt:L1-L24 | FAIL (cannot access run/job logs or trigger/observe reruns from this environment). |

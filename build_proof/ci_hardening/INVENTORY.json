@@ -22,6 +22,7 @@
     "build_proof/ci_hardening/PR_DESCRIPTION_ADDENDUM.md",
     "build_proof/ci_hardening/ci_links.txt",
     "build_proof/ci_hardening/commands.txt",
+    "build_proof/ci_hardening/outputs/00_ci_failures_root_cause.txt",
     "build_proof/ci_hardening/outputs/01_action_pin_audit.txt",
     "build_proof/ci_hardening/outputs/01_node___version.txt",
     "build_proof/ci_hardening/outputs/02_npm___version.txt",
@@ -29,6 +30,8 @@
     "build_proof/ci_hardening/outputs/04_npm_run_lint.txt",
     "build_proof/ci_hardening/outputs/05_npm_run_typecheck.txt",
     "build_proof/ci_hardening/outputs/06_npm_test.txt",
-    "build_proof/ci_hardening/outputs/07_actionlint__version.txt"
+    "build_proof/ci_hardening/outputs/07_actionlint__version.txt",
+    "build_proof/ci_hardening/outputs/08_blocker_network_and_actionlint_install.txt",
+    "build_proof/ci_hardening/outputs/09_gh_cli_check.txt"
   ]
 }

@@ -31,3 +31,10 @@ EVIDENCE: .github/workflows/secret-scan.yml:L4-L8
 ## 8.4 Supply-chain pinning evidence {#security-pinning}
 Action pin audit output is recorded at `build_proof/ci_hardening/outputs/01_action_pin_audit.txt` and classifies every `uses:` reference as `SHA_PINNED` or `NOT_PINNED`.
 EVIDENCE: build_proof/ci_hardening/outputs/01_action_pin_audit.txt:L1-L30
+
+
+## 8.5 Evidence limitations and blockers {#security-evidence-limitations}
+This environment cannot access github.com Actions logs/API (`CONNECT tunnel failed, response 403`), and `gh` CLI is not installed, so decisive root-cause extraction and rerun verification for PR jobs are blocked.
+EVIDENCE: build_proof/ci_hardening/outputs/00_ci_failures_root_cause.txt:L1-L24
+Attempting deterministic local actionlint install via Go also fails because module fetch is forbidden, so CHK-CI-G6B cannot be promoted to PASS in this environment.
+EVIDENCE: build_proof/ci_hardening/outputs/08_blocker_network_and_actionlint_install.txt:L1-L8

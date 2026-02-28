@@ -1,0 +1,7 @@
++ go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
+go: github.com/rhysd/actionlint/cmd/actionlint@v1.7.7: github.com/rhysd/actionlint/cmd/actionlint@v1.7.7: Get "https://proxy.golang.org/github.com/rhysd/actionlint/cmd/actionlint/@v/v1.7.7.info": Forbidden
+EXIT_CODE=1
+
++ git ls-remote https://github.com/reviewdog/action-actionlint refs/tags/v1
+fatal: unable to access 'https://github.com/reviewdog/action-actionlint/': CONNECT tunnel failed, response 403
+EXIT_CODE=128
