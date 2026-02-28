@@ -54,20 +54,26 @@ export class AXLApiError extends Error {
 const RETRY_STATUS = new Set([429, 500, 502, 503, 504]);
 const RETRY_DELAYS_MS = [1000, 2000, 4000];
 
+function shouldRetry(init?: RequestInit): boolean {
+  const method = (init?.method ?? 'GET').toUpperCase();
+  return method === 'GET' || method === 'HEAD';
+}
+
 async function apiFetch(path: string, init?: RequestInit, attempt = 0): Promise<Response> {
   const url = `${getApiBase()}${path}`;
+  const canRetry = shouldRetry(init);
   let res: Response;
   try {
     res = await fetch(url, { ...init, credentials: 'omit' });
   } catch (networkErr) {
-    if (attempt < RETRY_DELAYS_MS.length) {
+    if (canRetry && attempt < RETRY_DELAYS_MS.length) {
       await delay(RETRY_DELAYS_MS[attempt]);
       return apiFetch(path, init, attempt + 1);
     }
     throw new AXLApiError({ code: 'NETWORK_ERROR', status: 0, message: String(networkErr) });
   }
 
-  if (RETRY_STATUS.has(res.status) && attempt < RETRY_DELAYS_MS.length) {
+  if (canRetry && RETRY_STATUS.has(res.status) && attempt < RETRY_DELAYS_MS.length) {
     const retryAfter = parseInt(res.headers.get('Retry-After') ?? '0', 10);
     await delay(retryAfter > 0 ? retryAfter * 1000 : RETRY_DELAYS_MS[attempt]);
     return apiFetch(path, init, attempt + 1);
