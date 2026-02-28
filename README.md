@@ -11,7 +11,6 @@ Production monorepo for AXL UI, Cloudflare Worker BFF, Python engine, and determ
 - `tools/`: supporting developer and prod-spec tooling.
 - `docs/`: operational, security, UI, and deployment docs.
 - `.github/workflows/`: CI workflows.
-- `archive/`: preserved wrapper/snapshot material moved out of active code paths.
 - `evidence/`: release/promoted proof artifacts and migration evidence.
 
 ## Quickstart

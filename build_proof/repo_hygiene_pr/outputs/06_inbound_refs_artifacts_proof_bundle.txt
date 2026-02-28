@@ -1,0 +1,5 @@
+./build_proof/repo_hygiene_pr/outputs/01_repo_tree_targets.txt:381:artifacts/proof_bundle/MANIFEST.json
+./build_proof/repo_hygiene_pr/outputs/01_repo_tree_targets.txt:382:artifacts/proof_bundle/inventory.json
+./build_proof/repo_hygiene_pr/outputs/01_repo_tree_targets.txt:383:artifacts/proof_bundle/plan.md
+./build_proof/repo_hygiene_pr/outputs/01_repo_tree_targets.txt:384:artifacts/proof_bundle/quality.json
+EXIT_CODE=0

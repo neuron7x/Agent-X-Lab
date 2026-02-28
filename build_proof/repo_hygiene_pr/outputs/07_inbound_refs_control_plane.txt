@@ -1,0 +1,14 @@
+./evidence/repo_normalize/before_tree.txt:625:control-plane/AXL_CP_LOCK.json
+./evidence/repo_normalize/before_tree.txt:626:control-plane/AXL_INTEGRATION_MAP.yaml
+./evidence/repo_normalize/before_tree.txt:627:control-plane/INVENTORY.json
+./evidence/repo_normalize/before_tree.txt:628:control-plane/UNIFIED.manifest.json
+./evidence/repo_normalize/before_tree.txt:1160:./control-plane
+./evidence/repo_normalize/before_tree.txt:1307:./control-plane/AXL_CP_LOCK.json
+./evidence/repo_normalize/before_tree.txt:1308:./control-plane/AXL_INTEGRATION_MAP.yaml
+./evidence/repo_normalize/before_tree.txt:1309:./control-plane/INVENTORY.json
+./evidence/repo_normalize/before_tree.txt:1310:./control-plane/UNIFIED.manifest.json
+./build_proof/repo_hygiene_pr/outputs/01_repo_tree_targets.txt:386:control-plane/AXL_CP_LOCK.json
+./build_proof/repo_hygiene_pr/outputs/01_repo_tree_targets.txt:387:control-plane/AXL_INTEGRATION_MAP.yaml
+./build_proof/repo_hygiene_pr/outputs/01_repo_tree_targets.txt:388:control-plane/INVENTORY.json
+./build_proof/repo_hygiene_pr/outputs/01_repo_tree_targets.txt:389:control-plane/UNIFIED.manifest.json
+EXIT_CODE=0

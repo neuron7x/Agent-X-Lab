@@ -1,0 +1,40 @@
+{
+  "base_sha": "45ad6aa0fcd6d96719e02818a4afc45b3ea9f926",
+  "branch": "work",
+  "commands": [
+    "build_proof/repo_hygiene_pr/commands.txt"
+  ],
+  "files_added_count": 0,
+  "files_deleted_count": 1,
+  "head_sha": "TBD_POST_COMMIT",
+  "kept_targets": [
+    "build_proof",
+    "sources"
+  ],
+  "outputs": [
+    "build_proof/repo_hygiene_pr/outputs/00_git_branch_sha.txt",
+    "build_proof/repo_hygiene_pr/outputs/01_repo_tree_targets.txt",
+    "build_proof/repo_hygiene_pr/outputs/02_sizes_targets.txt",
+    "build_proof/repo_hygiene_pr/outputs/03_inbound_refs_archive.txt",
+    "build_proof/repo_hygiene_pr/outputs/04_inbound_refs_sources.txt",
+    "build_proof/repo_hygiene_pr/outputs/05_inbound_refs_build_proof.txt",
+    "build_proof/repo_hygiene_pr/outputs/06_inbound_refs_artifacts_proof_bundle.txt",
+    "build_proof/repo_hygiene_pr/outputs/07_inbound_refs_control_plane.txt",
+    "build_proof/repo_hygiene_pr/outputs/08_inbound_refs_engine_workflows.txt",
+    "build_proof/repo_hygiene_pr/outputs/09_ci_workflow_consumption_scan.txt",
+    "build_proof/repo_hygiene_pr/outputs/10_prod_spec_inputs_scan.txt",
+    "build_proof/repo_hygiene_pr/outputs/11_removal_decisions.txt",
+    "build_proof/repo_hygiene_pr/outputs/12_manifest_gen.txt",
+    "build_proof/repo_hygiene_pr/outputs/13_git_rm.txt",
+    "build_proof/repo_hygiene_pr/outputs/14_post_refs_scan.txt",
+    "build_proof/repo_hygiene_pr/outputs/15_local_checks.txt",
+    "build_proof/repo_hygiene_pr/outputs/CI_OFFLOAD_RUNBOOK.txt"
+  ],
+  "removed_targets": [
+    "archive",
+    "artifacts/proof_bundle",
+    "control-plane",
+    "engine/.github/workflows"
+  ],
+  "timestamp_utc": "2026-02-28T06:59:31.257757Z"
+}

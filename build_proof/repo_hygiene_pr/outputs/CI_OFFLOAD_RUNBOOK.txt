@@ -1,0 +1,13 @@
+Local execution intentionally limited to offline-safe checks under NETWORK_POLICY=ci_offload_only.
+
+Run CI workflows from repository root:
+
+1) gh workflow run prod-spec-gates.yml --ref $(git rev-parse --abbrev-ref HEAD)
+2) gh workflow run ui-verify.yml --ref $(git rev-parse --abbrev-ref HEAD)
+3) gh run list --limit 10
+4) gh run view <run-id> --log
+
+Attach artifact links for:
+- build_proof/repo_hygiene_pr/outputs/*
+- evidence/removed_payload/REMOVAL_MANIFEST.json
+- evidence/removed_payload/EXPORT_RUNBOOK.md

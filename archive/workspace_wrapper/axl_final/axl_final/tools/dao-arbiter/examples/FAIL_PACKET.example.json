@@ -1,7 +1,0 @@
-{
-  "check_name": "ci/docs:lint",
-  "error_extract": "README.md:1: MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: \"DAO-Arbiter: The Dopaminergic Arbiter Hypothesis\"]",
-  "repro_cmd": "markdownlint README.md",
-  "done_when": "markdownlint README.md exits with code 0 in CI",
-  "evidence_ptr": "https://example.org/ci/runs/1"
-}
