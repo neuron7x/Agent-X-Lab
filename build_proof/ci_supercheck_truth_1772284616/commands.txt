@@ -1,0 +1,12 @@
+pwd
+rg --files -g AGENTS.md
+git remote -v
+git symbolic-ref refs/remotes/origin/HEAD
+git rev-parse HEAD
+git branch --show-current
+ls .github/workflows/*.yml
+sha256sum .github/workflows/ci-supercheck.yml
+sed -n '1,260p' .github/workflows/ci-supercheck.yml
+curl -i -s https://api.github.com/search/repositories?q=Agent-X-Lab+in:name
+curl -I -s https://github.com
+python3 scripts for workflow/check comparison

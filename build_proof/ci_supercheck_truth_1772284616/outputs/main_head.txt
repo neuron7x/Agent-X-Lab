@@ -1,0 +1,3 @@
+Default branch (local current): work
+HEAD SHA: 24f936bbf86bf2115e5efe703b86bdb2006a8a6b
+Repo slug: UNKNOWN (no git remote configured)

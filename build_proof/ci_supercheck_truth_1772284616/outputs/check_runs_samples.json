@@ -1,0 +1,17 @@
+Attempt: GET https://api.github.com/search/repositories?q=Agent-X-Lab+in:name
+HTTP/1.1 403 Forbidden
+content-length: 9
+content-type: text/plain
+date: Sat, 28 Feb 2026 13:18:19 GMT
+server: envoy
+connection: close
+
+
+Attempt: HEAD https://github.com
+HTTP/1.1 403 Forbidden
+content-length: 9
+content-type: text/plain
+date: Sat, 28 Feb 2026 13:18:19 GMT
+server: envoy
+connection: close
+

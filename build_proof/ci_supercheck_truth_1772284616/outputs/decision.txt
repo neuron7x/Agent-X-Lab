@@ -1,0 +1,10 @@
+CATEGORY: CANDIDATE A (outdated required names) but UNPROVEN due missing runtime evidence.
+FACTS:
+1) ci-supercheck can require analyze/review/scan whenever change-set is not docs-only.
+2) Local workflow definitions include jobs with ids analyze/review/scan and no explicit name, so normalized names likely match, but this must be validated against live check-runs.
+3) Ground-truth check-runs and rulesets cannot be fetched (HTTP 403 + unknown repo slug), so categories A/B/C/D/E cannot be proven conclusively.
+RECOMMENDATION: FAIL-CLOSED. Do not modify CI Supercheck until live check-run samples and ruleset requirements are available.
+MISSING DATA:
+- Repository slug owner/repo for this checkout.
+- GitHub API access to commits/{sha}/check-runs across recent main SHAs.
+- GitHub API access to branch protection/rulesets for main.

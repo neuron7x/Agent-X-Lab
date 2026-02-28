@@ -428,6 +428,15 @@ class AD2026Runtime:
         # Aggregate
         runner = GateRunnerResult(gate_results)
         execution_allowed = runner.all_pass
+        gate_reports = {
+            result.gate_id: {
+                "status": result.status.value,
+                "passed": result.passed,
+                "violations": list(result.violations),
+                "evidence": list(result.evidence),
+            }
+            for result in gate_results
+        }
 
         # Emit final APB
         final_apb = self.apb_chain.append(
@@ -445,6 +454,7 @@ class AD2026Runtime:
             "sps_hash":            sps.sha256(),
             "execution_allowed":   execution_allowed,
             "gates":               runner.summary(),
+            "gate_reports":        gate_reports,
             "gate_results_hash":   runner.gate_results_hash,
             "apb_bundle_id":       final_apb.bundle_id,
             "apb_sha256":          final_apb.sha256(),
@@ -456,6 +466,7 @@ class AD2026Runtime:
 
         return {
             "execution_allowed": execution_allowed,
+            "gate_reports":      gate_reports,
             "gates":             runner.as_dict(),
             "apb":               final_apb.as_dict(),
             "ci_l9":             ci_l9.as_dict(),

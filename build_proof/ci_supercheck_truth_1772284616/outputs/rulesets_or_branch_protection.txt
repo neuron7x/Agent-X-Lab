@@ -1,0 +1,3 @@
+BLOCKED: Unable to query branch protection/rulesets from GitHub API.
+Reason: outbound requests to github.com/api.github.com return HTTP/1.1 403 Forbidden in this environment, and no git remote/repo slug is configured locally.
+Missing data required: repository slug (owner/repo) and API access to GET /repos/{owner}/{repo}/rulesets and/or branch protection endpoints.
