@@ -5,6 +5,7 @@ on:
     paths:
       - 'engine/**'
       - '.github/workflows/engine-drift-guard.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read

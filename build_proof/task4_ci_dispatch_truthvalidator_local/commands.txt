@@ -1,0 +1,6 @@
+python - <<'PY'  # inventory potential targets and workflow_dispatch support
+python -m compileall -q tools/ci
+python tools/verify_action_pinning.py --workflows .github/workflows
+python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows
+python tools/ci/dispatch_ci_for_pr.py --pr 125 --dry-run true --changed-files-file /tmp/task4_changed_files_truthvalidator.txt --head-ref work --head-sha <HEAD_SHA> --repo neuron7x/Agent-X-Lab --out-dir /tmp/task4_offline_evidence_truthvalidator
+PY

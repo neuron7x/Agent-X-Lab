@@ -1,0 +1,56 @@
+{
+  "base_repo": "neuron7x/Agent-X-Lab",
+  "contract_version": "task4.v2",
+  "dispatched_workflows": [
+    {
+      "dispatch_ref": "work",
+      "dispatch_status": "SKIP_OFFLINE",
+      "reason": "workflow_changes",
+      "workflow_file": "action-pin-audit.yml"
+    },
+    {
+      "dispatch_ref": "work",
+      "dispatch_status": "SKIP_OFFLINE",
+      "reason": "engine_changes",
+      "workflow_file": "engine-drift-guard.yml"
+    },
+    {
+      "dispatch_ref": "work",
+      "dispatch_status": "SKIP_OFFLINE",
+      "reason": "engine_changes",
+      "workflow_file": "python-verify.yml"
+    },
+    {
+      "dispatch_ref": "work",
+      "dispatch_status": "SKIP_OFFLINE",
+      "reason": "ui_e2e_relevant",
+      "workflow_file": "ui-e2e.yml"
+    },
+    {
+      "dispatch_ref": "work",
+      "dispatch_status": "SKIP_OFFLINE",
+      "reason": "ui_perf_relevant",
+      "workflow_file": "ui-perf.yml"
+    },
+    {
+      "dispatch_ref": "work",
+      "dispatch_status": "SKIP_OFFLINE",
+      "reason": "ui_changes",
+      "workflow_file": "ui-verify.yml"
+    },
+    {
+      "dispatch_ref": "work",
+      "dispatch_status": "SKIP_OFFLINE",
+      "reason": "workflow_changes",
+      "workflow_file": "workflow-hygiene.yml"
+    }
+  ],
+  "errors": [],
+  "head_ref": "work",
+  "head_sha": "b38f48a017eac8a7c1fdb3e48722d365a8ff7767",
+  "pr_number": 125,
+  "repo": "neuron7x/Agent-X-Lab",
+  "resolved_runs": [],
+  "run_started_at_utc": "2026-02-28T21:13:26Z",
+  "started_at_utc": "2026-02-28T21:13:26Z"
+}
