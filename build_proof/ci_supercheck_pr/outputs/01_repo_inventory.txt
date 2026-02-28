@@ -1,0 +1,76 @@
++ ls -la
+total 584
+drwxr-xr-x  25 root root   4096 Feb 28 07:30 .
+drwxr-xr-x   3 root root   4096 Feb 28 06:57 ..
+-rw-r--r--   1 root root    795 Feb 28 06:58 .env.example
+-rw-r--r--   1 root root     84 Feb 28 06:58 .env.test
+drwxr-xr-x   8 root root   4096 Feb 28 07:33 .git
+drwxr-xr-x   4 root root   4096 Feb 28 07:25 .github
+-rw-r--r--   1 root root    553 Feb 28 06:58 .gitignore
+-rw-r--r--   1 root root   1125 Feb 28 06:58 .lighthouserc.json
+drwxr-xr-x   2 root root   4096 Feb 28 06:58 .lovable
+-rw-r--r--   1 root root      8 Feb 28 06:58 .node-version
+-rw-r--r--   1 root root      3 Feb 28 06:58 .nvmrc
+drwxr-xr-x   3 root root   4096 Feb 28 07:29 .pytest_cache
+-rw-r--r--   1 root root      7 Feb 28 06:58 .python-version
+-rw-r--r--   1 root root    204 Feb 28 06:58 ARCHITECTURE.md
+-rw-r--r--   1 root root    569 Feb 28 06:58 CONTRIBUTING.md
+-rw-r--r--   1 root root   1131 Feb 28 06:58 Makefile
+-rw-r--r--   1 root root   7432 Feb 28 06:58 PROOF_CHECKLIST.md
+-rw-r--r--   1 root root    472 Feb 28 07:27 README.md
+-rw-r--r--   1 root root    484 Feb 28 06:58 RELEASES_MANIFEST.json
+-rw-r--r--   1 root root   2806 Feb 28 07:30 SYSTEM_OBJECT.json
+-rw-r--r--   1 root root    165 Feb 28 06:58 TESTING.md
+-rw-r--r--   1 root root   3934 Feb 28 06:58 UDGS_MANIFEST.json
+-rw-r--r--   1 root root   2129 Feb 28 06:58 UNIFIED_SYSTEM.md
+drwxr-xr-x   3 root root   4096 Feb 28 06:58 ad2026_state
+drwxr-xr-x   3 root root   4096 Feb 28 07:30 artifacts
+drwxr-xr-x  11 root root   4096 Feb 28 07:33 build_proof
+-rw-r--r--   1 root root    414 Feb 28 06:58 components.json
+drwxr-xr-x   2 root root   4096 Feb 28 07:28 dist
+drwxr-xr-x   6 root root   4096 Feb 28 07:27 docs
+drwxr-xr-x   2 root root   4096 Feb 28 06:58 e2e
+drwxr-xr-x  19 root root   4096 Feb 28 06:58 engine
+-rw-r--r--   1 root root   1408 Feb 28 06:58 eslint.config.js
+drwxr-xr-x   5 root root   4096 Feb 28 07:24 evidence
+-rw-r--r--   1 root root   1232 Feb 28 06:58 index.html
+drwxr-xr-x 388 root root  16384 Feb 28 07:28 node_modules
+-rw-r--r--   1 root root 344229 Feb 28 06:58 package-lock.json
+-rw-r--r--   1 root root   4106 Feb 28 06:58 package.json
+-rw-r--r--   1 root root    858 Feb 28 06:58 playwright.config.ts
+-rw-r--r--   1 root root     81 Feb 28 06:58 postcss.config.js
+drwxr-xr-x   2 root root   4096 Feb 28 06:58 public
+-rw-r--r--   1 root root    159 Feb 28 06:58 pytest.ini
+drwxr-xr-x   2 root root   4096 Feb 28 07:29 qa8_state
+drwxr-xr-x   2 root root   4096 Feb 28 06:58 releases
+drwxr-xr-x   2 root root   4096 Feb 28 06:58 scripts
+drwxr-xr-x   4 root root   4096 Feb 28 06:58 sources
+drwxr-xr-x   9 root root   4096 Feb 28 06:58 src
+drwxr-xr-x   3 root root   4096 Feb 28 06:58 system
+-rw-r--r--   1 root root   1986 Feb 28 06:58 tailwind.config.ts
+drwxr-xr-x   6 root root   4096 Feb 28 07:25 tools
+-rw-r--r--   1 root root    684 Feb 28 06:58 tsconfig.app.json
+-rw-r--r--   1 root root    369 Feb 28 06:58 tsconfig.json
+-rw-r--r--   1 root root    481 Feb 28 06:58 tsconfig.node.json
+drwxr-xr-x   6 root root   4096 Feb 28 06:58 udgs_core
+-rw-r--r--   1 root root    933 Feb 28 06:58 vercel.json
+-rw-r--r--   1 root root   1272 Feb 28 06:58 vite.config.ts
+-rw-r--r--   1 root root    992 Feb 28 06:58 vitest.config.ts
+drwxr-xr-x   3 root root   4096 Feb 28 06:58 workers
+EXIT_CODE=0
++ ls -la .github/workflows
+total 64
+drwxr-xr-x 2 root root 4096 Feb 28 07:27 .
+drwxr-xr-x 4 root root 4096 Feb 28 07:25 ..
+-rw-r--r-- 1 root root  854 Feb 28 07:27 action-pin-audit.yml
+-rw-r--r-- 1 root root  433 Feb 28 07:27 codeql-analysis.yml
+-rw-r--r-- 1 root root  390 Feb 28 07:27 dependency-review.yml
+-rw-r--r-- 1 root root 6506 Feb 28 07:26 prod-spec-gates.yml
+-rw-r--r-- 1 root root 1874 Feb 28 07:27 python-verify.yml
+-rw-r--r-- 1 root root 8633 Feb 28 06:58 run-engine-dispatch.yml
+-rw-r--r-- 1 root root  410 Feb 28 07:27 secret-scan.yml
+-rw-r--r-- 1 root root 1529 Feb 28 07:26 ui-e2e.yml
+-rw-r--r-- 1 root root 1852 Feb 28 07:26 ui-perf.yml
+-rw-r--r-- 1 root root 2330 Feb 28 07:26 ui-verify.yml
+-rw-r--r-- 1 root root  597 Feb 28 07:27 workflow-hygiene.yml
+EXIT_CODE=0

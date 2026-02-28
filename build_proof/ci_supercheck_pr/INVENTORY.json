@@ -1,0 +1,34 @@
+{
+  "base_sha": "03490102ec6dc7728401bd72989bfe0310f0e2cc",
+  "head_sha": "37f28540e7edcd4449f993848db3e8abeb7af2aa",
+  "branch": "work",
+  "timestamp_utc": "2026-02-28T07:36:48Z",
+  "files_touched": [
+    ".github/workflows/prod-spec-gates.yml",
+    ".github/workflows/workflow-hygiene.yml",
+    ".github/workflows/ci-supercheck.yml",
+    "README.md",
+    "docs/06_CI_AND_RELEASE.md",
+    "docs/08_SECURITY_GATES.md",
+    "docs/09_BRANCH_PROTECTION.md",
+    "docs/99_CHECKLIST.md",
+    "build_proof/ci_supercheck_pr/INVENTORY.json",
+    "build_proof/ci_supercheck_pr/commands.txt",
+    "build_proof/ci_supercheck_pr/PR_DESCRIPTION_ADDENDUM.md",
+    "build_proof/ci_supercheck_pr/outputs/00_baseline_git.txt",
+    "build_proof/ci_supercheck_pr/outputs/01_repo_inventory.txt",
+    "build_proof/ci_supercheck_pr/outputs/02_workflow_names_jobs.txt",
+    "build_proof/ci_supercheck_pr/outputs/03_local_npm_ci.txt",
+    "build_proof/ci_supercheck_pr/outputs/04_local_lint.txt",
+    "build_proof/ci_supercheck_pr/outputs/05_local_typecheck.txt",
+    "build_proof/ci_supercheck_pr/outputs/06_local_tests.txt",
+    "build_proof/ci_supercheck_pr/outputs/07_local_build.txt",
+    "build_proof/ci_supercheck_pr/outputs/08_prod_spec_workflow_smoke.txt",
+    "build_proof/ci_supercheck_pr/outputs/09_action_pins_static_audit.txt"
+  ],
+  "policy_decisions": [
+    "offline-first local proofs; no network-dependent local API checks",
+    "GitHub API action-pin validation executed in workflow-hygiene Action Pin Verify job",
+    "CI Supercheck is single required branch-protection check"
+  ]
+}

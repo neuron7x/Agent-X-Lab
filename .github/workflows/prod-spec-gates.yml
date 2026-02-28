@@ -39,18 +39,21 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           pip-version: ${{ env.PIP_VERSION }}
-      - run: |
+      - name: Install validator
+        run: |
           set -euo pipefail
           python -m pip install --quiet jsonschema
-      - run: |
+      - name: Validate AC_VERSION schema
+        run: |
           set -euo pipefail
-          python3 -c 'import json,sys,jsonschema; schema=json.load(open("engine/schemas/ac.schema.json")); data=json.load(open("artifacts/AC_VERSION.json")); filtered={k:v for k,v in data.items() if not k.startswith("_")}; jsonschema.validate(filtered, schema, format_checker=jsonschema.FormatChecker()); print("AC_VERSION.json schema valid")'
-      - run: |
+          python3 -c 'import json,jsonschema; schema=json.load(open("engine/schemas/ac.schema.json", encoding="utf-8")); data=json.load(open("artifacts/AC_VERSION.json", encoding="utf-8")); filtered={k:v for k,v in data.items() if not k.startswith("_")}; jsonschema.validate(filtered, schema, format_checker=jsonschema.FormatChecker()); print("AC_VERSION schema PASS")'
+      - name: Validate SSDF map
+        run: |
           set -euo pipefail
-          python3 -c 'import json,sys,pathlib; p=pathlib.Path("artifacts/SSDF.map");\
-if not p.exists(): print("SSDF.map not found - skipping"); sys.exit(0)\
-; data=json.load(open(p)); required=["generated_at","ac_version_sha256","coverage_fraction","controls"]; missing=[f for f in required if f not in data];\
-print("SSDF.map valid") if not missing and data.get("coverage_fraction",0)>=0.80 else (_ for _ in ()).throw(SystemExit(1))'
+          python3 -c 'import json,pathlib,sys; p=pathlib.Path("artifacts/SSDF.map");\
+if not p.exists(): print("SSDF.map not found - skip"); sys.exit(0)\
+; data=json.loads(p.read_text(encoding="utf-8")); required=["generated_at","ac_version_sha256","coverage_fraction","controls"]; missing=[k for k in required if k not in data];\
+(sys.exit(1) if missing or data.get("coverage_fraction",0)<0.80 else print("SSDF.map PASS"))'
 
   gate-check:
     name: Full RRD Gate Check
@@ -63,33 +66,47 @@ print("SSDF.map valid") if not missing and data.get("coverage_fraction",0)>=0.80
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           pip-version: ${{ env.PIP_VERSION }}
-      - run: |
+      - name: Prepare dirs
+        run: |
           set -euo pipefail
           mkdir -p artifacts ad2026_state/pb build_proof/prod_spec
-      - run: |
+      - name: Generate deterministic rebuild evidence
+        run: |
           set -euo pipefail
-          python3 -c 'import datetime,json,pathlib; payload={"schema":"REBUILD_LOG_V1","generated_at":datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00","Z"),"independent_build_count":2,"build_strategy":"ci_deterministic_probe","source":".github/workflows/prod-spec-gates.yml"}; pathlib.Path("artifacts/rebuild.log").write_text(json.dumps(payload, indent=2)+"\n", encoding="utf-8"); pathlib.Path("build_proof/prod_spec/rebuild.log").write_text(json.dumps(payload, indent=2)+"\n", encoding="utf-8")'
-      - run: |
+          python3 -c 'import datetime,json,pathlib; payload={"schema":"REBUILD_LOG_V1","generated_at":datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00","Z"),"independent_build_count":2,"build_strategy":"ci_deterministic_probe","source":".github/workflows/prod-spec-gates.yml"}; text=json.dumps(payload, indent=2)+"\n"; pathlib.Path("artifacts/rebuild.log").write_text(text, encoding="utf-8"); pathlib.Path("build_proof/prod_spec/rebuild.log").write_text(text, encoding="utf-8")'
+      - name: Assert evidence
+        run: |
           set -euo pipefail
           test -s artifacts/rebuild.log
           test -s build_proof/prod_spec/rebuild.log
-      - id: gate_check
+      - name: Run PROD_SPEC checker and ensure report
+        id: gate_check
         run: |
           set -euo pipefail
           set +e
-          python3 engine/scripts/check_prod_spec_gates.py --ac artifacts/AC_VERSION.json --pb-dir ad2026_state/pb/ --ssdf artifacts/SSDF.map --artifacts-dir artifacts/ --out build_proof/prod_spec/gate_check.report.json
+          python3 engine/scripts/check_prod_spec_gates.py \
+            --ac artifacts/AC_VERSION.json \
+            --pb-dir ad2026_state/pb/ \
+            --ssdf artifacts/SSDF.map \
+            --artifacts-dir artifacts/ \
+            --out build_proof/prod_spec/gate_check.report.json
           ec=$?
+          set -e
           if [ ! -f build_proof/prod_spec/gate_check.report.json ]; then
-            python3 -c 'import json,pathlib; p=pathlib.Path("build_proof/prod_spec/gate_check.report.json"); p.parent.mkdir(parents=True, exist_ok=True); p.write_text(json.dumps({"rrd_status":"UNKNOWN","error":"checker_failed_before_report"}, sort_keys=True)+"\n", encoding="utf-8")'
+            python3 -c 'import json,pathlib; p=pathlib.Path("build_proof/prod_spec/gate_check.report.json"); p.parent.mkdir(parents=True, exist_ok=True); p.write_text(json.dumps({"error":"checker_failed_before_report","rrd_status":"UNKNOWN"}, sort_keys=True)+"\n", encoding="utf-8")'
           fi
           echo "exit_code=$ec" >> "$GITHUB_OUTPUT"
           exit 0
-      - env:
+      - name: Enforce gate semantics
+        env:
           CHECKER_EXIT_CODE: ${{ steps.gate_check.outputs.exit_code }}
         run: |
           set -euo pipefail
-          python3 -c 'import json,os,sys,pathlib; report_path=pathlib.Path("build_proof/prod_spec/gate_check.report.json"); checker_exit_code=int(os.environ.get("CHECKER_EXIT_CODE","1")); report=json.loads(report_path.read_text(encoding="utf-8")); rrd=report.get("rrd_status","UNKNOWN"); gates=report.get("gates",[]); m={g.get("gate_id"):g.get("status") for g in gates if isinstance(g,dict)}; g0=m.get("G0"); g3=m.get("G3");\
-sys.exit(1) if g0=="FAIL" or g3=="FAIL" else (sys.exit(1) if checker_exit_code!=0 and rrd=="PRODUCTION_SPEC_V2.1" else sys.exit(0))'
+          python3 -c 'import json,os,pathlib,sys; p=pathlib.Path("build_proof/prod_spec/gate_check.report.json"); report=json.loads(p.read_text(encoding="utf-8")); gates=report.get("gates",[]); m={g.get("gate_id"): g.get("status") for g in gates if isinstance(g, dict)}; rrd=report.get("rrd_status","UNKNOWN"); ec=int(os.environ.get("CHECKER_EXIT_CODE","1"));\
+if m.get("G0")=="FAIL" or m.get("G3")=="FAIL": print("BLOCK: G0/G3 FAIL"); sys.exit(1)\
+;\
+if ec!=0 and rrd=="PRODUCTION_SPEC_V2.1": print("BLOCK: checker non-zero with release status"); sys.exit(1)\
+; print("RRD gate semantics PASS")'
       - if: always()
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
@@ -114,14 +131,21 @@ sys.exit(1) if g0=="FAIL" or g3=="FAIL" else (sys.exit(1) if checker_exit_code!=
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           pip-version: ${{ env.PIP_VERSION }}
-      - run: |
+      - name: Validate PB chain integrity
+        run: |
           set -euo pipefail
-          python3 -c 'import hashlib,json,sys,pathlib; pb_dir=pathlib.Path("ad2026_state/pb");\
-sys.exit(0) if (not pb_dir.exists()) else None; bundles=sorted(pb_dir.glob("PB-*.json"));\
-sys.exit(0) if not bundles else None; pbs=[(p,json.loads(p.read_text())) for p in bundles]; pbs.sort(key=lambda x:x[1].get("timestamp","")); req=["pb_id","timestamp","environment_class","ac_version_sha256","prev_pb_hash","input_state_hash","output_state_hash","gate_results","metrics","actions","evidence_anchors","signature"];\
-[(_ for _ in ()).throw(SystemExit(1)) for p,pb in pbs if any(f not in pb for f in req)]; prev=None\
-\nfor p,pb in pbs:\
- declared=pb.get("prev_pb_hash");\
- (_ for _ in ()).throw(SystemExit(1)) if ((prev is None and declared is not None) or (prev is not None and declared!=prev)) else None;\
- prev=hashlib.sha256(p.read_bytes()).hexdigest();\
-\n(_ for _ in ()).throw(SystemExit(1)) if any(pb.get("environment_class")=="NO_TEE" for _,pb in pbs) else print("PB chain integrity PASS")'
+          python3 -c 'import hashlib,json,pathlib,sys; pb_dir=pathlib.Path("ad2026_state/pb");\
+if not pb_dir.exists(): print("PB dir missing - skip"); sys.exit(0)\
+; bundles=sorted(pb_dir.glob("PB-*.json"));\
+if not bundles: print("No PB bundles - skip"); sys.exit(0)\
+; pbs=[(p,json.loads(p.read_text(encoding="utf-8"))) for p in bundles]; pbs.sort(key=lambda x: x[1].get("timestamp","")); req=["pb_id","timestamp","environment_class","ac_version_sha256","prev_pb_hash","input_state_hash","output_state_hash","gate_results","metrics","actions","evidence_anchors","signature"];\
+[sys.exit(1) for _,pb in pbs if any(k not in pb for k in req)]; prev=None\
+\
+for p,pb in pbs:\
+ d=pb.get("prev_pb_hash");\
+ if (prev is None and d is not None) or (prev is not None and d!=prev): print("PB chain broken"); sys.exit(1);\
+ prev=hashlib.sha256(p.read_bytes()).hexdigest()\
+\
+;\
+if any(pb.get("environment_class")=="NO_TEE" for _,pb in pbs): print("NO_TEE found"); sys.exit(1)\
+; print("PB chain integrity PASS")'
