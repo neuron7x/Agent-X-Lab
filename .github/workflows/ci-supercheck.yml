@@ -208,5 +208,4 @@ jobs:
                   crash = traceback.format_exc().replace(os.environ.get('GITHUB_TOKEN', 'missing_token'), '[REDACTED_TOKEN]')
                   print(f"FATAL SYSTEM ERROR:\n{crash}")
                   sys.exit(1)
-
           PY
