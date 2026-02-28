@@ -23,7 +23,9 @@ class TriggerError(RuntimeError):
 
 def _repo_from_remote() -> str | None:
     try:
-        remote = subprocess.check_output(["git", "remote", "get-url", "origin"], text=True, stderr=subprocess.DEVNULL).strip()
+        remote = subprocess.check_output(
+            ["git", "remote", "get-url", "origin"], text=True, stderr=subprocess.DEVNULL
+        ).strip()
     except Exception:
         return None
 
@@ -80,14 +82,13 @@ def _find_dispatch_run(repo: str, token: str, ref: str, start_epoch: float) -> d
     deadline = time.time() + 600
     endpoint = f"actions/workflows/{WORKFLOW_FILE}/runs"
     while time.time() < deadline:
-        query = urllib.parse.urlencode({"event": "workflow_dispatch", "branch": ref, "per_page": 10})
+        query = urllib.parse.urlencode({"event": "workflow_dispatch", "branch": ref, "per_page": 20})
         payload = _request(repo, token, "GET", f"{endpoint}?{query}")
         runs = payload.get("workflow_runs", []) if isinstance(payload, dict) else []
-        for run in runs:
-            if not isinstance(run, dict):
-                continue
-            if _iso_to_epoch(run.get("created_at")) >= start_epoch - 2:
-                return run
+        matches = [r for r in runs if isinstance(r, dict) and _iso_to_epoch(r.get("created_at")) >= start_epoch - 2]
+        if matches:
+            matches.sort(key=lambda r: _iso_to_epoch(r.get("created_at")))
+            return matches[0]
         time.sleep(10)
     raise TriggerError("timeout waiting for ci-dispatch workflow run")
 
@@ -98,6 +99,32 @@ def _write_sha256_manifest(root: pathlib.Path) -> None:
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
         rows.append(f"{digest}  {path.relative_to(root).as_posix()}")
     (root / "sha256sum.txt").write_text("\n".join(rows) + ("\n" if rows else ""), encoding="utf-8")
+
+
+def _run_capture(command: list[str], out_path: pathlib.Path) -> None:
+    proc = subprocess.run(command, text=True, capture_output=True, check=False)
+    out_path.write_text((proc.stdout or "") + (proc.stderr or ""), encoding="utf-8")
+    if proc.returncode != 0:
+        raise TriggerError(f"command failed ({proc.returncode}): {' '.join(command)}")
+
+
+def _build_patch_text() -> str:
+    if subprocess.run(["git", "rev-parse", "--verify", "origin/main"], capture_output=True, text=True).returncode == 0:
+        proc = subprocess.run(["git", "diff", "--no-color", "origin/main...HEAD"], capture_output=True, text=True)
+        if proc.returncode == 0:
+            return proc.stdout
+    proc = subprocess.run(["git", "show", "--no-color", "HEAD"], capture_output=True, text=True)
+    if proc.returncode == 0:
+        return proc.stdout
+    raise TriggerError("failed to build patch from origin/main...HEAD or git show HEAD")
+
+
+def _capture_env(out_path: pathlib.Path) -> None:
+    py = subprocess.run(["python", "--version"], text=True, capture_output=True, check=False)
+    pip = subprocess.run(["python", "-m", "pip", "--version"], text=True, capture_output=True, check=False)
+    out_path.write_text((py.stdout or "") + (py.stderr or "") + (pip.stdout or "") + (pip.stderr or ""), encoding="utf-8")
+    if py.returncode != 0 or pip.returncode != 0:
+        raise TriggerError("failed to capture python/pip env")
 
 
 def main() -> int:
@@ -136,13 +163,34 @@ def main() -> int:
     outputs_dir.mkdir(parents=True, exist_ok=True)
     patches_dir.mkdir(parents=True, exist_ok=True)
 
+    commands = [
+        f"python tools/ci/trigger_ci_dispatch.py --repo {args.repo} --pr {args.pr} --ref {args.ref}",
+        f"POST /repos/{args.repo}/actions/workflows/{WORKFLOW_FILE}/dispatches (inputs: pr_number={args.pr}, dry_run=false)",
+        f"GET /repos/{args.repo}/actions/workflows/{WORKFLOW_FILE}/runs?event=workflow_dispatch&branch={args.ref}&per_page=20",
+        "python tools/verify_action_pinning.py --workflows .github/workflows",
+        "python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows",
+        "python --version",
+        "python -m pip --version",
+        "git diff --no-color origin/main...HEAD (fallback: git show --no-color HEAD)",
+    ]
+    (proof_root / "commands.txt").write_text("\n".join(commands) + "\n", encoding="utf-8")
+
     (outputs_dir / "dispatcher_run.txt").write_text(
         f"run_id={run_id}\nrun_url={run_url}\npr={args.pr}\nhead_sha={head_sha}\n",
         encoding="utf-8",
     )
 
-    patch_text = subprocess.check_output(["git", "diff", "--", "."], text=True)
-    (patches_dir / "final.patch").write_text(patch_text, encoding="utf-8")
+    _run_capture(
+        ["python", "tools/verify_action_pinning.py", "--workflows", ".github/workflows"],
+        outputs_dir / "verify_action_pinning.txt",
+    )
+    _run_capture(
+        ["python", "engine/tools/verify_workflow_hygiene.py", "--workflows", ".github/workflows"],
+        outputs_dir / "verify_workflow_hygiene.txt",
+    )
+    _capture_env(outputs_dir / "env.txt")
+
+    (patches_dir / "final.patch").write_text(_build_patch_text(), encoding="utf-8")
 
     _write_sha256_manifest(proof_root)
     print(run_url)

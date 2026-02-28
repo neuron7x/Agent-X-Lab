@@ -6,11 +6,13 @@ import datetime as dt
 import json
 import os
 import pathlib
+import sys
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
-import sys
+
+sys.dont_write_bytecode = True
 
 SCRIPT_DIR = pathlib.Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parents[1]
@@ -39,6 +41,24 @@ def _parse_bool(value: str) -> bool:
     raise DispatchError(f"invalid bool value: {value}")
 
 
+def _to_epoch(iso_value: str | None) -> float:
+    if not iso_value or not isinstance(iso_value, str):
+        return 0.0
+    try:
+        return dt.datetime.strptime(iso_value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc).timestamp()
+    except ValueError:
+        return 0.0
+
+
+def _redact_token(text: str, token: str | None) -> str:
+    redacted = text
+    if token:
+        redacted = redacted.replace(token, "[REDACTED_TOKEN]")
+        if len(token) >= 8:
+            redacted = redacted.replace(token[:8], "[REDACTED_TOKEN_PREFIX]")
+    return redacted
+
+
 class GitHubClient:
     def __init__(self, token: str, repo: str, trace: list[str]):
         self.repo = repo
@@ -51,9 +71,7 @@ class GitHubClient:
 
     def request(self, method: str, endpoint: str, payload: dict | None = None) -> object:
         url = f"{API_ROOT}/repos/{self.repo}/{endpoint.lstrip('/')}"
-        body = None
-        if payload is not None:
-            body = json.dumps(payload).encode("utf-8")
+        body = json.dumps(payload).encode("utf-8") if payload is not None else None
 
         backoff = 1.0
         for attempt in range(1, 8):
@@ -62,24 +80,18 @@ class GitHubClient:
                 with urllib.request.urlopen(req, timeout=30) as resp:
                     data = resp.read().decode("utf-8")
                     self.trace.append(f"{method} {endpoint} -> {resp.status}")
-                    if not data:
-                        return {}
-                    return json.loads(data)
+                    return json.loads(data) if data else {}
             except urllib.error.HTTPError as exc:
                 self.trace.append(f"{method} {endpoint} -> {exc.code}")
                 if exc.code in (401, 403):
-                    raise DispatchError(f"GitHub API denied {method} {endpoint} ({exc.code}); token missing or insufficient permissions") from exc
-                if exc.code in (429,) and attempt < 7:
+                    raise DispatchError(
+                        f"GitHub API denied {method} {endpoint} ({exc.code}); token missing or insufficient permissions"
+                    ) from exc
+                if exc.code in (403, 429) and attempt < 7:
                     wait_s = _retry_wait(exc.headers, backoff)
                     time.sleep(wait_s)
                     backoff *= 2
                     continue
-                if exc.code == 403 and attempt < 7:
-                    wait_s = _retry_wait(exc.headers, backoff)
-                    if wait_s > 0:
-                        time.sleep(wait_s)
-                        backoff *= 2
-                        continue
                 raise DispatchError(f"GitHub API error {exc.code} for {method} {endpoint}") from exc
             except urllib.error.URLError as exc:
                 self.trace.append(f"{method} {endpoint} -> URLERROR")
@@ -100,26 +112,41 @@ def _retry_wait(headers, fallback: float) -> int:
     return max(1, int(fallback))
 
 
-def _find_run_for_workflow(client: GitHubClient, workflow_file: str, branch: str, head_sha: str, start_epoch: float, deadline_epoch: float) -> dict:
+def _find_run_for_workflow(
+    client: GitHubClient,
+    workflow_file: str,
+    head_sha: str,
+    start_epoch: float,
+    started_at_utc: str,
+    deadline_epoch: float,
+) -> dict:
     endpoint = f"actions/workflows/{workflow_file}/runs"
     while time.time() < deadline_epoch:
-        query = urllib.parse.urlencode({"event": "workflow_dispatch", "branch": branch, "per_page": 10})
+        query = urllib.parse.urlencode({"event": "workflow_dispatch", "per_page": 20})
         data = client.request("GET", f"{endpoint}?{query}")
         runs = data.get("workflow_runs", []) if isinstance(data, dict) else []
+        matches: list[dict] = []
         for run in runs:
             if not isinstance(run, dict):
                 continue
-            created_at = run.get("created_at")
-            created_epoch = 0.0
-            if isinstance(created_at, str):
-                try:
-                    created_epoch = dt.datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc).timestamp()
-                except ValueError:
-                    created_epoch = 0.0
-            if run.get("head_sha") == head_sha and created_epoch >= start_epoch - 2:
-                return run
+            if run.get("head_sha") != head_sha:
+                continue
+            created_epoch = _to_epoch(run.get("created_at"))
+            if created_epoch >= start_epoch - 2:
+                matches.append(run)
+
+        if matches:
+            matches.sort(key=lambda item: _to_epoch(item.get("created_at")))
+            selected = matches[0]
+            if selected.get("head_sha") != head_sha:
+                raise DispatchError(
+                    f"resolved run head_sha mismatch for {workflow_file}: expected={head_sha} actual={selected.get('head_sha')}"
+                )
+            return selected
         time.sleep(10)
-    raise DispatchError(f"timeout waiting for workflow run: {workflow_file}")
+    raise DispatchError(
+        f"timeout resolving run for workflow_file={workflow_file} head_sha={head_sha} started_at={started_at_utc}"
+    )
 
 
 def _write_summary(evidence: dict) -> None:
@@ -141,7 +168,9 @@ def _write_summary(evidence: dict) -> None:
         run = resolved_by_wf.get(workflow, {})
         url = run.get("html_url")
         run_text = f"[{run.get('run_id')}]({url})" if url else "-"
-        lines.append(f"| `{workflow}` | `{item['dispatch_status']}` | {run_text} | `{run.get('conclusion', '-')}` |")
+        lines.append(
+            f"| `{workflow}` | `{item['dispatch_status']}` | {run_text} | `{run.get('conclusion', '-')}` |"
+        )
     with open(summary_path, "a", encoding="utf-8") as handle:
         handle.write("\n".join(lines) + "\n")
 
@@ -181,6 +210,9 @@ def main() -> int:
         "errors": errors,
     }
 
+    changed_files_path = out_dir / "changed_files.txt"
+    changed_files_path.write_text("", encoding="utf-8")
+
     try:
         client = GitHubClient(token, repo, trace)
         pr_data = client.request("GET", f"pulls/{args.pr}")
@@ -202,28 +234,34 @@ def main() -> int:
             raise DispatchError(f"fork PRs are not allowed: base={base_repo} head={head_repo}")
 
         changed_files = get_changed_files(token, repo, args.pr)
-        (out_dir / "changed_files.txt").write_text("\n".join(changed_files) + ("\n" if changed_files else ""), encoding="utf-8")
+        changed_files_path.write_text("\n".join(changed_files) + ("\n" if changed_files else ""), encoding="utf-8")
 
         workflow_map = calculate_required(changed_files)
         dry_run = _parse_bool(args.dry_run)
 
         for workflow_file, reason in workflow_map.items():
             status = "SKIP_DRY_RUN"
+            dispatch_ref = str(head_ref)
             if not dry_run:
-                client.request("POST", f"actions/workflows/{workflow_file}/dispatches", {"ref": head_ref})
+                client.request("POST", f"actions/workflows/{workflow_file}/dispatches", {"ref": dispatch_ref})
                 status = "DISPATCHED"
             evidence["dispatched_workflows"].append(
                 {
                     "workflow_file": workflow_file,
                     "reason": reason,
                     "dispatch_status": status,
+                    "dispatch_ref": dispatch_ref,
                 }
             )
 
         if not dry_run:
             for item in evidence["dispatched_workflows"]:
                 wf = item["workflow_file"]
-                run = _find_run_for_workflow(client, wf, str(head_ref), str(head_sha), start_epoch, deadline)
+                run = _find_run_for_workflow(client, wf, str(head_sha), start_epoch, started_at, deadline)
+                if run.get("head_sha") != head_sha:
+                    raise DispatchError(
+                        f"resolved run head_sha mismatch for {wf}: expected={head_sha} actual={run.get('head_sha')}"
+                    )
                 evidence["resolved_runs"].append(
                     {
                         "workflow_file": wf,
@@ -232,12 +270,12 @@ def main() -> int:
                         "head_sha": run.get("head_sha"),
                         "status": run.get("status"),
                         "conclusion": run.get("conclusion"),
+                        "created_at": run.get("created_at"),
                     }
                 )
 
     except Exception as exc:  # noqa: BLE001
-        message = str(exc).replace(token, "[REDACTED_TOKEN]")
-        errors.append(message)
+        errors.append(_redact_token(str(exc), token))
 
     (out_dir / "evidence.json").write_text(json.dumps(evidence, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     (out_dir / "api_trace.log").write_text("\n".join(trace) + ("\n" if trace else ""), encoding="utf-8")

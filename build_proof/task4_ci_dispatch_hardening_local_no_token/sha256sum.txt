@@ -1,0 +1,6 @@
+21af8f0b217d46cf2425e639096a55f5ae1f1a65eb66c932aca21795cb5692d9  ./commands.txt
+98229c83e0b9447fe1053412fde480fb12ef70e3e3a4c228a99690842fbaab3e  ./outputs/dispatcher_run.txt
+1cef11a9793f151fa209b0cdb38a4765eea46f0ce99599603f3eb2eae8d3aa50  ./outputs/env.txt
+babd2d70bb9bd8c5ee7991f7e08ae0720c5f9791ef4a28042af6f1f75490a78c  ./outputs/verify_action_pinning.txt
+a735a840cca039ec8e46dffaeefce5217665d76d8b50fd01e653ed91ba29fc2f  ./outputs/verify_workflow_hygiene.txt
+8176a4977b762ec63a5e963c34e5bf639fa93f1d9d068f72445eb69798deda9f  ./patches/final.patch

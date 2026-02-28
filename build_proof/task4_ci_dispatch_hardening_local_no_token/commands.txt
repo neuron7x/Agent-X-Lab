@@ -1,0 +1,7 @@
+python -m compileall -q tools/ci
+python tools/verify_action_pinning.py --workflows .github/workflows
+python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows
+GITHUB_REPOSITORY=neuron7x/Agent-X-Lab python tools/ci/dispatch_ci_for_pr.py --pr 1 --dry-run true --out-dir /tmp/ci_dispatch_test
+python --version
+python -m pip --version
+git diff --no-color origin/main...HEAD (fallback git show --no-color HEAD)

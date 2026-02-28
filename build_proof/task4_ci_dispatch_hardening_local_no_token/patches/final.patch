@@ -1,0 +1,704 @@
+commit ba120428454be5d7a850c35ce2837399b570d179
+Author: Codex <codex@openai.com>
+Date:   Sat Feb 28 20:12:30 2026 +0000
+
+    ci: add deterministic PR CI dispatcher with evidence bundle
+    
+    ### Motivation
+    - Provide a single maintainer-invoked mechanism to deterministically select, dispatch, and audit CI runs for a PR and produce an auditable evidence bundle.
+    - Enforce fail-closed behavior for forks and missing/insufficient tokens, preserve action-SHA pinning, and avoid workspace drift during dispatcher execution.
+    - Produce machine- and human-friendly artifacts (JSON + step summary + artifact bundle) for downstream verification and archival.
+    
+    ### Description
+    - Add ` .github/workflows/ci-dispatch.yml` which is `workflow_dispatch`-only, sets `PYTHON_VERSION: "3.13.8"` and `PIP_VERSION: "26.0"`, invokes the dispatcher, enforces a workspace-drift check, and uploads `${{ runner.temp }}/ci_dispatch/**` as an evidence artifact.
+    - Add `tools/ci/ci_contract.py` (stdlib-only) implementing `get_changed_files(token, repo, pr_number)` with pagination and `calculate_required(paths)` mapping changed paths to required workflow files/reasons (docs fast-path, `.github/` hygiene, `engine/` and UI rules).
+    - Add `tools/ci/dispatch_ci_for_pr.py` which: requires `GITHUB_TOKEN`/`GH_TOKEN`, refuses fork PRs, fetches PR metadata and changed files, deterministically computes workflows via `ci_contract.calculate_required`, dispatches workflows via the GitHub REST API (or records `SKIP_DRY_RUN`), polls for runs matching `head_sha`, writes `evidence.json` + `api_trace.log` + `changed_files.txt`, appends a Markdown table to `$GITHUB_STEP_SUMMARY`, and implements exponential backoff and redaction of tokens from errors.
+    - Add `tools/ci/trigger_ci_dispatch.py` for maintainer-side use to trigger the `ci-dispatch.yml` run via API, locate the created dispatcher run, and build a `build_proof/task4_ci_dispatch_<RUN_ID>/` bundle that contains `outputs/dispatcher_run.txt`, a `patches/final.patch`, and a `sha256sum.txt` manifest.
+    - Enable `workflow_dispatch` on ` .github/workflows/engine-drift-guard.yml` so engine checks can be invoked by the dispatcher when relevant.
+    - Include a local proof bundle under `build_proof/task4_ci_dispatch_local_no_token/` (verifier outputs, dispatcher-run note explaining token absence, `final.patch`, and `sha256sum.txt`).
+    
+    ### Testing
+    - Ran `python tools/verify_action_pinning.py --workflows .github/workflows` and received `OK: all workflow actions are SHA-pinned (or local/docker references)`. (pass)
+    - Ran `python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows` and received `PASS: workflow hygiene policy satisfied`. (pass)
+    - Byte-compiled new tooling with `python -m compileall -q tools/ci` to validate syntax of added modules. (pass)
+    - Exercised CLI surface (`--help`) for `tools/ci/dispatch_ci_for_pr.py` and `tools/ci/trigger_ci_dispatch.py`, and executed `tools/ci/trigger_ci_dispatch.py --pr 1 --repo neuron7x/Agent-X-Lab` to confirm fail-closed behavior when `GH_TOKEN`/`GITHUB_TOKEN` is not provided (expected failure recorded in proof bundle). (expected fail-closed)
+
+diff --git a/.github/workflows/ci-dispatch.yml b/.github/workflows/ci-dispatch.yml
+new file mode 100644
+index 0000000..6289f58
+--- /dev/null
++++ b/.github/workflows/ci-dispatch.yml
+@@ -0,0 +1,73 @@
++name: ci-dispatch
++
++on:
++  workflow_dispatch:
++    inputs:
++      pr_number:
++        description: "PR number to evaluate and dispatch"
++        required: true
++        type: string
++      dry_run:
++        description: "Compute required workflows but do not dispatch"
++        required: false
++        default: "false"
++        type: choice
++        options: ["false", "true"]
++
++permissions:
++  contents: read
++  pull-requests: read
++  actions: write
++  checks: read
++
++concurrency:
++  group: ci-dispatch-${{ github.ref }}
++  cancel-in-progress: false
++
++env:
++  PYTHON_VERSION: "3.13.8"
++  PIP_VERSION: "26.0"
++
++jobs:
++  dispatch-ci:
++    runs-on: ubuntu-latest
++    timeout-minutes: 20
++    steps:
++      - name: Checkout
++        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
++
++      - name: Set up Python + pinned pip
++        uses: ./.github/actions/setup-python-pip
++        with:
++          python-version: ${{ env.PYTHON_VERSION }}
++          pip-version: ${{ env.PIP_VERSION }}
++
++      - name: Run PR CI dispatcher
++        env:
++          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++        run: |
++          set -euo pipefail
++          mkdir -p "${RUNNER_TEMP}/ci_dispatch"
++          python tools/ci/dispatch_ci_for_pr.py \
++            --pr "${{ inputs.pr_number }}" \
++            --dry-run "${{ inputs.dry_run }}" \
++            --out-dir "${RUNNER_TEMP}/ci_dispatch"
++
++      - name: Check workspace drift
++        run: |
++          set -euo pipefail
++          git status --porcelain | tee "${RUNNER_TEMP}/ci_dispatch/drift-status.txt"
++          git diff --name-only | tee "${RUNNER_TEMP}/ci_dispatch/drift-diff.txt"
++          if [[ -s "${RUNNER_TEMP}/ci_dispatch/drift-status.txt" || -s "${RUNNER_TEMP}/ci_dispatch/drift-diff.txt" ]]; then
++            echo "::error::workspace drift detected"
++            exit 1
++          fi
++
++      - name: Upload CI dispatch evidence
++        if: always()
++        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
++        with:
++          name: ci-dispatch-${{ github.run_id }}
++          retention-days: 30
++          if-no-files-found: error
++          path: ${{ runner.temp }}/ci_dispatch/**
+diff --git a/.github/workflows/engine-drift-guard.yml b/.github/workflows/engine-drift-guard.yml
+index 6fbd57d..1ee6569 100644
+--- a/.github/workflows/engine-drift-guard.yml
++++ b/.github/workflows/engine-drift-guard.yml
+@@ -5,6 +5,7 @@ on:
+     paths:
+       - 'engine/**'
+       - '.github/workflows/engine-drift-guard.yml'
++  workflow_dispatch:
+ 
+ permissions:
+   contents: read
+diff --git a/build_proof/task4_ci_dispatch_local_no_token/commands.txt b/build_proof/task4_ci_dispatch_local_no_token/commands.txt
+new file mode 100644
+index 0000000..bdc9f15
+--- /dev/null
++++ b/build_proof/task4_ci_dispatch_local_no_token/commands.txt
+@@ -0,0 +1,2 @@
++python tools/verify_action_pinning.py --workflows .github/workflows
++python engine/tools/verify_workflow_hygiene.py --workflows .github/workflows
+diff --git a/build_proof/task4_ci_dispatch_local_no_token/outputs/dispatcher_run.txt b/build_proof/task4_ci_dispatch_local_no_token/outputs/dispatcher_run.txt
+new file mode 100644
+index 0000000..39ad0c7
+--- /dev/null
++++ b/build_proof/task4_ci_dispatch_local_no_token/outputs/dispatcher_run.txt
+@@ -0,0 +1,3 @@
++run_id=unavailable
++run_url=unavailable
++reason=GH_TOKEN/GITHUB_TOKEN not set in execution environment; dispatcher trigger skipped.
+diff --git a/build_proof/task4_ci_dispatch_local_no_token/outputs/verify_action_pinning.txt b/build_proof/task4_ci_dispatch_local_no_token/outputs/verify_action_pinning.txt
+new file mode 100644
+index 0000000..2084572
+--- /dev/null
++++ b/build_proof/task4_ci_dispatch_local_no_token/outputs/verify_action_pinning.txt
+@@ -0,0 +1 @@
++OK: all workflow actions are SHA-pinned (or local/docker references)
+diff --git a/build_proof/task4_ci_dispatch_local_no_token/outputs/verify_workflow_hygiene.txt b/build_proof/task4_ci_dispatch_local_no_token/outputs/verify_workflow_hygiene.txt
+new file mode 100644
+index 0000000..dd13803
+--- /dev/null
++++ b/build_proof/task4_ci_dispatch_local_no_token/outputs/verify_workflow_hygiene.txt
+@@ -0,0 +1 @@
++PASS: workflow hygiene policy satisfied
+diff --git a/build_proof/task4_ci_dispatch_local_no_token/patches/final.patch b/build_proof/task4_ci_dispatch_local_no_token/patches/final.patch
+new file mode 100644
+index 0000000..1f70f00
+--- /dev/null
++++ b/build_proof/task4_ci_dispatch_local_no_token/patches/final.patch
+@@ -0,0 +1,12 @@
++diff --git a/.github/workflows/engine-drift-guard.yml b/.github/workflows/engine-drift-guard.yml
++index 6fbd57d..1ee6569 100644
++--- a/.github/workflows/engine-drift-guard.yml
+++++ b/.github/workflows/engine-drift-guard.yml
++@@ -5,6 +5,7 @@ on:
++     paths:
++       - 'engine/**'
++       - '.github/workflows/engine-drift-guard.yml'
+++  workflow_dispatch:
++ 
++ permissions:
++   contents: read
+diff --git a/build_proof/task4_ci_dispatch_local_no_token/sha256sum.txt b/build_proof/task4_ci_dispatch_local_no_token/sha256sum.txt
+new file mode 100644
+index 0000000..d77c6a3
+--- /dev/null
++++ b/build_proof/task4_ci_dispatch_local_no_token/sha256sum.txt
+@@ -0,0 +1,5 @@
++0d7cb7cb61c6b7efcacf26b47b97a8f4f70d218037318599e0288372a097b051  ./commands.txt
++6ab4f67c9b450270393d541fd45467ad31f8b13b84b234cc567167236c266671  ./outputs/dispatcher_run.txt
++babd2d70bb9bd8c5ee7991f7e08ae0720c5f9791ef4a28042af6f1f75490a78c  ./outputs/verify_action_pinning.txt
++a735a840cca039ec8e46dffaeefce5217665d76d8b50fd01e653ed91ba29fc2f  ./outputs/verify_workflow_hygiene.txt
++2dbce6c1780fc4ccf16d6c2c56f6bdc47b333eb4d704381f7daa6f52143c6a2d  ./patches/final.patch
+diff --git a/tools/ci/ci_contract.py b/tools/ci/ci_contract.py
+new file mode 100755
+index 0000000..57666a8
+--- /dev/null
++++ b/tools/ci/ci_contract.py
+@@ -0,0 +1,103 @@
++#!/usr/bin/env python3
++from __future__ import annotations
++
++import json
++import time
++import urllib.error
++import urllib.parse
++import urllib.request
++from typing import Dict, List
++
++API_ROOT = "https://api.github.com"
++
++
++def _github_get_json(token: str, url: str) -> object:
++    headers = {
++        "Authorization": f"Bearer {token}",
++        "Accept": "application/vnd.github+json",
++        "User-Agent": "axl-ci-contract",
++    }
++    req = urllib.request.Request(url, headers=headers, method="GET")
++    backoff = 1.0
++    for attempt in range(1, 6):
++        try:
++            with urllib.request.urlopen(req, timeout=30) as resp:
++                return json.loads(resp.read().decode("utf-8"))
++        except urllib.error.HTTPError as exc:
++            if exc.code in (403, 429) and attempt < 5:
++                retry_after = exc.headers.get("Retry-After")
++                reset = exc.headers.get("X-RateLimit-Reset")
++                if retry_after and retry_after.isdigit():
++                    wait_s = max(1, int(retry_after))
++                elif reset and reset.isdigit():
++                    wait_s = max(1, int(reset) - int(time.time()))
++                else:
++                    wait_s = int(backoff)
++                    backoff *= 2
++                time.sleep(wait_s)
++                continue
++            raise
++
++
++def get_changed_files(token: str, repo: str, pr_number: int) -> List[str]:
++    files: list[str] = []
++    page = 1
++    while True:
++        endpoint = f"{API_ROOT}/repos/{repo}/pulls/{pr_number}/files"
++        query = urllib.parse.urlencode({"per_page": 100, "page": page})
++        data = _github_get_json(token, f"{endpoint}?{query}")
++        if not isinstance(data, list):
++            raise RuntimeError("unexpected pulls/files API response")
++        if not data:
++            break
++        for item in data:
++            if isinstance(item, dict) and isinstance(item.get("filename"), str):
++                files.append(item["filename"])
++        if len(data) < 100:
++            break
++        page += 1
++    return sorted(set(files))
++
++
++def calculate_required(paths: List[str]) -> Dict[str, str]:
++    if paths and all(p.startswith("docs/") or p.startswith("build_proof/") or p.endswith(".md") for p in paths):
++        return {}
++
++    required: dict[str, str] = {}
++
++    def add(workflow: str, reason: str) -> None:
++        required[workflow] = reason
++
++    def any_path(predicate) -> bool:
++        return any(predicate(path) for path in paths)
++
++    if any_path(lambda p: p.startswith(".github/")):
++        add("workflow-hygiene.yml", "workflow_changes")
++        add("action-pin-audit.yml", "workflow_changes")
++
++    if any_path(lambda p: p.startswith("engine/")):
++        add("engine-drift-guard.yml", "engine_changes")
++        add("python-verify.yml", "engine_changes")
++
++    ui_config_suffixes = (
++        "config.ts",
++        "config.js",
++        "vite.config.ts",
++        "playwright.config.ts",
++        "tsconfig.json",
++        "package.json",
++        "package-lock.json",
++    )
++    if any_path(
++        lambda p: p.startswith(("src/", "workers/", "e2e/", "scripts/"))
++        or p.endswith(ui_config_suffixes)
++    ):
++        add("ui-verify.yml", "ui_changes")
++
++    if any_path(lambda p: p.startswith("e2e/") or "playwright" in p.lower()):
++        add("ui-e2e.yml", "ui_e2e_relevant")
++
++    if any_path(lambda p: p.startswith(("src/", "workers/"))):
++        add("ui-perf.yml", "ui_perf_relevant")
++
++    return dict(sorted(required.items(), key=lambda item: item[0]))
+diff --git a/tools/ci/dispatch_ci_for_pr.py b/tools/ci/dispatch_ci_for_pr.py
+new file mode 100755
+index 0000000..82094a6
+--- /dev/null
++++ b/tools/ci/dispatch_ci_for_pr.py
+@@ -0,0 +1,254 @@
++#!/usr/bin/env python3
++from __future__ import annotations
++
++import argparse
++import datetime as dt
++import json
++import os
++import pathlib
++import time
++import urllib.error
++import urllib.parse
++import urllib.request
++import sys
++
++SCRIPT_DIR = pathlib.Path(__file__).resolve().parent
++REPO_ROOT = SCRIPT_DIR.parents[1]
++if str(REPO_ROOT) not in sys.path:
++    sys.path.insert(0, str(REPO_ROOT))
++
++from tools.ci.ci_contract import calculate_required, get_changed_files
++
++API_ROOT = "https://api.github.com"
++
++
++class DispatchError(RuntimeError):
++    pass
++
++
++def _iso_now() -> str:
++    return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
++
++
++def _parse_bool(value: str) -> bool:
++    norm = (value or "").strip().lower()
++    if norm in {"1", "true", "yes", "y"}:
++        return True
++    if norm in {"0", "false", "no", "n", ""}:
++        return False
++    raise DispatchError(f"invalid bool value: {value}")
++
++
++class GitHubClient:
++    def __init__(self, token: str, repo: str, trace: list[str]):
++        self.repo = repo
++        self.trace = trace
++        self.headers = {
++            "Authorization": f"Bearer {token}",
++            "Accept": "application/vnd.github+json",
++            "User-Agent": "axl-ci-dispatcher",
++        }
++
++    def request(self, method: str, endpoint: str, payload: dict | None = None) -> object:
++        url = f"{API_ROOT}/repos/{self.repo}/{endpoint.lstrip('/')}"
++        body = None
++        if payload is not None:
++            body = json.dumps(payload).encode("utf-8")
++
++        backoff = 1.0
++        for attempt in range(1, 8):
++            req = urllib.request.Request(url, headers=self.headers, method=method, data=body)
++            try:
++                with urllib.request.urlopen(req, timeout=30) as resp:
++                    data = resp.read().decode("utf-8")
++                    self.trace.append(f"{method} {endpoint} -> {resp.status}")
++                    if not data:
++                        return {}
++                    return json.loads(data)
++            except urllib.error.HTTPError as exc:
++                self.trace.append(f"{method} {endpoint} -> {exc.code}")
++                if exc.code in (401, 403):
++                    raise DispatchError(f"GitHub API denied {method} {endpoint} ({exc.code}); token missing or insufficient permissions") from exc
++                if exc.code in (429,) and attempt < 7:
++                    wait_s = _retry_wait(exc.headers, backoff)
++                    time.sleep(wait_s)
++                    backoff *= 2
++                    continue
++                if exc.code == 403 and attempt < 7:
++                    wait_s = _retry_wait(exc.headers, backoff)
++                    if wait_s > 0:
++                        time.sleep(wait_s)
++                        backoff *= 2
++                        continue
++                raise DispatchError(f"GitHub API error {exc.code} for {method} {endpoint}") from exc
++            except urllib.error.URLError as exc:
++                self.trace.append(f"{method} {endpoint} -> URLERROR")
++                if attempt == 7:
++                    raise DispatchError(f"network error for {method} {endpoint}: {exc.reason}") from exc
++                time.sleep(backoff)
++                backoff *= 2
++        raise DispatchError(f"request exhausted retries: {method} {endpoint}")
++
++
++def _retry_wait(headers, fallback: float) -> int:
++    retry_after = headers.get("Retry-After") if headers else None
++    if retry_after and retry_after.isdigit():
++        return max(1, int(retry_after))
++    reset = headers.get("X-RateLimit-Reset") if headers else None
++    if reset and reset.isdigit():
++        return max(1, int(reset) - int(time.time()))
++    return max(1, int(fallback))
++
++
++def _find_run_for_workflow(client: GitHubClient, workflow_file: str, branch: str, head_sha: str, start_epoch: float, deadline_epoch: float) -> dict:
++    endpoint = f"actions/workflows/{workflow_file}/runs"
++    while time.time() < deadline_epoch:
++        query = urllib.parse.urlencode({"event": "workflow_dispatch", "branch": branch, "per_page": 10})
++        data = client.request("GET", f"{endpoint}?{query}")
++        runs = data.get("workflow_runs", []) if isinstance(data, dict) else []
++        for run in runs:
++            if not isinstance(run, dict):
++                continue
++            created_at = run.get("created_at")
++            created_epoch = 0.0
++            if isinstance(created_at, str):
++                try:
++                    created_epoch = dt.datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc).timestamp()
++                except ValueError:
++                    created_epoch = 0.0
++            if run.get("head_sha") == head_sha and created_epoch >= start_epoch - 2:
++                return run
++        time.sleep(10)
++    raise DispatchError(f"timeout waiting for workflow run: {workflow_file}")
++
++
++def _write_summary(evidence: dict) -> None:
++    summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
++    if not summary_path:
++        return
++    lines = [
++        "## CI Dispatch Evidence",
++        "",
++        f"- PR: `{evidence['pr_number']}`",
++        f"- Head SHA: `{evidence['head_sha']}`",
++        "",
++        "| Workflow | Dispatch | Run | Conclusion |",
++        "|---|---|---|---|",
++    ]
++    resolved_by_wf = {entry["workflow_file"]: entry for entry in evidence.get("resolved_runs", [])}
++    for item in evidence.get("dispatched_workflows", []):
++        workflow = item["workflow_file"]
++        run = resolved_by_wf.get(workflow, {})
++        url = run.get("html_url")
++        run_text = f"[{run.get('run_id')}]({url})" if url else "-"
++        lines.append(f"| `{workflow}` | `{item['dispatch_status']}` | {run_text} | `{run.get('conclusion', '-')}` |")
++    with open(summary_path, "a", encoding="utf-8") as handle:
++        handle.write("\n".join(lines) + "\n")
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser(description="Dispatch deterministic CI workflow set for a PR")
++    parser.add_argument("--pr", type=int, required=True)
++    parser.add_argument("--dry-run", default="false")
++    parser.add_argument("--out-dir", required=True)
++    args = parser.parse_args()
++
++    out_dir = pathlib.Path(args.out_dir)
++    out_dir.mkdir(parents=True, exist_ok=True)
++    trace: list[str] = []
++    errors: list[str] = []
++
++    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
++    if not token:
++        raise SystemExit("ERROR: missing token; set GITHUB_TOKEN or GH_TOKEN")
++
++    repo = os.environ.get("GITHUB_REPOSITORY")
++    if not repo:
++        raise SystemExit("ERROR: GITHUB_REPOSITORY is required")
++
++    started_at = _iso_now()
++    start_epoch = time.time()
++    deadline = start_epoch + 900
++
++    evidence = {
++        "base_repo": repo,
++        "pr_number": args.pr,
++        "head_ref": "",
++        "head_sha": "",
++        "run_started_at_utc": started_at,
++        "dispatched_workflows": [],
++        "resolved_runs": [],
++        "errors": errors,
++    }
++
++    try:
++        client = GitHubClient(token, repo, trace)
++        pr_data = client.request("GET", f"pulls/{args.pr}")
++        if not isinstance(pr_data, dict):
++            raise DispatchError("unexpected PR response payload")
++
++        base_repo = ((pr_data.get("base") or {}).get("repo") or {}).get("full_name")
++        head_repo = ((pr_data.get("head") or {}).get("repo") or {}).get("full_name")
++        head_ref = (pr_data.get("head") or {}).get("ref")
++        head_sha = (pr_data.get("head") or {}).get("sha")
++
++        evidence["base_repo"] = str(base_repo or repo)
++        evidence["head_ref"] = str(head_ref or "")
++        evidence["head_sha"] = str(head_sha or "")
++
++        if not base_repo or not head_repo or not head_ref or not head_sha:
++            raise DispatchError("PR payload missing base/head repository metadata")
++        if head_repo != base_repo:
++            raise DispatchError(f"fork PRs are not allowed: base={base_repo} head={head_repo}")
++
++        changed_files = get_changed_files(token, repo, args.pr)
++        (out_dir / "changed_files.txt").write_text("\n".join(changed_files) + ("\n" if changed_files else ""), encoding="utf-8")
++
++        workflow_map = calculate_required(changed_files)
++        dry_run = _parse_bool(args.dry_run)
++
++        for workflow_file, reason in workflow_map.items():
++            status = "SKIP_DRY_RUN"
++            if not dry_run:
++                client.request("POST", f"actions/workflows/{workflow_file}/dispatches", {"ref": head_ref})
++                status = "DISPATCHED"
++            evidence["dispatched_workflows"].append(
++                {
++                    "workflow_file": workflow_file,
++                    "reason": reason,
++                    "dispatch_status": status,
++                }
++            )
++
++        if not dry_run:
++            for item in evidence["dispatched_workflows"]:
++                wf = item["workflow_file"]
++                run = _find_run_for_workflow(client, wf, str(head_ref), str(head_sha), start_epoch, deadline)
++                evidence["resolved_runs"].append(
++                    {
++                        "workflow_file": wf,
++                        "run_id": run.get("id"),
++                        "html_url": run.get("html_url"),
++                        "head_sha": run.get("head_sha"),
++                        "status": run.get("status"),
++                        "conclusion": run.get("conclusion"),
++                    }
++                )
++
++    except Exception as exc:  # noqa: BLE001
++        message = str(exc).replace(token, "[REDACTED_TOKEN]")
++        errors.append(message)
++
++    (out_dir / "evidence.json").write_text(json.dumps(evidence, indent=2, sort_keys=True) + "\n", encoding="utf-8")
++    (out_dir / "api_trace.log").write_text("\n".join(trace) + ("\n" if trace else ""), encoding="utf-8")
++    _write_summary(evidence)
++
++    if errors:
++        for err in errors:
++            print(f"ERROR: {err}")
++        return 1
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/tools/ci/trigger_ci_dispatch.py b/tools/ci/trigger_ci_dispatch.py
+new file mode 100755
+index 0000000..d574b9a
+--- /dev/null
++++ b/tools/ci/trigger_ci_dispatch.py
+@@ -0,0 +1,153 @@
++#!/usr/bin/env python3
++from __future__ import annotations
++
++import argparse
++import datetime as dt
++import hashlib
++import json
++import os
++import pathlib
++import subprocess
++import time
++import urllib.error
++import urllib.parse
++import urllib.request
++
++API_ROOT = "https://api.github.com"
++WORKFLOW_FILE = "ci-dispatch.yml"
++
++
++class TriggerError(RuntimeError):
++    pass
++
++
++def _repo_from_remote() -> str | None:
++    try:
++        remote = subprocess.check_output(["git", "remote", "get-url", "origin"], text=True, stderr=subprocess.DEVNULL).strip()
++    except Exception:
++        return None
++
++    if remote.startswith("git@github.com:"):
++        slug = remote.split(":", 1)[1]
++    elif "github.com/" in remote:
++        slug = remote.split("github.com/", 1)[1]
++    else:
++        return None
++    if slug.endswith(".git"):
++        slug = slug[:-4]
++    return slug.strip("/") or None
++
++
++def _request(repo: str, token: str, method: str, endpoint: str, payload: dict | None = None) -> object:
++    url = f"{API_ROOT}/repos/{repo}/{endpoint.lstrip('/')}"
++    headers = {
++        "Authorization": f"Bearer {token}",
++        "Accept": "application/vnd.github+json",
++        "User-Agent": "axl-trigger-ci-dispatch",
++    }
++    body = json.dumps(payload).encode("utf-8") if payload is not None else None
++
++    backoff = 1
++    for attempt in range(1, 8):
++        req = urllib.request.Request(url, headers=headers, method=method, data=body)
++        try:
++            with urllib.request.urlopen(req, timeout=30) as resp:
++                data = resp.read().decode("utf-8")
++                return json.loads(data) if data else {}
++        except urllib.error.HTTPError as exc:
++            if exc.code in (401, 403):
++                raise TriggerError(f"GitHub API denied {method} {endpoint} ({exc.code})") from exc
++            if exc.code in (403, 429) and attempt < 7:
++                retry_after = exc.headers.get("Retry-After")
++                if retry_after and retry_after.isdigit():
++                    wait_s = max(1, int(retry_after))
++                else:
++                    reset = exc.headers.get("X-RateLimit-Reset")
++                    wait_s = max(1, int(reset) - int(time.time())) if reset and reset.isdigit() else backoff
++                time.sleep(wait_s)
++                backoff *= 2
++                continue
++            raise TriggerError(f"GitHub API error {exc.code} for {method} {endpoint}") from exc
++
++
++def _iso_to_epoch(text: str | None) -> float:
++    if not text:
++        return 0.0
++    return dt.datetime.strptime(text, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc).timestamp()
++
++
++def _find_dispatch_run(repo: str, token: str, ref: str, start_epoch: float) -> dict:
++    deadline = time.time() + 600
++    endpoint = f"actions/workflows/{WORKFLOW_FILE}/runs"
++    while time.time() < deadline:
++        query = urllib.parse.urlencode({"event": "workflow_dispatch", "branch": ref, "per_page": 10})
++        payload = _request(repo, token, "GET", f"{endpoint}?{query}")
++        runs = payload.get("workflow_runs", []) if isinstance(payload, dict) else []
++        for run in runs:
++            if not isinstance(run, dict):
++                continue
++            if _iso_to_epoch(run.get("created_at")) >= start_epoch - 2:
++                return run
++        time.sleep(10)
++    raise TriggerError("timeout waiting for ci-dispatch workflow run")
++
++
++def _write_sha256_manifest(root: pathlib.Path) -> None:
++    rows: list[str] = []
++    for path in sorted(p for p in root.rglob("*") if p.is_file() and p.name != "sha256sum.txt"):
++        digest = hashlib.sha256(path.read_bytes()).hexdigest()
++        rows.append(f"{digest}  {path.relative_to(root).as_posix()}")
++    (root / "sha256sum.txt").write_text("\n".join(rows) + ("\n" if rows else ""), encoding="utf-8")
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser(description="Trigger CI dispatch workflow and create build_proof bundle")
++    parser.add_argument("--repo", default=_repo_from_remote())
++    parser.add_argument("--pr", required=True, type=int)
++    parser.add_argument("--ref", default="main")
++    args = parser.parse_args()
++
++    if not args.repo:
++        raise SystemExit("ERROR: --repo required (or configure origin remote)")
++
++    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
++    if not token:
++        raise SystemExit("ERROR: missing token; set GH_TOKEN or GITHUB_TOKEN")
++
++    start_epoch = time.time()
++    _request(
++        args.repo,
++        token,
++        "POST",
++        f"actions/workflows/{WORKFLOW_FILE}/dispatches",
++        {"ref": args.ref, "inputs": {"pr_number": str(args.pr), "dry_run": "false"}},
++    )
++
++    run = _find_dispatch_run(args.repo, token, args.ref, start_epoch)
++    run_id = str(run.get("id"))
++    run_url = str(run.get("html_url"))
++
++    pr_data = _request(args.repo, token, "GET", f"pulls/{args.pr}")
++    head_sha = ((pr_data.get("head") or {}).get("sha")) if isinstance(pr_data, dict) else ""
++
++    proof_root = pathlib.Path("build_proof") / f"task4_ci_dispatch_{run_id}"
++    outputs_dir = proof_root / "outputs"
++    patches_dir = proof_root / "patches"
++    outputs_dir.mkdir(parents=True, exist_ok=True)
++    patches_dir.mkdir(parents=True, exist_ok=True)
++
++    (outputs_dir / "dispatcher_run.txt").write_text(
++        f"run_id={run_id}\nrun_url={run_url}\npr={args.pr}\nhead_sha={head_sha}\n",
++        encoding="utf-8",
++    )
++
++    patch_text = subprocess.check_output(["git", "diff", "--", "."], text=True)
++    (patches_dir / "final.patch").write_text(patch_text, encoding="utf-8")
++
++    _write_sha256_manifest(proof_root)
++    print(run_url)
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
