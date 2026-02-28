@@ -88,6 +88,7 @@ def cmd_selftest(cfg_path: Path) -> int:
 
 
 def main(argv: list[str] | None = None) -> None:
+    """Deterministic command entrypoint for inventory/VR/release workflows."""
     argv = _normalize_global_flags(argv or sys.argv[1:])
     p = argparse.ArgumentParser(
         prog="sg", description="AgentX Lab governor CLI (deterministic)."

@@ -783,6 +783,14 @@ async function handleForgeN8n(request: Request, env: Env): Promise<Response> {
 // ── Main fetch handler ─────────────────────────────────────────────────────
 
 export default {
+  /**
+   * Worker request entrypoint.
+   *
+   * Routing invariants:
+   * - CORS preflight handled before path dispatch.
+   * - `/dispatch/*` and `/ai/forge*` are fail-closed behind API-key auth + rate limiting.
+   * - GitHub/webhook paths stay server-side so browser clients never use provider tokens directly.
+   */
   async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     const { pathname } = url;
