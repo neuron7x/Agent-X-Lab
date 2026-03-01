@@ -217,27 +217,28 @@ def evaluate_contracts(strict: bool = False, out_path: Path | None = None, json_
             gates.append(_status("GATE_02_GIT_CLEAN", "FAIL", {"dirty": dirty, "status_returncode": st.returncode}))
             failures.append({"gate": "GATE_02_GIT_CLEAN", "reason": "git tree is not clean"})
 
-        model_path = repo_root / "engine/artifacts/repo_model/repo_model.json"
-        rm = run_cmd(
-            ctx,
-            ["python", "-m", "exoneural_governor", "repo-model", "--out", "engine/artifacts/repo_model/repo_model.json"],
-            "repo_model_generate",
-        )
-        model_ok = rm.returncode == 0 and model_path.exists()
-        parsed = None
-        if model_ok:
-            try:
-                parsed = _load_json(model_path)
-            except Exception:
-                model_ok = False
-        if model_ok and parsed is not None:
-            ctx.model_path = model_path
-            ctx.model = parsed
-            repo_fingerprint = parsed.get("repo_fingerprint")
-            gates.append(_status("GATE_03_REPO_MODEL_GENERATES", "PASS", {"path": "engine/artifacts/repo_model/repo_model.json"}))
-        else:
-            gates.append(_status("GATE_03_REPO_MODEL_GENERATES", "FAIL", {"returncode": rm.returncode, "path_exists": model_path.exists()}))
-            failures.append({"gate": "GATE_03_REPO_MODEL_GENERATES", "reason": "repo-model generation failed"})
+        with tempfile.TemporaryDirectory(prefix="axl_contract_eval_gate3_") as td:
+            model_path = Path(td) / "repo_model.json"
+            rm = run_cmd(
+                ctx,
+                ["python", "-m", "exoneural_governor", "repo-model", "--out", model_path.as_posix(), "--no-contract"],
+                "repo_model_generate",
+            )
+            model_ok = rm.returncode == 0 and model_path.exists()
+            parsed = None
+            if model_ok:
+                try:
+                    parsed = _load_json(model_path)
+                except Exception:
+                    model_ok = False
+            if model_ok and parsed is not None:
+                ctx.model_path = model_path
+                ctx.model = parsed
+                repo_fingerprint = parsed.get("repo_fingerprint")
+                gates.append(_status("GATE_03_REPO_MODEL_GENERATES", "PASS", {"path": model_path.as_posix()}))
+            else:
+                gates.append(_status("GATE_03_REPO_MODEL_GENERATES", "FAIL", {"returncode": rm.returncode, "path_exists": model_path.exists()}))
+                failures.append({"gate": "GATE_03_REPO_MODEL_GENERATES", "reason": "repo-model generation failed"})
 
         schema_status = "FAIL"
         schema_details: dict[str, Any] = {}
@@ -259,8 +260,8 @@ def evaluate_contracts(strict: bool = False, out_path: Path | None = None, json_
                 tmp_dir = Path(td)
                 run1p = tmp_dir / "repo_model.run1.json"
                 run2p = tmp_dir / "repo_model.run2.json"
-                r1 = run_cmd(ctx, ["python", "-m", "exoneural_governor", "repo-model", "--out", run1p.as_posix()], "repo_model_run1")
-                r2 = run_cmd(ctx, ["python", "-m", "exoneural_governor", "repo-model", "--out", run2p.as_posix()], "repo_model_run2")
+                r1 = run_cmd(ctx, ["python", "-m", "exoneural_governor", "repo-model", "--out", run1p.as_posix(), "--no-contract"], "repo_model_run1")
+                r2 = run_cmd(ctx, ["python", "-m", "exoneural_governor", "repo-model", "--out", run2p.as_posix(), "--no-contract"], "repo_model_run2")
                 if r1.returncode == 0 and r2.returncode == 0 and run1p.exists() and run2p.exists():
                     j1 = _load_json(run1p)
                     j2 = _load_json(run2p)
@@ -449,7 +450,9 @@ def cli(argv: list[str] | None = None) -> int:
         run_cmd(ctx, ["pip", "-V"], "pip_version")
         run_cmd(ctx, ["node", "-v"], "node_version")
         run_cmd(ctx, ["git", "status", "--porcelain"], "git_status_porcelain")
-        run_cmd(ctx, ["python", "-m", "exoneural_governor", "repo-model", "--out", "engine/artifacts/repo_model/repo_model.json"], "repo_model_generate")
+        with tempfile.TemporaryDirectory(prefix="axl_contract_eval_artifacts_") as td:
+            artifact_model = Path(td) / "repo_model.json"
+            run_cmd(ctx, ["python", "-m", "exoneural_governor", "repo-model", "--out", artifact_model.as_posix(), "--no-contract"], "repo_model_generate")
         art = write_artifacts(report, out_dir, ctx.commands, ctx.command_outputs)
         report["artifacts"] = art
         (out_dir / "report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
