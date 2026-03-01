@@ -1,4 +1,4 @@
-.PHONY: setup bootstrap lint test test-all test-integration test-e2e test-property dev-ui dev-worker gates reproduce repo-model repo-model-deps repo-model-strict
+.PHONY: setup bootstrap lint test test-all test-integration test-e2e test-property dev-ui dev-worker gates reproduce repo-model repo-model-deps repo-model-strict contract-eval
 
 PYTHON ?= python
 VENV ?= .venv
@@ -63,3 +63,8 @@ repo-model: repo-model-deps
 repo-model-strict: repo-model-deps
 	@echo "Synthesizing Repository Model (strict)..."
 	cd engine && PYTHONPATH=. $(PYTHON_RUN) -m exoneural_governor repo-model --strict
+
+
+contract-eval:
+	@echo "Running contract evaluator..."
+	cd engine && PYTHONPATH=. $(PYTHON_RUN) -m exoneural_governor contract-eval
