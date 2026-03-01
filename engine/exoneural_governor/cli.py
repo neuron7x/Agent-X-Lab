@@ -139,6 +139,8 @@ def main(argv: list[str] | None = None) -> None:
     ce.add_argument("--strict", action="store_true", help="Fail on policy warnings.")
     ce.add_argument("--out", default=None, help="Artifact output directory.")
     ce.add_argument("--json", action="store_true", help="Emit strict JSON report to stdout.")
+    ce.add_argument("--allow-write", action="store_true", help="Allow evaluator writes outside --out.")
+    ce.add_argument("--no-write", action="store_true", help="Disallow evaluator writes outside --out (default).")
 
     args = p.parse_args(argv)
     cfg_path = Path(args.config)
@@ -175,6 +177,10 @@ def main(argv: list[str] | None = None) -> None:
             ce_args.extend(["--out", str(args.out)])
         if args.json:
             ce_args.append("--json")
+        if args.allow_write:
+            ce_args.append("--allow-write")
+        if args.no_write:
+            ce_args.append("--no-write")
         rc = contract_eval_cli(ce_args)
     else:
         raise RuntimeError("unreachable")

@@ -1,0 +1,8 @@
+name: local action
+inputs:
+  token:
+    required: true
+runs:
+  using: composite
+  steps:
+    - run: python scripts/run.py --out action.json
