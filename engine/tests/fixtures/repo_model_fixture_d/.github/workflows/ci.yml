@@ -1,0 +1,12 @@
+name: Fixture CI
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        required: true
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./../actions/missing
+      - run: python engine/tools/runner.py --out artifacts/out.json

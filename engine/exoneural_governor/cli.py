@@ -130,6 +130,8 @@ def main(argv: list[str] | None = None) -> None:
     rm.add_argument("--contract-out", default="engine/artifacts/repo_model/architecture_contract.jsonl", help="Output path for architecture contract JSONL.")
     rm.add_argument("--no-contract", action="store_true", help="Disable architecture contract output.")
     rm.add_argument("--strict", action="store_true", help="Exit non-zero if dangling edges or parse failures are present.")
+    rm.add_argument("--include-glob", action="append", default=[], help="Agent discovery include glob (repeatable).")
+    rm.add_argument("--exclude-glob", action="append", default=[], help="Agent discovery exclude glob (repeatable).")
     rm.add_argument("--stdout", action="store_true", help="Print JSON model to stdout.")
 
     ce = sub.add_parser(
@@ -140,7 +142,7 @@ def main(argv: list[str] | None = None) -> None:
     ce.add_argument("--out", default=None, help="Artifact output directory.")
     ce.add_argument("--json", action="store_true", help="Emit strict JSON report to stdout.")
     ce.add_argument("--allow-write", action="store_true", help="Allow evaluator writes outside --out.")
-    ce.add_argument("--no-write", action="store_true", help="Disallow evaluator writes outside --out (default).")
+    ce.add_argument("--strict-no-write", action="store_true", help="Enforce zero writes outside --out.")
 
     args = p.parse_args(argv)
     cfg_path = Path(args.config)
@@ -166,6 +168,10 @@ def main(argv: list[str] | None = None) -> None:
             rm_args.append("--no-contract")
         if args.strict:
             rm_args.append("--strict")
+        for g in args.include_glob:
+            rm_args.extend(["--include-glob", str(g)])
+        for g in args.exclude_glob:
+            rm_args.extend(["--exclude-glob", str(g)])
         if args.stdout:
             rm_args.append("--stdout")
         rc = repo_model_cli(rm_args)
@@ -179,8 +185,8 @@ def main(argv: list[str] | None = None) -> None:
             ce_args.append("--json")
         if args.allow_write:
             ce_args.append("--allow-write")
-        if args.no_write:
-            ce_args.append("--no-write")
+        if args.strict_no_write:
+            ce_args.append("--strict-no-write")
         rc = contract_eval_cli(ce_args)
     else:
         raise RuntimeError("unreachable")

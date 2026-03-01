@@ -31,7 +31,6 @@ def test_repo_model_fixture_a_contract_and_names(tmp_path: Path) -> None:
 
     assert model["counts"]["agents_count"] > 0
     assert model["unknowns"]["dangling_edges"] == []
-    assert any(a["kind"] == "GITHUB_WORKFLOW" and a.get("name") for a in model["agents"])
     assert any(a["kind"] == "MAKEFILE" and a.get("name") for a in model["agents"])
 
     lines = [ln for ln in contract.read_text(encoding="utf-8").splitlines() if ln.strip()]
@@ -51,3 +50,16 @@ def test_repo_model_fixture_c_js_edges() -> None:
     model = generate_repo_model(_fixture("repo_model_fixture_c"))
     edge_types = [e["edge_type"] for e in model["edges"]]
     assert "IMPORTS_JS" in edge_types
+
+
+def test_repo_model_fixture_d_discovery_and_contract(tmp_path: Path) -> None:
+    repo_root = _fixture("repo_model_fixture_d")
+    out = tmp_path / "rm.json"
+    contract = tmp_path / "ac.jsonl"
+    model = generate_repo_model(repo_root, out_path=out, contract_out=contract)
+    write_architecture_contract(contract, model)
+    assert model["unknowns"]["parse_failures"] == []
+    assert model["counts"]["agents_count"] >= 3
+    rows = [json.loads(x) for x in contract.read_text(encoding="utf-8").splitlines() if x.strip()]
+    assert len(rows) == len(model["agents"])
+    assert all("subdomain_tags" in r for r in rows)

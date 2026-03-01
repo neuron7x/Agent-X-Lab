@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import fnmatch
 import hashlib
 import json
 import re
@@ -255,7 +256,22 @@ def _name_for_path(repo_root: Path, path: Path, parse_failures: list[str]) -> tu
     return None, "MISSING", None
 
 
-def discover_agents(repo_root: Path) -> list[dict[str, Any]]:
+DEFAULT_INCLUDE_GLOBS = [
+    ".github/workflows/*",
+    ".github/actions/**",
+    "Makefile",
+    "scripts/**",
+    "tools/**",
+    "engine/scripts/**",
+    "engine/tools/**/*.py",
+    "engine/exoneural_governor/**/*.py",
+    "docs/**/*.md",
+]
+
+DEFAULT_EXCLUDE_GLOBS = ["**/__init__.py"]
+
+
+def discover_agents(repo_root: Path, include_globs: list[str] | None = None, exclude_globs: list[str] | None = None) -> list[dict[str, Any]]:
     paths: set[Path] = set()
     paths.update(_iter_files(repo_root / ".github" / "workflows"))
     paths.update(_iter_files(repo_root / ".github" / "actions"))
@@ -277,10 +293,17 @@ def discover_agents(repo_root: Path) -> list[dict[str, Any]]:
         if p.suffix.lower() == ".md":
             paths.add(p)
 
+    include_globs = include_globs if include_globs is not None else []
+    exclude_globs = exclude_globs if exclude_globs is not None else DEFAULT_EXCLUDE_GLOBS
+
     agents: list[dict[str, Any]] = []
     parse_failures: list[str] = []
     for p in sorted(paths):
         rel = _rel(repo_root, p)
+        if include_globs and not any(fnmatch.fnmatch(rel, pat) for pat in include_globs):
+            continue
+        if exclude_globs and any(fnmatch.fnmatch(rel, pat) for pat in exclude_globs):
+            continue
         name, source, evidence = _name_for_path(repo_root, p, parse_failures)
         row: dict[str, Any] = {
             "agent_id": _sha12(rel),
@@ -639,6 +662,7 @@ def _extract_python_import_edges_for_graph(repo_root: Path, bounded_paths: set[s
     group_roots = [
         repo_root / 'tools' / 'dao-arbiter' / 'dao_lifebook',
         repo_root / 'engine' / 'exoneural_governor',
+        repo_root / 'engine' / 'tools',
     ]
     for src_file in bounded_files:
         if src_file.suffix != '.py' or not src_file.exists():
@@ -889,6 +913,7 @@ def _extract_wiring_edges(repo_root: Path, agents: list[dict[str, Any]]) -> tupl
         for path in known
         if path.startswith("tools/dao-arbiter/dao_lifebook/")
         or path.startswith("engine/exoneural_governor/")
+        or path.startswith("engine/tools/")
     }
     for src, dst, et in _extract_python_import_edges_for_graph(repo_root, bounded_import_paths):
         edges.add((src, dst, et))
@@ -1167,8 +1192,8 @@ def _populate_invocation_examples(repo_root: Path, agents: list[dict[str, Any]])
         a["invocation_examples"] = hits[a["path"]][:MAX_INVOCATION_EXAMPLES]
 
 
-def _build_model_once(repo_root: Path, out_path: Path, contract_path: Path) -> dict[str, Any]:
-    agents = discover_agents(repo_root)
+def _build_model_once(repo_root: Path, out_path: Path, contract_path: Path, include_globs: list[str] | None = None, exclude_globs: list[str] | None = None) -> dict[str, Any]:
+    agents = discover_agents(repo_root, include_globs=include_globs, exclude_globs=exclude_globs)
     edges, unknowns, depends_from_edges = _extract_wiring_edges(repo_root, agents)
     _populate_interfaces_and_deps(repo_root, agents, unknowns, depends_from_edges)
     _populate_invocation_examples(repo_root, agents)
@@ -1208,6 +1233,9 @@ def _build_model_once(repo_root: Path, out_path: Path, contract_path: Path) -> d
     ranked.sort(key=lambda r: (-r["core_score"], -r["pr_norm"], -r["bc_norm"], r["agent_id"]))
 
     core_candidates = [{"agent_id": r["agent_id"], "path": r["path"], "kind": r["kind"], "pr": r["pr"], "bc": r["bc"], "core_score": r["core_score"], "rank": i} for i, r in enumerate(ranked[:k], start=1)]
+    if git_available() and in_git_repo(repo_root):
+        for row in core_candidates:
+            row["blame"] = blame_for_path(repo_root, row["path"])
     sccs = strongly_connected_components(node_ids, directed)
     events = [{"type": "ARCHITECTURAL_CYCLE_DETECTED", "agent_ids": list(comp)} for comp in sccs if len(comp) > 1]
     unknowns["events"] = sorted(events, key=lambda e: tuple(e["agent_ids"]))
@@ -1240,17 +1268,17 @@ def _rel_if_within(repo_root: Path, path: Path) -> str | None:
     except ValueError:
         return None
 
-def generate_repo_model(repo_root: Path, out_path: Path | None = None, contract_out: Path | None = None) -> dict[str, Any]:
+def generate_repo_model(repo_root: Path, out_path: Path | None = None, contract_out: Path | None = None, include_globs: list[str] | None = None, exclude_globs: list[str] | None = None) -> dict[str, Any]:
     out_path = out_path or (repo_root / "engine/artifacts/repo_model/repo_model.json")
     contract_out = contract_out or (repo_root / "engine/artifacts/repo_model/architecture_contract.jsonl")
     exclude = {x for x in (_rel_if_within(repo_root, out_path), _rel_if_within(repo_root, contract_out)) if x is not None}
     start_fp = _repo_fingerprint(repo_root, exclude)
-    model = _build_model_once(repo_root, out_path, contract_out)
+    model = _build_model_once(repo_root, out_path, contract_out, include_globs=include_globs, exclude_globs=exclude_globs)
     end_fp = _repo_fingerprint(repo_root, exclude)
     rescans = 0
     if start_fp != end_fp:
         rescans = 1
-        model = _build_model_once(repo_root, out_path, contract_out)
+        model = _build_model_once(repo_root, out_path, contract_out, include_globs=include_globs, exclude_globs=exclude_globs)
         end_fp = _repo_fingerprint(repo_root, exclude)
     stable = start_fp == end_fp
     model["scan"] = {
@@ -1305,6 +1333,7 @@ def write_architecture_contract(out_path: Path, model: dict[str, Any]) -> None:
             "depends_on_paths": a.get("depends_on_paths", []),
             "invocation_examples": invocation_examples if isinstance(invocation_examples, list) else [],
             "provides": sorted({o.get("name") for o in outputs if isinstance(o, dict) and isinstance(o.get("name"), str)}),
+            "subdomain_tags": sorted(set(str(a.get("path", "")).replace("-", "/").split("/")))[:8],
             "edges_summary": edge_index.get(a["agent_id"], {}),
             "core_rank": core_rank.get(a["agent_id"]),
             "blame": blame,
@@ -1325,6 +1354,8 @@ def cli(argv: list[str] | None = None) -> int:
     p.add_argument("--no-contract", action="store_true")
     p.add_argument("--stdout", action="store_true")
     p.add_argument("--strict", action="store_true")
+    p.add_argument("--include-glob", action="append", default=[])
+    p.add_argument("--exclude-glob", action="append", default=[])
     args = p.parse_args(argv)
 
     repo_root = discover_repo_root(Path.cwd())
@@ -1333,7 +1364,13 @@ def cli(argv: list[str] | None = None) -> int:
     contract_out = Path(args.contract_out)
     contract_out = contract_out if contract_out.is_absolute() else repo_root / contract_out
 
-    model = generate_repo_model(repo_root, out_path=out_path, contract_out=contract_out)
+    model = generate_repo_model(
+        repo_root,
+        out_path=out_path,
+        contract_out=contract_out,
+        include_globs=(args.include_glob or None),
+        exclude_globs=(args.exclude_glob or None),
+    )
     write_repo_model(out_path, model)
     if not args.no_contract:
         write_architecture_contract(contract_out, model)

@@ -12,18 +12,19 @@ def _repo_root() -> Path:
     return Path(proc.stdout.strip()).resolve()
 
 
-def test_contract_eval_runs() -> None:
+def test_contract_eval_runs(tmp_path: Path) -> None:
     repo_root = _repo_root()
     original = Path.cwd()
     try:
         os.chdir(repo_root / "engine")
-        code, report = evaluate_contracts(strict=False, out_path=None, json_mode=True, no_write=True)
+        code, report = evaluate_contracts(strict=False, out_path=tmp_path, json_mode=True, no_write=True)
     finally:
         os.chdir(original)
     assert code in (0, 2)
     ids = [g["id"] for g in report["gates"]]
     assert "GATE_A01_HERMETIC_RUNNER" in ids
     assert "GATE_A03_DETERMINISTIC_ENV_STAMP" in ids
+    assert (tmp_path / "report.json").exists()
 
 
 def test_schema_validator_rejects_malformed_minimum_dict() -> None:
