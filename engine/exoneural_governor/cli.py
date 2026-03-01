@@ -126,6 +126,9 @@ def main(argv: list[str] | None = None) -> None:
 
     rm = sub.add_parser("repo-model", help="Generate repository architecture model artifact.")
     rm.add_argument("--out", default="engine/artifacts/repo_model/repo_model.json", help="Output path for repository model JSON.")
+    rm.add_argument("--contract-out", default="engine/artifacts/repo_model/architecture_contract.jsonl", help="Output path for architecture contract JSONL.")
+    rm.add_argument("--no-contract", action="store_true", help="Disable architecture contract output.")
+    rm.add_argument("--strict", action="store_true", help="Exit non-zero if dangling edges or parse failures are present.")
     rm.add_argument("--stdout", action="store_true", help="Print JSON model to stdout.")
 
     args = p.parse_args(argv)
@@ -147,6 +150,11 @@ def main(argv: list[str] | None = None) -> None:
         rc = cmd_selftest(cfg_path)
     elif args.cmd == "repo-model":
         rm_args = ["--out", str(args.out)]
+        rm_args.extend(["--contract-out", str(args.contract_out)])
+        if args.no_contract:
+            rm_args.append("--no-contract")
+        if args.strict:
+            rm_args.append("--strict")
         if args.stdout:
             rm_args.append("--stdout")
         rc = repo_model_cli(rm_args)
