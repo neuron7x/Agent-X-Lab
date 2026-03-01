@@ -41,7 +41,9 @@ jobs:
       - name: Install Platform Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r _state_base/engine/requirements.txt
+          if [ -f _state_base/engine/requirements.txt ]; then
+            pip install -r _state_base/engine/requirements.txt
+          fi
           pip install -r _state_head/engine/requirements.txt
           pip install -e ./_state_head/engine
 

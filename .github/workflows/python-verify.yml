@@ -37,6 +37,9 @@ jobs:
           elif [ -f engine/pyproject.toml ]; then
             root="engine"
             python -m pip install -e ./engine
+            if [ -f engine/requirements.txt ]; then
+              python -m pip install -r engine/requirements.txt
+            fi
             if [ -f engine/requirements-dev.txt ]; then
               python -m pip install -r engine/requirements-dev.txt
             fi
@@ -45,6 +48,9 @@ jobs:
             python -m pip install -r requirements-dev.txt
           elif [ -f engine/requirements-dev.txt ]; then
             root="engine"
+            if [ -f engine/requirements.txt ]; then
+              python -m pip install -r engine/requirements.txt
+            fi
             python -m pip install -r engine/requirements-dev.txt
           else
             echo "missing Python test contract" >&2

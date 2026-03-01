@@ -9,7 +9,7 @@ setup:
 	npm ci
 	$(PYTHON) -m venv $(VENV)
 	$(VENV_PYTHON) -m pip install --upgrade pip
-	$(VENV_PYTHON) -m pip install -r engine/requirements-dev.txt
+	$(VENV_PYTHON) -m pip install -r engine/requirements.txt -r engine/requirements-dev.txt
 
 bootstrap: setup
 	bash scripts/bootstrap.sh
