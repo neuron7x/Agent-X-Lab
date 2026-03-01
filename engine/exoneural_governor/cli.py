@@ -12,6 +12,7 @@ from .vr import run_vr
 from .release import build_release
 from .util import ensure_dir
 from .repo_model import cli as repo_model_cli
+from .contract_eval import cli as contract_eval_cli
 
 
 def _default_config_path() -> Path:
@@ -126,7 +127,15 @@ def main(argv: list[str] | None = None) -> None:
 
     rm = sub.add_parser("repo-model", help="Generate repository architecture model artifact.")
     rm.add_argument("--out", default="engine/artifacts/repo_model/repo_model.json", help="Output path for repository model JSON.")
+    rm.add_argument("--contract-out", default="engine/artifacts/repo_model/architecture_contract.jsonl", help="Output path for architecture contract JSONL.")
+    rm.add_argument("--no-contract", action="store_true", help="Disable architecture contract output.")
+    rm.add_argument("--strict", action="store_true", help="Exit non-zero if dangling edges or parse failures are present.")
     rm.add_argument("--stdout", action="store_true", help="Print JSON model to stdout.")
+
+    ce = sub.add_parser("contract-eval", help="Run deterministic contract evaluator for repo infrastructure.")
+    ce.add_argument("--strict", action="store_true", help="Fail on policy warnings.")
+    ce.add_argument("--out", default=None, help="Artifact output directory.")
+    ce.add_argument("--json", action="store_true", help="Emit strict JSON report to stdout.")
 
     args = p.parse_args(argv)
     cfg_path = Path(args.config)
@@ -147,9 +156,23 @@ def main(argv: list[str] | None = None) -> None:
         rc = cmd_selftest(cfg_path)
     elif args.cmd == "repo-model":
         rm_args = ["--out", str(args.out)]
+        rm_args.extend(["--contract-out", str(args.contract_out)])
+        if args.no_contract:
+            rm_args.append("--no-contract")
+        if args.strict:
+            rm_args.append("--strict")
         if args.stdout:
             rm_args.append("--stdout")
         rc = repo_model_cli(rm_args)
+    elif args.cmd == "contract-eval":
+        ce_args: list[str] = []
+        if args.strict:
+            ce_args.append("--strict")
+        if args.out is not None:
+            ce_args.extend(["--out", str(args.out)])
+        if args.json:
+            ce_args.append("--json")
+        rc = contract_eval_cli(ce_args)
     else:
         raise RuntimeError("unreachable")
 
