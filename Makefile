@@ -1,4 +1,4 @@
-.PHONY: setup bootstrap lint test test-all test-integration test-e2e test-property dev-ui dev-worker gates reproduce repo-model repo-model-deps
+.PHONY: setup bootstrap lint test test-all test-integration test-e2e test-property dev-ui dev-worker gates reproduce repo-model repo-model-deps repo-model-strict
 
 PYTHON ?= python
 VENV ?= .venv
@@ -58,3 +58,6 @@ repo-model-deps:
 repo-model: repo-model-deps
 	@echo "Synthesizing Repository Model..."
 	cd engine && PYTHONPATH=. $(PYTHON_RUN) -m exoneural_governor repo-model
+
+repo-model-strict: repo-model
+	python engine/scripts/check_architecture_drift.py --base engine/artifacts/repo_model/repo_model.json --head engine/artifacts/repo_model/repo_model.json --override false --summary /tmp/architecture_drift_summary.md --report /tmp/architecture_drift_report.md

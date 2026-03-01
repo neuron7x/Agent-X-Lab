@@ -33,7 +33,7 @@ jobs:
       - name: Provision Exoneural Runtime
         uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
-          python-version: '3.12'
+          python-version: '3.13'
           cache: 'pip'
           cache-dependency-path: |
             _state_head/engine/requirements.txt
@@ -41,8 +41,8 @@ jobs:
       - name: Install Platform Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r _state_head/engine/requirements.txt
-          pip install -e ./_state_head/engine
+          pip install --force-reinstall -r _state_head/engine/requirements.txt
+          pip install --force-reinstall -e ./_state_head/engine
 
       - name: Synthesize Base Contract
         working-directory: _state_base
