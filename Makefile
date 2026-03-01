@@ -67,4 +67,8 @@ repo-model-strict: repo-model-deps
 
 contract-eval:
 	@echo "Running contract evaluator..."
-	cd engine && PYTHONPATH=. $(PYTHON_RUN) -m exoneural_governor contract-eval --out artifacts/contract_eval
+	cd engine && PYTHONPATH=. $(PYTHON_RUN) -m exoneural_governor contract-eval --out artifacts/contract_eval --no-write
+
+# How to run hardening gates:
+#   make repo-model
+#   make contract-eval

@@ -13,6 +13,8 @@ from typing import Any
 
 import yaml
 
+from .blame import blame_for_path, git_available, in_git_repo
+
 IGNORED_DIRS = {
     ".git",
     "node_modules",
@@ -1269,6 +1271,8 @@ def write_repo_model(out_path: Path, model: dict[str, Any]) -> None:
 
 def write_architecture_contract(out_path: Path, model: dict[str, Any]) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
+    repo_root = Path(str(model.get("repo_root", ""))).resolve() if model.get("repo_root") else None
+    can_blame = bool(repo_root and repo_root.exists() and git_available() and in_git_repo(repo_root))
     core_rank = {c.get("agent_id"): c.get("rank") for c in model.get("core_candidates", []) if isinstance(c, dict)}
     edge_index: dict[str, dict[str, int]] = {}
     for e in model.get("edges", []):
@@ -1287,6 +1291,9 @@ def write_architecture_contract(out_path: Path, model: dict[str, Any]) -> None:
         outputs = a.get("interface", {}).get("outputs", [])
         invocation_examples = a.get("invocation_examples", [])
         # NOTE(repo-infra): deterministic fallback fields are required by contract-eval gates.
+        blame = None
+        if can_blame and repo_root is not None and core_rank.get(a["agent_id"]) is not None:
+            blame = blame_for_path(repo_root, a["path"])
         rows.append({
             "agent_id": a["agent_id"],
             "path": a["path"],
@@ -1300,7 +1307,7 @@ def write_architecture_contract(out_path: Path, model: dict[str, Any]) -> None:
             "provides": sorted({o.get("name") for o in outputs if isinstance(o, dict) and isinstance(o.get("name"), str)}),
             "edges_summary": edge_index.get(a["agent_id"], {}),
             "core_rank": core_rank.get(a["agent_id"]),
-            "blame": None,
+            "blame": blame,
         })
     with out_path.open("w", encoding="utf-8") as f:
         for row in rows:
@@ -1334,7 +1341,11 @@ def cli(argv: list[str] | None = None) -> int:
     if args.stdout:
         print(json.dumps(model, indent=2, sort_keys=True))
     else:
-        print(f"WROTE:{out_path.relative_to(repo_root).as_posix()}")
+        try:
+            shown = out_path.relative_to(repo_root).as_posix()
+        except ValueError:
+            shown = out_path.as_posix()
+        print(f"WROTE:{shown}")
 
     if args.strict and (model.get("unknowns", {}).get("dangling_edges") or model.get("unknowns", {}).get("parse_failures")):
         return 2

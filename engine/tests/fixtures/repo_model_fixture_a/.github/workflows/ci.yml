@@ -1,0 +1,13 @@
+name: fixture ci
+on:
+  workflow_dispatch:
+    inputs:
+      out:
+        description: output
+        required: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/local
+      - run: python scripts/run.py --out out.json
