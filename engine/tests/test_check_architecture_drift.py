@@ -139,3 +139,37 @@ def test_fails_on_invalid_schema(tmp_path: Path) -> None:
     proc = _run_checker(tmp_path, base, head)
     assert proc.returncode == 1
     assert "INVALID_CONTRACT_SCHEMA" in proc.stderr
+
+
+
+def test_missing_base_contract_is_auto_created(tmp_path: Path) -> None:
+    head_path = tmp_path / "head.json"
+    head_path.write_text(json.dumps(_base_contract()), encoding="utf-8")
+
+    summary_path = tmp_path / "summary.md"
+    report_path = tmp_path / "report.md"
+    base_path = tmp_path / "missing" / "base.json"
+
+    script = Path(__file__).resolve().parents[1] / "scripts" / "check_architecture_drift.py"
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(script),
+            "--base",
+            str(base_path),
+            "--head",
+            str(head_path),
+            "--core-k",
+            "5",
+            "--summary",
+            str(summary_path),
+            "--report",
+            str(report_path),
+        ],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+    assert proc.returncode == 0
+    assert base_path.exists()

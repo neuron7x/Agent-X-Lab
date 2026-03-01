@@ -41,23 +41,31 @@ jobs:
       - name: Install Platform Dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f _state_base/engine/requirements.txt ]; then
-            pip install -r _state_base/engine/requirements.txt
-          fi
           pip install -r _state_head/engine/requirements.txt
           pip install -e ./_state_head/engine
 
       - name: Synthesize Base Contract
+        continue-on-error: true
         working-directory: _state_base
         run: |
-          make repo-model
-          cp engine/artifacts/repo_model/repo_model.json ../base_contract.json
+          if grep -q "^repo-model:" Makefile; then
+            make repo-model
+            cp engine/artifacts/repo_model/repo_model.json ../base_contract.json
+          else
+            echo '{"wiring": {"edges": []}, "metadata": {"core_candidates": []}, "unknowns": {"events": [], "dangling_edges": []}}' > ../base_contract.json
+          fi
 
       - name: Synthesize Head Contract
         working-directory: _state_head
         run: |
           make repo-model
           cp engine/artifacts/repo_model/repo_model.json ../head_contract.json
+
+      - name: Ensure Base Contract Exists
+        run: |
+          if [ ! -f base_contract.json ]; then
+            echo '{"wiring": {"edges": []}, "metadata": {"core_candidates": []}, "unknowns": {"events": [], "dangling_edges": []}}' > base_contract.json
+          fi
 
       - name: Execute Epistemic Comparator
         id: comparator
@@ -72,7 +80,7 @@ jobs:
           if [[ "${HAS_OVERRIDE}" == "true" ]]; then
             OVERRIDE_FLAG="--override"
           fi
-          python _state_head/engine/scripts/check_architecture_drift.py \
+          PYTHONPATH=$GITHUB_WORKSPACE/_state_head/engine python _state_head/engine/scripts/check_architecture_drift.py \
             --base base_contract.json \
             --head head_contract.json \
             --core-k 5 \

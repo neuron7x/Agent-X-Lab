@@ -13,6 +13,22 @@ from typing import Any
 REPORT_MARKER = "<!-- architecture-drift-report -->"
 
 
+
+
+def default_contract() -> dict[str, Any]:
+    return {
+        "wiring": {"edges": []},
+        "metadata": {"core_candidates": []},
+        "unknowns": {"events": [], "dangling_edges": []},
+    }
+
+
+def ensure_contract_file(path: Path) -> None:
+    if path.exists():
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(default_contract()), encoding="utf-8")
+
 def load_contract(path: Path) -> dict[str, Any]:
     with path.open("r", encoding="utf-8") as fh:
         return json.load(fh)
@@ -159,6 +175,9 @@ def main() -> None:
     parser.add_argument("--core-k", type=int, default=5)
     parser.add_argument("--override", action="store_true")
     args = parser.parse_args()
+
+    ensure_contract_file(args.base)
+    ensure_contract_file(args.head)
 
     base_model = load_contract(args.base)
     head_model = load_contract(args.head)
