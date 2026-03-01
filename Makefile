@@ -53,6 +53,7 @@ reproduce: test
 
 
 repo-model-deps:
+	@$(PYTHON_RUN) -m pip check >/dev/null 2>&1 || true
 	@$(PYTHON_RUN) -c "import jsonschema, yaml, networkx" >/dev/null 2>&1 || (echo "!!! Missing dependencies. Run: pip install -r engine/requirements.txt !!!" && exit 1)
 
 repo-model: repo-model-deps
@@ -60,4 +61,16 @@ repo-model: repo-model-deps
 	cd engine && PYTHONPATH=. $(PYTHON_RUN) -m exoneural_governor repo-model
 
 repo-model-strict: repo-model
-	python engine/scripts/check_architecture_drift.py --base engine/artifacts/repo_model/repo_model.json --head engine/artifacts/repo_model/repo_model.json --override false --summary /tmp/architecture_drift_summary.md --report /tmp/architecture_drift_report.md
+	@set -euo pipefail; \
+	BASE_REF="$${BASE_REF:-HEAD~1}"; \
+	TMP_BASE="$$(mktemp -d)"; \
+	trap 'rm -rf "$$TMP_BASE"' EXIT; \
+	git archive "$$BASE_REF" | tar -x -C "$$TMP_BASE"; \
+	( cd "$$TMP_BASE" && make repo-model ); \
+	cp "$$TMP_BASE/engine/artifacts/repo_model/repo_model.json" /tmp/architecture_base_repo_model.json; \
+	$(PYTHON_RUN) engine/scripts/check_architecture_drift.py \
+		--base /tmp/architecture_base_repo_model.json \
+		--head engine/artifacts/repo_model/repo_model.json \
+		--core-k 5 \
+		--summary /tmp/architecture_drift_summary.md \
+		--report /tmp/architecture_drift_report.md

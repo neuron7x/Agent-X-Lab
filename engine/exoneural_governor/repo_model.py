@@ -10,6 +10,7 @@ from collections import deque
 from pathlib import Path
 from typing import Any
 
+import networkx as nx
 import yaml
 
 IGNORED_DIRS = {
@@ -683,60 +684,35 @@ def betweenness_centrality_brandes(
 def strongly_connected_components(
     nodes: list[str], edges: list[tuple[str, str]]
 ) -> list[tuple[str, ...]]:
-    ordered = sorted(set(nodes))
-    out_adj, _ = _build_graph(ordered, edges)
-
-    index = 0
-    index_map: dict[str, int] = {}
-    lowlink: dict[str, int] = {}
-    stack: list[str] = []
-    on_stack: set[str] = set()
-    components: list[tuple[str, ...]] = []
-
-    def strongconnect(node: str) -> None:
-        nonlocal index
-        index_map[node] = index
-        lowlink[node] = index
-        index += 1
-        stack.append(node)
-        on_stack.add(node)
-
-        for nxt in out_adj[node]:
-            if nxt not in index_map:
-                strongconnect(nxt)
-                lowlink[node] = min(lowlink[node], lowlink[nxt])
-            elif nxt in on_stack:
-                lowlink[node] = min(lowlink[node], index_map[nxt])
-
-        if lowlink[node] == index_map[node]:
-            comp: list[str] = []
-            while stack:
-                top = stack.pop()
-                on_stack.remove(top)
-                comp.append(top)
-                if top == node:
-                    break
-            components.append(tuple(sorted(comp)))
-
-    for node in ordered:
-        if node not in index_map:
-            strongconnect(node)
-
+    graph = nx.DiGraph()
+    graph.add_nodes_from(sorted(set(nodes)))
+    graph.add_edges_from(sorted(set(edges)))
+    components = [tuple(sorted(component)) for component in nx.strongly_connected_components(graph)]
     return sorted(components)
+
 
 def _repo_fingerprint(repo_root: Path, scan_paths: list[str]) -> str:
     code, out = _run_git(["rev-parse", "HEAD"], repo_root)
     if code == 0 and out:
         return out
+
     sha = hashlib.sha256()
     for rel in sorted(scan_paths):
         path = repo_root / rel
         if not path.exists() or not path.is_file():
             continue
-        file_sha = hashlib.sha256(path.read_bytes()).hexdigest()
+
+        file_hash = None
+        git_code, git_out = _run_git(["hash-object", rel], repo_root)
+        if git_code == 0 and git_out:
+            file_hash = git_out
+        else:
+            stat = path.stat()
+            file_hash = f"{stat.st_mtime_ns}:{stat.st_size}"
+
         sha.update(rel.encode("utf-8"))
         sha.update(b"\n")
-        sha.update(file_sha.encode("utf-8"))
+        sha.update(file_hash.encode("utf-8"))
         sha.update(b"\n")
     return sha.hexdigest()
 

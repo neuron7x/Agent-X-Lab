@@ -41,13 +41,14 @@ jobs:
       - name: Install Platform Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install --force-reinstall -r _state_head/engine/requirements.txt
-          pip install --force-reinstall -e ./_state_head/engine
+          pip install -r _state_base/engine/requirements.txt
+          pip install -r _state_head/engine/requirements.txt
+          pip install -e ./_state_head/engine
 
       - name: Synthesize Base Contract
         working-directory: _state_base
         run: |
-          PYTHONPATH=$GITHUB_WORKSPACE/_state_head/engine make repo-model
+          make repo-model
           cp engine/artifacts/repo_model/repo_model.json ../base_contract.json
 
       - name: Synthesize Head Contract
@@ -65,9 +66,14 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
+          OVERRIDE_FLAG=""
+          if [[ "${HAS_OVERRIDE}" == "true" ]]; then
+            OVERRIDE_FLAG="--override"
+          fi
           python _state_head/engine/scripts/check_architecture_drift.py \
             --base base_contract.json \
             --head head_contract.json \
-            --override "${HAS_OVERRIDE}" \
+            --core-k 5 \
+            ${OVERRIDE_FLAG} \
             --summary "$GITHUB_STEP_SUMMARY" \
             --report architecture_drift_report.md
