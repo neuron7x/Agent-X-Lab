@@ -132,7 +132,10 @@ def main(argv: list[str] | None = None) -> None:
     rm.add_argument("--strict", action="store_true", help="Exit non-zero if dangling edges or parse failures are present.")
     rm.add_argument("--stdout", action="store_true", help="Print JSON model to stdout.")
 
-    ce = sub.add_parser("contract-eval", help="Run deterministic contract evaluator for repo infrastructure.")
+    ce = sub.add_parser(
+        "contract-eval",
+        help="Run deterministic contract evaluator for repository infrastructure contracts.",
+    )
     ce.add_argument("--strict", action="store_true", help="Fail on policy warnings.")
     ce.add_argument("--out", default=None, help="Artifact output directory.")
     ce.add_argument("--json", action="store_true", help="Emit strict JSON report to stdout.")
