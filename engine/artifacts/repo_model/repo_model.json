@@ -14,7 +14,7 @@
     },
     {
       "agent_id": "091dfbcc3c82",
-      "kind": "CLI_SCRIPT",
+      "kind": "OTHER",
       "name": null,
       "path": "tools/__init__.py"
     },
@@ -23,6 +23,18 @@
       "kind": "CLI_SCRIPT",
       "name": null,
       "path": "tools/dao-arbiter/dao_lifebook/evidence.py"
+    },
+    {
+      "agent_id": "10d3dff3c235",
+      "kind": "OTHER",
+      "name": null,
+      "path": "engine/exoneural_governor/release.py"
+    },
+    {
+      "agent_id": "11a46a763eb3",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/scripts/check_architecture_drift.py"
     },
     {
       "agent_id": "13f4f85ff413",
@@ -67,6 +79,12 @@
       "path": "tools/dao-arbiter/dao_lifebook/metrics.py"
     },
     {
+      "agent_id": "24747dd20869",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/tools/doctor.py"
+    },
+    {
       "agent_id": "296f2abfe95f",
       "kind": "CLI_SCRIPT",
       "name": null,
@@ -91,6 +109,24 @@
       "path": "tools/dao-arbiter/dao_lifebook/models.py"
     },
     {
+      "agent_id": "3666bc6008f0",
+      "kind": "OTHER",
+      "name": null,
+      "path": "engine/exoneural_governor/manifest.py"
+    },
+    {
+      "agent_id": "3746c68c7237",
+      "kind": "GITHUB_WORKFLOW",
+      "name": null,
+      "path": ".github/workflows/architecture-drift-guard.yml"
+    },
+    {
+      "agent_id": "3b8a0dbcad9e",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/tools/generate_titan9_proof.py"
+    },
+    {
       "agent_id": "3c40e639b708",
       "kind": "CLI_SCRIPT",
       "name": null,
@@ -101,6 +137,24 @@
       "kind": "OTHER",
       "name": null,
       "path": ".github/actions/setup-python-pip/README.md"
+    },
+    {
+      "agent_id": "460a083eebe5",
+      "kind": "OTHER",
+      "name": null,
+      "path": "engine/exoneural_governor/network.py"
+    },
+    {
+      "agent_id": "465ae5319598",
+      "kind": "OTHER",
+      "name": null,
+      "path": "engine/exoneural_governor/config.py"
+    },
+    {
+      "agent_id": "46adbe02595d",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/tools/verify_protocol_consistency.py"
     },
     {
       "agent_id": "494134882b71",
@@ -121,6 +175,12 @@
       "path": "engine/scripts/validate_arsenal.py"
     },
     {
+      "agent_id": "5144b17b9f00",
+      "kind": "OTHER",
+      "name": null,
+      "path": "engine/exoneural_governor/cli.py"
+    },
+    {
       "agent_id": "528ef445cd0e",
       "kind": "CLI_SCRIPT",
       "name": null,
@@ -137,6 +197,18 @@
       "kind": "CLI_SCRIPT",
       "name": null,
       "path": "tools/prod_spec/_jws_ed25519.py"
+    },
+    {
+      "agent_id": "5680a043a1cf",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/tools/dependency_review_gate.py"
+    },
+    {
+      "agent_id": "57a474f36696",
+      "kind": "OTHER",
+      "name": null,
+      "path": "engine/exoneural_governor/repo_model.py"
     },
     {
       "agent_id": "5eb18b5caa52",
@@ -157,10 +229,28 @@
       "path": ".github/workflows/codeql-analysis.yml"
     },
     {
+      "agent_id": "6fb35cc12bad",
+      "kind": "OTHER",
+      "name": null,
+      "path": "engine/exoneural_governor/vr.py"
+    },
+    {
+      "agent_id": "6ffc6272c922",
+      "kind": "OTHER",
+      "name": null,
+      "path": "engine/exoneural_governor/__init__.py"
+    },
+    {
       "agent_id": "737973ca0363",
-      "kind": "CLI_SCRIPT",
+      "kind": "OTHER",
       "name": null,
       "path": "tools/dao-arbiter/dao_lifebook/__init__.py"
+    },
+    {
+      "agent_id": "74b361755a73",
+      "kind": "OTHER",
+      "name": null,
+      "path": "engine/exoneural_governor/__main__.py"
     },
     {
       "agent_id": "761881281f17",
@@ -173,6 +263,12 @@
       "kind": "MAKEFILE",
       "name": null,
       "path": "Makefile"
+    },
+    {
+      "agent_id": "797e2110302c",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/tools/secret_scan_gate.py"
     },
     {
       "agent_id": "79ac8cbe2be0",
@@ -229,6 +325,12 @@
       "path": "tools/dao-arbiter/dao_lifebook/engine.py"
     },
     {
+      "agent_id": "8ee120fbe41c",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/tools/witness.py"
+    },
+    {
       "agent_id": "8fad63b5805a",
       "kind": "CLI_SCRIPT",
       "name": null,
@@ -248,7 +350,7 @@
     },
     {
       "agent_id": "95b6f7b21fa5",
-      "kind": "OTHER",
+      "kind": "CLI_SCRIPT",
       "name": null,
       "path": "engine/tools/pip_audit_gate.py"
     },
@@ -277,6 +379,12 @@
       "path": ".github/workflows/prod-spec-gates.yml"
     },
     {
+      "agent_id": "a1195dff2f41",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/tools/nongit_runner.py"
+    },
+    {
       "agent_id": "a48c1f2ad5ec",
       "kind": "CLI_SCRIPT",
       "name": null,
@@ -284,7 +392,7 @@
     },
     {
       "agent_id": "a48ead286090",
-      "kind": "OTHER",
+      "kind": "CLI_SCRIPT",
       "name": null,
       "path": "engine/tools/verify_workflow_hygiene.py"
     },
@@ -293,6 +401,12 @@
       "kind": "GITHUB_WORKFLOW",
       "name": null,
       "path": ".github/workflows/run-engine-dispatch.yml"
+    },
+    {
+      "agent_id": "a87ed7d405b7",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/tools/scorecard_failure_envelope.py"
     },
     {
       "agent_id": "a8f4ad96f6d3",
@@ -325,6 +439,12 @@
       "path": ".github/workflows/ci-dispatch.yml"
     },
     {
+      "agent_id": "b1b2fc2b9139",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/tools/run_gate.py"
+    },
+    {
       "agent_id": "b2504b9c7c93",
       "kind": "CLI_SCRIPT",
       "name": null,
@@ -349,16 +469,52 @@
       "path": "tools/vitest-custom-coverage.ts"
     },
     {
+      "agent_id": "b5746f88d0ae",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/tools/derive_proof.py"
+    },
+    {
+      "agent_id": "b5d0c22bc159",
+      "kind": "OTHER",
+      "name": null,
+      "path": "engine/exoneural_governor/backend.py"
+    },
+    {
+      "agent_id": "b93cc28b6b3f",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/tools/titan9_inventory.py"
+    },
+    {
       "agent_id": "b9d464b9e214",
       "kind": "GITHUB_COMPOSITE_ACTION",
       "name": null,
       "path": ".github/actions/setup-node-npm/action.yml"
     },
     {
+      "agent_id": "be0ec25862de",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/tools/verify_readme_contract.py"
+    },
+    {
+      "agent_id": "be25be8864d2",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/tools/agent/run_and_log.py"
+    },
+    {
       "agent_id": "c15e62628d67",
       "kind": "GITHUB_WORKFLOW",
       "name": null,
       "path": ".github/workflows/ci-supercheck.yml"
+    },
+    {
+      "agent_id": "c41534393071",
+      "kind": "OTHER",
+      "name": null,
+      "path": "engine/exoneural_governor/redaction.py"
     },
     {
       "agent_id": "c531a9034661",
@@ -373,6 +529,12 @@
       "path": ".github/actions/setup-python-pip/action.yml"
     },
     {
+      "agent_id": "cdf278aee206",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/tools/feg_r8_verify.py"
+    },
+    {
       "agent_id": "d53c234440ca",
       "kind": "CLI_SCRIPT",
       "name": null,
@@ -385,8 +547,14 @@
       "path": "scripts/e2e-preflight.mjs"
     },
     {
+      "agent_id": "dcaddc28f27e",
+      "kind": "OTHER",
+      "name": null,
+      "path": "engine/exoneural_governor/catalog.py"
+    },
+    {
       "agent_id": "df1ce49b7d84",
-      "kind": "CLI_SCRIPT",
+      "kind": "OTHER",
       "name": null,
       "path": "tools/prod_spec/__init__.py"
     },
@@ -398,9 +566,15 @@
     },
     {
       "agent_id": "e76a8411873e",
-      "kind": "CLI_SCRIPT",
+      "kind": "OTHER",
       "name": null,
       "path": "tools/ci/__init__.py"
+    },
+    {
+      "agent_id": "e7a0bcba07e2",
+      "kind": "OTHER",
+      "name": null,
+      "path": "engine/exoneural_governor/util.py"
     },
     {
       "agent_id": "e9563f3a98ea",
@@ -415,6 +589,18 @@
       "path": "tools/prod_spec/make_ac_package.py"
     },
     {
+      "agent_id": "f0a0348d6646",
+      "kind": "CLI_SCRIPT",
+      "name": null,
+      "path": "engine/tools/verify_action_pinning.py"
+    },
+    {
+      "agent_id": "f2a078357571",
+      "kind": "OTHER",
+      "name": null,
+      "path": "engine/exoneural_governor/inventory.py"
+    },
+    {
       "agent_id": "f89780a8cb8a",
       "kind": "CLI_SCRIPT",
       "name": null,
@@ -427,13 +613,15 @@
       "path": "tools/dao-arbiter/dao_lifebook/roles.py"
     }
   ],
-  "agents_count": 71,
+  "agents_count": 102,
   "centrality": {
     "betweenness": {
       "02ccd5545223": 0.0,
       "07b857d36fe3": 0.0,
       "091dfbcc3c82": 0.0,
-      "107181b0136f": 0.0,
+      "107181b0136f": 3.3003300330033e-05,
+      "10d3dff3c235": 9.900990099009902e-05,
+      "11a46a763eb3": 0.0,
       "13f4f85ff413": 0.0,
       "18b9e121bf29": 0.0,
       "1a380f34e244": 0.0,
@@ -441,33 +629,48 @@
       "205935321408": 0.0,
       "2071f12f1fdc": 0.0,
       "22891e7f6bdf": 0.0,
+      "24747dd20869": 0.0,
       "296f2abfe95f": 0.0,
       "345cb2d648c0": 0.0,
       "359c0e728169": 0.0,
       "35ae4a8ef16f": 0.0,
+      "3666bc6008f0": 0.0,
+      "3746c68c7237": 0.0,
+      "3b8a0dbcad9e": 0.0,
       "3c40e639b708": 0.0,
       "41f6a90a2fdb": 0.0,
+      "460a083eebe5": 0.0,
+      "465ae5319598": 0.0,
+      "46adbe02595d": 0.0,
       "494134882b71": 0.0,
       "4b68ec6643ec": 0.0,
       "4bebda360782": 0.0,
+      "5144b17b9f00": 0.0008910891089108911,
       "528ef445cd0e": 0.0,
       "5439dad6e944": 0.0,
       "54647cd29853": 0.0,
+      "5680a043a1cf": 0.0,
+      "57a474f36696": 0.0,
       "5eb18b5caa52": 0.0,
       "605d1b717c3c": 0.0,
       "63bd641104d1": 0.0,
+      "6fb35cc12bad": 0.0002970297029702971,
+      "6ffc6272c922": 0.0,
       "737973ca0363": 0.0,
+      "74b361755a73": 0.0,
       "761881281f17": 0.0,
       "76ed074a9305": 0.0,
+      "797e2110302c": 0.0,
       "79ac8cbe2be0": 0.0,
       "7bf1bfd85ffc": 0.0,
       "7c818bec6261": 0.0,
       "7cdd3ccec44c": 0.0,
       "810f752e610f": 0.0,
-      "83d5ad62ebf4": 0.0,
+      "83d5ad62ebf4": 4.950495049504951e-05,
       "84095bafd1ea": 0.0,
       "88130c5cb3f9": 0.0,
-      "8c161845b6cd": 0.0,
+      "8c161845b6cd": 0.0003300330033003301,
+      "8ee120fbe41c": 0.0,
       "8fad63b5805a": 0.0,
       "9396ecc12364": 0.0,
       "955dae5c3467": 0.0,
@@ -476,157 +679,253 @@
       "99f4c0c11ca3": 0.0,
       "9db81dcc8db6": 0.0,
       "9f58ecd05211": 0.0,
+      "a1195dff2f41": 0.0,
       "a48c1f2ad5ec": 0.0,
       "a48ead286090": 0.0,
       "a573abac079d": 0.0,
+      "a87ed7d405b7": 0.0,
       "a8f4ad96f6d3": 0.0,
       "ac2dfda93fe2": 0.0,
       "acb157b43d64": 0.0,
       "ad8a239f2d91": 0.0,
       "adef7ce44438": 0.0,
+      "b1b2fc2b9139": 0.0,
       "b2504b9c7c93": 0.0,
-      "b33fc1feeaae": 0.0,
+      "b33fc1feeaae": 0.0004785478547854786,
       "b4361375d6c8": 0.0,
       "b4f661346660": 0.0,
+      "b5746f88d0ae": 0.0,
+      "b5d0c22bc159": 0.0,
+      "b93cc28b6b3f": 0.0,
       "b9d464b9e214": 0.0,
+      "be0ec25862de": 0.0,
+      "be25be8864d2": 0.0,
       "c15e62628d67": 0.0,
+      "c41534393071": 0.0,
       "c531a9034661": 0.0,
       "c7714d6aa3ec": 0.0,
+      "cdf278aee206": 0.0,
       "d53c234440ca": 0.0,
       "d763c671ea26": 0.0,
+      "dcaddc28f27e": 0.0,
       "df1ce49b7d84": 0.0,
       "e61771ef6023": 0.0,
       "e76a8411873e": 0.0,
+      "e7a0bcba07e2": 0.0,
       "e9563f3a98ea": 0.0,
       "eff08bbf59e2": 0.0,
+      "f0a0348d6646": 0.0,
+      "f2a078357571": 0.0,
       "f89780a8cb8a": 0.0,
-      "fbb0fdb4053a": 0.0
+      "fbb0fdb4053a": 0.00019801980198019803
     },
     "pagerank": {
-      "02ccd5545223": 0.013140604467757463,
-      "07b857d36fe3": 0.013140604467757463,
-      "091dfbcc3c82": 0.013140604467757463,
-      "107181b0136f": 0.013140604467757463,
-      "13f4f85ff413": 0.013140604467757463,
-      "18b9e121bf29": 0.013140604467757463,
-      "1a380f34e244": 0.013140604467757463,
-      "1acf4838acb5": 0.013140604467757463,
-      "205935321408": 0.013140604467757463,
-      "2071f12f1fdc": 0.013140604467757463,
-      "22891e7f6bdf": 0.013140604467757463,
-      "296f2abfe95f": 0.013140604467757463,
-      "345cb2d648c0": 0.013140604467757463,
-      "359c0e728169": 0.013140604467757463,
-      "35ae4a8ef16f": 0.013140604467757463,
-      "3c40e639b708": 0.013140604467757463,
-      "41f6a90a2fdb": 0.013140604467757463,
-      "494134882b71": 0.013140604467757463,
-      "4b68ec6643ec": 0.013140604467757463,
-      "4bebda360782": 0.013140604467757463,
-      "528ef445cd0e": 0.013140604467757463,
-      "5439dad6e944": 0.013140604467757463,
-      "54647cd29853": 0.013140604467757463,
-      "5eb18b5caa52": 0.013140604467757463,
-      "605d1b717c3c": 0.013140604467757463,
-      "63bd641104d1": 0.013140604467757463,
-      "737973ca0363": 0.013140604467757463,
-      "761881281f17": 0.013140604467757463,
-      "76ed074a9305": 0.013140604467757463,
-      "79ac8cbe2be0": 0.028033289532028573,
-      "7bf1bfd85ffc": 0.013140604467757463,
-      "7c818bec6261": 0.013140604467757463,
-      "7cdd3ccec44c": 0.013140604467757463,
-      "810f752e610f": 0.013140604467757463,
-      "83d5ad62ebf4": 0.013140604467757463,
-      "84095bafd1ea": 0.013140604467757463,
-      "88130c5cb3f9": 0.013140604467757463,
-      "8c161845b6cd": 0.013140604467757463,
-      "8fad63b5805a": 0.013140604467757463,
-      "9396ecc12364": 0.013140604467757463,
-      "955dae5c3467": 0.01686377573382524,
-      "95b6f7b21fa5": 0.024310118265960794,
-      "9978a13b71da": 0.01686377573382524,
-      "99f4c0c11ca3": 0.013140604467757463,
-      "9db81dcc8db6": 0.013140604467757463,
-      "9f58ecd05211": 0.013140604467757463,
-      "a48c1f2ad5ec": 0.024310118265960794,
-      "a48ead286090": 0.01686377573382524,
-      "a573abac079d": 0.013140604467757463,
-      "a8f4ad96f6d3": 0.013140604467757463,
-      "ac2dfda93fe2": 0.013140604467757463,
-      "acb157b43d64": 0.013140604467757463,
-      "ad8a239f2d91": 0.01686377573382524,
-      "adef7ce44438": 0.013140604467757463,
-      "b2504b9c7c93": 0.013140604467757463,
-      "b33fc1feeaae": 0.013140604467757463,
-      "b4361375d6c8": 0.013140604467757463,
-      "b4f661346660": 0.013140604467757463,
-      "b9d464b9e214": 0.013140604467757463,
-      "c15e62628d67": 0.013140604467757463,
-      "c531a9034661": 0.013140604467757463,
-      "c7714d6aa3ec": 0.013140604467757463,
-      "d53c234440ca": 0.028033289532028573,
-      "d763c671ea26": 0.013140604467757463,
-      "df1ce49b7d84": 0.013140604467757463,
-      "e61771ef6023": 0.013140604467757463,
-      "e76a8411873e": 0.013140604467757463,
-      "e9563f3a98ea": 0.013140604467757463,
-      "eff08bbf59e2": 0.013140604467757463,
-      "f89780a8cb8a": 0.013140604467757463,
-      "fbb0fdb4053a": 0.013140604467757463
+      "02ccd5545223": 0.007615975805960079,
+      "07b857d36fe3": 0.007615975805960079,
+      "091dfbcc3c82": 0.007615975805960079,
+      "107181b0136f": 0.011466406907424185,
+      "10d3dff3c235": 0.009326850370864942,
+      "11a46a763eb3": 0.007615975805960079,
+      "13f4f85ff413": 0.007615975805960079,
+      "18b9e121bf29": 0.011252229955283298,
+      "1a380f34e244": 0.007615975805960079,
+      "1acf4838acb5": 0.007615975805960079,
+      "205935321408": 0.007615975805960079,
+      "2071f12f1fdc": 0.007615975805960079,
+      "22891e7f6bdf": 0.009848012048649457,
+      "24747dd20869": 0.007615975805960079,
+      "296f2abfe95f": 0.007615975805960079,
+      "345cb2d648c0": 0.007615975805960079,
+      "359c0e728169": 0.007615975805960079,
+      "35ae4a8ef16f": 0.028137423977383353,
+      "3666bc6008f0": 0.011579887213584902,
+      "3746c68c7237": 0.007615975805960079,
+      "3b8a0dbcad9e": 0.007615975805960079,
+      "3c40e639b708": 0.007615975805960079,
+      "41f6a90a2fdb": 0.007615975805960079,
+      "460a083eebe5": 0.007615975805960079,
+      "465ae5319598": 0.013290761778489766,
+      "46adbe02595d": 0.007615975805960079,
+      "494134882b71": 0.007615975805960079,
+      "4b68ec6643ec": 0.007615975805960079,
+      "4bebda360782": 0.007615975805960079,
+      "5144b17b9f00": 0.014089555241058994,
+      "528ef445cd0e": 0.033293154500398464,
+      "5439dad6e944": 0.007615975805960079,
+      "54647cd29853": 0.007615975805960079,
+      "5680a043a1cf": 0.007615975805960079,
+      "57a474f36696": 0.009326850370864942,
+      "5eb18b5caa52": 0.007615975805960079,
+      "605d1b717c3c": 0.007615975805960079,
+      "63bd641104d1": 0.007615975805960079,
+      "6fb35cc12bad": 0.009326850370864942,
+      "6ffc6272c922": 0.007615975805960079,
+      "737973ca0363": 0.007615975805960079,
+      "74b361755a73": 0.007615975805960079,
+      "761881281f17": 0.007615975805960079,
+      "76ed074a9305": 0.007615975805960079,
+      "797e2110302c": 0.007615975805960079,
+      "79ac8cbe2be0": 0.015707950099833723,
+      "7bf1bfd85ffc": 0.007615975805960079,
+      "7c818bec6261": 0.007615975805960079,
+      "7cdd3ccec44c": 0.007615975805960079,
+      "810f752e610f": 0.007615975805960079,
+      "83d5ad62ebf4": 0.012638282129062648,
+      "84095bafd1ea": 0.007615975805960079,
+      "88130c5cb3f9": 0.007615975805960079,
+      "8c161845b6cd": 0.010043568094122171,
+      "8ee120fbe41c": 0.007615975805960079,
+      "8fad63b5805a": 0.007615975805960079,
+      "9396ecc12364": 0.007615975805960079,
+      "955dae5c3467": 0.009234370664734808,
+      "95b6f7b21fa5": 0.010852765523509535,
+      "9978a13b71da": 0.009773835617659717,
+      "99f4c0c11ca3": 0.007615975805960079,
+      "9db81dcc8db6": 0.007615975805960079,
+      "9f58ecd05211": 0.007615975805960079,
+      "a1195dff2f41": 0.007615975805960079,
+      "a48c1f2ad5ec": 0.010852765523509535,
+      "a48ead286090": 0.009234370664734808,
+      "a573abac079d": 0.007615975805960079,
+      "a87ed7d405b7": 0.007615975805960079,
+      "a8f4ad96f6d3": 0.007615975805960079,
+      "ac2dfda93fe2": 0.007615975805960079,
+      "acb157b43d64": 0.007615975805960079,
+      "ad8a239f2d91": 0.009773835617659717,
+      "adef7ce44438": 0.007615975805960079,
+      "b1b2fc2b9139": 0.007615975805960079,
+      "b2504b9c7c93": 0.007615975805960079,
+      "b33fc1feeaae": 0.012833838174535362,
+      "b4361375d6c8": 0.007615975805960079,
+      "b4f661346660": 0.007615975805960079,
+      "b5746f88d0ae": 0.007615975805960079,
+      "b5d0c22bc159": 0.007615975805960079,
+      "b93cc28b6b3f": 0.007615975805960079,
+      "b9d464b9e214": 0.027036714111256823,
+      "be0ec25862de": 0.007615975805960079,
+      "be25be8864d2": 0.007615975805960079,
+      "c15e62628d67": 0.007615975805960079,
+      "c41534393071": 0.008937279608501688,
+      "c531a9034661": 0.007615975805960079,
+      "c7714d6aa3ec": 0.03189189868758101,
+      "cdf278aee206": 0.007615975805960079,
+      "d53c234440ca": 0.013010625335209173,
+      "d763c671ea26": 0.007615975805960079,
+      "dcaddc28f27e": 0.01064815417340655,
+      "df1ce49b7d84": 0.007615975805960079,
+      "e61771ef6023": 0.007615975805960079,
+      "e76a8411873e": 0.007615975805960079,
+      "e7a0bcba07e2": 0.06012936318267379,
+      "e9563f3a98ea": 0.007615975805960079,
+      "eff08bbf59e2": 0.007615975805960079,
+      "f0a0348d6646": 0.007615975805960079,
+      "f2a078357571": 0.01064815417340655,
+      "f89780a8cb8a": 0.007615975805960079,
+      "fbb0fdb4053a": 0.009848012048649457
     }
   },
   "core_candidates": [
     {
-      "agent_id": "79ac8cbe2be0",
+      "agent_id": "e7a0bcba07e2",
       "bc": 0.0,
       "core_score": 0.6,
-      "kind": "CLI_SCRIPT",
-      "path": "tools/ci/action_pin_audit.py",
-      "pr": 0.028033289532028573,
+      "kind": "OTHER",
+      "path": "engine/exoneural_governor/util.py",
+      "pr": 0.06012936318267379,
       "rank": 1
     },
     {
-      "agent_id": "d53c234440ca",
-      "bc": 0.0,
-      "core_score": 0.6,
-      "kind": "CLI_SCRIPT",
-      "path": "engine/scripts/check_prod_spec_gates.py",
-      "pr": 0.028033289532028573,
+      "agent_id": "5144b17b9f00",
+      "bc": 0.0008910891089108911,
+      "core_score": 0.5405924276788505,
+      "kind": "OTHER",
+      "path": "engine/exoneural_governor/cli.py",
+      "pr": 0.014089555241058994,
       "rank": 2
     },
     {
-      "agent_id": "95b6f7b21fa5",
-      "bc": 0.0,
-      "core_score": 0.5203124999979617,
-      "kind": "OTHER",
-      "path": "engine/tools/pip_audit_gate.py",
-      "pr": 0.024310118265960794,
+      "agent_id": "b33fc1feeaae",
+      "bc": 0.0004785478547854786,
+      "core_score": 0.3428770875072363,
+      "kind": "CLI_SCRIPT",
+      "path": "tools/dao-arbiter/dao_lifebook/truth_plane.py",
+      "pr": 0.012833838174535362,
       "rank": 3
     },
     {
-      "agent_id": "a48c1f2ad5ec",
+      "agent_id": "528ef445cd0e",
       "bc": 0.0,
-      "core_score": 0.5203124999979617,
+      "core_score": 0.3322152712569407,
       "kind": "CLI_SCRIPT",
-      "path": "tools/ci/dispatch_ci_for_pr.py",
-      "pr": 0.024310118265960794,
+      "path": "tools/dao-arbiter/dao_lifebook/_types.py",
+      "pr": 0.033293154500398464,
       "rank": 4
     },
     {
-      "agent_id": "955dae5c3467",
+      "agent_id": "c7714d6aa3ec",
       "bc": 0.0,
-      "core_score": 0.36093749999388514,
-      "kind": "CLI_SCRIPT",
-      "path": "tools/verify_action_pinning.py",
-      "pr": 0.01686377573382524,
+      "core_score": 0.3182328599492365,
+      "kind": "GITHUB_COMPOSITE_ACTION",
+      "path": ".github/actions/setup-python-pip/action.yml",
+      "pr": 0.03189189868758101,
       "rank": 5
     }
   ],
   "core_candidates_count": 5,
-  "repo_fingerprint": "0668075d70f537b675e3e52af4cdc2b76cdeb855",
+  "metadata": {
+    "core_candidates": [
+      {
+        "agent_id": "e7a0bcba07e2",
+        "bc": 0.0,
+        "core_score": 0.6,
+        "kind": "OTHER",
+        "path": "engine/exoneural_governor/util.py",
+        "pr": 0.06012936318267379,
+        "rank": 1
+      },
+      {
+        "agent_id": "5144b17b9f00",
+        "bc": 0.0008910891089108911,
+        "core_score": 0.5405924276788505,
+        "kind": "OTHER",
+        "path": "engine/exoneural_governor/cli.py",
+        "pr": 0.014089555241058994,
+        "rank": 2
+      },
+      {
+        "agent_id": "b33fc1feeaae",
+        "bc": 0.0004785478547854786,
+        "core_score": 0.3428770875072363,
+        "kind": "CLI_SCRIPT",
+        "path": "tools/dao-arbiter/dao_lifebook/truth_plane.py",
+        "pr": 0.012833838174535362,
+        "rank": 3
+      },
+      {
+        "agent_id": "528ef445cd0e",
+        "bc": 0.0,
+        "core_score": 0.3322152712569407,
+        "kind": "CLI_SCRIPT",
+        "path": "tools/dao-arbiter/dao_lifebook/_types.py",
+        "pr": 0.033293154500398464,
+        "rank": 4
+      },
+      {
+        "agent_id": "c7714d6aa3ec",
+        "bc": 0.0,
+        "core_score": 0.3182328599492365,
+        "kind": "GITHUB_COMPOSITE_ACTION",
+        "path": ".github/actions/setup-python-pip/action.yml",
+        "pr": 0.03189189868758101,
+        "rank": 5
+      }
+    ]
+  },
+  "repo_fingerprint": "79f34b596dc4c76c3dae0658d7a0dec7bfb0e238",
   "repo_root": "/workspace/Agent-X-Lab",
   "unknowns": {
+    "dangling_edges": [],
+    "events": [],
     "parse_failures": []
   },
   "wiring": {
@@ -639,11 +938,32 @@
         "to_path": "tools/ci/action_pin_audit.py"
       },
       {
+        "edge_type": "USES_LOCAL_ACTION",
+        "from_id": "adef7ce44438",
+        "from_path": ".github/workflows/ci-dispatch.yml",
+        "to_id": "c7714d6aa3ec",
+        "to_path": ".github/actions/setup-python-pip/action.yml"
+      },
+      {
         "edge_type": "RUNS_SCRIPT",
         "from_id": "adef7ce44438",
         "from_path": ".github/workflows/ci-dispatch.yml",
         "to_id": "a48c1f2ad5ec",
         "to_path": "tools/ci/dispatch_ci_for_pr.py"
+      },
+      {
+        "edge_type": "USES_LOCAL_ACTION",
+        "from_id": "5eb18b5caa52",
+        "from_path": ".github/workflows/engine-drift-guard.yml",
+        "to_id": "c7714d6aa3ec",
+        "to_path": ".github/actions/setup-python-pip/action.yml"
+      },
+      {
+        "edge_type": "USES_LOCAL_ACTION",
+        "from_id": "9f58ecd05211",
+        "from_path": ".github/workflows/prod-spec-gates.yml",
+        "to_id": "c7714d6aa3ec",
+        "to_path": ".github/actions/setup-python-pip/action.yml"
       },
       {
         "edge_type": "RUNS_SCRIPT",
@@ -653,11 +973,53 @@
         "to_path": "engine/scripts/check_prod_spec_gates.py"
       },
       {
+        "edge_type": "USES_LOCAL_ACTION",
+        "from_id": "acb157b43d64",
+        "from_path": ".github/workflows/python-verify.yml",
+        "to_id": "c7714d6aa3ec",
+        "to_path": ".github/actions/setup-python-pip/action.yml"
+      },
+      {
         "edge_type": "RUNS_SCRIPT",
         "from_id": "acb157b43d64",
         "from_path": ".github/workflows/python-verify.yml",
         "to_id": "95b6f7b21fa5",
         "to_path": "engine/tools/pip_audit_gate.py"
+      },
+      {
+        "edge_type": "USES_LOCAL_ACTION",
+        "from_id": "a573abac079d",
+        "from_path": ".github/workflows/run-engine-dispatch.yml",
+        "to_id": "c7714d6aa3ec",
+        "to_path": ".github/actions/setup-python-pip/action.yml"
+      },
+      {
+        "edge_type": "USES_LOCAL_ACTION",
+        "from_id": "b4361375d6c8",
+        "from_path": ".github/workflows/ui-e2e.yml",
+        "to_id": "b9d464b9e214",
+        "to_path": ".github/actions/setup-node-npm/action.yml"
+      },
+      {
+        "edge_type": "USES_LOCAL_ACTION",
+        "from_id": "13f4f85ff413",
+        "from_path": ".github/workflows/ui-perf.yml",
+        "to_id": "b9d464b9e214",
+        "to_path": ".github/actions/setup-node-npm/action.yml"
+      },
+      {
+        "edge_type": "USES_LOCAL_ACTION",
+        "from_id": "1a380f34e244",
+        "from_path": ".github/workflows/ui-verify.yml",
+        "to_id": "b9d464b9e214",
+        "to_path": ".github/actions/setup-node-npm/action.yml"
+      },
+      {
+        "edge_type": "USES_LOCAL_ACTION",
+        "from_id": "02ccd5545223",
+        "from_path": ".github/workflows/workflow-hygiene.yml",
+        "to_id": "c7714d6aa3ec",
+        "to_path": ".github/actions/setup-python-pip/action.yml"
       },
       {
         "edge_type": "RUNS_SCRIPT",
@@ -700,8 +1062,365 @@
         "from_path": "Makefile",
         "to_id": "9978a13b71da",
         "to_path": "scripts/generate_manifest.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "74b361755a73",
+        "from_path": "engine/exoneural_governor/__main__.py",
+        "to_id": "5144b17b9f00",
+        "to_path": "engine/exoneural_governor/cli.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "dcaddc28f27e",
+        "from_path": "engine/exoneural_governor/catalog.py",
+        "to_id": "e7a0bcba07e2",
+        "to_path": "engine/exoneural_governor/util.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "5144b17b9f00",
+        "from_path": "engine/exoneural_governor/cli.py",
+        "to_id": "dcaddc28f27e",
+        "to_path": "engine/exoneural_governor/catalog.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "5144b17b9f00",
+        "from_path": "engine/exoneural_governor/cli.py",
+        "to_id": "465ae5319598",
+        "to_path": "engine/exoneural_governor/config.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "5144b17b9f00",
+        "from_path": "engine/exoneural_governor/cli.py",
+        "to_id": "f2a078357571",
+        "to_path": "engine/exoneural_governor/inventory.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "5144b17b9f00",
+        "from_path": "engine/exoneural_governor/cli.py",
+        "to_id": "10d3dff3c235",
+        "to_path": "engine/exoneural_governor/release.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "5144b17b9f00",
+        "from_path": "engine/exoneural_governor/cli.py",
+        "to_id": "57a474f36696",
+        "to_path": "engine/exoneural_governor/repo_model.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "5144b17b9f00",
+        "from_path": "engine/exoneural_governor/cli.py",
+        "to_id": "e7a0bcba07e2",
+        "to_path": "engine/exoneural_governor/util.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "5144b17b9f00",
+        "from_path": "engine/exoneural_governor/cli.py",
+        "to_id": "6fb35cc12bad",
+        "to_path": "engine/exoneural_governor/vr.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "465ae5319598",
+        "from_path": "engine/exoneural_governor/config.py",
+        "to_id": "e7a0bcba07e2",
+        "to_path": "engine/exoneural_governor/util.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "f2a078357571",
+        "from_path": "engine/exoneural_governor/inventory.py",
+        "to_id": "e7a0bcba07e2",
+        "to_path": "engine/exoneural_governor/util.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "3666bc6008f0",
+        "from_path": "engine/exoneural_governor/manifest.py",
+        "to_id": "e7a0bcba07e2",
+        "to_path": "engine/exoneural_governor/util.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "c41534393071",
+        "from_path": "engine/exoneural_governor/redaction.py",
+        "to_id": "e7a0bcba07e2",
+        "to_path": "engine/exoneural_governor/util.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "10d3dff3c235",
+        "from_path": "engine/exoneural_governor/release.py",
+        "to_id": "465ae5319598",
+        "to_path": "engine/exoneural_governor/config.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "10d3dff3c235",
+        "from_path": "engine/exoneural_governor/release.py",
+        "to_id": "3666bc6008f0",
+        "to_path": "engine/exoneural_governor/manifest.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "10d3dff3c235",
+        "from_path": "engine/exoneural_governor/release.py",
+        "to_id": "e7a0bcba07e2",
+        "to_path": "engine/exoneural_governor/util.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "6fb35cc12bad",
+        "from_path": "engine/exoneural_governor/vr.py",
+        "to_id": "dcaddc28f27e",
+        "to_path": "engine/exoneural_governor/catalog.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "6fb35cc12bad",
+        "from_path": "engine/exoneural_governor/vr.py",
+        "to_id": "465ae5319598",
+        "to_path": "engine/exoneural_governor/config.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "6fb35cc12bad",
+        "from_path": "engine/exoneural_governor/vr.py",
+        "to_id": "f2a078357571",
+        "to_path": "engine/exoneural_governor/inventory.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "6fb35cc12bad",
+        "from_path": "engine/exoneural_governor/vr.py",
+        "to_id": "3666bc6008f0",
+        "to_path": "engine/exoneural_governor/manifest.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "6fb35cc12bad",
+        "from_path": "engine/exoneural_governor/vr.py",
+        "to_id": "c41534393071",
+        "to_path": "engine/exoneural_governor/redaction.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "6fb35cc12bad",
+        "from_path": "engine/exoneural_governor/vr.py",
+        "to_id": "e7a0bcba07e2",
+        "to_path": "engine/exoneural_governor/util.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "737973ca0363",
+        "from_path": "tools/dao-arbiter/dao_lifebook/__init__.py",
+        "to_id": "528ef445cd0e",
+        "to_path": "tools/dao-arbiter/dao_lifebook/_types.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "737973ca0363",
+        "from_path": "tools/dao-arbiter/dao_lifebook/__init__.py",
+        "to_id": "83d5ad62ebf4",
+        "to_path": "tools/dao-arbiter/dao_lifebook/constraints.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "737973ca0363",
+        "from_path": "tools/dao-arbiter/dao_lifebook/__init__.py",
+        "to_id": "8c161845b6cd",
+        "to_path": "tools/dao-arbiter/dao_lifebook/engine.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "737973ca0363",
+        "from_path": "tools/dao-arbiter/dao_lifebook/__init__.py",
+        "to_id": "107181b0136f",
+        "to_path": "tools/dao-arbiter/dao_lifebook/evidence.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "737973ca0363",
+        "from_path": "tools/dao-arbiter/dao_lifebook/__init__.py",
+        "to_id": "22891e7f6bdf",
+        "to_path": "tools/dao-arbiter/dao_lifebook/metrics.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "737973ca0363",
+        "from_path": "tools/dao-arbiter/dao_lifebook/__init__.py",
+        "to_id": "35ae4a8ef16f",
+        "to_path": "tools/dao-arbiter/dao_lifebook/models.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "737973ca0363",
+        "from_path": "tools/dao-arbiter/dao_lifebook/__init__.py",
+        "to_id": "fbb0fdb4053a",
+        "to_path": "tools/dao-arbiter/dao_lifebook/roles.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "737973ca0363",
+        "from_path": "tools/dao-arbiter/dao_lifebook/__init__.py",
+        "to_id": "b33fc1feeaae",
+        "to_path": "tools/dao-arbiter/dao_lifebook/truth_plane.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "18b9e121bf29",
+        "from_path": "tools/dao-arbiter/dao_lifebook/_retry.py",
+        "to_id": "528ef445cd0e",
+        "to_path": "tools/dao-arbiter/dao_lifebook/_types.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "5439dad6e944",
+        "from_path": "tools/dao-arbiter/dao_lifebook/cli.py",
+        "to_id": "8c161845b6cd",
+        "to_path": "tools/dao-arbiter/dao_lifebook/engine.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "5439dad6e944",
+        "from_path": "tools/dao-arbiter/dao_lifebook/cli.py",
+        "to_id": "107181b0136f",
+        "to_path": "tools/dao-arbiter/dao_lifebook/evidence.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "5439dad6e944",
+        "from_path": "tools/dao-arbiter/dao_lifebook/cli.py",
+        "to_id": "35ae4a8ef16f",
+        "to_path": "tools/dao-arbiter/dao_lifebook/models.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "5439dad6e944",
+        "from_path": "tools/dao-arbiter/dao_lifebook/cli.py",
+        "to_id": "b33fc1feeaae",
+        "to_path": "tools/dao-arbiter/dao_lifebook/truth_plane.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "83d5ad62ebf4",
+        "from_path": "tools/dao-arbiter/dao_lifebook/constraints.py",
+        "to_id": "528ef445cd0e",
+        "to_path": "tools/dao-arbiter/dao_lifebook/_types.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "83d5ad62ebf4",
+        "from_path": "tools/dao-arbiter/dao_lifebook/constraints.py",
+        "to_id": "35ae4a8ef16f",
+        "to_path": "tools/dao-arbiter/dao_lifebook/models.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "8c161845b6cd",
+        "from_path": "tools/dao-arbiter/dao_lifebook/engine.py",
+        "to_id": "528ef445cd0e",
+        "to_path": "tools/dao-arbiter/dao_lifebook/_types.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "8c161845b6cd",
+        "from_path": "tools/dao-arbiter/dao_lifebook/engine.py",
+        "to_id": "83d5ad62ebf4",
+        "to_path": "tools/dao-arbiter/dao_lifebook/constraints.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "8c161845b6cd",
+        "from_path": "tools/dao-arbiter/dao_lifebook/engine.py",
+        "to_id": "107181b0136f",
+        "to_path": "tools/dao-arbiter/dao_lifebook/evidence.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "8c161845b6cd",
+        "from_path": "tools/dao-arbiter/dao_lifebook/engine.py",
+        "to_id": "22891e7f6bdf",
+        "to_path": "tools/dao-arbiter/dao_lifebook/metrics.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "8c161845b6cd",
+        "from_path": "tools/dao-arbiter/dao_lifebook/engine.py",
+        "to_id": "35ae4a8ef16f",
+        "to_path": "tools/dao-arbiter/dao_lifebook/models.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "8c161845b6cd",
+        "from_path": "tools/dao-arbiter/dao_lifebook/engine.py",
+        "to_id": "fbb0fdb4053a",
+        "to_path": "tools/dao-arbiter/dao_lifebook/roles.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "107181b0136f",
+        "from_path": "tools/dao-arbiter/dao_lifebook/evidence.py",
+        "to_id": "528ef445cd0e",
+        "to_path": "tools/dao-arbiter/dao_lifebook/_types.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "107181b0136f",
+        "from_path": "tools/dao-arbiter/dao_lifebook/evidence.py",
+        "to_id": "35ae4a8ef16f",
+        "to_path": "tools/dao-arbiter/dao_lifebook/models.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "fbb0fdb4053a",
+        "from_path": "tools/dao-arbiter/dao_lifebook/roles.py",
+        "to_id": "83d5ad62ebf4",
+        "to_path": "tools/dao-arbiter/dao_lifebook/constraints.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "fbb0fdb4053a",
+        "from_path": "tools/dao-arbiter/dao_lifebook/roles.py",
+        "to_id": "35ae4a8ef16f",
+        "to_path": "tools/dao-arbiter/dao_lifebook/models.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "fbb0fdb4053a",
+        "from_path": "tools/dao-arbiter/dao_lifebook/roles.py",
+        "to_id": "b33fc1feeaae",
+        "to_path": "tools/dao-arbiter/dao_lifebook/truth_plane.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "b33fc1feeaae",
+        "from_path": "tools/dao-arbiter/dao_lifebook/truth_plane.py",
+        "to_id": "18b9e121bf29",
+        "to_path": "tools/dao-arbiter/dao_lifebook/_retry.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "b33fc1feeaae",
+        "from_path": "tools/dao-arbiter/dao_lifebook/truth_plane.py",
+        "to_id": "528ef445cd0e",
+        "to_path": "tools/dao-arbiter/dao_lifebook/_types.py"
+      },
+      {
+        "edge_type": "IMPORTS_PY",
+        "from_id": "b33fc1feeaae",
+        "from_path": "tools/dao-arbiter/dao_lifebook/truth_plane.py",
+        "to_id": "35ae4a8ef16f",
+        "to_path": "tools/dao-arbiter/dao_lifebook/models.py"
       }
     ],
-    "edges_count": 10
+    "edges_count": 70
   }
 }

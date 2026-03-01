@@ -1,4 +1,4 @@
-.PHONY: setup bootstrap lint test test-all test-integration test-e2e test-property dev-ui dev-worker gates reproduce repo-model
+.PHONY: setup bootstrap lint test test-all test-integration test-e2e test-property dev-ui dev-worker gates reproduce repo-model repo-model-deps repo-model-strict
 
 PYTHON ?= python
 VENV ?= .venv
@@ -9,7 +9,7 @@ setup:
 	npm ci
 	$(PYTHON) -m venv $(VENV)
 	$(VENV_PYTHON) -m pip install --upgrade pip
-	$(VENV_PYTHON) -m pip install -r engine/requirements-dev.txt
+	$(VENV_PYTHON) -m pip install -r engine/requirements.txt -r engine/requirements-dev.txt
 
 bootstrap: setup
 	bash scripts/bootstrap.sh
@@ -52,5 +52,25 @@ reproduce: test
 	$(PYTHON_RUN) scripts/generate_manifest.py
 
 
-repo-model:
-	cd engine && $(PYTHON_RUN) -m exoneural_governor repo-model
+repo-model-deps:
+	@$(PYTHON_RUN) -m pip check >/dev/null 2>&1 || true
+	@$(PYTHON_RUN) -c "import jsonschema, yaml, networkx" >/dev/null 2>&1 || (echo "!!! Missing dependencies. Run: pip install -r engine/requirements.txt !!!" && exit 1)
+
+repo-model: repo-model-deps
+	@echo "Synthesizing Repository Model..."
+	cd engine && PYTHONPATH=. $(PYTHON_RUN) -m exoneural_governor repo-model
+
+repo-model-strict: repo-model
+	@set -euo pipefail; \
+	BASE_REF="$${BASE_REF:-HEAD~1}"; \
+	TMP_BASE="$$(mktemp -d)"; \
+	trap 'rm -rf "$$TMP_BASE"' EXIT; \
+	git archive "$$BASE_REF" | tar -x -C "$$TMP_BASE"; \
+	( cd "$$TMP_BASE" && make repo-model ); \
+	cp "$$TMP_BASE/engine/artifacts/repo_model/repo_model.json" /tmp/architecture_base_repo_model.json; \
+	$(PYTHON_RUN) engine/scripts/check_architecture_drift.py \
+		--base /tmp/architecture_base_repo_model.json \
+		--head engine/artifacts/repo_model/repo_model.json \
+		--core-k 5 \
+		--summary /tmp/architecture_drift_summary.md \
+		--report /tmp/architecture_drift_report.md

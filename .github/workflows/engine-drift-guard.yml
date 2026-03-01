@@ -74,6 +74,9 @@ jobs:
         run: |
           set -euo pipefail
           python -m pip --version
+          if [ -f engine/requirements.txt ]; then
+            python -m pip install -r engine/requirements.txt
+          fi
           if [ -f engine/requirements.lock ]; then
             python -m pip install -r engine/requirements.lock
           fi

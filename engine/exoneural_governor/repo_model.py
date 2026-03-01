@@ -10,6 +10,7 @@ from collections import deque
 from pathlib import Path
 from typing import Any
 
+import networkx as nx
 import yaml
 
 IGNORED_DIRS = {
@@ -678,19 +679,40 @@ def betweenness_centrality_brandes(
     return bc
 
 
+
+
+def strongly_connected_components(
+    nodes: list[str], edges: list[tuple[str, str]]
+) -> list[tuple[str, ...]]:
+    graph = nx.DiGraph()
+    graph.add_nodes_from(sorted(set(nodes)))
+    graph.add_edges_from(sorted(set(edges)))
+    components = [tuple(sorted(component)) for component in nx.strongly_connected_components(graph)]
+    return sorted(components)
+
+
 def _repo_fingerprint(repo_root: Path, scan_paths: list[str]) -> str:
     code, out = _run_git(["rev-parse", "HEAD"], repo_root)
     if code == 0 and out:
         return out
+
     sha = hashlib.sha256()
     for rel in sorted(scan_paths):
         path = repo_root / rel
         if not path.exists() or not path.is_file():
             continue
-        file_sha = hashlib.sha256(path.read_bytes()).hexdigest()
+
+        file_hash = None
+        git_code, git_out = _run_git(["hash-object", rel], repo_root)
+        if git_code == 0 and git_out:
+            file_hash = git_out
+        else:
+            stat = path.stat()
+            file_hash = f"{stat.st_mtime_ns}:{stat.st_size}"
+
         sha.update(rel.encode("utf-8"))
         sha.update(b"\n")
-        sha.update(file_sha.encode("utf-8"))
+        sha.update(file_hash.encode("utf-8"))
         sha.update(b"\n")
     return sha.hexdigest()
 
@@ -755,6 +777,19 @@ def generate_repo_model(repo_root: Path) -> dict[str, Any]:
         for idx, row in enumerate(ranked[:k], start=1)
     ]
 
+    sccs = strongly_connected_components(node_ids, directed)
+    cycle_events = [
+        {"type": "ARCHITECTURAL_CYCLE_DETECTED", "agent_ids": list(component)}
+        for component in sccs
+        if len(component) > 1
+    ]
+    unknown_events = sorted(
+        cycle_events, key=lambda event: tuple(event.get("agent_ids", []))
+    )
+
+    unknowns_payload = dict(unknowns)
+    unknowns_payload["events"] = unknown_events
+
     return {
         "repo_root": repo_root.as_posix(),
         "repo_fingerprint": _repo_fingerprint(
@@ -772,7 +807,10 @@ def generate_repo_model(repo_root: Path) -> dict[str, Any]:
         },
         "core_candidates": core_candidates,
         "core_candidates_count": len(core_candidates),
-        "unknowns": unknowns,
+        "metadata": {
+            "core_candidates": core_candidates,
+        },
+        "unknowns": unknowns_payload,
     }
 
 
