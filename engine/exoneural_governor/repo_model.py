@@ -604,6 +604,92 @@ def _resolve_py_import(repo_root: Path, src: Path, module: str | None, level: in
     return None
 
 
+
+
+def _resolve_relative_import_for_graph(current_file: Path, module: str | None, level: int, name: str) -> Path | None:
+    base_dir = current_file.parent
+    parent = base_dir
+    for _ in range(max(0, level - 1)):
+        parent = parent.parent
+    module_parts = [part for part in (module.split(".") if module else []) if part]
+    name_parts = [part for part in name.split(".") if part]
+    candidate = parent.joinpath(*(module_parts + name_parts)) if (module_parts or name_parts) else parent
+    for path in (candidate.with_suffix('.py'), candidate / '__init__.py'):
+        if path.exists() and path.is_file():
+            return path
+    return None
+
+
+def _resolve_same_root_absolute_import_for_graph(root_dir: Path, module_name: str) -> Path | None:
+    parts = [part for part in module_name.split('.') if part]
+    if not parts:
+        return None
+    candidate = root_dir.joinpath(*parts)
+    for path in (candidate.with_suffix('.py'), candidate / '__init__.py'):
+        if path.exists() and path.is_file():
+            return path
+    return None
+
+
+def _extract_python_import_edges_for_graph(repo_root: Path, bounded_paths: set[str]) -> list[tuple[str, str, str]]:
+    edges: set[tuple[str, str, str]] = set()
+    bounded_files = sorted(repo_root / rel for rel in bounded_paths)
+    group_roots = [
+        repo_root / 'tools' / 'dao-arbiter' / 'dao_lifebook',
+        repo_root / 'engine' / 'exoneural_governor',
+    ]
+    for src_file in bounded_files:
+        if src_file.suffix != '.py' or not src_file.exists():
+            continue
+        src_rel = _rel(repo_root, src_file)
+        root_dir: Path | None = None
+        for grp in group_roots:
+            try:
+                src_file.relative_to(grp)
+                root_dir = grp
+                break
+            except ValueError:
+                continue
+        if root_dir is None:
+            continue
+        try:
+            tree = ast.parse(_read_text(src_file))
+        except Exception:
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ImportFrom):
+                level = int(node.level or 0)
+                module = node.module
+                for alias in node.names:
+                    alias_name = alias.name
+                    dst_file: Path | None = None
+                    if level > 0:
+                        dst_file = _resolve_relative_import_for_graph(src_file, module, level, alias_name)
+                        if dst_file is None and module:
+                            dst_file = _resolve_relative_import_for_graph(src_file, module, level, '')
+                    elif module:
+                        full = module if alias_name == '*' else f"{module}.{alias_name}"
+                        dst_file = _resolve_same_root_absolute_import_for_graph(root_dir, full)
+                        if dst_file is None:
+                            dst_file = _resolve_same_root_absolute_import_for_graph(root_dir, module)
+                    elif alias_name != '*':
+                        dst_file = _resolve_same_root_absolute_import_for_graph(root_dir, alias_name)
+                    if dst_file is None or not dst_file.exists():
+                        continue
+                    dst_rel = _rel(repo_root, dst_file)
+                    if dst_rel == src_rel or dst_rel not in bounded_paths:
+                        continue
+                    edges.add((src_rel, dst_rel, 'IMPORTS_PY'))
+            elif isinstance(node, ast.Import):
+                for alias in node.names:
+                    dst_file = _resolve_same_root_absolute_import_for_graph(root_dir, alias.name)
+                    if dst_file is None or not dst_file.exists():
+                        continue
+                    dst_rel = _rel(repo_root, dst_file)
+                    if dst_rel == src_rel or dst_rel not in bounded_paths:
+                        continue
+                    edges.add((src_rel, dst_rel, 'IMPORTS_PY'))
+    return sorted(edges)
 def _resolve_js_local(base: Path, spec: str) -> Path | None:
     cand = (base / spec).resolve()
     candidates = [cand, *[cand.with_suffix(ext) for ext in [".js", ".mjs", ".ts"]], cand / "index.js", cand / "index.mjs", cand / "index.ts"]
@@ -743,13 +829,15 @@ def _extract_wiring_edges(repo_root: Path, agents: list[dict[str, Any]]) -> tupl
                     edges.add((src, dst, "RUNS_SCRIPT"))
                     depends[src].add(dst)
 
-    for rel in sorted(known):
-        if not rel.endswith(".py"):
-            continue
-        for dep in _extract_python_dep_paths(repo_root, rel, {"import_resolution_failures": []}):
-            if dep in known and dep != rel:
-                edges.add((rel, dep, "IMPORTS_PY"))
-                depends[rel].add(dep)
+    bounded_import_paths = {
+        path
+        for path in known
+        if path.startswith("tools/dao-arbiter/dao_lifebook/")
+        or path.startswith("engine/exoneural_governor/")
+    }
+    for src, dst, et in _extract_python_import_edges_for_graph(repo_root, bounded_import_paths):
+        edges.add((src, dst, et))
+        depends.setdefault(src, set()).add(dst)
 
     resolved: list[dict[str, str]] = []
     for s, d, t in sorted(edges, key=lambda x: (x[0], x[1], x[2])):
@@ -1032,15 +1120,21 @@ def _build_model_once(repo_root: Path, out_path: Path, contract_path: Path) -> d
 
     node_ids = sorted(a["agent_id"] for a in agents)
     directed = [(e["from_id"], e["to_id"]) for e in edges]
-    pr = pagerank(node_ids, directed)
-    bc = betweenness_centrality_brandes(node_ids, directed)
-    max_pr = max(pr.values()) if pr else 0.0
-    max_bc = max(bc.values()) if bc else 0.0
 
     degree = {nid: 0 for nid in node_ids}
     for s, d in directed:
         degree[s] += 1
         degree[d] += 1
+
+    active_nodes = sorted([nid for nid, deg in degree.items() if deg > 0])
+    active_edges = [(s, d) for s, d in directed if s in degree and d in degree and degree[s] > 0 and degree[d] > 0]
+
+    pr_active = pagerank(active_nodes, active_edges) if active_nodes else {}
+    bc_active = betweenness_centrality_brandes(active_nodes, active_edges) if active_nodes else {}
+    pr = {nid: pr_active.get(nid, 0.0) for nid in node_ids}
+    bc = {nid: bc_active.get(nid, 0.0) for nid in node_ids}
+    max_pr = max(pr.values()) if pr else 0.0
+    max_bc = max(bc.values()) if bc else 0.0
     nonzero = sum(1 for v in degree.values() if v > 0)
     k = max(5, min(25, round(0.08 * nonzero))) if nonzero else 5
 
