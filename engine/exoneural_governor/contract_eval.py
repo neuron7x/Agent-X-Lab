@@ -128,8 +128,9 @@ def _git_snapshot(ctx: EvalContext) -> dict[str, Any]:
 
 def _repo_fingerprint(ctx: EvalContext, label: str) -> str:
     head = _run_cmd(ctx, f"git_head_{label}", ["git", "rev-parse", "HEAD"])
-    status = _run_cmd(ctx, f"git_status_{label}", ["git", "status", "--porcelain=v1", "--untracked-files=all"])
-    return _sha256_text(_canonical_json({"head": head.stdout.strip(), "porcelain": status.stdout.splitlines()}))
+    tree = _run_cmd(ctx, f"git_tree_{label}", ["git", "ls-tree", "-r", "HEAD"])
+    status = _run_cmd(ctx, f"git_status_{label}", ["git", "status", "--porcelain=v1", "--untracked-files=no"])
+    return _sha256_text(_canonical_json({"head": head.stdout.strip(), "tree": tree.stdout.splitlines(), "porcelain": status.stdout.splitlines()}))
 
 
 def _porcelain_path(line: str) -> str:
@@ -139,25 +140,31 @@ def _porcelain_path(line: str) -> str:
     return payload.strip()
 
 
-def _is_allowed_path(path: str, out_rel: str | None) -> bool:
-    if not out_rel:
+def _is_allowed_path(path: str, out_rel: str | None, repo_root: Path, out_dir: Path | None) -> bool:
+    if not out_rel or out_dir is None:
         return False
-    return path == out_rel or path.startswith(out_rel + "/")
+    candidate = (repo_root / path).resolve()
+    out_resolved = out_dir.resolve()
+    try:
+        candidate.relative_to(out_resolved)
+        return True
+    except ValueError:
+        return False
 
 
-def _strict_no_write_diff(before: dict[str, Any], after: dict[str, Any], out_rel: str | None) -> dict[str, Any]:
+def _strict_no_write_diff(before: dict[str, Any], after: dict[str, Any], out_rel: str | None, repo_root: Path, out_dir: Path | None) -> dict[str, Any]:
     before_lines = set(before["porcelain_lines"])
     after_lines = set(after["porcelain_lines"])
     added_lines = sorted(after_lines - before_lines)
     removed_lines = sorted(before_lines - after_lines)
 
-    outside_added = sorted([ln for ln in added_lines if not _is_allowed_path(_porcelain_path(ln), out_rel)])
-    outside_removed = sorted([ln for ln in removed_lines if not _is_allowed_path(_porcelain_path(ln), out_rel)])
+    outside_added = sorted([ln for ln in added_lines if not _is_allowed_path(_porcelain_path(ln), out_rel, repo_root, out_dir)])
+    outside_removed = sorted([ln for ln in removed_lines if not _is_allowed_path(_porcelain_path(ln), out_rel, repo_root, out_dir)])
 
     before_untracked = set(before["untracked_lines"])
     after_untracked = set(after["untracked_lines"])
     new_untracked = sorted(after_untracked - before_untracked)
-    outside_new_untracked = sorted([p for p in new_untracked if not _is_allowed_path(p, out_rel)])
+    outside_new_untracked = sorted([p for p in new_untracked if not _is_allowed_path(p, out_rel, repo_root, out_dir)])
 
     return {
         "outside_porcelain_added": outside_added,
@@ -176,10 +183,11 @@ def _semantic_signature(model: dict[str, Any], contract_rows: list[dict[str, Any
     }
 
 
-def evaluate_contracts(strict: bool, out_path: Path | None, json_mode: bool, no_write: bool = True) -> tuple[int, dict[str, Any]]:
-    repo_root = discover_repo_root(Path.cwd())
+def evaluate_contracts(strict: bool, out_path: Path | None, json_mode: bool, no_write: bool = True, repo_root: Path | None = None, engine_root: Path | None = None) -> tuple[int, dict[str, Any]]:
+    repo_root = (repo_root.resolve() if repo_root else discover_repo_root(Path.cwd()))
     out_dir = out_path.resolve() if out_path else None
     ctx = EvalContext(repo_root=repo_root, strict=strict, json_mode=json_mode, out_dir=out_dir, no_write=no_write)
+    engine_root = engine_root.resolve() if engine_root else (repo_root / "engine")
     gates: dict[str, GateResult] = {}
     warnings: list[dict[str, str]] = []
 
@@ -205,8 +213,8 @@ def evaluate_contracts(strict: bool, out_path: Path | None, json_mode: bool, no_
         "PYTHONPYCACHEPREFIX": str(temp_root / "pycache"),
         "npm_config_cache": str(temp_root / "npm_cache"),
     }
-    for v in hermetic_env.values():
-        Path(v).mkdir(parents=True, exist_ok=True)
+    for key in ("XDG_CACHE_HOME", "PIP_CACHE_DIR", "PYTHONPYCACHEPREFIX", "npm_config_cache"):
+        Path(hermetic_env[key]).mkdir(parents=True, exist_ok=True)
 
     before = _git_snapshot(ctx)
     fp_start = _repo_fingerprint(ctx, "start")
@@ -223,134 +231,136 @@ def evaluate_contracts(strict: bool, out_path: Path | None, json_mode: bool, no_
     _gate_put(gates, "GATE_A03_DETERMINISTIC_ENV_STAMP", "PASS", {"sha256": _sha256_text(_canonical_json(env_stamp))})
 
     run_artifacts: list[tuple[Path, Path]] = []
-    for n in ("run1", "run2"):
-        tmp = Path(tempfile.mkdtemp(prefix=f"repo_model_{n}_", dir=temp_root))
-        run_artifacts.append((tmp / "repo_model.json", tmp / "architecture_contract.jsonl"))
-
-    repo_model_ok = True
-    for model_path, contract_path in run_artifacts:
-        rec = _run_cmd(
-            ctx,
-            f"repo_model_{model_path.parent.name}",
-            python_module_cmd("exoneural_governor", "repo-model", "--out", str(model_path), "--contract-out", str(contract_path)),
-            cwd=repo_root / "engine",
-            env=hermetic_env,
-        )
-        if rec.returncode != 0:
-            repo_model_ok = False
-            break
-
-    if not repo_model_ok:
-        _gate_put(gates, "GATE_A02_STRICT_NO_WRITE", "FAIL", {"reason": "repo-model execution failed"})
-        _gate_put(gates, "GATE_A06_DETERMINISM_SIGNATURE", "FAIL", {"reason": "repo-model execution failed"})
-    else:
-        m1, c1 = run_artifacts[0]
-        m2, c2 = run_artifacts[1]
-        model1 = json.loads(m1.read_text(encoding="utf-8"))
-        model2 = json.loads(m2.read_text(encoding="utf-8"))
-        contract_rows1 = [json.loads(ln) for ln in c1.read_text(encoding="utf-8").splitlines() if ln.strip()]
-        contract_rows2 = [json.loads(ln) for ln in c2.read_text(encoding="utf-8").splitlines() if ln.strip()]
-
-        sig1 = _semantic_signature(model1, contract_rows1)
-        sig2 = _semantic_signature(model2, contract_rows2)
-        sig1_text = _canonical_json(sig1)
-        sig2_text = _canonical_json(sig2)
-        det_ok = sig1_text == sig2_text
-
-        if out_dir:
-            shutil.copy2(m1, out_dir / "repo_model.run1.json")
-            shutil.copy2(m2, out_dir / "repo_model.run2.json")
-            (out_dir / "signature.run1.json").write_text(sig1_text + "\n", encoding="utf-8")
-            (out_dir / "signature.run2.json").write_text(sig2_text + "\n", encoding="utf-8")
-
-        _gate_put(
-            gates,
-            "GATE_A06_DETERMINISM_SIGNATURE",
-            "PASS" if det_ok else "FAIL",
-            {
-                "semantic_equal": det_ok,
-                "signature_run1_sha256": _sha256_text(sig1_text),
-                "signature_run2_sha256": _sha256_text(sig2_text),
-                "signature_run1": sig1,
-                "signature_run2": sig2,
-            },
-        )
-
-        ok_schema, reason = validate_repo_model_schema(model1)
-        dangling = model1.get("unknowns", {}).get("dangling_edges", [])
-        parse_failures = model1.get("unknowns", {}).get("parse_failures", [])
-
-        comp_status = "PASS"
-        if strict and (dangling or parse_failures):
-            comp_status = "FAIL"
-        elif dangling or parse_failures:
-            warnings.append({"code": "DISCOVERY_INCOMPLETE", "message": f"dangling={len(dangling)} parse_failures={len(parse_failures)}"})
-        _gate_put(gates, "GATE_B01_AGENT_DISCOVERY_COMPLETENESS", comp_status, {"dangling_edges": len(dangling), "parse_failures": len(parse_failures)})
-
-        dep_edges = [e for e in model1.get("edges", []) if isinstance(e, dict) and e.get("edge_type") in {"IMPORTS_PY", "IMPORTS_JS", "INCLUDES"}]
-        _gate_put(gates, "GATE_B02_EDGE_TYPE_COVERAGE_MIN_IMPORTS", "PASS" if len(dep_edges) >= 1 else "FAIL", {"edge_count": len(dep_edges), "minimum": 1})
-
-        agents = [a for a in model1.get("agents", []) if isinstance(a, dict)]
-        _gate_put(gates, "GATE_C01_ARCHITECTURE_CONTRACT_JSONL", "PASS" if len(contract_rows1) == len(agents) else "FAIL", {"agents": len(agents), "rows": len(contract_rows1)})
-
-        name_required = {"CLI_SCRIPT", "GITHUB_WORKFLOW", "GITHUB_COMPOSITE_ACTION", "MAKEFILE"}
-        missing_names = sorted([str(a.get("path")) for a in agents if a.get("kind") in name_required and not str(a.get("name") or "").strip()])
-        _gate_put(gates, "GATE_C02_NAME_RECONSTRUCTION_NON_NULL", "PASS" if not missing_names else "FAIL", {"missing": _bounded(missing_names)})
-
-        iface_fail: list[str] = []
-        for a in agents:
-            p = a.get("path")
-            if not isinstance(p, str):
-                continue
-            fp = repo_root / p
-            if not fp.exists() or not fp.is_file():
-                continue
-            text = fp.read_text(encoding="utf-8", errors="replace")
-            inputs = a.get("interface", {}).get("inputs", []) if isinstance(a.get("interface"), dict) else []
-            has_parser = fp.suffix in {".py", ".js", ".mjs", ".ts", ".sh", ".bash"} and (
-                "argparse.ArgumentParser(" in text or "@click.option(" in text or "yargs" in text
-            )
-            if has_parser and not inputs:
-                iface_fail.append(p)
-        _gate_put(gates, "GATE_C03_ZERO_SHOT_INTERFACE_EXTRACTION_MINIMUM", "PASS" if not iface_fail else "FAIL", {"missing_inputs": _bounded(iface_fail)})
-
-        policy_fail = bool(strict and (dangling or parse_failures))
-        _gate_put(gates, "GATE_D01_POLICY_TIERS_ENFORCED", "FAIL" if policy_fail else "PASS", {"strict": strict})
-
-        fixtures_present = all(
-            (repo_root / p).exists()
-            for p in [
-                "engine/tests/fixtures/repo_model_fixture_a",
-                "engine/tests/fixtures/repo_model_fixture_b",
-                "engine/tests/fixtures/repo_model_fixture_c",
-                "engine/tests/fixtures/repo_model_fixture_d",
-            ]
-        )
-        _gate_put(gates, "GATE_D02_REGRESSION_FIXTURES_GOLDEN", "PASS" if fixtures_present else "FAIL", {"fixtures_present": fixtures_present})
-
-        ids = sorted([a.get("agent_id") for a in agents if isinstance(a.get("agent_id"), str)])
-        edges = [
-            (e.get("from_id"), e.get("to_id"))
-            for e in model1.get("edges", [])
-            if isinstance(e, dict) and isinstance(e.get("from_id"), str) and isinstance(e.get("to_id"), str)
+    with tempfile.TemporaryDirectory(prefix="repo_model_run1_", dir=temp_root) as run1_tmp, tempfile.TemporaryDirectory(prefix="repo_model_run2_", dir=temp_root) as run2_tmp:
+        run_artifacts = [
+            (Path(run1_tmp) / "repo_model.json", Path(run1_tmp) / "architecture_contract.jsonl"),
+            (Path(run2_tmp) / "repo_model.json", Path(run2_tmp) / "architecture_contract.jsonl"),
         ]
-        pr1 = pagerank(ids, edges)
-        bc1 = betweenness_centrality_brandes(ids, edges)
-        ids2 = ids + [f"iso_{i}" for i in range(8)]
-        pr2 = pagerank(ids2, edges)
-        bc2 = betweenness_centrality_brandes(ids2, edges)
-        top1 = [k for k, _ in sorted(((k, 0.6 * pr1.get(k, 0.0) + 0.4 * bc1.get(k, 0.0)) for k in ids), key=lambda x: (-x[1], x[0]))[:5]]
-        top2 = [k for k, _ in sorted(((k, 0.6 * pr2.get(k, 0.0) + 0.4 * bc2.get(k, 0.0)) for k in ids), key=lambda x: (-x[1], x[0]))[:5]]
-        _gate_put(gates, "GATE_E01_CENTRALITY_STABILITY_SANITY", "PASS" if top1 == top2 else "FAIL", {"top5_before": top1, "top5_after": top2})
 
-        blame_missing = [r.get("path") for r in contract_rows1 if r.get("core_rank") is not None and (not isinstance(r.get("blame"), dict) or not r["blame"].get("top_author"))]
-        can_git = git_available() and in_git_repo(repo_root)
-        _gate_put(
-            gates,
-            "GATE_E02_BUS_FACTOR_MINIMUM",
-            "FAIL" if strict and can_git and blame_missing else "PASS",
-            {"git_available": can_git, "missing_blame": _bounded([str(x) for x in blame_missing if isinstance(x, str)]), "schema_ok": ok_schema, "schema_reason": reason},
-        )
+        repo_model_ok = True
+        for model_path, contract_path in run_artifacts:
+            rec = _run_cmd(
+                ctx,
+                f"repo_model_{model_path.parent.name}",
+                python_module_cmd("exoneural_governor", "repo-model", "--out", str(model_path), "--contract-out", str(contract_path)),
+                cwd=engine_root,
+                env=hermetic_env,
+            )
+            if rec.returncode != 0:
+                repo_model_ok = False
+                break
+
+        if not repo_model_ok:
+            _gate_put(gates, "GATE_A02_STRICT_NO_WRITE", "FAIL", {"reason": "repo-model execution failed"})
+            _gate_put(gates, "GATE_A06_DETERMINISM_SIGNATURE", "FAIL", {"reason": "repo-model execution failed"})
+        else:
+            m1, c1 = run_artifacts[0]
+            m2, c2 = run_artifacts[1]
+            model1 = json.loads(m1.read_text(encoding="utf-8"))
+            model2 = json.loads(m2.read_text(encoding="utf-8"))
+            contract_rows1 = [json.loads(ln) for ln in c1.read_text(encoding="utf-8").splitlines() if ln.strip()]
+            contract_rows2 = [json.loads(ln) for ln in c2.read_text(encoding="utf-8").splitlines() if ln.strip()]
+
+            sig1 = _semantic_signature(model1, contract_rows1)
+            sig2 = _semantic_signature(model2, contract_rows2)
+            sig1_text = _canonical_json(sig1)
+            sig2_text = _canonical_json(sig2)
+            det_ok = sig1_text == sig2_text
+
+            if out_dir:
+                shutil.copy2(m1, out_dir / "repo_model.run1.json")
+                shutil.copy2(m2, out_dir / "repo_model.run2.json")
+                (out_dir / "signature.run1.json").write_text(sig1_text + "\n", encoding="utf-8")
+                (out_dir / "signature.run2.json").write_text(sig2_text + "\n", encoding="utf-8")
+
+            _gate_put(
+                gates,
+                "GATE_A06_DETERMINISM_SIGNATURE",
+                "PASS" if det_ok else "FAIL",
+                {
+                    "semantic_equal": det_ok,
+                    "signature_run1_sha256": _sha256_text(sig1_text),
+                    "signature_run2_sha256": _sha256_text(sig2_text),
+                    "signature_run1": sig1,
+                    "signature_run2": sig2,
+                },
+            )
+
+            ok_schema, reason = validate_repo_model_schema(model1)
+            dangling = model1.get("unknowns", {}).get("dangling_edges", [])
+            parse_failures = model1.get("unknowns", {}).get("parse_failures", [])
+
+            comp_status = "PASS"
+            if strict and (dangling or parse_failures):
+                comp_status = "FAIL"
+            elif dangling or parse_failures:
+                warnings.append({"code": "DISCOVERY_INCOMPLETE", "message": f"dangling={len(dangling)} parse_failures={len(parse_failures)}"})
+            _gate_put(gates, "GATE_B01_AGENT_DISCOVERY_COMPLETENESS", comp_status, {"dangling_edges": len(dangling), "parse_failures": len(parse_failures)})
+
+            dep_edges = [e for e in model1.get("edges", []) if isinstance(e, dict) and e.get("edge_type") in {"IMPORTS_PY", "IMPORTS_JS", "INCLUDES"}]
+            _gate_put(gates, "GATE_B02_EDGE_TYPE_COVERAGE_MIN_IMPORTS", "PASS" if len(dep_edges) >= 1 else "FAIL", {"edge_count": len(dep_edges), "minimum": 1})
+
+            agents = [a for a in model1.get("agents", []) if isinstance(a, dict)]
+            _gate_put(gates, "GATE_C01_ARCHITECTURE_CONTRACT_JSONL", "PASS" if len(contract_rows1) == len(agents) else "FAIL", {"agents": len(agents), "rows": len(contract_rows1)})
+
+            name_required = {"CLI_SCRIPT", "GITHUB_WORKFLOW", "GITHUB_COMPOSITE_ACTION", "MAKEFILE"}
+            missing_names = sorted([str(a.get("path")) for a in agents if a.get("kind") in name_required and not str(a.get("name") or "").strip()])
+            _gate_put(gates, "GATE_C02_NAME_RECONSTRUCTION_NON_NULL", "PASS" if not missing_names else "FAIL", {"missing": _bounded(missing_names)})
+
+            iface_fail: list[str] = []
+            for a in agents:
+                p = a.get("path")
+                if not isinstance(p, str):
+                    continue
+                fp = repo_root / p
+                if not fp.exists() or not fp.is_file():
+                    continue
+                text = fp.read_text(encoding="utf-8", errors="replace")
+                inputs = a.get("interface", {}).get("inputs", []) if isinstance(a.get("interface"), dict) else []
+                has_parser = fp.suffix in {".py", ".js", ".mjs", ".ts", ".sh", ".bash"} and (
+                    "argparse.ArgumentParser(" in text or "@click.option(" in text or "yargs" in text
+                )
+                if has_parser and not inputs:
+                    iface_fail.append(p)
+            _gate_put(gates, "GATE_C03_ZERO_SHOT_INTERFACE_EXTRACTION_MINIMUM", "PASS" if not iface_fail else "FAIL", {"missing_inputs": _bounded(iface_fail)})
+
+            policy_fail = bool(strict and (dangling or parse_failures))
+            _gate_put(gates, "GATE_D01_POLICY_TIERS_ENFORCED", "FAIL" if policy_fail else "PASS", {"strict": strict})
+
+            fixtures_present = all(
+                (repo_root / p).exists()
+                for p in [
+                    "engine/tests/fixtures/repo_model_fixture_a",
+                    "engine/tests/fixtures/repo_model_fixture_b",
+                    "engine/tests/fixtures/repo_model_fixture_c",
+                    "engine/tests/fixtures/repo_model_fixture_d",
+                ]
+            )
+            _gate_put(gates, "GATE_D02_REGRESSION_FIXTURES_GOLDEN", "PASS" if fixtures_present else "FAIL", {"fixtures_present": fixtures_present})
+
+            ids = sorted([a.get("agent_id") for a in agents if isinstance(a.get("agent_id"), str)])
+            edges = [
+                (e.get("from_id"), e.get("to_id"))
+                for e in model1.get("edges", [])
+                if isinstance(e, dict) and isinstance(e.get("from_id"), str) and isinstance(e.get("to_id"), str)
+            ]
+            pr1 = pagerank(ids, edges)
+            bc1 = betweenness_centrality_brandes(ids, edges)
+            ids2 = ids + [f"iso_{i}" for i in range(8)]
+            pr2 = pagerank(ids2, edges)
+            bc2 = betweenness_centrality_brandes(ids2, edges)
+            top1 = [k for k, _ in sorted(((k, 0.6 * pr1.get(k, 0.0) + 0.4 * bc1.get(k, 0.0)) for k in ids), key=lambda x: (-x[1], x[0]))[:5]]
+            top2 = [k for k, _ in sorted(((k, 0.6 * pr2.get(k, 0.0) + 0.4 * bc2.get(k, 0.0)) for k in ids), key=lambda x: (-x[1], x[0]))[:5]]
+            _gate_put(gates, "GATE_E01_CENTRALITY_STABILITY_SANITY", "PASS" if top1 == top2 else "FAIL", {"top5_before": top1, "top5_after": top2})
+
+            blame_missing = [r.get("path") for r in contract_rows1 if r.get("core_rank") is not None and (not isinstance(r.get("blame"), dict) or not r["blame"].get("top_author"))]
+            can_git = git_available() and in_git_repo(repo_root)
+            _gate_put(
+                gates,
+                "GATE_E02_BUS_FACTOR_MINIMUM",
+                "FAIL" if strict and can_git and blame_missing else "PASS",
+                {"git_available": can_git, "missing_blame": _bounded([str(x) for x in blame_missing if isinstance(x, str)]), "schema_ok": ok_schema, "schema_reason": reason},
+            )
 
     fp_end = _repo_fingerprint(ctx, "end")
     if fp_start != fp_end:
@@ -363,7 +373,7 @@ def evaluate_contracts(strict: bool, out_path: Path | None, json_mode: bool, no_
         _gate_put(gates, "GATE_A04_REPO_FINGERPRINT_RESCAN", "PASS", {"start": fp_start, "end": fp_end})
 
     after = _git_snapshot(ctx)
-    diff = _strict_no_write_diff(before, after, out_rel)
+    diff = _strict_no_write_diff(before, after, out_rel, repo_root, out_dir)
     outside_changes = bool(diff["outside_porcelain_added"] or diff["outside_porcelain_removed"] or diff["outside_new_untracked"])
     _gate_put(gates, "GATE_A05_OUTSIDE_OUT_WRITE_CHECK", "FAIL" if (no_write and outside_changes) else "PASS", diff)
     _gate_put(gates, "GATE_A02_STRICT_NO_WRITE", "PASS" if (not no_write or not outside_changes) else "FAIL", {"enabled": no_write, "out_dir": out_dir.as_posix() if out_dir else None})
@@ -400,8 +410,9 @@ def cli(argv: list[str] | None = None) -> int:
     parser.add_argument("--strict", action="store_true")
     parser.add_argument("--out", type=str, default=None)
     parser.add_argument("--json", action="store_true")
-    parser.add_argument("--allow-write", action="store_true")
-    parser.add_argument("--strict-no-write", action="store_true")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--allow-write", action="store_true")
+    group.add_argument("--strict-no-write", action="store_true")
     args = parser.parse_args(argv)
     out_dir = Path(args.out).resolve() if args.out else None
     no_write = True if args.strict_no_write else (not args.allow_write)

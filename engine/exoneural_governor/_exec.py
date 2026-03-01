@@ -11,6 +11,44 @@ from typing import Any
 
 
 @dataclass(frozen=True)
+class EnvPolicy:
+    allowlist_keys: set[str]
+    defaults: dict[str, str]
+    required_keys: set[str]
+
+
+DEFAULT_ENV_POLICY = EnvPolicy(
+    allowlist_keys={
+        "PATH",
+        "HOME",
+        "USER",
+        "LOGNAME",
+        "SHELL",
+        "TERM",
+        "TMPDIR",
+        "TMP",
+        "TEMP",
+        "SystemRoot",
+        "WINDIR",
+        "ComSpec",
+        "PATHEXT",
+    },
+    defaults={
+        "LANG": "C.UTF-8",
+        "LC_ALL": "C.UTF-8",
+        "PYTHONUTF8": "1",
+        "PYTHONIOENCODING": "utf-8",
+        "TZ": "UTC",
+        "NO_COLOR": "1",
+        "PIP_DISABLE_PIP_VERSION_CHECK": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+        "PYTHONHASHSEED": "0",
+    },
+    required_keys={"PATH"},
+)
+
+
+@dataclass(frozen=True)
 class ExecResult:
     name: str
     command: list[str]
@@ -32,12 +70,47 @@ class ExecResult:
         }
 
 
-def run_command(name: str, command: list[str], cwd: Path, env: dict[str, str] | None = None) -> ExecResult:
-    run_env = os.environ.copy()
-    if env:
-        run_env.update(env)
-    proc = subprocess.run(command, cwd=cwd, env=run_env, capture_output=True, text=True, check=False)
-    return ExecResult(name=name, command=command, returncode=proc.returncode, stdout=proc.stdout, stderr=proc.stderr)
+def build_env(extra_env: dict[str, str] | None = None, policy: EnvPolicy = DEFAULT_ENV_POLICY) -> dict[str, str]:
+    env: dict[str, str] = {}
+    for key in sorted(policy.allowlist_keys):
+        value = os.environ.get(key)
+        if value is not None:
+            env[key] = value
+    for key, value in policy.defaults.items():
+        env.setdefault(key, value)
+    if extra_env:
+        for key, value in extra_env.items():
+            env[key] = value
+
+    if not env.get("PATH"):
+        env["PATH"] = os.defpath
+
+    missing = sorted([k for k in policy.required_keys if not env.get(k)])
+    if missing:
+        raise RuntimeError(f"missing required environment keys: {','.join(missing)}")
+    return env
+
+
+def run_command(name: str, command: list[str], cwd: Path, env: dict[str, str] | None = None, policy: EnvPolicy = DEFAULT_ENV_POLICY) -> ExecResult:
+    run_env = build_env(extra_env=env, policy=policy)
+    try:
+        proc = subprocess.run(
+            command,
+            cwd=cwd,
+            env=run_env,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+        )
+        return ExecResult(name=name, command=command, returncode=proc.returncode, stdout=proc.stdout, stderr=proc.stderr)
+    except FileNotFoundError:
+        binary = command[0] if command else "<empty>"
+        return ExecResult(name=name, command=command, returncode=127, stdout="", stderr=f"ENOENT:{binary}")
+    except OSError as exc:
+        binary = command[0] if command else "<empty>"
+        return ExecResult(name=name, command=command, returncode=127, stdout="", stderr=f"OSERROR:{binary}:{exc}")
 
 
 def python_module_cmd(module: str, *args: str) -> list[str]:

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import os
 import subprocess
 from pathlib import Path
 
@@ -15,12 +14,7 @@ def _repo_root() -> Path:
 
 def test_contract_eval_runs(tmp_path: Path) -> None:
     repo_root = _repo_root()
-    original = Path.cwd()
-    try:
-        os.chdir(repo_root / "engine")
-        code, report = evaluate_contracts(strict=False, out_path=tmp_path, json_mode=True, no_write=True)
-    finally:
-        os.chdir(original)
+    code, report = evaluate_contracts(strict=False, out_path=tmp_path, json_mode=True, no_write=True, repo_root=repo_root, engine_root=repo_root / "engine")
     assert code in (0, 2)
     ids = [g["id"] for g in report["gates"]]
     assert "GATE_A01_ENVIRONMENT_STAMP" in ids
@@ -30,12 +24,7 @@ def test_contract_eval_runs(tmp_path: Path) -> None:
 
 def test_contract_eval_gate_ids_unique(tmp_path: Path) -> None:
     repo_root = _repo_root()
-    original = Path.cwd()
-    try:
-        os.chdir(repo_root / "engine")
-        _, report = evaluate_contracts(strict=False, out_path=tmp_path, json_mode=True, no_write=True)
-    finally:
-        os.chdir(original)
+    _, report = evaluate_contracts(strict=False, out_path=tmp_path, json_mode=True, no_write=True, repo_root=repo_root, engine_root=repo_root / "engine")
     ids = [g["id"] for g in report["gates"]]
     assert len(ids) == len(set(ids))
 

@@ -28,3 +28,14 @@ RIS (Repository Intelligence Stack) provides deterministic repository graph synt
 - `commands.log` + `NNN_*.json`: executed command evidence and output hashes.
 - `repo_model.run1.json`, `repo_model.run2.json`: determinism evidence.
 - `hashes.json`: SHA-256 for all bundle files.
+
+
+## Hermetic execution envelope
+- Subprocess environment is built from an allowlist, then deterministic defaults are applied (UTF-8 I/O, UTC timezone, no-color, prompt-disabled git).
+- All subprocesses use UTF-8 decoding with replacement to prevent locale-dependent failures.
+- Missing binaries are converted to structured command results (`returncode=127`, `ENOENT:<binary>`) so gates fail deterministically instead of crashing.
+
+## Strict no-write safety
+- Strict checks compare full porcelain snapshots before/after and only allow path changes resolved under `--out`.
+- Path checks are resolved-path based to prevent symlink-prefix escape bypasses.
+- Repo fingerprint uses bounded git signals (`HEAD`, `ls-tree`, tracked porcelain) for stable cross-platform comparisons.

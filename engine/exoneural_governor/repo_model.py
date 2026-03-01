@@ -2,14 +2,13 @@ from __future__ import annotations
 
 import argparse
 import ast
-import fnmatch
 import hashlib
 import json
 import re
 import shlex
 import subprocess
 from collections import Counter, deque
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 import yaml
@@ -271,6 +270,24 @@ DEFAULT_INCLUDE_GLOBS = [
 DEFAULT_EXCLUDE_GLOBS = ["**/__init__.py"]
 
 
+
+
+def _canon_rel(rel: str) -> str:
+    r = rel.replace("\\", "/")
+    while r.startswith("./"):
+        r = r[2:]
+    return r
+
+
+def _match(rel: str, pat: str) -> bool:
+    rel2 = _canon_rel(rel)
+    pat2 = pat.replace("\\", "/")
+    return PurePosixPath(rel2).match(pat2)
+
+
+def _match_any(rel: str, patterns: list[str]) -> bool:
+    return any(_match(rel, p) for p in patterns)
+
 def discover_agents(repo_root: Path, include_globs: list[str] | None = None, exclude_globs: list[str] | None = None) -> list[dict[str, Any]]:
     paths: set[Path] = set()
     paths.update(_iter_files(repo_root / ".github" / "workflows"))
@@ -300,9 +317,9 @@ def discover_agents(repo_root: Path, include_globs: list[str] | None = None, exc
     parse_failures: list[str] = []
     for p in sorted(paths):
         rel = _rel(repo_root, p)
-        if include_globs and not any(fnmatch.fnmatch(rel, pat) for pat in include_globs):
+        if include_globs and not _match_any(rel, include_globs):
             continue
-        if exclude_globs and any(fnmatch.fnmatch(rel, pat) for pat in exclude_globs):
+        if exclude_globs and _match_any(rel, exclude_globs):
             continue
         name, source, evidence = _name_for_path(repo_root, p, parse_failures)
         row: dict[str, Any] = {
@@ -656,8 +673,9 @@ def _resolve_same_root_absolute_import_for_graph(root_dir: Path, module_name: st
     return None
 
 
-def _extract_python_import_edges_for_graph(repo_root: Path, bounded_paths: set[str]) -> list[tuple[str, str, str]]:
+def _extract_python_import_edges_for_graph(repo_root: Path, bounded_paths: set[str], parse_failures: list[str] | None = None) -> list[tuple[str, str, str]]:
     edges: set[tuple[str, str, str]] = set()
+    parse_failures = parse_failures if parse_failures is not None else []
     bounded_files = sorted(repo_root / rel for rel in bounded_paths)
     group_roots = [
         repo_root / 'tools' / 'dao-arbiter' / 'dao_lifebook',
@@ -680,7 +698,11 @@ def _extract_python_import_edges_for_graph(repo_root: Path, bounded_paths: set[s
             continue
         try:
             tree = ast.parse(_read_text(src_file))
+        except SyntaxError:
+            parse_failures.append(_canon_rel(src_rel))
+            continue
         except Exception:
+            parse_failures.append(_canon_rel(src_rel))
             continue
         for node in ast.walk(tree):
             if isinstance(node, ast.ImportFrom):
@@ -915,7 +937,8 @@ def _extract_wiring_edges(repo_root: Path, agents: list[dict[str, Any]]) -> tupl
         or path.startswith("engine/exoneural_governor/")
         or path.startswith("engine/tools/")
     }
-    for src, dst, et in _extract_python_import_edges_for_graph(repo_root, bounded_import_paths):
+    py_parse_failures: list[str] = []
+    for src, dst, et in _extract_python_import_edges_for_graph(repo_root, bounded_import_paths, parse_failures=py_parse_failures):
         edges.add((src, dst, et))
         depends.setdefault(src, set()).add(dst)
     for src, dst, et in _extract_js_import_edges_for_graph(repo_root, bounded_import_paths):
@@ -933,7 +956,7 @@ def _extract_wiring_edges(repo_root: Path, agents: list[dict[str, Any]]) -> tupl
             dangling.append({"from_path": s, "to_path": d, "edge_type": t})
 
     return resolved, {
-        "parse_failures": sorted(set(parse_failures)),
+        "parse_failures": sorted(set([_canon_rel(x) for x in parse_failures + py_parse_failures])),
         "dangling_edges": sorted(dangling, key=lambda x: (x["from_path"], x["to_path"], x["edge_type"])),
         "import_resolution_failures": [],
     }, depends
@@ -1297,6 +1320,20 @@ def write_repo_model(out_path: Path, model: dict[str, Any]) -> None:
     out_path.write_text(json.dumps(model, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def _subdomain_tags(path: str, limit: int = 8) -> list[str]:
+    p = path.replace("\\", "/").lstrip("./")
+    segs = [s for s in p.split("/") if s]
+    raw: list[str] = []
+    for seg in segs:
+        base = seg.rsplit(".", 1)[0]
+        parts = [x for x in base.split("-") if x]
+        raw.extend(parts)
+        if len(raw) >= limit * 2:
+            break
+    stable_unique = list(dict.fromkeys(raw))
+    return stable_unique[:limit]
+
+
 def write_architecture_contract(out_path: Path, model: dict[str, Any]) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     repo_root = Path(str(model.get("repo_root", ""))).resolve() if model.get("repo_root") else None
@@ -1333,7 +1370,7 @@ def write_architecture_contract(out_path: Path, model: dict[str, Any]) -> None:
             "depends_on_paths": a.get("depends_on_paths", []),
             "invocation_examples": invocation_examples if isinstance(invocation_examples, list) else [],
             "provides": sorted({o.get("name") for o in outputs if isinstance(o, dict) and isinstance(o.get("name"), str)}),
-            "subdomain_tags": sorted(set(str(a.get("path", "")).replace("-", "/").split("/")))[:8],
+            "subdomain_tags": _subdomain_tags(str(a.get("path", ""))),
             "edges_summary": edge_index.get(a["agent_id"], {}),
             "core_rank": core_rank.get(a["agent_id"]),
             "blame": blame,

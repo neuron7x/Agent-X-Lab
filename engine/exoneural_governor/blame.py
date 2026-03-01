@@ -1,18 +1,19 @@
 from __future__ import annotations
 
-import subprocess
 from collections import Counter
 from pathlib import Path
 from typing import Any
 
+from ._exec import run_command
+
 
 def git_available() -> bool:
-    proc = subprocess.run(["git", "--version"], capture_output=True, text=True, check=False)
+    proc = run_command("git_version", ["git", "--version"], Path.cwd())
     return proc.returncode == 0
 
 
 def in_git_repo(repo_root: Path) -> bool:
-    proc = subprocess.run(["git", "rev-parse", "--is-inside-work-tree"], cwd=repo_root, capture_output=True, text=True, check=False)
+    proc = run_command("git_inside", ["git", "rev-parse", "--is-inside-work-tree"], repo_root)
     return proc.returncode == 0 and proc.stdout.strip() == "true"
 
 
@@ -30,7 +31,7 @@ def blame_for_path(repo_root: Path, rel_path: str, ignore_revs_file: str | None 
     if ignore and ignore.exists():
         cmd.extend(["--ignore-revs-file", str(ignore)])
     cmd.extend(["--", rel_path])
-    proc = subprocess.run(cmd, cwd=repo_root, capture_output=True, text=True, check=False)
+    proc = run_command("git_blame", cmd, repo_root)
     if proc.returncode != 0:
         return None
     counts: Counter[str] = Counter()
