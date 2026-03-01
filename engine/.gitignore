@@ -41,3 +41,7 @@ proof/*
 # FEG runtime evidence
 artifacts/feg/
 artifacts/feg_r8/
+
+# RIS contract-eval artifacts
+artifacts/contract_eval/
+artifacts/contract_eval_strict/

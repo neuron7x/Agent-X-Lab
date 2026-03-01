@@ -43,3 +43,7 @@ __pycache__/
 # QA8 live state (runtime-generated, not committed)
 qa8_state/QA8_STATUS.json
 qa8_state/HEAL_LOG.jsonl
+
+# RIS evaluator artifacts
+engine/artifacts/contract_eval/
+engine/artifacts/contract_eval_strict/

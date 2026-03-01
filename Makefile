@@ -1,4 +1,4 @@
-.PHONY: setup bootstrap lint test test-all test-integration test-e2e test-property dev-ui dev-worker gates reproduce repo-model repo-model-deps repo-model-strict contract-eval
+.PHONY: setup bootstrap lint test test-all test-integration test-e2e test-property dev-ui dev-worker gates reproduce repo-model repo-model-deps repo-model-strict contract-eval contract-eval-strict-no-write
 
 PYTHON ?= python
 VENV ?= .venv
@@ -67,7 +67,11 @@ repo-model-strict: repo-model-deps
 
 contract-eval:
 	@echo "Running contract evaluator..."
-	cd engine && PYTHONPATH=. $(PYTHON_RUN) -m exoneural_governor contract-eval --out artifacts/contract_eval --no-write
+	cd engine && PYTHONPATH=. $(PYTHON_RUN) -m exoneural_governor contract-eval --strict --out artifacts/contract_eval --strict-no-write
+
+contract-eval-strict-no-write:
+	@echo "Running contract evaluator (strict-no-write)..."
+	cd engine && PYTHONPATH=. $(PYTHON_RUN) -m exoneural_governor contract-eval --strict --out artifacts/contract_eval_strict --strict-no-write
 
 # How to run hardening gates:
 #   make repo-model
