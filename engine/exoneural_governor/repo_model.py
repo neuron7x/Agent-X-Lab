@@ -690,6 +690,59 @@ def _extract_python_import_edges_for_graph(repo_root: Path, bounded_paths: set[s
                         continue
                     edges.add((src_rel, dst_rel, 'IMPORTS_PY'))
     return sorted(edges)
+
+
+def _extract_js_import_edges_for_graph(repo_root: Path, bounded_paths: set[str]) -> list[tuple[str, str, str]]:
+    edges: set[tuple[str, str, str]] = set()
+    for rel in sorted(bounded_paths):
+        if Path(rel).suffix not in {".js", ".mjs", ".ts", ".tsx", ".jsx"}:
+            continue
+        src_file = repo_root / rel
+        if not src_file.exists():
+            continue
+        text = _read_text(src_file)
+        specs = [m.group(1) for m in re.finditer(r"import\s+[^\n]*?from\s+['\"]([^'\"]+)['\"]", text)]
+        specs.extend([m.group(1) for m in re.finditer(r"require\(\s*['\"]([^'\"]+)['\"]\s*\)", text)])
+        for spec in sorted(specs):
+            if not spec.startswith(("./", "../")):
+                continue
+            dst_file = _resolve_js_local(src_file.parent, spec)
+            if dst_file is None or not dst_file.exists():
+                continue
+            dst_rel = _rel(repo_root, dst_file)
+            if dst_rel == rel or dst_rel not in bounded_paths:
+                continue
+            edges.add((rel, dst_rel, "IMPORTS_JS"))
+    return sorted(edges)
+
+
+def _extract_include_edges_for_graph(repo_root: Path, bounded_paths: set[str]) -> list[tuple[str, str, str]]:
+    edges: set[tuple[str, str, str]] = set()
+    for rel in sorted(bounded_paths):
+        src_file = repo_root / rel
+        if not src_file.exists():
+            continue
+        text = _read_text(src_file)
+        if src_file.suffix.lower() in {".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp", ".hxx"}:
+            for m in re.finditer(r'^\s*#include\s+"([^"]+)"', text, flags=re.MULTILINE):
+                dst_file = (src_file.parent / m.group(1).strip()).resolve()
+                if not dst_file.exists() or not dst_file.is_file():
+                    continue
+                dst_rel = _rel(repo_root, dst_file)
+                if dst_rel == rel or dst_rel not in bounded_paths:
+                    continue
+                edges.add((rel, dst_rel, "INCLUDES"))
+        if src_file.name == "Makefile" or src_file.suffix in {".mk", ".make"}:
+            for m in re.finditer(r"^\s*include\s+(.+)$", text, flags=re.MULTILINE):
+                spec = m.group(1).strip().split()[0]
+                dst_file = (src_file.parent / spec).resolve()
+                if not dst_file.exists() or not dst_file.is_file():
+                    continue
+                dst_rel = _rel(repo_root, dst_file)
+                if dst_rel == rel or dst_rel not in bounded_paths:
+                    continue
+                edges.add((rel, dst_rel, "INCLUDES"))
+    return sorted(edges)
 def _resolve_js_local(base: Path, spec: str) -> Path | None:
     cand = (base / spec).resolve()
     candidates = [cand, *[cand.with_suffix(ext) for ext in [".js", ".mjs", ".ts"]], cand / "index.js", cand / "index.mjs", cand / "index.ts"]
@@ -836,6 +889,12 @@ def _extract_wiring_edges(repo_root: Path, agents: list[dict[str, Any]]) -> tupl
         or path.startswith("engine/exoneural_governor/")
     }
     for src, dst, et in _extract_python_import_edges_for_graph(repo_root, bounded_import_paths):
+        edges.add((src, dst, et))
+        depends.setdefault(src, set()).add(dst)
+    for src, dst, et in _extract_js_import_edges_for_graph(repo_root, bounded_import_paths):
+        edges.add((src, dst, et))
+        depends.setdefault(src, set()).add(dst)
+    for src, dst, et in _extract_include_edges_for_graph(repo_root, bounded_import_paths):
         edges.add((src, dst, et))
         depends.setdefault(src, set()).add(dst)
 
@@ -1210,24 +1269,47 @@ def write_repo_model(out_path: Path, model: dict[str, Any]) -> None:
 
 def write_architecture_contract(out_path: Path, model: dict[str, Any]) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
+    core_rank = {c.get("agent_id"): c.get("rank") for c in model.get("core_candidates", []) if isinstance(c, dict)}
+    edge_index: dict[str, dict[str, int]] = {}
+    for e in model.get("edges", []):
+        if not isinstance(e, dict):
+            continue
+        src = e.get("from_id")
+        et = e.get("edge_type")
+        if not isinstance(src, str) or not isinstance(et, str):
+            continue
+        edge_index.setdefault(src, {})
+        edge_index[src][et] = edge_index[src].get(et, 0) + 1
+
     rows = []
     for a in sorted(model.get("agents", []), key=lambda x: x["agent_id"]):
+        inputs = a.get("interface", {}).get("inputs", [])
+        outputs = a.get("interface", {}).get("outputs", [])
+        invocation_examples = a.get("invocation_examples", [])
+        # NOTE(repo-infra): deterministic fallback fields are required by contract-eval gates.
         rows.append({
             "agent_id": a["agent_id"],
             "path": a["path"],
             "kind": a["kind"],
             "subkind": a.get("subkind"),
             "name": a.get("name"),
-            "name_source": a.get("name_source"),
-            "interface": {"inputs": a.get("interface", {}).get("inputs", []), "outputs": a.get("interface", {}).get("outputs", [])},
+            "inputs": inputs if isinstance(inputs, list) else [],
+            "outputs": outputs if isinstance(outputs, list) else [],
             "depends_on_paths": a.get("depends_on_paths", []),
-            "invocation_examples": a.get("invocation_examples", []),
-            "evolution": a.get("evolution"),
+            "invocation_examples": invocation_examples if isinstance(invocation_examples, list) else [],
+            "provides": sorted({o.get("name") for o in outputs if isinstance(o, dict) and isinstance(o.get("name"), str)}),
+            "edges_summary": edge_index.get(a["agent_id"], {}),
+            "core_rank": core_rank.get(a["agent_id"]),
+            "blame": None,
         })
     with out_path.open("w", encoding="utf-8") as f:
         for row in rows:
             f.write(json.dumps(row, sort_keys=True) + "\n")
 
+
+# How to run (deterministic local commands):
+#   PYTHONPATH=. python -m exoneural_governor repo-model --out engine/artifacts/repo_model/repo_model.json
+#   PYTHONPATH=. python -m exoneural_governor contract-eval --out engine/artifacts/contract_eval
 
 def cli(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="repo-model")

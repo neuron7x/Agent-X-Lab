@@ -79,4 +79,7 @@ def test_repo_model_quality_and_contract(tmp_path: Path) -> None:
     lines = [ln for ln in contract.read_text(encoding="utf-8").splitlines() if ln.strip()]
     assert lines
     obj = json.loads(lines[0])
-    assert "agent_id" in obj and "interface" in obj
+    assert "agent_id" in obj
+    assert "inputs" in obj and isinstance(obj["inputs"], list)
+    assert "outputs" in obj and isinstance(obj["outputs"], list)
+    assert "core_rank" in obj

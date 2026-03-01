@@ -4,12 +4,18 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
 import subprocess
+import sys
 import tempfile
+from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+EXIT_PASS = 0
+EXIT_FAIL = 2
+EXIT_ERROR = 3
 
 GATE_ORDER = [
     "GATE_01_REPO_ROOT",
@@ -25,30 +31,33 @@ GATE_ORDER = [
 
 
 @dataclass
+class CommandRecord:
+    name: str
+    command: list[str]
+    returncode: int
+    stdout: str
+    stderr: str
+
+
+@dataclass
 class EvalContext:
     repo_root: Path
     strict: bool
     json_mode: bool
     out_dir: Path | None
-    commands: list[str] = field(default_factory=list)
-    command_outputs: list[dict[str, str]] = field(default_factory=list)
+    commands: list[CommandRecord] = field(default_factory=list)
     model_path: Path | None = None
     model: dict[str, Any] | None = None
-    run1: dict[str, Any] | None = None
-    run2: dict[str, Any] | None = None
 
 
-def discover_repo_root(cwd: Path) -> Path:
-    proc = subprocess.run(
-        ["git", "rev-parse", "--show-toplevel"],
-        cwd=cwd,
-        check=False,
-        capture_output=True,
-        text=True,
-    )
-    if proc.returncode != 0:
-        raise RuntimeError("git repo root discovery failed")
-    return Path(proc.stdout.strip()).resolve()
+@dataclass
+class GateResult:
+    gate_id: str
+    status: str
+    details: dict[str, Any]
+
+    def as_dict(self) -> dict[str, Any]:
+        return {"id": self.gate_id, "status": self.status, "details": self.details}
 
 
 def _sha256_bytes(data: bytes) -> str:
@@ -59,24 +68,49 @@ def _sha256_file(path: Path) -> str:
     return _sha256_bytes(path.read_bytes())
 
 
-def run_cmd(ctx: EvalContext, cmd: list[str], name: str) -> subprocess.CompletedProcess[str]:
-    ctx.commands.append(" ".join(cmd))
-    proc = subprocess.run(cmd, cwd=ctx.repo_root, check=False, capture_output=True, text=True)
-    ctx.command_outputs.append(
-        {
-            "name": name,
-            "stdout": proc.stdout,
-            "stderr": proc.stderr,
-            "stdout_sha256": _sha256_bytes(proc.stdout.encode("utf-8", errors="replace")),
-            "stderr_sha256": _sha256_bytes(proc.stderr.encode("utf-8", errors="replace")),
-            "returncode": str(proc.returncode),
-        }
+def _json_load(path: Path) -> dict[str, Any]:
+    with path.open("r", encoding="utf-8") as fh:
+        loaded = json.load(fh)
+    if not isinstance(loaded, dict):
+        raise ValueError(f"expected JSON object in {path}")
+    return loaded
+
+
+def _run_cmd(ctx: EvalContext, name: str, cmd: list[str]) -> CommandRecord:
+    proc = subprocess.run(
+        cmd,
+        cwd=ctx.repo_root,
+        capture_output=True,
+        text=True,
+        check=False,
     )
-    return proc
+    rec = CommandRecord(
+        name=name,
+        command=cmd,
+        returncode=proc.returncode,
+        stdout=proc.stdout,
+        stderr=proc.stderr,
+    )
+    ctx.commands.append(rec)
+    return rec
 
 
-def _status(gid: str, status: str, details: dict[str, Any]) -> dict[str, Any]:
-    return {"id": gid, "status": status, "details": details}
+def discover_repo_root(cwd: Path) -> Path:
+    if shutil.which("git") is None:
+        raise RuntimeError("git executable not found")
+    proc = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"],
+        cwd=cwd,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if proc.returncode != 0:
+        raise RuntimeError("unable to discover repo root via git rev-parse")
+    root = Path(proc.stdout.strip()).resolve()
+    if not root.exists():
+        raise RuntimeError("discovered repo root does not exist")
+    return root
 
 
 def validate_repo_model_schema(model: dict[str, Any]) -> tuple[bool, str]:
@@ -89,345 +123,519 @@ def validate_repo_model_schema(model: dict[str, Any]) -> tuple[bool, str]:
         "counts": dict,
         "unknowns": dict,
     }
-    for k, t in required_top.items():
-        if k not in model:
-            return False, f"missing key: {k}"
-        if not isinstance(model[k], t):
-            return False, f"invalid type for {k}"
+    for key, expected_type in required_top.items():
+        if key not in model:
+            return False, f"missing key: {key}"
+        if not isinstance(model[key], expected_type):
+            return False, f"invalid type for {key}"
 
     counts = model["counts"]
-    for k in ("agents_count", "edges_count", "core_candidates_count"):
-        if k not in counts or not isinstance(counts[k], int):
-            return False, f"invalid counts.{k}"
+    for key in ("agents_count", "edges_count", "core_candidates_count"):
+        if key not in counts:
+            return False, f"missing counts.{key}"
+        if not isinstance(counts[key], int):
+            return False, f"invalid type for counts.{key}"
 
-    def is_hex12(value: Any) -> bool:
+    def _is_hex12(value: Any) -> bool:
         if not isinstance(value, str) or len(value) != 12:
             return False
         try:
             int(value, 16)
-            return True
         except ValueError:
             return False
+        return True
 
-    for item in model["agents"]:
-        if not isinstance(item, dict):
-            return False, "invalid agent item"
-        if not is_hex12(item.get("agent_id")):
-            return False, "invalid agent_id"
-        if not isinstance(item.get("path"), str):
-            return False, "invalid agent.path"
-        if not isinstance(item.get("kind"), str):
-            return False, "invalid agent.kind"
+    agents = model["agents"]
+    for index, agent in enumerate(agents):
+        if not isinstance(agent, dict):
+            return False, f"agents[{index}] is not object"
+        if not _is_hex12(agent.get("agent_id")):
+            return False, f"agents[{index}].agent_id invalid"
+        if not isinstance(agent.get("path"), str):
+            return False, f"agents[{index}].path invalid"
+        if not isinstance(agent.get("kind"), str):
+            return False, f"agents[{index}].kind invalid"
 
-    for item in model["edges"]:
-        if not isinstance(item, dict):
-            return False, "invalid edge item"
-        if not isinstance(item.get("from_id"), str):
-            return False, "invalid edge.from_id"
-        if not isinstance(item.get("to_id"), str):
-            return False, "invalid edge.to_id"
-        if not isinstance(item.get("edge_type"), str):
-            return False, "invalid edge.edge_type"
+    edges = model["edges"]
+    for index, edge in enumerate(edges):
+        if not isinstance(edge, dict):
+            return False, f"edges[{index}] is not object"
+        if not isinstance(edge.get("from_id"), str):
+            return False, f"edges[{index}].from_id invalid"
+        if not isinstance(edge.get("to_id"), str):
+            return False, f"edges[{index}].to_id invalid"
+        if not isinstance(edge.get("edge_type"), str):
+            return False, f"edges[{index}].edge_type invalid"
 
-    for item in model["core_candidates"]:
-        if not isinstance(item, dict):
-            return False, "invalid core candidate item"
-        if not isinstance(item.get("agent_id"), str):
-            return False, "invalid core.agent_id"
-        if not isinstance(item.get("core_score"), (int, float)):
-            return False, "invalid core.core_score"
-        if not isinstance(item.get("rank"), int):
-            return False, "invalid core.rank"
-        if not isinstance(item.get("path"), str):
-            return False, "invalid core.path"
-        if not isinstance(item.get("kind"), str):
-            return False, "invalid core.kind"
-        if not isinstance(item.get("pr"), (int, float)):
-            return False, "invalid core.pr"
-        if not isinstance(item.get("bc"), (int, float)):
-            return False, "invalid core.bc"
+    candidates = model["core_candidates"]
+    for index, candidate in enumerate(candidates):
+        if not isinstance(candidate, dict):
+            return False, f"core_candidates[{index}] is not object"
+        for key, typ in {
+            "agent_id": str,
+            "rank": int,
+            "path": str,
+            "kind": str,
+        }.items():
+            if not isinstance(candidate.get(key), typ):
+                return False, f"core_candidates[{index}].{key} invalid"
+        for key in ("core_score", "pr", "bc"):
+            if not isinstance(candidate.get(key), (int, float)):
+                return False, f"core_candidates[{index}].{key} invalid"
 
     return True, "ok"
 
 
-def _load_json(path: Path) -> dict[str, Any]:
-    with path.open("r", encoding="utf-8") as fh:
-        return json.load(fh)
+def _gate_repo_root(ctx: EvalContext) -> GateResult:
+    markers = {
+        "engine": (ctx.repo_root / "engine").is_dir(),
+        ".github": (ctx.repo_root / ".github").is_dir(),
+        "Makefile": (ctx.repo_root / "Makefile").is_file(),
+    }
+    if all(markers.values()):
+        return GateResult("GATE_01_REPO_ROOT", "PASS", {"markers": markers})
+    return GateResult("GATE_01_REPO_ROOT", "FAIL", {"markers": markers})
+
+
+def _gate_git_clean(ctx: EvalContext) -> GateResult:
+    rec = _run_cmd(ctx, "git_status_porcelain", ["git", "status", "--porcelain"])
+    dirty = bool(rec.stdout.strip())
+    if rec.returncode == 0 and not dirty:
+        return GateResult("GATE_02_GIT_CLEAN", "PASS", {"dirty": False})
+    return GateResult(
+        "GATE_02_GIT_CLEAN",
+        "FAIL",
+        {"dirty": dirty, "returncode": rec.returncode},
+    )
+
+
+def _repo_model_cmd(output_path: Path) -> list[str]:
+    return [
+        sys.executable,
+        "-m",
+        "exoneural_governor",
+        "repo-model",
+        "--out",
+        output_path.as_posix(),
+        "--no-contract",
+    ]
+
+
+def _gate_repo_model_generates(ctx: EvalContext, artifacts_model_path: Path) -> GateResult:
+    rec = _run_cmd(ctx, "repo_model_generate", _repo_model_cmd(artifacts_model_path))
+    if rec.returncode != 0 or not artifacts_model_path.exists():
+        return GateResult(
+            "GATE_03_REPO_MODEL_GENERATES",
+            "FAIL",
+            {
+                "returncode": rec.returncode,
+                "output_exists": artifacts_model_path.exists(),
+                "path": artifacts_model_path.as_posix(),
+            },
+        )
+    try:
+        model = _json_load(artifacts_model_path)
+    except Exception as exc:
+        return GateResult(
+            "GATE_03_REPO_MODEL_GENERATES",
+            "FAIL",
+            {"reason": f"invalid_json: {exc}", "path": artifacts_model_path.as_posix()},
+        )
+
+    ctx.model_path = artifacts_model_path
+    ctx.model = model
+    return GateResult("GATE_03_REPO_MODEL_GENERATES", "PASS", {"path": artifacts_model_path.as_posix()})
+
+
+def _gate_repo_model_schema(ctx: EvalContext) -> GateResult:
+    if ctx.model is None:
+        return GateResult("GATE_04_REPO_MODEL_SCHEMA", "FAIL", {"reason": "repo model missing"})
+    ok, reason = validate_repo_model_schema(ctx.model)
+    return GateResult("GATE_04_REPO_MODEL_SCHEMA", "PASS" if ok else "FAIL", {"reason": reason})
+
+
+def _edge_counter(model: dict[str, Any]) -> Counter[tuple[str, str, str]]:
+    return Counter((str(e.get("from_id")), str(e.get("to_id")), str(e.get("edge_type"))) for e in model.get("edges", []))
+
+
+def _gate_repo_model_determinism(ctx: EvalContext, git_clean_passed: bool, run_dir: Path) -> GateResult:
+    if not git_clean_passed:
+        return GateResult("GATE_05_REPO_MODEL_DETERMINISM", "FAIL", {"reason": "requires clean git tree"})
+
+    run1 = run_dir / "repo_model.run1.json"
+    run2 = run_dir / "repo_model.run2.json"
+    rec1 = _run_cmd(ctx, "repo_model_run1", _repo_model_cmd(run1))
+    rec2 = _run_cmd(ctx, "repo_model_run2", _repo_model_cmd(run2))
+    if rec1.returncode != 0 or rec2.returncode != 0:
+        return GateResult(
+            "GATE_05_REPO_MODEL_DETERMINISM",
+            "FAIL",
+            {"run1_returncode": rec1.returncode, "run2_returncode": rec2.returncode},
+        )
+
+    try:
+        m1 = _json_load(run1)
+        m2 = _json_load(run2)
+    except Exception as exc:
+        return GateResult("GATE_05_REPO_MODEL_DETERMINISM", "FAIL", {"reason": f"invalid_json: {exc}"})
+
+    checks = {
+        "repo_fingerprint_equal": m1.get("repo_fingerprint") == m2.get("repo_fingerprint"),
+        "counts_equal": m1.get("counts") == m2.get("counts"),
+        "agent_ids_equal": {a.get("agent_id") for a in m1.get("agents", [])} == {a.get("agent_id") for a in m2.get("agents", [])},
+        "edges_multiset_equal": _edge_counter(m1) == _edge_counter(m2),
+        "core_order_equal": [
+            (c.get("agent_id"), c.get("rank")) for c in m1.get("core_candidates", [])
+        ]
+        == [
+            (c.get("agent_id"), c.get("rank")) for c in m2.get("core_candidates", [])
+        ],
+    }
+
+    if all(checks.values()):
+        return GateResult("GATE_05_REPO_MODEL_DETERMINISM", "PASS", checks)
+    return GateResult("GATE_05_REPO_MODEL_DETERMINISM", "FAIL", checks)
+
+
+def _gate_dangling_edges_policy(ctx: EvalContext) -> tuple[GateResult, dict[str, str] | None]:
+    if ctx.model is None:
+        return GateResult("GATE_06_DANGLING_EDGES_POLICY", "FAIL", {"reason": "repo model missing"}), None
+
+    dangling = ctx.model.get("unknowns", {}).get("dangling_edges", [])
+    if not isinstance(dangling, list):
+        return GateResult("GATE_06_DANGLING_EDGES_POLICY", "FAIL", {"reason": "unknowns.dangling_edges invalid"}), None
+
+    if ctx.strict and dangling:
+        return (
+            GateResult(
+                "GATE_06_DANGLING_EDGES_POLICY",
+                "FAIL",
+                {"dangling_edges_count": len(dangling), "strict": True},
+            ),
+            None,
+        )
+
+    warning = None
+    if dangling:
+        warning = {"gate": "GATE_06_DANGLING_EDGES_POLICY", "note": f"dangling_edges={len(dangling)}"}
+    return (
+        GateResult(
+            "GATE_06_DANGLING_EDGES_POLICY",
+            "PASS",
+            {"dangling_edges_count": len(dangling), "strict": ctx.strict},
+        ),
+        warning,
+    )
+
+
+def _gate_core_candidates_minimum(ctx: EvalContext) -> GateResult:
+    if ctx.model is None:
+        return GateResult("GATE_07_CORE_CANDIDATES_MINIMUM", "FAIL", {"reason": "repo model missing"})
+
+    counts = ctx.model.get("counts", {})
+    candidates = ctx.model.get("core_candidates", [])
+    count_ok = isinstance(counts.get("core_candidates_count"), int) and counts["core_candidates_count"] >= 5
+    score_ok = all(
+        isinstance(item.get("core_score"), (int, float)) and 0 <= float(item["core_score"]) <= 1 for item in candidates
+    )
+    status = "PASS" if count_ok and score_ok else "FAIL"
+    return GateResult(
+        "GATE_07_CORE_CANDIDATES_MINIMUM",
+        status,
+        {
+            "core_candidates_count": counts.get("core_candidates_count"),
+            "count_ok": count_ok,
+            "score_ok": score_ok,
+        },
+    )
+
+
+def _gate_agent_id_reproducible(ctx: EvalContext) -> GateResult:
+    if ctx.model is None:
+        return GateResult("GATE_08_AGENT_ID_REPRODUCIBLE", "FAIL", {"reason": "repo model missing"})
+
+    mismatches: list[dict[str, str]] = []
+    for agent in ctx.model.get("agents", []):
+        path = agent.get("path")
+        actual = agent.get("agent_id")
+        if not isinstance(path, str) or not isinstance(actual, str):
+            mismatches.append({"path": str(path), "expected": "", "actual": str(actual)})
+            continue
+        expected = hashlib.sha256(path.encode("utf-8")).hexdigest()[:12]
+        if expected != actual:
+            mismatches.append({"path": path, "expected": expected, "actual": actual})
+
+    status = "PASS" if not mismatches else "FAIL"
+    details: dict[str, Any] = {"mismatch_count": len(mismatches)}
+    if mismatches:
+        details["mismatches"] = mismatches
+    return GateResult("GATE_08_AGENT_ID_REPRODUCIBLE", status, details)
+
+
+def _gate_no_markdown_json(json_mode: bool) -> GateResult:
+    if not json_mode:
+        return GateResult("GATE_09_NO_MARKDOWN_JSON", "PASS", {"json_mode": False})
+
+    payload = json.dumps({"probe": True}, sort_keys=True)
+    first = payload.lstrip()[:1]
+    last = payload.rstrip()[-1:]
+    has_fence = "```" in payload
+    ok = first == "{" and last == "}" and not has_fence
+    return GateResult(
+        "GATE_09_NO_MARKDOWN_JSON",
+        "PASS" if ok else "FAIL",
+        {
+            "json_mode": True,
+            "starts_with": first,
+            "ends_with": last,
+            "has_code_fence": has_fence,
+        },
+    )
+
+
+def _collect_env_fingerprints(ctx: EvalContext) -> dict[str, str | None]:
+    py = _run_cmd(ctx, "python_version", [sys.executable, "-V"])
+    pip = _run_cmd(ctx, "pip_version", ["pip", "-V"])
+    node = _run_cmd(ctx, "node_version", ["node", "-v"])
+    return {
+        "python": (py.stdout.strip() or py.stderr.strip() or None),
+        "pip": (pip.stdout.strip() or pip.stderr.strip() or None) if pip.returncode == 0 else None,
+        "node": (node.stdout.strip() or node.stderr.strip() or None) if node.returncode == 0 else None,
+    }
+
+
+def _build_report(
+    *,
+    state: str,
+    exit_code: int,
+    repo_root: Path,
+    repo_fingerprint: str | None,
+    gates: list[GateResult],
+    failures: list[dict[str, str]],
+    warnings: list[dict[str, str]],
+    artifacts: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "state": state,
+        "exit_code": exit_code,
+        "repo_root": repo_root.as_posix(),
+        "repo_fingerprint": repo_fingerprint,
+        "gates": [g.as_dict() for g in gates],
+        "failures": failures,
+        "warnings": warnings,
+        "artifacts": artifacts,
+    }
+
+
+def write_artifacts(report: dict[str, Any], ctx: EvalContext) -> dict[str, Any]:
+    if ctx.out_dir is None:
+        return {"dir": None, "files": []}
+
+    out_dir = ctx.out_dir
+    out_dir.mkdir(parents=True, exist_ok=True)
+    outputs = out_dir / "outputs"
+    outputs.mkdir(parents=True, exist_ok=True)
+
+    files: list[Path] = []
+
+    commands_log = out_dir / "commands.log"
+    commands_log.write_text(
+        "".join(" ".join(rec.command) + "\n" for rec in ctx.commands),
+        encoding="utf-8",
+    )
+    files.append(commands_log)
+
+    for index, rec in enumerate(ctx.commands, start=1):
+        prefix = outputs / f"{index:03d}_{rec.name}"
+        stdout_path = prefix.with_suffix(".stdout.txt")
+        stderr_path = prefix.with_suffix(".stderr.txt")
+        meta_path = prefix.with_suffix(".meta.json")
+        stdout_path.write_text(rec.stdout, encoding="utf-8")
+        stderr_path.write_text(rec.stderr, encoding="utf-8")
+        meta_path.write_text(
+            json.dumps(
+                {
+                    "name": rec.name,
+                    "returncode": rec.returncode,
+                    "stdout_sha256": _sha256_bytes(rec.stdout.encode("utf-8")),
+                    "stderr_sha256": _sha256_bytes(rec.stderr.encode("utf-8")),
+                },
+                sort_keys=True,
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        files.extend([stdout_path, stderr_path, meta_path])
+
+    try:
+        dir_value = out_dir.relative_to(ctx.repo_root).as_posix()
+    except ValueError:
+        dir_value = out_dir.as_posix()
+
+    report_path = out_dir / "report.json"
+    hashes_path = out_dir / "hashes.json"
+    projected_files = sorted([*files, report_path, hashes_path])
+    artifacts_info = {
+        "dir": dir_value,
+        "files": [path.relative_to(out_dir).as_posix() for path in projected_files],
+    }
+    report["artifacts"] = artifacts_info
+    report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    files.append(report_path)
+
+    hashes = {path.relative_to(out_dir).as_posix(): _sha256_file(path) for path in sorted(files)}
+    hashes_path.write_text(json.dumps(hashes, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+    files.append(hashes_path)
+
+    return {
+        "dir": dir_value,
+        "files": [path.relative_to(out_dir).as_posix() for path in sorted(files)],
+    }
 
 
 def evaluate_contracts(strict: bool = False, out_path: Path | None = None, json_mode: bool = False) -> tuple[int, dict[str, Any]]:
     try:
         repo_root = discover_repo_root(Path.cwd())
     except Exception as exc:
-        report = {
-            "state": "ERROR",
-            "exit_code": 3,
-            "repo_root": Path.cwd().as_posix(),
-            "repo_fingerprint": None,
-            "gates": [_status("GATE_01_REPO_ROOT", "ERROR", {"error": str(exc)})],
-            "failures": [{"gate": "GATE_01_REPO_ROOT", "reason": str(exc)}],
-            "warnings": [],
-            "artifacts": {"dir": None, "files": []},
-        }
-        return 3, report
+        fallback_root = Path.cwd().resolve()
+        report = _build_report(
+            state="ERROR",
+            exit_code=EXIT_ERROR,
+            repo_root=fallback_root,
+            repo_fingerprint=None,
+            gates=[GateResult("GATE_01_REPO_ROOT", "ERROR", {"reason": str(exc)})],
+            failures=[{"gate": "GATE_01_REPO_ROOT", "reason": str(exc)}],
+            warnings=[],
+            artifacts={"dir": None, "files": []},
+        )
+        return EXIT_ERROR, report
 
     os.chdir(repo_root)
     ctx = EvalContext(repo_root=repo_root, strict=strict, json_mode=json_mode, out_dir=out_path)
 
-    gates: list[dict[str, Any]] = []
+    if shutil.which("git") is None:
+        report = _build_report(
+            state="ERROR",
+            exit_code=EXIT_ERROR,
+            repo_root=repo_root,
+            repo_fingerprint=None,
+            gates=[GateResult("GATE_01_REPO_ROOT", "ERROR", {"reason": "git unavailable"})],
+            failures=[{"gate": "GATE_01_REPO_ROOT", "reason": "git unavailable"}],
+            warnings=[],
+            artifacts={"dir": None, "files": []},
+        )
+        return EXIT_ERROR, report
+
+    gates: list[GateResult] = []
     failures: list[dict[str, str]] = []
     warnings: list[dict[str, str]] = []
-    repo_fingerprint: str | None = None
 
     try:
-        git_check = run_cmd(ctx, ["git", "--version"], "git_version")
-        if git_check.returncode != 0:
-            report = {
-                "state": "ERROR",
-                "exit_code": 3,
-                "repo_root": repo_root.as_posix(),
-                "repo_fingerprint": None,
-                "gates": [_status("GATE_00_GIT_AVAILABLE", "ERROR", {"returncode": git_check.returncode})],
-                "failures": [{"gate": "GATE_00_GIT_AVAILABLE", "reason": "git unavailable"}],
-                "warnings": [],
-                "artifacts": {"dir": None, "files": []},
-            }
-            return 3, report
+        env = _collect_env_fingerprints(ctx)
 
-        env_details: dict[str, str | None] = {}
-        py = run_cmd(ctx, ["python", "-V"], "python_version")
-        env_details["python"] = py.stdout.strip() or py.stderr.strip()
-        pip = run_cmd(ctx, ["pip", "-V"], "pip_version")
-        env_details["pip"] = (pip.stdout.strip() or pip.stderr.strip()) if pip.returncode == 0 else None
-        node = run_cmd(ctx, ["node", "-v"], "node_version")
-        env_details["node"] = (node.stdout.strip() or node.stderr.strip()) if node.returncode == 0 else None
+        g1 = _gate_repo_root(ctx)
+        g1.details["environment"] = env
+        gates.append(g1)
+        if g1.status == "FAIL":
+            failures.append({"gate": g1.gate_id, "reason": "required repository markers missing"})
 
-        markers_ok = (repo_root / "engine").is_dir() and (repo_root / ".github").is_dir() and (repo_root / "Makefile").is_file()
-        if markers_ok:
-            gates.append(_status("GATE_01_REPO_ROOT", "PASS", {"repo_root": repo_root.as_posix(), "env": env_details}))
+        g2 = _gate_git_clean(ctx)
+        gates.append(g2)
+        if g2.status == "FAIL":
+            failures.append({"gate": g2.gate_id, "reason": "git tree is not clean"})
+
+        baseline_status = _run_cmd(ctx, "git_status_baseline", ["git", "status", "--porcelain"])
+        baseline_stdout = baseline_status.stdout
+
+        temp_parent = ctx.repo_root / "engine" / "artifacts"
+        temp_parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix="contract_eval_repo_model_", dir=temp_parent) as model_td, tempfile.TemporaryDirectory(
+            prefix="contract_eval_repo_model_det_", dir=temp_parent
+        ) as det_td:
+            model_path = Path(model_td) / "repo_model.json"
+            g3 = _gate_repo_model_generates(ctx, model_path)
+            gates.append(g3)
+            if g3.status == "FAIL":
+                failures.append({"gate": g3.gate_id, "reason": "repo-model generation failed"})
+
+            g4 = _gate_repo_model_schema(ctx)
+            gates.append(g4)
+            if g4.status == "FAIL":
+                failures.append({"gate": g4.gate_id, "reason": str(g4.details.get("reason", "schema validation failed"))})
+
+            g5 = _gate_repo_model_determinism(ctx, g2.status == "PASS", Path(det_td))
+            gates.append(g5)
+            if g5.status == "FAIL":
+                failures.append({"gate": g5.gate_id, "reason": "determinism checks failed"})
+
+        post_status = _run_cmd(ctx, "git_status_post_repo_model", ["git", "status", "--porcelain"])
+        if post_status.returncode != 0 or post_status.stdout != baseline_stdout:
+            g5.status = "FAIL"
+            g5.details["tree_mutation_detected"] = True
+            if not any(item["gate"] == g5.gate_id for item in failures):
+                failures.append({"gate": g5.gate_id, "reason": "repo-model mutated git working tree during evaluation"})
         else:
-            gates.append(_status("GATE_01_REPO_ROOT", "FAIL", {"repo_root": repo_root.as_posix()}))
-            failures.append({"gate": "GATE_01_REPO_ROOT", "reason": "required markers missing"})
+            g5.details["tree_mutation_detected"] = False
 
-        st = run_cmd(ctx, ["git", "status", "--porcelain"], "git_status_porcelain")
-        dirty = bool(st.stdout.strip())
-        if st.returncode == 0 and not dirty:
-            gates.append(_status("GATE_02_GIT_CLEAN", "PASS", {"dirty": False}))
-        else:
-            gates.append(_status("GATE_02_GIT_CLEAN", "FAIL", {"dirty": dirty, "status_returncode": st.returncode}))
-            failures.append({"gate": "GATE_02_GIT_CLEAN", "reason": "git tree is not clean"})
+        g6, warning = _gate_dangling_edges_policy(ctx)
+        gates.append(g6)
+        if g6.status == "FAIL":
+            failures.append({"gate": g6.gate_id, "reason": "dangling edges policy violation"})
+        if warning is not None:
+            warnings.append(warning)
 
-        with tempfile.TemporaryDirectory(prefix="axl_contract_eval_gate3_") as td:
-            model_path = Path(td) / "repo_model.json"
-            rm = run_cmd(
-                ctx,
-                ["python", "-m", "exoneural_governor", "repo-model", "--out", model_path.as_posix(), "--no-contract"],
-                "repo_model_generate",
-            )
-            model_ok = rm.returncode == 0 and model_path.exists()
-            parsed = None
-            if model_ok:
-                try:
-                    parsed = _load_json(model_path)
-                except Exception:
-                    model_ok = False
-            if model_ok and parsed is not None:
-                ctx.model_path = model_path
-                ctx.model = parsed
-                repo_fingerprint = parsed.get("repo_fingerprint")
-                gates.append(_status("GATE_03_REPO_MODEL_GENERATES", "PASS", {"path": model_path.as_posix()}))
-            else:
-                gates.append(_status("GATE_03_REPO_MODEL_GENERATES", "FAIL", {"returncode": rm.returncode, "path_exists": model_path.exists()}))
-                failures.append({"gate": "GATE_03_REPO_MODEL_GENERATES", "reason": "repo-model generation failed"})
+        g7 = _gate_core_candidates_minimum(ctx)
+        gates.append(g7)
+        if g7.status == "FAIL":
+            failures.append({"gate": g7.gate_id, "reason": "core candidate requirements failed"})
 
-        schema_status = "FAIL"
-        schema_details: dict[str, Any] = {}
+        g8 = _gate_agent_id_reproducible(ctx)
+        gates.append(g8)
+        if g8.status == "FAIL":
+            failures.append({"gate": g8.gate_id, "reason": "agent_id reproducibility mismatch"})
+
+        g9 = _gate_no_markdown_json(json_mode)
+        gates.append(g9)
+        if g9.status == "FAIL":
+            failures.append({"gate": g9.gate_id, "reason": "json stdout formatting invalid"})
+
+        state = "PASS" if all(g.status == "PASS" for g in gates) else "FAIL"
+        exit_code = EXIT_PASS if state == "PASS" else EXIT_FAIL
+
+        repo_fingerprint = None
         if ctx.model is not None:
-            ok, reason = validate_repo_model_schema(ctx.model)
-            schema_status = "PASS" if ok else "FAIL"
-            schema_details = {"reason": reason}
-            if not ok:
-                failures.append({"gate": "GATE_04_REPO_MODEL_SCHEMA", "reason": reason})
-        else:
-            schema_details = {"reason": "missing model"}
-            failures.append({"gate": "GATE_04_REPO_MODEL_SCHEMA", "reason": "missing model"})
-        gates.append(_status("GATE_04_REPO_MODEL_SCHEMA", schema_status, schema_details))
+            fingerprint = ctx.model.get("repo_fingerprint")
+            repo_fingerprint = str(fingerprint) if fingerprint is not None else None
 
-        det_status = "FAIL"
-        det_details: dict[str, Any] = {}
-        if ctx.model is not None and not dirty:
-            with tempfile.TemporaryDirectory(prefix="axl_contract_eval_") as td:
-                tmp_dir = Path(td)
-                run1p = tmp_dir / "repo_model.run1.json"
-                run2p = tmp_dir / "repo_model.run2.json"
-                r1 = run_cmd(ctx, ["python", "-m", "exoneural_governor", "repo-model", "--out", run1p.as_posix(), "--no-contract"], "repo_model_run1")
-                r2 = run_cmd(ctx, ["python", "-m", "exoneural_governor", "repo-model", "--out", run2p.as_posix(), "--no-contract"], "repo_model_run2")
-                if r1.returncode == 0 and r2.returncode == 0 and run1p.exists() and run2p.exists():
-                    j1 = _load_json(run1p)
-                    j2 = _load_json(run2p)
-                    counts1 = j1.get("counts", {})
-                    counts2 = j2.get("counts", {})
-                    set1 = {a.get("agent_id") for a in j1.get("agents", [])}
-                    set2 = {a.get("agent_id") for a in j2.get("agents", [])}
-                    edges1 = sorted((e.get("from_id"), e.get("to_id"), e.get("edge_type")) for e in j1.get("edges", []))
-                    edges2 = sorted((e.get("from_id"), e.get("to_id"), e.get("edge_type")) for e in j2.get("edges", []))
-                    core1 = [(c.get("agent_id"), c.get("rank")) for c in j1.get("core_candidates", [])]
-                    core2 = [(c.get("agent_id"), c.get("rank")) for c in j2.get("core_candidates", [])]
-                    checks = {
-                        "repo_fingerprint_equal": j1.get("repo_fingerprint") == j2.get("repo_fingerprint"),
-                        "counts_equal": counts1 == counts2,
-                        "agent_ids_equal": set1 == set2,
-                        "edges_multiset_equal": edges1 == edges2,
-                        "core_order_equal": core1 == core2,
-                    }
-                    if all(checks.values()):
-                        det_status = "PASS"
-                    else:
-                        failures.append({"gate": "GATE_05_REPO_MODEL_DETERMINISM", "reason": "determinism checks failed"})
-                    det_details = checks
-                    ctx.run1, ctx.run2 = j1, j2
-                else:
-                    failures.append({"gate": "GATE_05_REPO_MODEL_DETERMINISM", "reason": "repo-model reruns failed"})
-                    det_details = {"run1_returncode": r1.returncode, "run2_returncode": r2.returncode}
-        else:
-            failures.append({"gate": "GATE_05_REPO_MODEL_DETERMINISM", "reason": "preconditions failed"})
-            det_details = {"requires_clean_git": True}
-        gates.append(_status("GATE_05_REPO_MODEL_DETERMINISM", det_status, det_details))
+        report = _build_report(
+            state=state,
+            exit_code=exit_code,
+            repo_root=repo_root,
+            repo_fingerprint=repo_fingerprint,
+            gates=gates,
+            failures=failures,
+            warnings=warnings,
+            artifacts={"dir": None, "files": []},
+        )
 
-        dangling = []
-        if ctx.model is not None:
-            dangling = ctx.model.get("unknowns", {}).get("dangling_edges", [])
-        if strict and dangling:
-            gates.append(_status("GATE_06_DANGLING_EDGES_POLICY", "FAIL", {"dangling_edges_count": len(dangling), "strict": True}))
-            failures.append({"gate": "GATE_06_DANGLING_EDGES_POLICY", "reason": "dangling edges present"})
-        else:
-            gates.append(_status("GATE_06_DANGLING_EDGES_POLICY", "PASS", {"dangling_edges_count": len(dangling), "strict": strict}))
-            if dangling:
-                warnings.append({"gate": "GATE_06_DANGLING_EDGES_POLICY", "note": f"dangling_edges={len(dangling)}"})
-
-        g7_status = "FAIL"
-        g7_details: dict[str, Any] = {}
-        if ctx.model is not None:
-            counts = ctx.model.get("counts", {})
-            cc = ctx.model.get("core_candidates", [])
-            min_ok = isinstance(counts.get("core_candidates_count"), int) and counts.get("core_candidates_count") >= 5
-            score_ok = all(isinstance(c.get("core_score"), (int, float)) and 0 <= float(c.get("core_score")) <= 1 for c in cc)
-            g7_details = {"core_candidates_count": counts.get("core_candidates_count"), "min_ok": min_ok, "score_range_ok": score_ok}
-            if min_ok and score_ok:
-                g7_status = "PASS"
-            else:
-                failures.append({"gate": "GATE_07_CORE_CANDIDATES_MINIMUM", "reason": "core candidates threshold/score invalid"})
-        else:
-            failures.append({"gate": "GATE_07_CORE_CANDIDATES_MINIMUM", "reason": "missing model"})
-            g7_details = {"reason": "missing model"}
-        gates.append(_status("GATE_07_CORE_CANDIDATES_MINIMUM", g7_status, g7_details))
-
-        g8_status = "FAIL"
-        g8_details: dict[str, Any] = {}
-        if ctx.model is not None:
-            mismatches: list[dict[str, str]] = []
-            for agent in ctx.model.get("agents", []):
-                p = agent.get("path")
-                aid = agent.get("agent_id")
-                if not isinstance(p, str) or not isinstance(aid, str):
-                    mismatches.append({"path": str(p), "expected": "", "actual": str(aid)})
-                    continue
-                expected = hashlib.sha256(p.encode("utf-8")).hexdigest()[:12]
-                if aid != expected:
-                    mismatches.append({"path": p, "expected": expected, "actual": aid})
-            g8_details = {"mismatch_count": len(mismatches)}
-            if mismatches:
-                g8_details["mismatches"] = mismatches[:20]
-                failures.append({"gate": "GATE_08_AGENT_ID_REPRODUCIBLE", "reason": "agent_id mismatch"})
-            else:
-                g8_status = "PASS"
-        else:
-            failures.append({"gate": "GATE_08_AGENT_ID_REPRODUCIBLE", "reason": "missing model"})
-            g8_details = {"reason": "missing model"}
-        gates.append(_status("GATE_08_AGENT_ID_REPRODUCIBLE", g8_status, g8_details))
-
-        g9_status = "PASS"
-        g9_details = {"json_mode": json_mode}
-        if json_mode:
-            # enforced by cli output implementation; deterministic construction
-            g9_details["format"] = "json_only"
-        gates.append(_status("GATE_09_NO_MARKDOWN_JSON", g9_status, g9_details))
-
-        failed = [g for g in gates if g["status"] == "FAIL"]
-        state = "PASS" if not failed else "FAIL"
-        exit_code = 0 if state == "PASS" else 2
-        report = {
-            "state": state,
-            "exit_code": exit_code,
-            "repo_root": repo_root.as_posix(),
-            "repo_fingerprint": repo_fingerprint,
-            "gates": gates,
-            "failures": failures,
-            "warnings": warnings,
-            "artifacts": {"dir": out_path.relative_to(repo_root).as_posix() if out_path and out_path.is_absolute() and out_path.is_relative_to(repo_root) else (out_path.as_posix() if out_path else None), "files": []},
-        }
+        artifacts = write_artifacts(report, ctx)
+        report["artifacts"] = artifacts
         return exit_code, report
     except Exception as exc:
-        report = {
-            "state": "ERROR",
-            "exit_code": 3,
-            "repo_root": repo_root.as_posix(),
-            "repo_fingerprint": repo_fingerprint,
-            "gates": gates,
-            "failures": failures + [{"gate": "INTERNAL", "reason": str(exc)}],
-            "warnings": warnings,
-            "artifacts": {"dir": out_path.as_posix() if out_path else None, "files": []},
-        }
-        return 3, report
-
-
-def write_artifacts(ctx_report: dict[str, Any], out_dir: Path, commands: list[str], command_outputs: list[dict[str, str]]) -> dict[str, Any]:
-    out_dir.mkdir(parents=True, exist_ok=True)
-    outputs_dir = out_dir / "outputs"
-    outputs_dir.mkdir(parents=True, exist_ok=True)
-
-    files: list[Path] = []
-
-    cmd_log = out_dir / "commands.log"
-    cmd_log.write_text("\n".join(commands) + "\n", encoding="utf-8")
-    files.append(cmd_log)
-
-    for i, item in enumerate(command_outputs, start=1):
-        base = outputs_dir / f"{i:03d}_{item['name']}"
-        outp = base.with_suffix(".stdout.txt")
-        errp = base.with_suffix(".stderr.txt")
-        meta = base.with_suffix(".meta.json")
-        outp.write_text(item["stdout"], encoding="utf-8")
-        errp.write_text(item["stderr"], encoding="utf-8")
-        meta.write_text(
-            json.dumps(
-                {
-                    "name": item["name"],
-                    "stdout_sha256": item["stdout_sha256"],
-                    "stderr_sha256": item["stderr_sha256"],
-                    "returncode": int(item["returncode"]),
-                },
-                indent=2,
-                sort_keys=True,
-            )
-            + "\n",
-            encoding="utf-8",
+        report = _build_report(
+            state="ERROR",
+            exit_code=EXIT_ERROR,
+            repo_root=repo_root,
+            repo_fingerprint=None,
+            gates=gates,
+            failures=failures + [{"gate": "INTERNAL", "reason": str(exc)}],
+            warnings=warnings,
+            artifacts={"dir": None, "files": []},
         )
-        files.extend([outp, errp, meta])
-
-    report_file = out_dir / "report.json"
-    report_file.write_text(json.dumps(ctx_report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    files.append(report_file)
-
-    hashes_file = out_dir / "hashes.json"
-    hashes = {p.relative_to(out_dir).as_posix(): _sha256_file(p) for p in sorted(files)}
-    hashes_file.write_text(json.dumps(hashes, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    files.append(hashes_file)
-
-    return {
-        "dir": out_dir.as_posix(),
-        "files": [p.relative_to(out_dir).as_posix() for p in sorted(files)],
-    }
+        artifacts = write_artifacts(report, ctx)
+        report["artifacts"] = artifacts
+        return EXIT_ERROR, report
 
 
 def cli(argv: list[str] | None = None) -> int:
@@ -438,30 +646,15 @@ def cli(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     out_dir = Path(args.out).resolve() if args.out else None
-    code, report = evaluate_contracts(strict=args.strict, out_path=out_dir, json_mode=args.json)
-
-    # regenerate command records for artifacts deterministically from local execution trace
-    if out_dir is not None:
-        # rerun lightweight collection to populate files; deterministic and local
-        repo_root = discover_repo_root(Path.cwd())
-        ctx = EvalContext(repo_root=repo_root, strict=args.strict, json_mode=args.json, out_dir=out_dir)
-        run_cmd(ctx, ["git", "--version"], "git_version")
-        run_cmd(ctx, ["python", "-V"], "python_version")
-        run_cmd(ctx, ["pip", "-V"], "pip_version")
-        run_cmd(ctx, ["node", "-v"], "node_version")
-        run_cmd(ctx, ["git", "status", "--porcelain"], "git_status_porcelain")
-        with tempfile.TemporaryDirectory(prefix="axl_contract_eval_artifacts_") as td:
-            artifact_model = Path(td) / "repo_model.json"
-            run_cmd(ctx, ["python", "-m", "exoneural_governor", "repo-model", "--out", artifact_model.as_posix(), "--no-contract"], "repo_model_generate")
-        art = write_artifacts(report, out_dir, ctx.commands, ctx.command_outputs)
-        report["artifacts"] = art
-        (out_dir / "report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    exit_code, report = evaluate_contracts(strict=args.strict, out_path=out_dir, json_mode=args.json)
 
     if args.json:
-        print(json.dumps(report, sort_keys=True))
+        payload = json.dumps(report, sort_keys=True)
+        print(payload)
     else:
         print(f"CONTRACT_EVAL:{report['state']}")
-    return int(code)
+
+    return exit_code
 
 
 if __name__ == "__main__":
