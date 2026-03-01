@@ -35,9 +35,12 @@ jobs:
         with:
           python-version: '3.12'
           cache: 'pip'
+          cache-dependency-path: |
+            _state_head/engine/requirements.txt
 
       - name: Install Platform Dependencies
-        run: pip install PyYAML
+        run: |
+          pip install -r _state_head/engine/requirements.txt
 
       - name: Synthesize Base Contract
         working-directory: _state_base

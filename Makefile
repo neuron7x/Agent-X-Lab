@@ -53,4 +53,5 @@ reproduce: test
 
 
 repo-model:
-	cd engine && $(PYTHON_RUN) -m exoneural_governor repo-model
+	@$(PYTHON_RUN) -c "import jsonschema" >/dev/null 2>&1 || (echo "Error: jsonschema not installed. Run pip install -r engine/requirements.txt" && exit 1)
+	cd engine && PYTHONPATH=. $(PYTHON_RUN) -m exoneural_governor repo-model
