@@ -11,20 +11,27 @@ def test_contract_eval_canonical_digests_present(tmp_path: Path) -> None:
     original = Path.cwd()
     try:
         os.chdir(repo_root / "engine")
-        proc = subprocess.run([
-            "python",
-            "-m",
-            "exoneural_governor",
-            "contract-eval",
-            "--out",
-            str(tmp_path),
-            "--strict-no-write",
-            "--json",
-        ], capture_output=True, text=True, check=False)
+        proc = subprocess.run(
+            [
+                "python",
+                "-m",
+                "exoneural_governor",
+                "contract-eval",
+                "--out",
+                str(tmp_path),
+                "--strict-no-write",
+                "--json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
     finally:
         os.chdir(original)
     assert proc.returncode in (0, 2)
     report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
-    gate = next(g for g in report["gates"] if g["id"] == "GATE_A02_STRICT_NO_WRITE")
-    assert "canonical_digest_run1" in gate["details"]
-    assert "canonical_digest_run2" in gate["details"]
+    gate = next(g for g in report["gates"] if g["id"] == "GATE_A06_DETERMINISM_SIGNATURE")
+    assert "signature_run1_sha256" in gate["details"]
+    assert "signature_run2_sha256" in gate["details"]
+    assert (tmp_path / "signature.run1.json").exists()
+    assert (tmp_path / "signature.run2.json").exists()
