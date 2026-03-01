@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import subprocess
+import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -254,39 +255,39 @@ def evaluate_contracts(strict: bool = False, out_path: Path | None = None, json_
         det_status = "FAIL"
         det_details: dict[str, Any] = {}
         if ctx.model is not None and not dirty:
-            tmp_dir = repo_root / "engine" / "artifacts" / "repo_model" / "_tmp"
-            tmp_dir.mkdir(parents=True, exist_ok=True)
-            run1p = tmp_dir / "repo_model.run1.json"
-            run2p = tmp_dir / "repo_model.run2.json"
-            r1 = run_cmd(ctx, ["python", "-m", "exoneural_governor", "repo-model", "--out", run1p.as_posix()], "repo_model_run1")
-            r2 = run_cmd(ctx, ["python", "-m", "exoneural_governor", "repo-model", "--out", run2p.as_posix()], "repo_model_run2")
-            if r1.returncode == 0 and r2.returncode == 0 and run1p.exists() and run2p.exists():
-                j1 = _load_json(run1p)
-                j2 = _load_json(run2p)
-                counts1 = j1.get("counts", {})
-                counts2 = j2.get("counts", {})
-                set1 = {a.get("agent_id") for a in j1.get("agents", [])}
-                set2 = {a.get("agent_id") for a in j2.get("agents", [])}
-                edges1 = sorted((e.get("from_id"), e.get("to_id"), e.get("edge_type")) for e in j1.get("edges", []))
-                edges2 = sorted((e.get("from_id"), e.get("to_id"), e.get("edge_type")) for e in j2.get("edges", []))
-                core1 = [(c.get("agent_id"), c.get("rank")) for c in j1.get("core_candidates", [])]
-                core2 = [(c.get("agent_id"), c.get("rank")) for c in j2.get("core_candidates", [])]
-                checks = {
-                    "repo_fingerprint_equal": j1.get("repo_fingerprint") == j2.get("repo_fingerprint"),
-                    "counts_equal": counts1 == counts2,
-                    "agent_ids_equal": set1 == set2,
-                    "edges_multiset_equal": edges1 == edges2,
-                    "core_order_equal": core1 == core2,
-                }
-                if all(checks.values()):
-                    det_status = "PASS"
+            with tempfile.TemporaryDirectory(prefix="axl_contract_eval_") as td:
+                tmp_dir = Path(td)
+                run1p = tmp_dir / "repo_model.run1.json"
+                run2p = tmp_dir / "repo_model.run2.json"
+                r1 = run_cmd(ctx, ["python", "-m", "exoneural_governor", "repo-model", "--out", run1p.as_posix()], "repo_model_run1")
+                r2 = run_cmd(ctx, ["python", "-m", "exoneural_governor", "repo-model", "--out", run2p.as_posix()], "repo_model_run2")
+                if r1.returncode == 0 and r2.returncode == 0 and run1p.exists() and run2p.exists():
+                    j1 = _load_json(run1p)
+                    j2 = _load_json(run2p)
+                    counts1 = j1.get("counts", {})
+                    counts2 = j2.get("counts", {})
+                    set1 = {a.get("agent_id") for a in j1.get("agents", [])}
+                    set2 = {a.get("agent_id") for a in j2.get("agents", [])}
+                    edges1 = sorted((e.get("from_id"), e.get("to_id"), e.get("edge_type")) for e in j1.get("edges", []))
+                    edges2 = sorted((e.get("from_id"), e.get("to_id"), e.get("edge_type")) for e in j2.get("edges", []))
+                    core1 = [(c.get("agent_id"), c.get("rank")) for c in j1.get("core_candidates", [])]
+                    core2 = [(c.get("agent_id"), c.get("rank")) for c in j2.get("core_candidates", [])]
+                    checks = {
+                        "repo_fingerprint_equal": j1.get("repo_fingerprint") == j2.get("repo_fingerprint"),
+                        "counts_equal": counts1 == counts2,
+                        "agent_ids_equal": set1 == set2,
+                        "edges_multiset_equal": edges1 == edges2,
+                        "core_order_equal": core1 == core2,
+                    }
+                    if all(checks.values()):
+                        det_status = "PASS"
+                    else:
+                        failures.append({"gate": "GATE_05_REPO_MODEL_DETERMINISM", "reason": "determinism checks failed"})
+                    det_details = checks
+                    ctx.run1, ctx.run2 = j1, j2
                 else:
-                    failures.append({"gate": "GATE_05_REPO_MODEL_DETERMINISM", "reason": "determinism checks failed"})
-                det_details = checks
-                ctx.run1, ctx.run2 = j1, j2
-            else:
-                failures.append({"gate": "GATE_05_REPO_MODEL_DETERMINISM", "reason": "repo-model reruns failed"})
-                det_details = {"run1_returncode": r1.returncode, "run2_returncode": r2.returncode}
+                    failures.append({"gate": "GATE_05_REPO_MODEL_DETERMINISM", "reason": "repo-model reruns failed"})
+                    det_details = {"run1_returncode": r1.returncode, "run2_returncode": r2.returncode}
         else:
             failures.append({"gate": "GATE_05_REPO_MODEL_DETERMINISM", "reason": "preconditions failed"})
             det_details = {"requires_clean_git": True}
