@@ -267,7 +267,7 @@ DEFAULT_INCLUDE_GLOBS = [
     "docs/**/*.md",
 ]
 
-DEFAULT_EXCLUDE_GLOBS = ["**/__init__.py"]
+DEFAULT_EXCLUDE_GLOBS: list[str] = []
 
 
 
