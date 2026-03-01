@@ -1,4 +1,4 @@
-.PHONY: setup bootstrap lint test test-all test-integration test-e2e test-property dev-ui dev-worker gates reproduce repo-model
+.PHONY: setup bootstrap lint test test-all test-integration test-e2e test-property dev-ui dev-worker gates reproduce repo-model repo-model-deps
 
 PYTHON ?= python
 VENV ?= .venv
@@ -52,6 +52,9 @@ reproduce: test
 	$(PYTHON_RUN) scripts/generate_manifest.py
 
 
-repo-model:
-	@$(PYTHON_RUN) -c "import jsonschema" >/dev/null 2>&1 || (echo "Error: jsonschema not installed. Run pip install -r engine/requirements.txt" && exit 1)
+repo-model-deps:
+	@$(PYTHON_RUN) -c "import jsonschema, yaml, networkx" >/dev/null 2>&1 || (echo "!!! Missing dependencies. Run: pip install -r engine/requirements.txt !!!" && exit 1)
+
+repo-model: repo-model-deps
+	@echo "Synthesizing Repository Model..."
 	cd engine && PYTHONPATH=. $(PYTHON_RUN) -m exoneural_governor repo-model

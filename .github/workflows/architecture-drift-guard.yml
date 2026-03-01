@@ -40,12 +40,14 @@ jobs:
 
       - name: Install Platform Dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r _state_head/engine/requirements.txt
+          pip install -e ./_state_head/engine
 
       - name: Synthesize Base Contract
         working-directory: _state_base
         run: |
-          make repo-model
+          PYTHONPATH=$GITHUB_WORKSPACE/_state_head/engine make repo-model
           cp engine/artifacts/repo_model/repo_model.json ../base_contract.json
 
       - name: Synthesize Head Contract
