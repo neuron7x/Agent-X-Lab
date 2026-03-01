@@ -1138,6 +1138,12 @@ def _iter_scan_files(repo_root: Path) -> list[Path]:
     return sorted(files)
 
 
+
+
+def _core_candidate_eligible(path: str) -> bool:
+    rel = _canon_rel(path)
+    return not rel.startswith("engine/exoneural_governor/_")
+
 def _classify_subkind(agent: dict[str, Any], out_edges: dict[str, int]) -> str:
     rel = agent["path"].lower()
     tok = rel.replace("/", " ")
@@ -1249,7 +1255,8 @@ def _build_model_once(repo_root: Path, out_path: Path, contract_path: Path, incl
 
     by_id = {a["agent_id"]: a for a in agents}
     ranked: list[dict[str, Any]] = []
-    for nid in node_ids:
+    candidate_nodes = [nid for nid in node_ids if _core_candidate_eligible(by_id[nid]["path"])]
+    for nid in candidate_nodes:
         pr_norm = pr.get(nid, 0.0) / max_pr if max_pr else 0.0
         bc_norm = bc.get(nid, 0.0) / max_bc if max_bc else 0.0
         ranked.append({"agent_id": nid, "path": by_id[nid]["path"], "kind": by_id[nid]["kind"], "pr": pr.get(nid, 0.0), "bc": bc.get(nid, 0.0), "pr_norm": pr_norm, "bc_norm": bc_norm, "core_score": 0.6 * pr_norm + 0.4 * bc_norm})

@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from exoneural_governor.repo_model import betweenness_centrality_brandes, generate_repo_model, pagerank, write_architecture_contract
+from exoneural_governor.repo_model import _core_candidate_eligible, betweenness_centrality_brandes, generate_repo_model, pagerank, write_architecture_contract
 
 
 def test_pagerank_determinism() -> None:
@@ -63,3 +63,8 @@ def test_repo_model_fixture_d_discovery_and_contract(tmp_path: Path) -> None:
     rows = [json.loads(x) for x in contract.read_text(encoding="utf-8").splitlines() if x.strip()]
     assert len(rows) == len(model["agents"])
     assert all("subdomain_tags" in r for r in rows)
+
+
+def test_private_engine_module_not_core_candidate() -> None:
+    assert _core_candidate_eligible("engine/exoneural_governor/_exec.py") is False
+    assert _core_candidate_eligible("engine/exoneural_governor/cli.py") is True
