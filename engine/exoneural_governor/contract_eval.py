@@ -6,6 +6,8 @@ import json
 import os
 import shutil
 import subprocess
+import sys
+import tempfile
 from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -209,7 +211,7 @@ def _gate_git_clean(ctx: EvalContext) -> GateResult:
 
 def _repo_model_cmd(output_path: Path) -> list[str]:
     return [
-        "python",
+        sys.executable,
         "-m",
         "exoneural_governor",
         "repo-model",
@@ -392,7 +394,7 @@ def _gate_no_markdown_json(json_mode: bool) -> GateResult:
 
 
 def _collect_env_fingerprints(ctx: EvalContext) -> dict[str, str | None]:
-    py = _run_cmd(ctx, "python_version", ["python", "-V"])
+    py = _run_cmd(ctx, "python_version", [sys.executable, "-V"])
     pip = _run_cmd(ctx, "pip_version", ["pip", "-V"])
     node = _run_cmd(ctx, "node_version", ["node", "-v"])
     return {
@@ -466,19 +468,25 @@ def write_artifacts(report: dict[str, Any], ctx: EvalContext) -> dict[str, Any]:
         )
         files.extend([stdout_path, stderr_path, meta_path])
 
-    report_path = out_dir / "report.json"
-    report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    files.append(report_path)
-
-    hashes = {path.relative_to(out_dir).as_posix(): _sha256_file(path) for path in sorted(files)}
-    hashes_path = out_dir / "hashes.json"
-    hashes_path.write_text(json.dumps(hashes, sort_keys=True, indent=2) + "\n", encoding="utf-8")
-    files.append(hashes_path)
-
     try:
         dir_value = out_dir.relative_to(ctx.repo_root).as_posix()
     except ValueError:
         dir_value = out_dir.as_posix()
+
+    report_path = out_dir / "report.json"
+    hashes_path = out_dir / "hashes.json"
+    projected_files = sorted([*files, report_path, hashes_path])
+    artifacts_info = {
+        "dir": dir_value,
+        "files": [path.relative_to(out_dir).as_posix() for path in projected_files],
+    }
+    report["artifacts"] = artifacts_info
+    report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    files.append(report_path)
+
+    hashes = {path.relative_to(out_dir).as_posix(): _sha256_file(path) for path in sorted(files)}
+    hashes_path.write_text(json.dumps(hashes, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+    files.append(hashes_path)
 
     return {
         "dir": dir_value,
@@ -537,25 +545,38 @@ def evaluate_contracts(strict: bool = False, out_path: Path | None = None, json_
         if g2.status == "FAIL":
             failures.append({"gate": g2.gate_id, "reason": "git tree is not clean"})
 
-        model_base = ctx.repo_root / "engine" / "artifacts" / "repo_model"
-        model_base.mkdir(parents=True, exist_ok=True)
-        model_path = model_base / "repo_model.json"
-        g3 = _gate_repo_model_generates(ctx, model_path)
-        gates.append(g3)
-        if g3.status == "FAIL":
-            failures.append({"gate": g3.gate_id, "reason": "repo-model generation failed"})
+        baseline_status = _run_cmd(ctx, "git_status_baseline", ["git", "status", "--porcelain"])
+        baseline_stdout = baseline_status.stdout
 
-        g4 = _gate_repo_model_schema(ctx)
-        gates.append(g4)
-        if g4.status == "FAIL":
-            failures.append({"gate": g4.gate_id, "reason": str(g4.details.get("reason", "schema validation failed"))})
+        temp_parent = ctx.repo_root / "engine" / "artifacts"
+        temp_parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix="contract_eval_repo_model_", dir=temp_parent) as model_td, tempfile.TemporaryDirectory(
+            prefix="contract_eval_repo_model_det_", dir=temp_parent
+        ) as det_td:
+            model_path = Path(model_td) / "repo_model.json"
+            g3 = _gate_repo_model_generates(ctx, model_path)
+            gates.append(g3)
+            if g3.status == "FAIL":
+                failures.append({"gate": g3.gate_id, "reason": "repo-model generation failed"})
 
-        tmp_dir = model_base / "_tmp"
-        tmp_dir.mkdir(parents=True, exist_ok=True)
-        g5 = _gate_repo_model_determinism(ctx, g2.status == "PASS", tmp_dir)
-        gates.append(g5)
-        if g5.status == "FAIL":
-            failures.append({"gate": g5.gate_id, "reason": "determinism checks failed"})
+            g4 = _gate_repo_model_schema(ctx)
+            gates.append(g4)
+            if g4.status == "FAIL":
+                failures.append({"gate": g4.gate_id, "reason": str(g4.details.get("reason", "schema validation failed"))})
+
+            g5 = _gate_repo_model_determinism(ctx, g2.status == "PASS", Path(det_td))
+            gates.append(g5)
+            if g5.status == "FAIL":
+                failures.append({"gate": g5.gate_id, "reason": "determinism checks failed"})
+
+        post_status = _run_cmd(ctx, "git_status_post_repo_model", ["git", "status", "--porcelain"])
+        if post_status.returncode != 0 or post_status.stdout != baseline_stdout:
+            g5.status = "FAIL"
+            g5.details["tree_mutation_detected"] = True
+            if not any(item["gate"] == g5.gate_id for item in failures):
+                failures.append({"gate": g5.gate_id, "reason": "repo-model mutated git working tree during evaluation"})
+        else:
+            g5.details["tree_mutation_detected"] = False
 
         g6, warning = _gate_dangling_edges_policy(ctx)
         gates.append(g6)
@@ -600,8 +621,6 @@ def evaluate_contracts(strict: bool = False, out_path: Path | None = None, json_
 
         artifacts = write_artifacts(report, ctx)
         report["artifacts"] = artifacts
-        if ctx.out_dir is not None:
-            (ctx.out_dir / "report.json").write_text(json.dumps(report, sort_keys=True, indent=2) + "\n", encoding="utf-8")
         return exit_code, report
     except Exception as exc:
         report = _build_report(
